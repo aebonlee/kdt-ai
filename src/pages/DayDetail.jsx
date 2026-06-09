@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { sessionByDate, subjectById, dayOf, sortedSessions } from '../data/curriculum'
+import { useProgress, setDone } from '../hooks/useProgress'
 
 const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
 
@@ -32,6 +33,8 @@ export default function DayDetail() {
     )
   }
 
+  const done = useProgress()
+  const isDone = !!done[date]
   const subj = subjectById(session.subjectId)
   const d = dayOf(session)
   const all = sortedSessions()
@@ -61,6 +64,19 @@ export default function DayDetail() {
 
           <Block title="학습 목표" items={d?.objectives} />
           <Block title="학습 내용" items={d?.contents} />
+
+          {/* 자가평가 (학습관리 진도율과 연동) */}
+          <div className="detail-block" style={{ borderTop: '1px solid var(--line)', paddingTop: 'var(--s-5)' }}>
+            <button
+              className={`check${isDone ? ' done' : ''}`}
+              onClick={() => setDone(date, !isDone)}
+              aria-pressed={isDone}
+              style={{ maxWidth: 360 }}
+            >
+              <span className="box">{isDone ? '✓' : ''}</span>
+              <span className="ctitle">{isDone ? '이해 완료 — 진도에 반영됨' : '이 수업 내용을 이해했어요'}</span>
+            </button>
+          </div>
         </div>
 
         <div className="detail-nav">

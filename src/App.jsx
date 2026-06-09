@@ -7,6 +7,9 @@ import Home from './pages/Home'
 import Subjects from './pages/Subjects'
 import Schedule from './pages/Schedule'
 import DayDetail from './pages/DayDetail'
+import Prep from './pages/Prep'
+import References from './pages/References'
+import Progress from './pages/Progress'
 
 export default function App() {
   return (
@@ -16,8 +19,11 @@ export default function App() {
       <main style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/subjects" element={<Subjects />} />
           <Route path="/schedule" element={<Schedule />} />
+          <Route path="/prep" element={<Prep />} />
+          <Route path="/subjects" element={<Subjects />} />
+          <Route path="/reference" element={<References />} />
+          <Route path="/progress" element={<Progress />} />
           <Route path="/day/:date" element={<DayDetail />} />
           <Route path="*" element={<Home />} />
         </Routes>

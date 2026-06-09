@@ -3,9 +3,12 @@ import { course } from '../data/course'
 import ThemeToggle from './ThemeToggle'
 
 const nav = [
-  { to: '/', label: '홈', end: true },
-  { to: '/subjects', label: '과목별' },
-  { to: '/schedule', label: '일정' },
+  { to: '/', label: 'About', end: true },
+  { to: '/schedule', label: '수업일정표' },
+  { to: '/prep', label: '선수학습자료' },
+  { to: '/subjects', label: '과목별 강의' },
+  { to: '/reference', label: '참고자료' },
+  { to: '/progress', label: '학습관리' },
 ]
 
 export default function Header() {
