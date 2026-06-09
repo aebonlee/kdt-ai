@@ -10,10 +10,10 @@ import DayDetail from './pages/DayDetail'
 
 export default function App() {
   return (
-    <div className="flex min-h-screen min-w-[320px] flex-col">
+    <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
       <ScrollToTop />
       <Header />
-      <main className="flex-1">
+      <main style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/subjects" element={<Subjects />} />

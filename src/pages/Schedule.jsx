@@ -1,52 +1,74 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { sessionsByWeek, subjectById } from '../data/curriculum'
+import { sessionsByMonth, subjectById, dayOf } from '../data/curriculum'
 
-const dot = {
-  navy: 'bg-navy',
-  ocean: 'bg-ocean',
-  azure: 'bg-azure',
-  sky: 'bg-sky',
-  amber: 'bg-amber',
-}
+const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
+const monthLabel = (m) => `${m.slice(0, 4)}년 ${Number(m.slice(5))}월`
+
+const FILTERS = ['전체', '판교', '광주']
 
 export default function Schedule() {
-  const weeks = sessionsByWeek()
+  const [region, setRegion] = useState('전체')
+  const months = sessionsByMonth()
+    .map(({ month, items }) => ({
+      month,
+      items: items.filter((s) => region === '전체' || s.region === region),
+    }))
+    .filter((g) => g.items.length > 0)
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-extrabold text-navy">전체 일정</h1>
-      <p className="mt-1 text-slate-600">주차별 타임라인 · 날짜를 클릭하면 일자별 상세로 이동합니다.</p>
-
-      <div className="mt-8 space-y-10">
-        {weeks.map(({ week, items }) => (
-          <section key={week}>
-            <h2 className="mb-3 inline-block rounded-full bg-navy px-4 py-1 text-sm font-bold text-white">
-              {week}주차
-            </h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((it) => {
-                const subj = subjectById(it.subjectId)
-                return (
-                  <Link
-                    key={it.date}
-                    to={`/day/${it.date}`}
-                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-azure hover:shadow-md"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className={`h-2.5 w-2.5 rounded-full ${dot[subj?.color] ?? 'bg-azure'}`} />
-                      <span className="text-xs font-semibold text-slate-500">{subj?.name}</span>
-                    </div>
-                    <p className="mt-2 font-mono text-sm text-slate-500">
-                      {it.date} ({it.weekday})
-                    </p>
-                    <p className="mt-1 font-bold text-navy">{it.title}</p>
-                  </Link>
-                )
-              })}
-            </div>
-          </section>
-        ))}
+    <div>
+      <div className="page-header-ed">
+        <div className="container">
+          <span className="eyebrow">Schedule</span>
+          <h1>전체 일정</h1>
+          <p>월별 타임라인입니다. 날짜를 클릭하면 일자별 상세로 이동합니다. (광주는 별도 분반)</p>
+        </div>
       </div>
+
+      <section className="section">
+        <div className="container">
+          {/* 지역(분반) 필터 */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
+            {FILTERS.map((f) => (
+              <button
+                key={f}
+                onClick={() => setRegion(f)}
+                className={`btn ${region === f ? 'btn-primary' : 'btn-ghost'}`}
+              >
+                {f !== '전체' && (
+                  <span className={`region-dot ${regionClass(f)}`} />
+                )}
+                {f === '전체' ? '전체' : f === '판교' ? '판교 (3·4반)' : '광주 (1반)'}
+              </button>
+            ))}
+          </div>
+
+          {months.map(({ month, items }) => (
+            <div key={month} style={{ marginBottom: 40 }}>
+              <span className="month-label">{monthLabel(month)}</span>
+              <div className="grid grid-3">
+                {items.map((s) => {
+                  const subj = subjectById(s.subjectId)
+                  const d = dayOf(s)
+                  return (
+                    <Link key={s.date + s.klass} to={`/day/${s.date}`} className="card day-card">
+                      <div className="meta">
+                        <span className={`region-dot ${regionClass(s.region)}`} />
+                        <span className="chip chip-code" style={{ fontSize: 11 }}>{subj?.code}</span>
+                        <span>{s.region} {s.klass}</span>
+                      </div>
+                      <span className="date">{s.date.slice(5)} ({s.weekday}) · Day {s.day}</span>
+                      <span className="topic">{subj?.name}</span>
+                      <span style={{ fontSize: 13, color: 'var(--ink-soft)' }}>{d?.title}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }

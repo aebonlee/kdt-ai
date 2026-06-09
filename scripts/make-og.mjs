@@ -15,47 +15,43 @@ import { dirname, resolve } from 'node:path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const out = resolve(__dirname, '../public/og.png')
 
-// 5색 팔레트
+// SKALA 브랜드 팔레트 (공식 사이트 기준)
 const C = {
-  navy: '#0A1F44',
-  ocean: '#14346E',
-  azure: '#2563EB',
-  sky: '#38BDF8',
-  amber: '#FBBF24',
+  indigo: '#0E1152',
+  dark: '#020408',
+  accent: '#3F51FF',
+  accent2: '#6C4DFF',
+  light: '#ACBEFF',
 }
 
 const svg = `
 <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="${C.navy}"/>
-      <stop offset="60%" stop-color="${C.ocean}"/>
-      <stop offset="100%" stop-color="#0d2752"/>
+      <stop offset="0%" stop-color="${C.indigo}"/>
+      <stop offset="60%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="${C.dark}"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="${C.accent2}"/>
+      <stop offset="100%" stop-color="${C.accent}"/>
     </linearGradient>
   </defs>
 
   <rect width="1200" height="630" fill="url(#bg)"/>
 
   <!-- 우상단 장식 원 -->
-  <circle cx="1040" cy="120" r="220" fill="${C.azure}" opacity="0.18"/>
-  <circle cx="1120" cy="60" r="120" fill="${C.sky}" opacity="0.18"/>
+  <circle cx="1040" cy="120" r="220" fill="${C.accent}" opacity="0.18"/>
+  <circle cx="1120" cy="60" r="120" fill="${C.accent2}" opacity="0.2"/>
 
-  <!-- 좌측 5색 액센트 바 -->
-  <rect x="90" y="250" width="14" height="130" rx="7" fill="${C.amber}"/>
+  <!-- 좌측 액센트 바 -->
+  <rect x="90" y="250" width="14" height="130" rx="7" fill="url(#acc)"/>
 
-  <text x="120" y="250" font-family="Pretendard, sans-serif" font-size="34" font-weight="700" fill="${C.sky}" letter-spacing="6">SK AI LEADER ACADEMY</text>
-  <text x="118" y="360" font-family="Pretendard, sans-serif" font-size="150" font-weight="800" fill="#ffffff">SKALA</text>
-  <text x="120" y="450" font-family="Pretendard, sans-serif" font-size="56" font-weight="700" fill="#ffffff">4기 교육 커리큘럼</text>
+  <text x="120" y="250" font-family="Pretendard, sans-serif" font-size="34" font-weight="700" fill="${C.light}" letter-spacing="6">SK AI LEADER ACADEMY</text>
+  <text x="118" y="360" font-family="Pretendard, sans-serif" font-size="150" font-weight="800" fill="#ffffff">SK<tspan fill="${C.accent}">ALA</tspan></text>
+  <text x="120" y="450" font-family="Pretendard, sans-serif" font-size="52" font-weight="700" fill="#ffffff">4기 강의 커리큘럼</text>
 
-  <!-- 하단 5색 점 -->
-  <g>
-    <circle cx="130" cy="540" r="13" fill="${C.navy}" stroke="#ffffff" stroke-opacity="0.3"/>
-    <circle cx="170" cy="540" r="13" fill="${C.ocean}"/>
-    <circle cx="210" cy="540" r="13" fill="${C.azure}"/>
-    <circle cx="250" cy="540" r="13" fill="${C.sky}"/>
-    <circle cx="290" cy="540" r="13" fill="${C.amber}"/>
-  </g>
-  <text x="330" y="548" font-family="Pretendard, sans-serif" font-size="30" font-weight="500" fill="#cbd5e1">2026.07 – 2026.12 · 평일 09:00–18:00</text>
+  <text x="120" y="548" font-family="Pretendard, sans-serif" font-size="28" font-weight="500" fill="${C.light}">이애본 강사 · 2026.07 – 11 · 평일 09:00–18:00</text>
 </svg>`
 
 mkdirSync(resolve(__dirname, '../public'), { recursive: true })

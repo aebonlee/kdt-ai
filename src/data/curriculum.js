@@ -1,134 +1,594 @@
 // ─────────────────────────────────────────────────────────────
-// SKALA 4기 커리큘럼 데이터
+// SKALA 4기 — 이애본 강사 담당 강의 커리큘럼
 //
-// ⚠️ 아래 subjects / sessions 는 구조 확인용 "샘플" 데이터입니다.
-//    대표님이 공유하실 엑셀/이미지(=> /reference 폴더) 기준으로
-//    실제 과목·일자·학습내용을 채워 넣으면 됩니다.
+// 출처: [SK] SKALA AI 캠퍼스 과정 강사 강의분야/스케쥴 확정표
+//   → "확정" 일정 중 비고(기타) 열에 동그라미(o) 표시된 일자 = 담당 강의일
+//   교육기간 2026.07.14 ~ 11.05, 평일 09:00~18:00 (100% 오프라인)
 //
 // 데이터 모델
-//   subject : 과목(모듈) 한 개          { id, name, color, summary }
-//   session : 특정 "일자"의 수업 한 회   { date, weekday, week, subjectId, title, objectives[], contents[], materials[] }
-//
-//   color 는 tailwind.config.js 의 팔레트 키(navy/ocean/azure/sky/amber) 중 하나.
+//   subject : 과목(모듈). days[] 에 일차별 학습내용(목표/내용) 보유
+//   session : 실제 강의가 잡힌 "일자" 인스턴스 (날짜·요일·지역·반 + 해당 과목의 day)
 // ─────────────────────────────────────────────────────────────
 
 export const subjects = [
   {
-    id: 'ai-foundation',
-    name: 'AI Foundation',
-    color: 'azure',
-    summary: 'AI/ML 기초 이론과 Python 기반 실습으로 토대를 다지는 입문 과정',
+    id: 'prompt',
+    code: '8-1',
+    name: 'Prompt 설계와 Context Engineering',
+    category: 'LLM · Agent',
+    summary: 'LLM의 입력을 설계·최적화하는 프롬프트 엔지니어링과 컨텍스트 구성 기법',
+    days: [
+      {
+        title: '프롬프트 설계와 컨텍스트 엔지니어링',
+        objectives: [
+          'LLM의 동작과 프롬프트의 역할 이해',
+          '프롬프트 구성요소와 패턴을 활용한 입력 설계',
+          '컨텍스트 윈도우·토큰 한계를 고려한 입력 최적화',
+        ],
+        contents: [
+          '프롬프트 구성요소: 역할(role)·지시(instruction)·예시(example)·제약(constraint)',
+          'Zero-shot / Few-shot / Chain-of-Thought 프롬프팅',
+          'System · User · Assistant 메시지 설계',
+          '컨텍스트 윈도우와 토큰 비용, 컨텍스트 압축·요약 전략',
+          '프롬프트 패턴과 안티패턴, 환각(hallucination) 줄이기',
+          '실습: 업무 프롬프트 작성 → 평가 → 개선',
+        ],
+      },
+    ],
   },
   {
-    id: 'deep-learning',
-    name: 'Deep Learning',
-    color: 'ocean',
-    summary: '신경망·CNN·RNN·Transformer 등 딥러닝 핵심 아키텍처 학습',
+    id: 'vue',
+    code: '2-1',
+    name: 'Front-Framework: Vue.js',
+    category: 'Front-End',
+    summary: 'Vue 3 기반 컴포넌트 프론트엔드 개발 (반응형, Composition API, 라우팅)',
+    days: [
+      {
+        title: 'Vue 기초와 반응형 시스템',
+        objectives: [
+          'Vue 3 프로젝트 구조와 SFC(Single File Component) 이해',
+          '반응형 상태와 템플릿 문법 활용',
+        ],
+        contents: [
+          'Vue 개요, Vite 기반 프로젝트 셋업, SFC 구조',
+          '반응형 상태: ref / reactive, 양방향 바인딩 v-model',
+          '템플릿 문법과 디렉티브: v-if / v-for / v-bind / v-on',
+          '이벤트 처리와 폼 입력',
+          'computed / watch 로 파생 상태 다루기',
+          '실습: 반응형 UI 컴포넌트 만들기',
+        ],
+      },
+      {
+        title: '컴포넌트·라우팅·상태관리',
+        objectives: [
+          '컴포넌트 통신과 재사용 패턴 이해',
+          'SPA 라우팅과 전역 상태 관리 적용',
+        ],
+        contents: [
+          '컴포넌트 통신: props / emit, 슬롯(slot)',
+          '라이프사이클과 Composition API(setup) 패턴',
+          'Vue Router 로 페이지 라우팅 구성',
+          'Pinia 로 전역 상태 관리',
+          'API 연동(fetch/axios)과 비동기 데이터 처리',
+          '실습: 미니 SPA(목록·상세·폼) 구현',
+        ],
+      },
+    ],
   },
   {
-    id: 'llm-app',
-    name: 'LLM & Application',
-    color: 'sky',
-    summary: 'LLM/RAG/에이전트를 활용한 AI 애플리케이션 개발',
+    id: 'spring-ai',
+    code: '4-2',
+    name: 'Spring AI',
+    category: 'Back-end',
+    summary: 'Spring Boot 기반으로 LLM·RAG·Tool을 통합하는 Spring AI 애플리케이션 개발',
+    days: [
+      {
+        title: 'Spring AI 개요와 LLM 연동',
+        objectives: [
+          'Spring AI 아키텍처와 추상화(ChatClient) 이해',
+          'Spring Boot 애플리케이션에 LLM 연동',
+        ],
+        contents: [
+          'Spring AI 개요와 의존성·환경설정',
+          'ChatClient / ChatModel 추상화',
+          'OpenAI · Anthropic 등 모델 프로바이더 연동',
+          'PromptTemplate 과 구조화된 메시지',
+          '실습: 채팅 응답 REST API 구현',
+        ],
+      },
+      {
+        title: 'Spring AI 기반 RAG',
+        objectives: [
+          'Embedding 과 VectorStore 개념 이해',
+          'Spring AI 로 문서 기반 질의응답 구현',
+        ],
+        contents: [
+          'Embedding Model 과 벡터화',
+          'VectorStore(예: pgvector) 연동과 문서 적재',
+          'Document Reader / Splitter 로 문서 처리',
+          'Retrieval 결합 프롬프트(RAG) 구성',
+          '실습: 사내 문서 QA API',
+        ],
+      },
+      {
+        title: 'Function Calling·구조화 출력·서비스 통합',
+        objectives: [
+          'Tool/Function Calling 으로 외부 기능 연동',
+          'AI 기능을 실제 서비스에 통합',
+        ],
+        contents: [
+          'Function Calling(Tool) 정의와 호출',
+          '구조화 출력(Structured Output) 매핑',
+          '스트리밍 응답과 예외·재시도 처리',
+          'AI 기능의 서비스 통합과 보안 고려사항',
+          '실습: 도구 연동형 AI 기능 서비스',
+        ],
+      },
+    ],
   },
   {
-    id: 'team-project',
-    name: 'Team Project',
-    color: 'amber',
-    summary: 'SK 실제 비즈니스 문제 해결을 위한 리얼 팀 프로젝트',
+    id: 'sllm',
+    code: '8-3',
+    name: 'sLLM 구현 및 Fine Tunning',
+    category: 'LLM · Agent',
+    summary: '오픈소스 소형 LLM(sLLM)의 활용과 LoRA 기반 파인튜닝',
+    days: [
+      {
+        title: 'sLLM 이해와 로컬 서빙',
+        objectives: [
+          'sLLM 개념과 오픈소스 모델 생태계 이해',
+          '양자화와 로컬 추론 환경 구성',
+        ],
+        contents: [
+          'sLLM 개념과 대형 LLM 대비 장단점',
+          '대표 오픈소스 모델(Llama, Qwen, Gemma 등)',
+          '양자화(quantization)와 경량화',
+          '로컬 서빙(ollama / vLLM / HF) 환경 구성',
+          'PEFT · LoRA 개념 소개',
+        ],
+      },
+      {
+        title: 'LoRA 파인튜닝 실습',
+        objectives: [
+          '파인튜닝용 데이터셋 구성 방법 이해',
+          'LoRA 로 sLLM 파인튜닝·평가·배포',
+        ],
+        contents: [
+          '파인튜닝 데이터셋 설계(instruction 포맷)',
+          'LoRA / QLoRA 학습 파이프라인',
+          '학습 모니터링과 하이퍼파라미터',
+          '평가와 추론 검증',
+          '실습: 도메인 특화 sLLM 파인튜닝',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'ml-dl',
+    code: '7-3',
+    name: '머신러닝 및 딥러닝 이해',
+    category: '데이터분석 · MLOps',
+    summary: '머신러닝/딥러닝의 핵심 개념과 PyTorch 기반 모델링 기초',
+    days: [
+      {
+        title: '머신러닝 기초',
+        objectives: [
+          '지도·비지도 학습과 대표 알고리즘 이해',
+          'scikit-learn 으로 모델 학습·평가',
+        ],
+        contents: [
+          'ML 개요와 학습 유형(지도/비지도/강화)',
+          '회귀와 분류, 대표 알고리즘',
+          '데이터 분할, 과적합과 일반화',
+          '평가지표(정확도·정밀도·재현율·F1·ROC)',
+          '실습: scikit-learn 분류 모델',
+        ],
+      },
+      {
+        title: '딥러닝 기초와 신경망',
+        objectives: [
+          '신경망 구조와 학습 원리 이해',
+          'PyTorch 로 신경망 구현',
+        ],
+        contents: [
+          '퍼셉트론과 다층 신경망(MLP)',
+          '순전파·역전파, 활성화 함수',
+          '손실 함수와 옵티마이저(SGD/Adam)',
+          'PyTorch 텐서와 학습 루프',
+          '실습: 신경망 분류 모델 학습',
+        ],
+      },
+      {
+        title: '딥러닝 아키텍처 개요',
+        objectives: [
+          '대표 딥러닝 아키텍처의 특징 이해',
+          '정규화·튜닝으로 모델 성능 개선',
+        ],
+        contents: [
+          'CNN(이미지), RNN/LSTM(시퀀스) 개요',
+          'Transformer 와 Attention 직관',
+          '과적합 방지: 드롭아웃·정규화·데이터 증강',
+          '하이퍼파라미터 튜닝과 전이학습',
+          '실습: 모델 개선 미니 과제',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'rag',
+    code: '8-7',
+    name: 'RAG Pipeline 설계 및 구축',
+    category: 'LLM · Agent',
+    summary: '검색 증강 생성(RAG) 파이프라인의 설계·구축·평가·고도화',
+    days: [
+      {
+        title: 'RAG 개념과 인덱싱',
+        objectives: [
+          'RAG의 필요성과 전체 파이프라인 이해',
+          '문서 적재·청킹·임베딩·색인 구성',
+        ],
+        contents: [
+          'RAG 개념과 LLM 한계 보완',
+          '문서 로딩과 청킹(chunking) 전략',
+          '임베딩과 벡터 인덱싱',
+          '벡터 검색(유사도) 기초',
+          '실습: 문서 인덱싱 파이프라인',
+        ],
+      },
+      {
+        title: '검색·재순위·생성',
+        objectives: [
+          '리트리버 구성과 검색 품질 향상',
+          '검색 결과를 결합한 응답 생성',
+        ],
+        contents: [
+          'Retriever 구성과 top-k 검색',
+          '재순위(re-ranking)와 하이브리드 검색(키워드+벡터)',
+          '컨텍스트 결합 프롬프트 설계',
+          '출처 인용과 근거 제시',
+          '실습: 질의응답 체인 구축',
+        ],
+      },
+      {
+        title: 'RAG 평가와 고도화',
+        objectives: [
+          'RAG 품질을 정량 평가',
+          '실서비스 관점의 고도화 적용',
+        ],
+        contents: [
+          '평가 지표와 RAGAS(충실도·관련성)',
+          '청킹·임베딩·검색 파라미터 튜닝',
+          '멀티 문서·메타데이터 필터링',
+          '비용·지연·캐싱 최적화',
+          '실습: RAG 파이프라인 개선',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'langchain',
+    code: '8-6',
+    name: '생성형 AI 서비스 개발의 이해/활용 (LangChain)',
+    category: 'LLM · Agent',
+    summary: 'LangChain 으로 LLM 기반 애플리케이션을 구성·서비스화',
+    days: [
+      {
+        title: 'LangChain 구조와 LCEL',
+        objectives: [
+          'LangChain 핵심 구성요소 이해',
+          'LCEL 로 체인 조합',
+        ],
+        contents: [
+          'LangChain 개요와 생태계',
+          '모델 · 프롬프트 · 출력 파서',
+          'LCEL(LangChain Expression Language) 체인 구성',
+          '실습: 기본 체인 만들기',
+        ],
+      },
+      {
+        title: '메모리·도구·문서 QA',
+        objectives: [
+          '대화 메모리와 도구 사용 적용',
+          '문서 기반 QA 체인 구성',
+        ],
+        contents: [
+          '대화 메모리(Memory)',
+          '도구(Tool)와 외부 연동',
+          'Retriever 결합 문서 QA',
+          '체인 조합과 라우팅',
+          '실습: 문서 QA 챗봇',
+        ],
+      },
+      {
+        title: '스트리밍·서비스화',
+        objectives: [
+          '응답 스트리밍과 콜백 처리',
+          'LLM 앱의 서비스 배포 관점 이해',
+        ],
+        contents: [
+          '스트리밍 응답과 콜백',
+          '관측(LangSmith) 과 디버깅',
+          '비용·캐싱·에러 처리',
+          '서비스 배포 구조',
+          '실습: 미니 생성형 AI 서비스',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'serving',
+    code: '7-5',
+    name: '모델 서빙 및 AIOps 구성',
+    category: '데이터분석 · MLOps',
+    summary: '학습한 모델의 서빙·운영(MLOps/AIOps) 파이프라인 구성',
+    days: [
+      {
+        title: '모델 서빙 기초',
+        objectives: [
+          '모델 서빙 패턴 이해',
+          '추론 API 구현',
+        ],
+        contents: [
+          '온라인/배치/스트림 서빙 패턴',
+          'FastAPI · BentoML 로 추론 API',
+          '모델 패키징과 버전 관리',
+          '입력 검증·전처리·후처리',
+          '실습: 추론 REST API',
+        ],
+      },
+      {
+        title: '컨테이너화·확장·모니터링',
+        objectives: [
+          '서빙 서비스의 컨테이너화·확장',
+          '운영 지표 모니터링 구성',
+        ],
+        contents: [
+          'Docker 컨테이너화와 배포',
+          '오토스케일링과 부하 대응',
+          '메트릭·로그·트레이싱(관측성)',
+          '데이터·모델 드리프트 모니터링',
+          '실습: 컨테이너 서빙 + 모니터링',
+        ],
+      },
+      {
+        title: 'MLOps/AIOps 파이프라인',
+        objectives: [
+          '학습→배포 자동화 파이프라인 이해',
+          'CI/CD 와 운영 자동화 적용',
+        ],
+        contents: [
+          'MLOps 파이프라인과 실험 관리',
+          '모델 레지스트리와 재현성',
+          'CI/CD 자동 배포',
+          'AIOps: 이상탐지·자동 대응',
+          '실습: 파이프라인 구성',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'agent',
+    code: '8-8',
+    name: 'AI Agent 설계 및 구축 (LangGraph)',
+    category: 'LLM · Agent',
+    summary: 'LangGraph 기반 에이전트(상태·도구·멀티에이전트) 설계와 구축',
+    days: [
+      {
+        title: '에이전트 개념과 LangGraph',
+        objectives: [
+          '에이전트와 ReAct 패턴 이해',
+          'LangGraph 그래프/노드/상태 구성',
+        ],
+        contents: [
+          '에이전트 개념과 자율 추론',
+          'ReAct(추론+행동) 패턴',
+          'LangGraph 의 그래프·노드·엣지·상태(State)',
+          '도구 호출과 분기 제어',
+          '실습: 단일 에이전트 구축',
+        ],
+      },
+      {
+        title: '멀티 에이전트·휴먼인더루프',
+        objectives: [
+          '멀티 에이전트 협업 설계',
+          '사람 개입(HITL)과 안정적 운영',
+        ],
+        contents: [
+          '멀티 에이전트 오케스트레이션',
+          '도구·메모리·서브그래프 조합',
+          'Human-in-the-loop 와 승인 흐름',
+          '에러 복구·재시도·관측',
+          '실습: 멀티 에이전트 워크플로',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'vectordb',
+    code: '8-4',
+    name: 'Vector DB',
+    category: 'LLM · Agent',
+    summary: '벡터 검색의 원리와 Vector DB 활용',
+    days: [
+      {
+        title: 'Vector DB 원리와 활용',
+        objectives: [
+          '임베딩과 벡터 유사도 검색 원리 이해',
+          '대표 Vector DB 를 활용한 검색 구현',
+        ],
+        contents: [
+          '임베딩과 벡터 공간, 유사도(코사인/내적)',
+          '인덱싱 알고리즘: HNSW · IVF',
+          '대표 Vector DB: pgvector · Chroma · FAISS · Pinecone',
+          '메타데이터 필터링과 하이브리드 검색',
+          '실습: 문서 임베딩·검색 구현',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'capstone',
+    code: 'CAP',
+    name: 'AI Agent Capstone',
+    category: 'LLM · Agent',
+    summary: '에이전트 기반 AI 서비스 캡스톤: 기획 → 설계 → 구현 → 발표',
+    days: [
+      {
+        title: '주제 선정과 아키텍처 설계',
+        objectives: ['문제 정의와 캡스톤 주제 선정', '에이전트 시스템 아키텍처 설계'],
+        contents: [
+          '문제 정의와 사용자 시나리오',
+          '에이전트 + RAG + 도구 아키텍처 설계',
+          '데이터·모델·인터페이스 계획',
+          '팀별 계획 수립',
+        ],
+      },
+      {
+        title: '구현',
+        objectives: ['설계 기반 에이전트 서비스 구현'],
+        contents: [
+          '에이전트 그래프·도구 구현',
+          'RAG·외부 API 연동',
+          '프론트/백 통합',
+          '중간 점검과 피드백',
+        ],
+      },
+      {
+        title: '통합·발표',
+        objectives: ['완성도 점검과 결과 발표'],
+        contents: [
+          '통합 테스트와 시연 준비',
+          '성능·한계 점검',
+          '결과 발표와 회고',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'miniproject',
+    code: '8-10',
+    name: 'AI 서비스 개발 Mini-project',
+    category: 'LLM · Agent',
+    summary: 'LLM·RAG·Agent 를 통합한 AI 서비스 미니 프로젝트',
+    days: [
+      {
+        title: '기획·설계',
+        objectives: ['미니 프로젝트 주제 기획과 요구사항 정의', '서비스 아키텍처 설계'],
+        contents: [
+          '주제 선정과 요구사항 정의',
+          '아키텍처·데이터 플로우 설계',
+          '기술 스택 선정',
+          '작업 분담과 일정',
+        ],
+      },
+      {
+        title: '구현',
+        objectives: ['핵심 기능 구현(LLM/RAG/Agent 통합)'],
+        contents: [
+          'LLM·RAG·Agent 기능 구현',
+          'API·UI 통합',
+          '예외 처리와 안정화',
+          '중간 시연',
+        ],
+      },
+      {
+        title: '테스트·배포·발표',
+        objectives: ['테스트·배포 후 결과 발표'],
+        contents: [
+          '기능 테스트와 버그 수정',
+          '배포와 시연 환경 구성',
+          '결과 발표와 피드백',
+        ],
+      },
+    ],
   },
 ]
 
+// 실제 강의가 잡힌 일자(확정 + 동그라미) — 날짜·요일·지역·반 + 과목 day
 export const sessions = [
-  {
-    date: '2026-07-06',
-    weekday: '월',
-    week: 1,
-    subjectId: 'ai-foundation',
-    title: '오리엔테이션 & AI 개요',
-    objectives: ['과정 전반 이해', 'AI/ML/DL 개념 구분'],
-    contents: ['SKALA 4기 OT', 'AI 트렌드와 SK의 AI 전략', '개발 환경 셋업'],
-    materials: [],
-  },
-  {
-    date: '2026-07-07',
-    weekday: '화',
-    week: 1,
-    subjectId: 'ai-foundation',
-    title: 'Python for AI (1)',
-    objectives: ['Python 핵심 문법 복습', 'NumPy 기초'],
-    contents: ['자료구조/제어문', 'NumPy 배열 연산', '실습'],
-    materials: [],
-  },
-  {
-    date: '2026-07-08',
-    weekday: '수',
-    week: 1,
-    subjectId: 'ai-foundation',
-    title: '데이터 분석 기초',
-    objectives: ['Pandas 데이터 핸들링', '시각화 기초'],
-    contents: ['Pandas DataFrame', 'Matplotlib/Seaborn', 'EDA 실습'],
-    materials: [],
-  },
-  {
-    date: '2026-07-13',
-    weekday: '월',
-    week: 2,
-    subjectId: 'deep-learning',
-    title: '신경망 기초',
-    objectives: ['퍼셉트론/역전파 이해', 'PyTorch 첫걸음'],
-    contents: ['신경망 구조', '경사하강법', 'PyTorch 텐서'],
-    materials: [],
-  },
-  {
-    date: '2026-07-14',
-    weekday: '화',
-    week: 2,
-    subjectId: 'deep-learning',
-    title: 'CNN과 이미지 분류',
-    objectives: ['합성곱 연산 이해', '이미지 분류 모델 구현'],
-    contents: ['Convolution/Pooling', '대표 CNN 아키텍처', '실습: 이미지 분류'],
-    materials: [],
-  },
-  {
-    date: '2026-09-01',
-    weekday: '화',
-    week: 9,
-    subjectId: 'llm-app',
-    title: 'LLM & RAG 개요',
-    objectives: ['LLM 동작 원리 이해', 'RAG 파이프라인 설계'],
-    contents: ['Transformer 복습', '프롬프트 엔지니어링', 'RAG 구성요소'],
-    materials: [],
-  },
-  {
-    date: '2026-11-02',
-    weekday: '월',
-    week: 18,
-    subjectId: 'team-project',
-    title: '팀 프로젝트 킥오프',
-    objectives: ['주제 선정', '팀 구성 및 역할 분담'],
-    contents: ['현업 인터뷰 공유', '문제 정의', '프로젝트 계획 수립'],
-    materials: [],
-  },
+  { date: '2026-07-21', weekday: '화', region: '판교', klass: '4반', subjectId: 'prompt', day: 1 },
+
+  { date: '2026-07-31', weekday: '금', region: '판교', klass: '4반', subjectId: 'vue', day: 1 },
+  { date: '2026-08-03', weekday: '월', region: '판교', klass: '4반', subjectId: 'vue', day: 2 },
+  { date: '2026-09-07', weekday: '월', region: '판교', klass: '3반', subjectId: 'vue', day: 1 },
+  { date: '2026-09-08', weekday: '화', region: '판교', klass: '3반', subjectId: 'vue', day: 2 },
+
+  { date: '2026-08-18', weekday: '화', region: '판교', klass: '4반', subjectId: 'spring-ai', day: 1 },
+  { date: '2026-08-19', weekday: '수', region: '판교', klass: '4반', subjectId: 'spring-ai', day: 2 },
+  { date: '2026-08-20', weekday: '목', region: '판교', klass: '4반', subjectId: 'spring-ai', day: 3 },
+
+  { date: '2026-08-28', weekday: '금', region: '판교', klass: '4반', subjectId: 'sllm', day: 1 },
+  { date: '2026-08-31', weekday: '월', region: '판교', klass: '4반', subjectId: 'sllm', day: 2 },
+
+  { date: '2026-09-01', weekday: '화', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 1 },
+  { date: '2026-09-02', weekday: '수', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 2 },
+  { date: '2026-09-03', weekday: '목', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 3 },
+
+  { date: '2026-09-17', weekday: '목', region: '판교', klass: '4반', subjectId: 'rag', day: 1 },
+  { date: '2026-09-18', weekday: '금', region: '판교', klass: '4반', subjectId: 'rag', day: 2 },
+  { date: '2026-09-21', weekday: '월', region: '판교', klass: '4반', subjectId: 'rag', day: 3 },
+
+  { date: '2026-09-22', weekday: '화', region: '판교', klass: '4반', subjectId: 'langchain', day: 1 },
+  { date: '2026-09-28', weekday: '월', region: '판교', klass: '4반', subjectId: 'langchain', day: 2 },
+  { date: '2026-09-29', weekday: '화', region: '판교', klass: '4반', subjectId: 'langchain', day: 3 },
+
+  { date: '2026-09-30', weekday: '수', region: '판교', klass: '4반', subjectId: 'serving', day: 1 },
+  { date: '2026-10-01', weekday: '목', region: '판교', klass: '4반', subjectId: 'serving', day: 2 },
+  { date: '2026-10-02', weekday: '금', region: '판교', klass: '4반', subjectId: 'serving', day: 3 },
+
+  { date: '2026-10-06', weekday: '화', region: '판교', klass: '4반', subjectId: 'agent', day: 1 },
+  { date: '2026-10-07', weekday: '수', region: '판교', klass: '4반', subjectId: 'agent', day: 2 },
+  { date: '2026-10-12', weekday: '월', region: '광주', klass: '1반', subjectId: 'agent', day: 1 },
+  { date: '2026-10-13', weekday: '화', region: '광주', klass: '1반', subjectId: 'agent', day: 2 },
+
+  { date: '2026-10-08', weekday: '목', region: '판교', klass: '4반', subjectId: 'vectordb', day: 1 },
+  { date: '2026-10-14', weekday: '수', region: '광주', klass: '1반', subjectId: 'vectordb', day: 1 },
+
+  { date: '2026-10-15', weekday: '목', region: '광주', klass: '1반', subjectId: 'capstone', day: 1 },
+  { date: '2026-10-16', weekday: '금', region: '광주', klass: '1반', subjectId: 'capstone', day: 2 },
+  { date: '2026-10-19', weekday: '월', region: '광주', klass: '1반', subjectId: 'capstone', day: 3 },
+
+  { date: '2026-10-20', weekday: '화', region: '광주', klass: '1반', subjectId: 'miniproject', day: 1 },
+  { date: '2026-10-21', weekday: '수', region: '광주', klass: '1반', subjectId: 'miniproject', day: 2 },
+  { date: '2026-10-22', weekday: '목', region: '광주', klass: '1반', subjectId: 'miniproject', day: 3 },
+  { date: '2026-10-26', weekday: '월', region: '판교', klass: '4반', subjectId: 'miniproject', day: 1 },
+  { date: '2026-10-27', weekday: '화', region: '판교', klass: '4반', subjectId: 'miniproject', day: 2 },
+  { date: '2026-10-28', weekday: '수', region: '판교', klass: '4반', subjectId: 'miniproject', day: 3 },
 ]
 
 // ── 조회 헬퍼 ──
 export const subjectById = (id) => subjects.find((s) => s.id === id)
 
-export const sessionsBySubject = (id) =>
-  sessions.filter((s) => s.subjectId === id).sort((a, b) => a.date.localeCompare(b.date))
+export const sortedSessions = () => [...sessions].sort((a, b) => a.date.localeCompare(b.date))
 
 export const sessionByDate = (date) => sessions.find((s) => s.date === date)
 
-export const sortedSessions = () =>
-  [...sessions].sort((a, b) => a.date.localeCompare(b.date))
+// 과목별로 묶은 세션 { subject, items[] } (담당 과목만, 첫 강의일 순)
+export const sessionsBySubject = () =>
+  subjects
+    .map((subject) => ({
+      subject,
+      items: sortedSessions().filter((s) => s.subjectId === subject.id),
+    }))
+    .filter((g) => g.items.length > 0)
+    .sort((a, b) => a.items[0].date.localeCompare(b.items[0].date))
 
-// 주차별 그룹 { week, items[] }
-export const sessionsByWeek = () => {
+// 월별 그룹 { month, items[] }  (month: '2026-07')
+export const sessionsByMonth = () => {
   const map = new Map()
   for (const s of sortedSessions()) {
-    if (!map.has(s.week)) map.set(s.week, [])
-    map.get(s.week).push(s)
+    const m = s.date.slice(0, 7)
+    if (!map.has(m)) map.set(m, [])
+    map.get(m).push(s)
   }
-  return [...map.entries()].sort((a, b) => a[0] - b[0]).map(([week, items]) => ({ week, items }))
+  return [...map.entries()].map(([month, items]) => ({ month, items }))
 }
+
+// 세션 → 해당 과목 day 내용
+export const dayOf = (session) => {
+  const subj = subjectById(session.subjectId)
+  return subj?.days?.[session.day - 1] ?? null
+}
+
+export const totalSessions = sessions.length
+export const totalSubjects = sessions.reduce((set, s) => set.add(s.subjectId), new Set()).size

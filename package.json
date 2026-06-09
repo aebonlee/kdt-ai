@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "SKALA (SK AI Leader Academy) 4기 — 과목·일자별 학습내용 커리큘럼 뷰어 (React + Vite + Tailwind + Supabase)",
+  "description": "SKALA 4기 (이애본 강사) — 과목·일자별 학습 커리큘럼 뷰어 (React + Vite, Editorial Navy)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -17,9 +17,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
     "vite": "^5.4.8"
   }
 }

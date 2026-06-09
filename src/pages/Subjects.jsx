@@ -1,58 +1,54 @@
 import { Link } from 'react-router-dom'
-import { subjects, sessionsBySubject } from '../data/curriculum'
+import { sessionsBySubject, dayOf } from '../data/curriculum'
 
-// 팔레트 키 → 좌측 보더/배지 색
-const accent = {
-  navy: 'border-navy',
-  ocean: 'border-ocean',
-  azure: 'border-azure',
-  sky: 'border-sky',
-  amber: 'border-amber',
-}
+const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
 
 export default function Subjects() {
+  const groups = sessionsBySubject()
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-extrabold text-navy">과목별 보기</h1>
-      <p className="mt-1 text-slate-600">과목(모듈)별로 묶어 일자별 수업 내용을 확인합니다.</p>
-
-      <div className="mt-8 space-y-8">
-        {subjects.map((s) => {
-          const items = sessionsBySubject(s.id)
-          return (
-            <section
-              key={s.id}
-              className={`rounded-2xl border-l-4 ${accent[s.color] ?? 'border-azure'} border-y border-r border-slate-200 bg-white p-6 shadow-sm`}
-            >
-              <h2 className="text-xl font-bold text-navy">{s.name}</h2>
-              <p className="mt-1 text-sm text-slate-600">{s.summary}</p>
-
-              {items.length === 0 ? (
-                <p className="mt-4 text-sm text-slate-400">등록된 일정이 아직 없습니다.</p>
-              ) : (
-                <ul className="mt-4 divide-y divide-slate-100">
-                  {items.map((it) => (
-                    <li key={it.date}>
-                      <Link
-                        to={`/day/${it.date}`}
-                        className="flex items-center justify-between gap-4 py-3 transition hover:text-azure"
-                      >
-                        <span className="flex items-center gap-3">
-                          <span className="w-28 shrink-0 text-sm font-mono text-slate-500">
-                            {it.date} ({it.weekday})
-                          </span>
-                          <span className="font-semibold">{it.title}</span>
-                        </span>
-                        <span className="text-sm text-slate-400">{it.week}주차 →</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          )
-        })}
+    <div>
+      <div className="page-header-ed">
+        <div className="container">
+          <span className="eyebrow">By Subject</span>
+          <h1>과목별 보기</h1>
+          <p>담당 과목(모듈)별로 일자별 수업 내용을 확인합니다. 광주는 별도 분반으로 구분 표시됩니다.</p>
+        </div>
       </div>
+
+      <section className="section">
+        <div className="container">
+          {groups.map(({ subject, items }) => (
+            <div key={subject.id} className="subject">
+              <div className="subject-head">
+                <span className="chip chip-code">{subject.code}</span>
+                <h3>{subject.name}</h3>
+                <span className="chip chip-cat">{subject.category}</span>
+                <span className="chip chip-day">{items.length}일</span>
+              </div>
+              <p className="subject-summary">{subject.summary}</p>
+
+              <div style={{ marginTop: 12 }}>
+                {items.map((s) => {
+                  const d = dayOf(s)
+                  return (
+                    <Link key={s.date} to={`/day/${s.date}`} className="session-row">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                        <span className="date">{s.date.slice(5)} ({s.weekday})</span>
+                        <span className={`chip chip-region ${regionClass(s.region)}`}>
+                          {s.region} {s.klass}
+                        </span>
+                        <span className="title">{d?.title}</span>
+                      </span>
+                      <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>Day {s.day} →</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }

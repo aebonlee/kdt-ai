@@ -2,18 +2,24 @@ import { course } from '../data/course'
 
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-slate-500">
-        <p className="font-semibold text-slate-700">
-          {course.title} — {course.subtitle} {course.cohort}
+    <footer className="footer">
+      <div className="container">
+        <img src="/brandLogo.png" alt="SKALA" style={{ height: 24, marginBottom: 12 }} />
+        <h4>
+          4기 · {course.instructor} 강사
+        </h4>
+        <p>
+          {course.subtitle} — {course.tagline}
         </p>
-        <p className="mt-1">
-          {course.overview.period} · {course.overview.time} · {course.overview.format}
+        <p>
+          {course.overview.period} ({course.overview.range}) · {course.overview.time} ·{' '}
+          {course.overview.format}
         </p>
-        <p className="mt-1">캠퍼스: {course.campuses.join(' · ')} · 문의: {course.contact}</p>
-        <p className="mt-3 text-xs text-slate-400">
-          본 사이트는 SKALA 4기 학습자용 커리큘럼 안내 페이지입니다.
+        <p>
+          담당 분반: {course.regions.map((r) => `${r.name} ${r.klass}`).join(' · ')} · 문의:{' '}
+          {course.contact}
         </p>
+        <p className="fine">SKALA 4기 학습자용 커리큘럼 안내 페이지 · 강사 담당 일정 기준</p>
       </div>
     </footer>
   )
