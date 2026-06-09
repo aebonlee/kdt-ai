@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { course } from '../data/course'
 import { sessionsBySubject, totalSessions, totalSubjects, sortedSessions } from '../data/curriculum'
+import Sentences from '../components/Sentences'
 
 export default function Home() {
   const groups = sessionsBySubject()
@@ -19,8 +20,7 @@ export default function Home() {
               SKALA <span className="accent">4기</span><br />담당 강의 커리큘럼
             </h1>
             <p className="hero-lead">
-              {course.instructor} 강사 담당 일정 기준입니다. 과목별·일자별 학습 목표와 내용을
-              확인하세요. (판교 3·4반, 광주 1반 — 광주는 별도 분반)
+              <Sentences text={`${course.instructor} 강사 담당 일정 기준입니다. 과목별·일자별 학습 목표와 내용을 확인하세요. (판교 3·4반, 광주 1반 — 광주는 별도 분반)`} />
             </p>
             <div className="hero-actions">
               <Link to="/schedule" className="btn btn-cta">
@@ -64,8 +64,7 @@ export default function Home() {
             <span className="eyebrow">Overview</span>
             <h2>SKALA 4기 전체 커리큘럼</h2>
             <p>
-              SK AI Leader Academy 4기 과정 전체 흐름입니다. 본 사이트는 이 중 {course.instructor} 강사
-              담당 과목을 다룹니다.
+              <Sentences text={`SK AI Leader Academy 4기 과정 전체 흐름입니다. 본 사이트는 이 중 ${course.instructor} 강사 담당 과목을 다룹니다.`} />
             </p>
           </div>
           <div

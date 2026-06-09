@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { sessionsByMonth, subjectById, dayOf } from '../data/curriculum'
+import Sentences from '../components/Sentences'
 
 const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
 const monthLabel = (m) => `${m.slice(0, 4)}년 ${Number(m.slice(5))}월`
@@ -22,7 +23,9 @@ export default function Schedule() {
         <div className="container">
           <span className="eyebrow">Schedule</span>
           <h1>전체 일정</h1>
-          <p>월별 타임라인입니다. 날짜를 클릭하면 일자별 상세로 이동합니다. (광주는 별도 분반)</p>
+          <p>
+            <Sentences text="월별 타임라인입니다. 날짜를 클릭하면 일자별 상세로 이동합니다. (광주는 별도 분반)" />
+          </p>
         </div>
       </div>
 

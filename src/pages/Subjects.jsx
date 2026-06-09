@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { sessionsBySubject, dayOf } from '../data/curriculum'
+import Sentences from '../components/Sentences'
 
 const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
 
@@ -12,7 +13,9 @@ export default function Subjects() {
         <div className="container">
           <span className="eyebrow">By Subject</span>
           <h1>과목별 보기</h1>
-          <p>담당 과목(모듈)별로 일자별 수업 내용을 확인합니다. 광주는 별도 분반으로 구분 표시됩니다.</p>
+          <p>
+            <Sentences text="담당 과목(모듈)별로 일자별 수업 내용을 확인합니다. 광주는 별도 분반으로 구분 표시됩니다." />
+          </p>
         </div>
       </div>
 
