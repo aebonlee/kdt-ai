@@ -57,6 +57,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SKALA 전체 커리큘럼 흐름도 */}
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
+            <span className="eyebrow">Overview</span>
+            <h2>SKALA 4기 전체 커리큘럼</h2>
+            <p>
+              SK AI Leader Academy 4기 과정 전체 흐름입니다. 본 사이트는 이 중 {course.instructor} 강사
+              담당 과목을 다룹니다.
+            </p>
+          </div>
+          <div
+            style={{
+              background: '#fff',
+              border: '1px solid var(--line)',
+              borderRadius: 'var(--radius)',
+              padding: 'var(--s-6)',
+            }}
+          >
+            <img
+              src="/curriculum_graph.png"
+              alt="SKALA 4기 전체 커리큘럼 흐름도"
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+            />
+          </div>
+        </div>
+      </section>
+
       {/* 과목 목록 */}
       <section className="section" style={{ background: 'var(--navy-50)' }}>
         <div className="container">
