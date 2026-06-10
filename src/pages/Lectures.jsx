@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } from '../data/curriculum'
 import { planFor } from '../data/lectureplans'
 import { examplesFor } from '../data/lectureexamples'
+import { conceptsFor } from '../data/lectureconcepts'
 import CodeBlock from '../components/CodeBlock'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
@@ -42,6 +44,15 @@ export default function Lectures() {
   const d = dayOf(current)
   const plan = planFor(current.subjectId, current.day)
   const codeExamples = examplesFor(current.subjectId, current.day)
+  const keyConcepts = conceptsFor(current.subjectId, current.day)
+
+  // 월 탭 (현재 항목의 월/참고를 기본 선택, 항목 변경 시 동기화)
+  const defaultTab = isRef ? 'ref' : current.date.slice(0, 7)
+  const [tab, setTab] = useState(defaultTab)
+  useEffect(() => {
+    setTab(isRef ? 'ref' : current.date.slice(0, 7))
+  }, [activeKey, isRef, current.date])
+  const tabItems = tab === 'ref' ? [] : months.find((m) => m.m === tab)?.items || []
 
   return (
     <div>
@@ -58,36 +69,30 @@ export default function Lectures() {
 
       <section className="section">
         <div className="container layout-side">
-          {/* 좌측 메뉴 */}
+          {/* 좌측 메뉴 — 월 탭 + 선택 월 목록 */}
           <nav className="side-nav" aria-label="강의 날짜">
-            {months.map((g) => (
-              <div key={g.m}>
-                <p className="side-nav-title">{monthLabel(g.m)}</p>
-                {g.items.map((s) => {
-                  const sj = subjectById(s.subjectId)
-                  const isActive = !isRef && s.date === activeKey
-                  return (
-                    <button
-                      key={s.date}
-                      className={`side-link${isActive ? ' active' : ''}`}
-                      onClick={() => navigate(`/lectures/${s.date}`)}
-                      aria-current={isActive ? 'true' : undefined}
-                    >
-                      {s.date.slice(5)} ({s.weekday})
-                      <span className="sl-sub">
-                        {sj?.name} · {s.region}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            ))}
+            <div className="month-tabs">
+              {months.map((g) => (
+                <button
+                  key={g.m}
+                  className={`month-tab${tab === g.m ? ' active' : ''}`}
+                  onClick={() => setTab(g.m)}
+                >
+                  {monthLabel(g.m)}
+                </button>
+              ))}
+              {referenceSubjects.length > 0 && (
+                <button
+                  className={`month-tab${tab === 'ref' ? ' active' : ''}`}
+                  onClick={() => setTab('ref')}
+                >
+                  참고
+                </button>
+              )}
+            </div>
 
-            {/* 참고(미배정) 그룹 */}
-            {referenceSubjects.length > 0 && (
-              <div>
-                <p className="side-nav-title">참고 (미배정)</p>
-                {referenceSubjects.flatMap((rs) =>
+            {tab === 'ref'
+              ? referenceSubjects.flatMap((rs) =>
                   rs.days.map((dd, i) => {
                     const key = `ref-${rs.id}-${i + 1}`
                     const isActive = key === activeKey
@@ -103,9 +108,24 @@ export default function Lectures() {
                       </button>
                     )
                   }),
-                )}
-              </div>
-            )}
+                )
+              : tabItems.map((s) => {
+                  const sj = subjectById(s.subjectId)
+                  const isActive = !isRef && s.date === activeKey
+                  return (
+                    <button
+                      key={s.date}
+                      className={`side-link${isActive ? ' active' : ''}`}
+                      onClick={() => navigate(`/lectures/${s.date}`)}
+                      aria-current={isActive ? 'true' : undefined}
+                    >
+                      {s.date.slice(5)} ({s.weekday})
+                      <span className="sl-sub">
+                        {sj?.name} · {s.region} {s.klass}
+                      </span>
+                    </button>
+                  )
+                })}
           </nav>
 
           {/* 본문 — 강의안 */}
@@ -143,6 +163,23 @@ export default function Lectures() {
                   ))}
                 </ul>
               </div>
+            )}
+
+            {/* 핵심 개념 (이론) */}
+            {keyConcepts.length > 0 && (
+              <>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
+                  📚 핵심 개념
+                </h3>
+                <div className="grid grid-2" style={{ marginTop: 12 }}>
+                  {keyConcepts.map((c, i) => (
+                    <dl key={i} className="concept">
+                      <dt>{c.term}</dt>
+                      <dd>{c.desc}</dd>
+                    </dl>
+                  ))}
+                </div>
+              </>
             )}
 
             {/* 8시간 시간표 */}

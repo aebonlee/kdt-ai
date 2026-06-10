@@ -327,6 +327,21 @@ ul { list-style: none; }
 }
 .side-link .sl-sub { display: block; font-size: 11px; font-weight: 500; color: var(--ink-soft); margin-top: 2px; }
 
+/* 월 탭 (강의안 좌측 상단) */
+.month-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.month-tab {
+  padding: 7px 13px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  border: 1px solid var(--line); background: var(--bg-white); color: var(--navy-600);
+  cursor: pointer; font-family: inherit; transition: var(--transition-base);
+}
+.month-tab:hover { border-color: var(--navy-400); color: var(--navy-800); }
+.month-tab.active { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+/* 핵심 개념 */
+.concept { padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-white); }
+.concept dt { font-weight: 800; color: var(--navy-800); font-size: 14px; margin-bottom: 4px; }
+.concept dd { margin: 0; color: var(--ink-soft); font-size: 13.5px; line-height: 1.6; }
+
 /* Code block */
 .codeblock {
   background: #0d1230; color: #e6e9f5; border-radius: var(--radius);
