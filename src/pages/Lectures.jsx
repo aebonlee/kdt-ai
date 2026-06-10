@@ -46,13 +46,32 @@ export default function Lectures() {
   const codeExamples = examplesFor(current.subjectId, current.day)
   const keyConcepts = conceptsFor(current.subjectId, current.day)
 
-  // 월 탭 (현재 항목의 월/참고를 기본 선택, 항목 변경 시 동기화)
-  const defaultTab = isRef ? 'ref' : current.date.slice(0, 7)
-  const [tab, setTab] = useState(defaultTab)
+  // 탭 구성: 월별 그룹, 단 한 월에 지역이 여럿이면 지역별로 분리 (예: 10월 판교 / 10월 광주)
+  const tabs = []
+  for (const g of months) {
+    const regions = [...new Set(g.items.map((s) => s.region))]
+    if (regions.length <= 1) {
+      tabs.push({ key: g.m, label: monthLabel(g.m), items: g.items })
+    } else {
+      for (const r of regions) {
+        tabs.push({ key: `${g.m}|${r}`, label: `${monthLabel(g.m)} ${r}`, items: g.items.filter((s) => s.region === r) })
+      }
+    }
+  }
+  const tabKeyFor = (s) => {
+    const m = s.date.slice(0, 7)
+    const g = months.find((x) => x.m === m)
+    const regions = [...new Set(g.items.map((x) => x.region))]
+    return regions.length <= 1 ? m : `${m}|${s.region}`
+  }
+
+  // 현재 항목의 탭을 기본 선택, 항목 변경 시 동기화
+  const [tab, setTab] = useState(isRef ? 'ref' : tabKeyFor(current))
   useEffect(() => {
-    setTab(isRef ? 'ref' : current.date.slice(0, 7))
-  }, [activeKey, isRef, current.date])
-  const tabItems = tab === 'ref' ? [] : months.find((m) => m.m === tab)?.items || []
+    setTab(isRef ? 'ref' : tabKeyFor(current))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeKey, isRef])
+  const tabItems = tab === 'ref' ? [] : tabs.find((t) => t.key === tab)?.items || []
 
   return (
     <div>
@@ -72,13 +91,13 @@ export default function Lectures() {
           {/* 좌측 메뉴 — 월 탭 + 선택 월 목록 */}
           <nav className="side-nav" aria-label="강의 날짜">
             <div className="month-tabs">
-              {months.map((g) => (
+              {tabs.map((t) => (
                 <button
-                  key={g.m}
-                  className={`month-tab${tab === g.m ? ' active' : ''}`}
-                  onClick={() => setTab(g.m)}
+                  key={t.key}
+                  className={`month-tab${tab === t.key ? ' active' : ''}`}
+                  onClick={() => setTab(t.key)}
                 >
-                  {monthLabel(g.m)}
+                  {t.label}
                 </button>
               ))}
               {referenceSubjects.length > 0 && (
