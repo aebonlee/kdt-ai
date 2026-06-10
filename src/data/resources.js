@@ -278,6 +278,375 @@ const { data, error } = await supabase
       { label: 'pgvector (AI)', url: 'https://supabase.com/docs/guides/ai' },
     ],
   },
+  {
+    id: 'git',
+    name: 'Git · GitHub',
+    tag: '필수',
+    desc: '코드 버전관리와 협업의 기본. 모든 실습·프로젝트의 토대입니다.',
+    sections: [
+      { h: '기본 흐름', items: ['clone / add / commit / push', '작업 단위로 커밋', 'git status / log'] },
+      { h: '브랜치·협업', items: ['branch / switch / merge', 'Pull Request 흐름', '충돌(conflict) 해결'] },
+      { h: '되돌리기', items: ['restore / reset / revert', 'stash 임시 저장', '.gitignore'] },
+    ],
+    practice: [
+      '새 저장소 만들고 첫 커밋·푸시',
+      '브랜치 생성 → 수정 → PR 올리기',
+      '일부러 충돌 만들고 해결해보기',
+      '.gitignore 로 node_modules·.env 제외',
+    ],
+    tips: [
+      '커밋 메시지는 "타입: 요약"(feat/fix/docs) 컨벤션',
+      'git status 를 자주 확인하는 습관',
+      'main 직접 push 대신 브랜치+PR',
+      'force push(-f)는 협업 시 매우 주의',
+    ],
+    snippet: {
+      lang: 'bash',
+      code: `# 새 작업은 브랜치에서 시작
+git switch -c feature/login    # 브랜치 생성 + 이동
+git add .                      # 변경 스테이징
+git commit -m "feat: 로그인 추가"
+git push -u origin feature/login   # 원격에 올리고 PR 생성`,
+    },
+    links: [
+      { label: 'Git 공식 문서(한)', url: 'https://git-scm.com/book/ko/v2' },
+      { label: 'GitHub Docs', url: 'https://docs.github.com/ko' },
+      { label: 'Learn Git Branching(시각 학습)', url: 'https://learngitbranching.js.org/?locale=ko' },
+    ],
+  },
+  {
+    id: 'cli',
+    name: '터미널 · CLI',
+    tag: '필수',
+    desc: '명령줄 기본기. 개발·배포·서버 작업의 공통 언어입니다.',
+    sections: [
+      { h: '파일·디렉터리', items: ['ls / cd / pwd', 'mkdir / cp / mv / rm', '경로(절대/상대)·와일드카드'] },
+      { h: '텍스트·검색', items: ['cat / less / head / tail', 'grep 로 내용 검색', '파이프(|)·리다이렉션(>, >>)'] },
+      { h: '환경·프로세스', items: ['환경변수 export', 'ps / kill', 'chmod 권한'] },
+    ],
+    practice: [
+      '폴더 구조 만들고 파일 이동·복사',
+      'grep 로 로그에서 ERROR 찾기',
+      '파이프로 명령 조합(ls | grep)',
+      '환경변수 설정 후 echo 로 확인',
+    ],
+    tips: [
+      'Tab 자동완성, ↑로 이전 명령',
+      'history / !! 로 명령 재실행',
+      '잘 모르면 man 또는 --help',
+      'rm -rf 는 복구 불가 — 경로 재확인',
+    ],
+    snippet: {
+      lang: 'bash',
+      code: `# .py 파일에서 'TODO' 포함 줄을 재귀 검색
+grep -rn "TODO" --include="*.py" .   # -r 재귀, -n 줄번호
+
+# 디렉터리만 출력
+ls -la | grep "^d"`,
+    },
+    links: [
+      { label: '생활코딩 리눅스', url: 'https://opentutorials.org/course/2598' },
+      { label: 'Bash 가이드(MDN 인접)', url: 'https://www.gnu.org/software/bash/manual/' },
+    ],
+  },
+  {
+    id: 'javascript',
+    name: 'JavaScript ES6+',
+    tag: '프론트',
+    desc: 'Vue 학습의 선수 지식. 모던 JS 핵심 문법을 익힙니다.',
+    sections: [
+      { h: '기본', items: ['let / const, 템플릿 리터럴', '화살표 함수', '구조 분해 / 스프레드'] },
+      { h: '배열·객체', items: ['map / filter / reduce', '옵셔널 체이닝 ?.', 'JSON 다루기'] },
+      { h: '비동기·모듈', items: ['Promise / async·await', 'fetch API', 'import / export'] },
+    ],
+    practice: [
+      'map/filter/reduce 로 배열 가공',
+      'async/await 로 API 호출',
+      '구조 분해로 객체 값 추출',
+      '모듈로 함수 분리·재사용',
+    ],
+    tips: [
+      'var 대신 const 우선, 재할당만 let',
+      '비교는 == 대신 ===',
+      '?. 와 ?? 로 안전하게 접근',
+      '비동기는 try/catch 로 에러 처리',
+    ],
+    snippet: {
+      lang: 'javascript',
+      code: `// 배열 가공: 짝수만 골라 제곱
+const nums = [1, 2, 3, 4]
+const result = nums
+  .filter(n => n % 2 === 0)   // [2, 4]
+  .map(n => n * n)            // [4, 16]
+
+// 비동기: await 로 순차 처리
+const res = await fetch('/api/items')  // 응답 대기
+const data = await res.json()          // JSON 파싱`,
+    },
+    links: [
+      { label: 'MDN JavaScript(한)', url: 'https://developer.mozilla.org/ko/docs/Web/JavaScript' },
+      { label: '모던 JavaScript 튜토리얼', url: 'https://ko.javascript.info/' },
+    ],
+  },
+  {
+    id: 'html-css',
+    name: 'HTML · CSS',
+    tag: '프론트',
+    desc: '웹 화면의 구조와 스타일. Vue 컴포넌트 작성의 바탕입니다.',
+    sections: [
+      { h: 'HTML', items: ['시맨틱 태그(header/main/section)', '폼·입력 요소', '접근성 기초(alt/label)'] },
+      { h: 'CSS', items: ['선택자·박스 모델', 'Flexbox / Grid 레이아웃', '반응형(미디어 쿼리)'] },
+    ],
+    practice: [
+      '시맨틱 태그로 페이지 마크업',
+      'Flexbox 로 카드 레이아웃',
+      '미디어 쿼리로 반응형 네비',
+      '폼 스타일링 + 포커스 상태',
+    ],
+    tips: [
+      'div 남발 대신 시맨틱 태그',
+      '폰트·간격은 rem 단위',
+      '레이아웃은 Flex/Grid 우선',
+      '모바일 퍼스트로 작성',
+    ],
+    snippet: {
+      lang: 'html',
+      code: `<!-- Flexbox 가로 정렬 + 균등 분할 -->
+<div class="row">
+  <div class="card">A</div>
+  <div class="card">B</div>
+</div>
+<style>
+  .row { display: flex; gap: 16px; }   /* 가로 배치 */
+  .card { flex: 1; padding: 16px; }     /* 남는 공간 균등 분할 */
+</style>`,
+    },
+    links: [
+      { label: 'MDN HTML(한)', url: 'https://developer.mozilla.org/ko/docs/Web/HTML' },
+      { label: 'Flexbox Froggy(게임)', url: 'https://flexboxfroggy.com/#ko' },
+    ],
+  },
+  {
+    id: 'sql',
+    name: 'SQL 기초',
+    tag: '데이터',
+    desc: '데이터베이스 조회·집계의 기본. Vector DB·pgvector 이해에도 도움됩니다.',
+    sections: [
+      { h: '조회', items: ['SELECT / WHERE', 'ORDER BY / LIMIT', '연산자·LIKE'] },
+      { h: '집계·조인', items: ['GROUP BY / COUNT / AVG', 'JOIN(INNER/LEFT)', '서브쿼리'] },
+      { h: '변경', items: ['INSERT / UPDATE / DELETE', '트랜잭션', '인덱스 개념'] },
+    ],
+    practice: [
+      '조건으로 행 필터링',
+      'GROUP BY 로 그룹 집계',
+      '두 테이블 JOIN',
+      '서브쿼리로 상위 N 추출',
+    ],
+    tips: [
+      '대량 변경 전 SELECT 로 먼저 확인',
+      'LIMIT 로 결과 일부만 점검',
+      'NULL 비교는 IS NULL',
+      '자주 조회하는 컬럼엔 인덱스',
+    ],
+    snippet: {
+      lang: 'sql',
+      code: `-- 부서별 평균 급여 상위 5
+SELECT dept, AVG(salary) AS avg_pay   -- 집계 함수
+FROM employees
+WHERE active = true                   -- 조건 필터
+GROUP BY dept                         -- 부서별 묶기
+ORDER BY avg_pay DESC
+LIMIT 5;`,
+    },
+    links: [
+      { label: 'SQLBolt(인터랙티브)', url: 'https://sqlbolt.com/' },
+      { label: 'PostgreSQL 튜토리얼', url: 'https://www.postgresqltutorial.com/' },
+    ],
+  },
+  {
+    id: 'pandas',
+    name: 'Pandas · NumPy',
+    tag: '데이터',
+    desc: '데이터 분석·전처리의 핵심 라이브러리. ML 실습의 선수 지식입니다.',
+    sections: [
+      { h: 'NumPy', items: ['ndarray, 벡터 연산', '브로드캐스팅', '난수·통계 함수'] },
+      { h: 'Pandas', items: ['Series / DataFrame', 'read_csv / to_csv', 'loc·iloc 선택'] },
+      { h: '전처리', items: ['결측치·이상치 처리', 'groupby 집계', '파생 컬럼·apply'] },
+    ],
+    practice: [
+      'CSV 로드 후 describe()로 요약',
+      '결측치 대치(fillna)',
+      'groupby 로 그룹 평균',
+      '조건으로 파생 컬럼 생성',
+    ],
+    tips: [
+      '반복문 대신 벡터 연산',
+      '.loc 로 명시적 선택',
+      'chained indexing 경고 주의(copy)',
+      'info()/describe() 로 먼저 파악',
+    ],
+    snippet: {
+      lang: 'python',
+      code: `import pandas as pd
+df = pd.read_csv("data.csv")
+
+# 결측치를 중앙값으로 채우고, 도시별 평균가 집계
+df["age"] = df["age"].fillna(df["age"].median())   # 중앙값 대치
+summary = df.groupby("city")["price"].mean()       # 도시별 평균
+print(summary.sort_values(ascending=False).head())`,
+    },
+    links: [
+      { label: 'Pandas 공식(10분 입문)', url: 'https://pandas.pydata.org/docs/user_guide/10min.html' },
+      { label: 'NumPy 공식', url: 'https://numpy.org/doc/stable/' },
+    ],
+  },
+  {
+    id: 'docker',
+    name: 'Docker 기초',
+    tag: '배포',
+    desc: '애플리케이션 컨테이너화. 모델 서빙·배포 실습의 기반입니다.',
+    sections: [
+      { h: '개념', items: ['이미지 vs 컨테이너', '레이어·캐시', '레지스트리'] },
+      { h: '명령', items: ['build / run / ps / logs', 'exec 로 진입', '포트·볼륨 매핑'] },
+      { h: '구성', items: ['Dockerfile', '.dockerignore', 'docker compose'] },
+    ],
+    practice: [
+      '파이썬 앱 Dockerfile 작성',
+      '이미지 빌드·컨테이너 실행',
+      '포트 매핑으로 접속',
+      'compose 로 앱+DB 동시 실행',
+    ],
+    tips: [
+      '.dockerignore 로 불필요 파일 제외',
+      '의존성 설치 레이어를 먼저(캐시)',
+      'slim/alpine 이미지로 경량화',
+      'exec -it <id> sh 로 내부 확인',
+    ],
+    snippet: {
+      lang: 'docker',
+      code: `# 이미지 빌드 후 컨테이너 실행
+docker build -t myapp .           # Dockerfile로 이미지 생성
+docker run -p 8000:8000 myapp     # 호스트:컨테이너 포트 매핑
+docker ps                         # 실행 중 컨테이너 확인
+docker logs -f <id>               # 로그 실시간 추적`,
+    },
+    links: [
+      { label: 'Docker 공식 문서', url: 'https://docs.docker.com/get-started/' },
+      { label: 'Play with Docker', url: 'https://labs.play-with-docker.com/' },
+    ],
+  },
+  {
+    id: 'http-api',
+    name: 'REST API · HTTP',
+    tag: '백엔드',
+    desc: '프론트-백엔드 통신의 기본. AI 서비스 API 설계·호출의 토대입니다.',
+    sections: [
+      { h: 'HTTP', items: ['메서드 GET/POST/PUT/DELETE', '상태코드 2xx/4xx/5xx', '헤더·바디·JSON'] },
+      { h: 'REST 설계', items: ['리소스 중심 URL', '멱등성·버전(/v1)', '에러 응답 규약'] },
+      { h: '인증·도구', items: ['토큰(Bearer)·CORS', 'curl / Postman', 'OpenAPI(Swagger)'] },
+    ],
+    practice: [
+      'curl 로 GET/POST 요청',
+      '상태코드별 의미 해석',
+      'JSON 바디 전송·응답 확인',
+      'Authorization 헤더로 토큰 전달',
+    ],
+    tips: [
+      'GET은 조회, 변경은 POST/PUT/DELETE',
+      '4xx=클라이언트, 5xx=서버 오류',
+      'CORS는 브라우저 보안 정책',
+      '버전(/v1)으로 호환성 관리',
+    ],
+    snippet: {
+      lang: 'bash',
+      code: `# JSON 본문으로 POST 요청
+curl -X POST https://api.example.com/items \\
+     -H "Content-Type: application/json" \\
+     -H "Authorization: Bearer $TOKEN" \\   # 인증 토큰
+     -d '{"name": "노트북", "price": 1500}'`,
+    },
+    links: [
+      { label: 'MDN HTTP(한)', url: 'https://developer.mozilla.org/ko/docs/Web/HTTP' },
+      { label: 'REST API Tutorial', url: 'https://restfulapi.net/' },
+    ],
+  },
+  {
+    id: 'colab',
+    name: 'Colab · Jupyter',
+    tag: '실습환경',
+    desc: '설치 없이 GPU로 ML/LLM을 실습하는 노트북 환경입니다.',
+    sections: [
+      { h: '노트북 기초', items: ['셀(코드/마크다운) 실행', '실행 순서·상태', '단축키(Shift+Enter)'] },
+      { h: '런타임', items: ['GPU/TPU 런타임 설정', '세션·메모리 한계', '!pip 패키지 설치'] },
+      { h: '연동', items: ['구글 드라이브 마운트', '파일 업로드/다운로드', '노트북 공유'] },
+    ],
+    practice: [
+      'GPU 런타임으로 변경',
+      '드라이브 마운트 후 파일 읽기',
+      '!pip install 로 패키지 설치',
+      '노트북 공유 링크 만들기',
+    ],
+    tips: [
+      '! 로 셀에서 셸 명령 실행',
+      '무료 GPU는 사용 한도·세션 끊김 주의',
+      '셀 실행 순서가 결과에 영향',
+      '중요 데이터는 드라이브에 저장',
+    ],
+    snippet: {
+      lang: 'python',
+      code: `# Colab에서 GPU 확인 + 드라이브 연결
+import torch
+print(torch.cuda.is_available())    # GPU 사용 가능 여부
+
+from google.colab import drive
+drive.mount('/content/drive')       # 구글 드라이브 마운트
+!pip install -q transformers        # ! 로 셸 명령 실행`,
+    },
+    links: [
+      { label: 'Google Colab', url: 'https://colab.research.google.com/' },
+      { label: 'Jupyter 공식', url: 'https://docs.jupyter.org/' },
+    ],
+  },
+  {
+    id: 'llm-basics',
+    name: 'LLM · 프롬프트 리터러시',
+    tag: 'AI 기초',
+    desc: '생성형 AI를 다루는 기본 소양. 모든 LLM 과목의 출발점입니다.',
+    sections: [
+      { h: '개념', items: ['토큰과 확률적 생성', '컨텍스트 윈도우', '지식 컷오프·환각'] },
+      { h: '프롬프트', items: ['명확한 지시·역할 부여', '예시(Few-shot)', '출력 형식 지정'] },
+      { h: '활용·주의', items: ['요약/생성/분류', 'API 키 발급·관리', '민감정보·저작권'] },
+    ],
+    practice: [
+      '같은 작업을 프롬프트로 요약·분류',
+      '역할 부여(System) 효과 비교',
+      '환각이 나오는 사례 찾아보기',
+      'API 키 발급 후 첫 호출',
+    ],
+    tips: [
+      '모호한 지시 대신 구체적·단계적으로',
+      '예시를 주면 형식이 안정',
+      '출력 형식(JSON 등)을 명시',
+      '프롬프트에 민감정보 입력 금지',
+    ],
+    snippet: {
+      lang: 'python',
+      code: `# OpenAI 호환 API 호출 기본형
+from openai import OpenAI
+client = OpenAI()   # OPENAI_API_KEY 환경변수 사용
+
+resp = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "AI를 한 문장으로 설명해줘"}],
+)
+print(resp.choices[0].message.content)`,
+    },
+    links: [
+      { label: 'OpenAI 문서', url: 'https://platform.openai.com/docs' },
+      { label: 'Anthropic 문서', url: 'https://docs.anthropic.com/' },
+      { label: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/kr' },
+    ],
+  },
 ]
 
 export const prepById = (id) => prepTopics.find((t) => t.id === id)
