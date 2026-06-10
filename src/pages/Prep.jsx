@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { prepTopics } from '../data/resources'
+import CodeBlock from '../components/CodeBlock'
 
 export default function Prep() {
   const [active, setActive] = useState(prepTopics[0].id)
@@ -114,7 +115,7 @@ export default function Prep() {
                     <div className="box-h" style={{ marginBottom: 8 }}>
                       ⌨️ 코드 예시 <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({t.snippet.lang})</span>
                     </div>
-                    <pre className="codeblock"><code>{t.snippet.code}</code></pre>
+                    <CodeBlock code={t.snippet.code} lang={t.snippet.lang} />
                   </div>
                 )}
 

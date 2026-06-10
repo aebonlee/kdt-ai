@@ -621,4 +621,9 @@ docker build -t app:demo . && echo "build ok"`,
   ],
 }
 
-export const examplesFor = (subjectId, day) => examples[`${subjectId}-${day}`] || []
+import { examplesExtra } from './lectureexamples2'
+
+export const examplesFor = (subjectId, day) => {
+  const key = `${subjectId}-${day}`
+  return [...(examples[key] || []), ...(examplesExtra[key] || [])]
+}

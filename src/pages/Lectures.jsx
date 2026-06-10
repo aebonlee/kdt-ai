@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate } from '../data/curriculum'
 import { planFor } from '../data/lectureplans'
 import { examplesFor } from '../data/lectureexamples'
+import CodeBlock from '../components/CodeBlock'
 
 const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
 const monthLabel = (m) => `${Number(m.slice(5))}월`
@@ -160,7 +161,7 @@ export default function Lectures() {
                         {ex.title}
                         <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({ex.lang})</span>
                       </div>
-                      <pre className="codeblock"><code>{ex.code}</code></pre>
+                      <CodeBlock code={ex.code} lang={ex.lang} />
                       {ex.note && (
                         <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7 }}>
                           💡 {ex.note}

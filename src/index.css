@@ -325,6 +325,7 @@ ul { list-style: none; }
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.65;
 }
 [data-theme="dark"] .codeblock { background: #05071c; border: 1px solid var(--line); }
+.codeblock .cmt { color: #6ee7a8; font-style: italic; }
 
 /* Practice / Tips boxes */
 .box { border-radius: var(--radius); padding: 16px 18px; }
