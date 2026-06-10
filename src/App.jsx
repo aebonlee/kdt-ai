@@ -8,6 +8,7 @@ import Subjects from './pages/Subjects'
 import Schedule from './pages/Schedule'
 import DayDetail from './pages/DayDetail'
 import Prep from './pages/Prep'
+import PrepDetail from './pages/PrepDetail'
 import Lectures from './pages/Lectures'
 import TeamProject from './pages/TeamProject'
 import References from './pages/References'
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/prep" element={<Prep />} />
+          <Route path="/prep/:id" element={<PrepDetail />} />
           <Route path="/lectures" element={<Lectures />} />
           <Route path="/lectures/:date" element={<Lectures />} />
           <Route path="/team" element={<TeamProject />} />
