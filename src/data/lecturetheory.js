@@ -552,6 +552,468 @@ limit 5;`,
       },
     ],
   },
+
+  // ── 머신러닝/딥러닝 ──
+  'ml-dl-1': {
+    theory: [
+      {
+        h: '일반화와 편향-분산 트레이드오프',
+        body: '머신러닝의 목표는 훈련 데이터 암기가 아니라 보지 않은 데이터에서의 성능(일반화)이다. 모델이 너무 단순하면 패턴을 못 잡고(과소적합·높은 편향), 너무 복잡하면 훈련 노이즈까지 외워(과적합·높은 분산) 새 데이터에서 실패한다. 이 균형점을 찾는 것이 핵심이며, 훈련/검증/테스트 분할과 교차검증으로 일반화 성능을 추정한다. 전처리(스케일링·인코딩)는 반드시 훈련 데이터 기준으로 fit해, 테스트 정보가 전처리에 스며드는 데이터 누수를 막아야 한다.',
+      },
+      {
+        h: '평가지표는 문제에 맞춰 고른다',
+        body: '정확도는 클래스 불균형에서 오해를 부른다(정상 99% 데이터면 무조건 정상이라 찍어도 99%). 정밀도(예측 양성 중 실제 양성)와 재현율(실제 양성 중 잡아낸 비율)은 트레이드오프이며 F1으로 균형을 본다. 임계값에 무관한 ROC-AUC는 순위 능력을 측정한다. 거짓양성과 거짓음성 중 무엇이 더 치명적인지(비즈니스 비용)에 따라 지표와 결정 임계값을 정한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 전처리 파이프라인 + 교차검증 (scikit-learn)',
+        lang: 'python',
+        code: `import pandas as pd
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+
+df = pd.read_csv("data.csv")
+y = df.pop("target")
+num = df.select_dtypes("number").columns
+cat = df.select_dtypes("object").columns
+
+# 수치=표준화, 범주=원핫 — 전처리를 파이프라인에 넣어 누수 방지
+pre = ColumnTransformer([
+    ("num", StandardScaler(), num),
+    ("cat", OneHotEncoder(handle_unknown="ignore"), cat),
+])
+pipe = Pipeline([("pre", pre),
+                 ("clf", RandomForestClassifier(n_estimators=300, random_state=42))])
+
+Xtr, Xte, ytr, yte = train_test_split(df, y, test_size=0.2, stratify=y, random_state=42)
+print("CV F1:", cross_val_score(pipe, df, y, cv=5, scoring="f1_macro").mean())
+
+pipe.fit(Xtr, ytr)
+print(classification_report(yte, pipe.predict(Xte)))`,
+        note: 'ColumnTransformer로 수치·범주를 따로 전처리하고 Pipeline에 포함해 교차검증 시 누수를 차단. stratify로 클래스 비율을 유지하고 f1_macro로 불균형을 고려.',
+      },
+    ],
+  },
+  'ml-dl-2': {
+    theory: [
+      {
+        h: '역전파와 옵티마이저',
+        body: '신경망 학습은 손실을 가중치로 미분한 기울기를 따라, 손실이 줄어드는 방향으로 가중치를 조금씩 갱신하는 과정이다. 역전파는 연쇄법칙으로 출력층→입력층 방향으로 기울기를 효율적으로 계산한다. 옵티마이저는 이 기울기를 어떻게 적용할지 정하며, SGD는 단순하지만 학습률에 민감하고, Adam은 1·2차 모멘트로 적응적 학습률을 제공해 대체로 빠르고 안정적으로 수렴한다. 학습률이 너무 크면 발산, 너무 작으면 느리거나 지역최소에 갇힌다.',
+      },
+      {
+        h: '활성화·정규화·조기종료',
+        body: '비선형 활성화(ReLU 등)가 없으면 층을 아무리 쌓아도 하나의 선형 변환에 불과하다. ReLU는 음수를 0으로 보내 기울기 소실에 강하고 계산이 싸 기본으로 쓰인다. 과적합 방지로 드롭아웃(학습 시 일부 뉴런 무작위 비활성)·배치정규화(층 입력 분포 안정화)를 쓰고, 검증 손실을 모니터링해 더 개선되지 않으면 조기종료하여 과적합 직전 가중치를 저장한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: PyTorch 학습 루프 + 검증 + 조기종료',
+        lang: 'python',
+        code: `import torch, torch.nn as nn
+from torch.utils.data import DataLoader, TensorDataset
+
+def make_loader(X, y, bs=64, shuffle=False):
+    ds = TensorDataset(torch.tensor(X, dtype=torch.float32),
+                       torch.tensor(y, dtype=torch.long))
+    return DataLoader(ds, batch_size=bs, shuffle=shuffle)
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = nn.Sequential(nn.Linear(30, 64), nn.ReLU(), nn.Dropout(0.2),
+                      nn.Linear(64, 2)).to(device)
+opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+loss_fn = nn.CrossEntropyLoss()
+
+best, patience, wait = 1e9, 5, 0
+for epoch in range(100):
+    model.train()
+    for xb, yb in train_loader:
+        xb, yb = xb.to(device), yb.to(device)
+        opt.zero_grad()
+        loss = loss_fn(model(xb), yb)
+        loss.backward(); opt.step()
+
+    model.eval(); vloss = 0.0
+    with torch.no_grad():
+        for xb, yb in val_loader:
+            xb, yb = xb.to(device), yb.to(device)
+            vloss += loss_fn(model(xb), yb).item()
+    vloss /= len(val_loader)
+
+    if vloss < best:                      # 개선되면 체크포인트
+        best, wait = vloss, 0
+        torch.save(model.state_dict(), "best.pt")
+    else:
+        wait += 1
+        if wait >= patience:              # 개선 없으면 조기종료
+            print(f"early stop @ epoch {epoch}, best val={best:.4f}"); break`,
+        note: 'zero_grad→forward→loss→backward→step의 4단계 학습 루프에 검증·조기종료·체크포인트를 결합한 실전 템플릿. Dropout으로 과적합을 억제한다.',
+      },
+    ],
+  },
+  'ml-dl-3': {
+    theory: [
+      {
+        h: 'CNN · RNN · Transformer',
+        body: 'CNN은 합성곱 필터로 지역 패턴(엣지→질감→형태)을 계층적으로 추출하고 파라미터를 공유해 이미지에 효율적이다. RNN/LSTM은 순차 데이터를 시점별로 처리하되 장기 의존성에 약했고, LSTM의 게이트(입력·망각·출력)가 이를 완화했다. Transformer는 Self-Attention으로 모든 토큰 쌍의 관계를 병렬로 계산해 장거리 의존성과 학습 속도를 동시에 해결했으며, 현대 LLM과 비전 모델(ViT)의 표준 아키텍처가 되었다.',
+      },
+      {
+        h: '전이학습 전략',
+        body: '대규모 데이터로 사전학습된 모델은 일반적 특징(엣지·표현)을 이미 학습한 상태다. 전이학습은 이 가중치를 가져와 작은 도메인 데이터로 미세조정하며, 데이터가 적을수록 효과가 크다. 보통 초기에는 특징 추출부를 동결하고 분류층만 학습하다가, 데이터가 충분하면 상위 층까지 낮은 학습률로 함께 미세조정한다. 데이터 증강은 학습 데이터를 변형해 과적합을 줄이고 일반화를 높인다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 전이학습 (ResNet18 미세조정 + 증강)',
+        lang: 'python',
+        code: `import torch, torch.nn as nn
+import torchvision as tv
+from torchvision import transforms as T
+
+# 1) 데이터 증강 (학습) vs 정규화만 (검증)
+train_tf = T.Compose([
+    T.RandomResizedCrop(224), T.RandomHorizontalFlip(),
+    T.ColorJitter(0.2, 0.2, 0.2), T.ToTensor(),
+    T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+])
+
+# 2) 사전학습 모델 로드 → 특징 추출부 동결
+model = tv.models.resnet18(weights="IMAGENET1K_V1")
+for p in model.parameters():
+    p.requires_grad = False
+
+# 3) 분류층을 우리 클래스 수로 교체 (이 층만 학습됨)
+NUM_CLASSES = 5
+model.fc = nn.Linear(model.fc.in_features, NUM_CLASSES)
+
+# 4) fc만 우선 학습 → 이후 layer4까지 낮은 LR로 미세조정(선택)
+opt = torch.optim.Adam(model.fc.parameters(), lr=1e-3)
+
+# (미세조정 단계) 상위 블록 해제
+for p in model.layer4.parameters():
+    p.requires_grad = True
+opt = torch.optim.Adam([
+    {"params": model.fc.parameters(), "lr": 1e-3},
+    {"params": model.layer4.parameters(), "lr": 1e-4},   # 더 낮게
+])`,
+        note: '특징 추출부 동결 → 분류층 교체·학습 → 상위 블록만 낮은 LR로 미세조정하는 2단계 전이학습. 학습/검증 증강을 다르게 적용해 누수를 막는다.',
+      },
+    ],
+  },
+
+  // ── 모델 서빙 / AIOps ──
+  'serving-1': {
+    theory: [
+      {
+        h: '서빙 패턴과 SLA',
+        body: '추론 서빙은 요청-응답이 실시간인 온라인, 대량을 모아 처리하는 배치, 연속 입력을 처리하는 스트림으로 나뉜다. 온라인 서빙은 지연(latency)이, 배치는 처리량(throughput)이 핵심 지표다. 모델은 앱 시작 시 1회 로드해 요청마다 재로딩을 피하고(예: FastAPI lifespan), 입력은 Pydantic으로 검증해 잘못된 입력이 추론까지 가지 않게 한다. 요청을 모아 배치로 추론하면 GPU 활용률·처리량이 오르지만 지연은 늘어 균형이 필요하다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: FastAPI 추론 서비스 (lifespan 로드 + 검증 + 배치)',
+        lang: 'python',
+        code: `from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, conlist
+import joblib, numpy as np
+
+STATE = {}
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    STATE["model"] = joblib.load("model.pkl")   # 시작 시 1회 로드
+    yield
+    STATE.clear()
+
+app = FastAPI(lifespan=lifespan)
+
+class Req(BaseModel):
+    features: conlist(float, min_length=30, max_length=30)   # 길이 검증
+
+class BatchReq(BaseModel):
+    items: list[Req]
+
+@app.get("/health")
+def health():
+    return {"ok": "model" in STATE}
+
+@app.post("/predict")
+def predict(req: Req):
+    try:
+        p = STATE["model"].predict([req.features])[0]
+        return {"prediction": int(p)}
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/predict-batch")             # 배치 추론으로 처리량↑
+def predict_batch(req: BatchReq):
+    X = np.array([r.features for r in req.items])
+    return {"predictions": STATE["model"].predict(X).astype(int).tolist()}`,
+        note: 'lifespan으로 모델을 1회 로드, Pydantic conlist로 입력 길이 검증, 단건·배치 엔드포인트를 함께 제공하는 실전 서빙 구조. /health는 readiness 프로브용.',
+      },
+    ],
+  },
+  'serving-2': {
+    theory: [
+      {
+        h: '컨테이너화와 무중단 배포',
+        body: 'Docker는 앱·의존성·런타임을 이미지로 묶어 어디서든 동일하게 실행되게 한다(환경 불일치 해소). 레이어 캐시를 활용하려면 자주 바뀌지 않는 의존성 설치를 먼저 두고 소스 복사를 나중에 둔다. 쿠버네티스는 배포·스케일·복구를 자동화하며, liveness(살아있나)와 readiness(트래픽 받을 준비됐나) 프로브를 구분해 모델 로딩이 끝나야 트래픽을 받게 한다. 롤링 업데이트로 새 파드가 ready가 된 뒤에만 트래픽을 옮겨 무중단 배포한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: Dockerfile + Kubernetes 배포(프로브 포함)',
+        lang: 'docker',
+        code: `# ---- Dockerfile (의존성 레이어 분리로 캐시 활용) ----
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt   # 자주 안 바뀜 → 먼저
+COPY . .                                             # 소스는 나중에
+EXPOSE 8000
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", \\
+     "-w", "2", "app:app", "--bind", "0.0.0.0:8000"]
+
+# ---- k8s deployment 발췌 (yaml) ----
+# livenessProbe:  { httpGet: { path: /health, port: 8000 }, initialDelaySeconds: 15 }
+# readinessProbe: { httpGet: { path: /health, port: 8000 }, periodSeconds: 5 }
+# strategy: { type: RollingUpdate, rollingUpdate: { maxUnavailable: 0, maxSurge: 1 } }`,
+        note: '의존성→소스 순서로 빌드 캐시를 극대화하고, liveness/readiness 프로브 + maxUnavailable:0 롤링 업데이트로 무중단 배포를 구성한다.',
+      },
+    ],
+  },
+  'serving-3': {
+    theory: [
+      {
+        h: 'MLOps · CI/CD · 드리프트',
+        body: 'MLOps는 데이터·학습·배포·모니터링을 자동화하고 재현 가능하게 만드는 실천이다. 모델 레지스트리로 버전·스테이지(staging/production)를 관리하고, CI/CD로 테스트→빌드→배포를 자동화하며, 카나리/블루그린 배포로 위험을 줄이고 문제 시 즉시 롤백한다. 배포 후에도 입력·개념 분포가 변하면(드리프트) 성능이 조용히 저하되므로 통계 검정(KS 등)으로 감시하고, 임계 초과 시 알림·재학습을 트리거한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: GitHub Actions ML CI/CD',
+        lang: 'yaml',
+        code: `name: ml-deploy
+on: { push: { branches: [main] } }
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+      - run: pytest -q                          # 1) 테스트 게이트
+      - run: |                                   # 2) 모델 검증(최소 성능)
+          python scripts/eval.py --min-f1 0.85
+      - name: Build & push image                # 3) 이미지 빌드/푸시
+        run: |
+          docker build -t $REG/infer:\${{ github.sha }} .
+          echo "\${{ secrets.REG_TOKEN }}" | docker login $REG -u ci --password-stdin
+          docker push $REG/infer:\${{ github.sha }}
+        env: { REG: registry.example.com }
+      - name: Deploy (canary)                    # 4) 카나리 배포
+        run: kubectl set image deploy/infer infer=$REG/infer:\${{ github.sha }}`,
+        note: '테스트·모델 성능 게이트를 통과해야 빌드·배포가 진행되는 ML CI/CD. 커밋 SHA를 이미지 태그로 써서 롤백을 쉽게 한다.',
+      },
+    ],
+  },
+
+  // ── Vue.js ──
+  'vue-1': {
+    theory: [
+      {
+        h: '반응성 시스템은 어떻게 동작하나',
+        body: 'Vue 3의 반응성은 JavaScript Proxy로 구현된다. reactive(obj)는 객체 접근(get)을 가로채 "이 값을 누가 사용하는지" 의존성을 수집하고, 변경(set)이 일어나면 그 값을 쓰는 computed·렌더 함수만 다시 실행한다. ref는 원시값을 {value} 객체로 감싸 같은 추적을 가능하게 하며, 템플릿에서는 .value가 자동 언랩된다. 덕분에 개발자는 DOM을 직접 조작하지 않고 상태만 바꾸면 화면이 최소 비용으로 갱신된다. computed는 의존이 바뀔 때만 재계산되어 캐싱되고, watch는 값 변화에 따른 부수효과(API 호출 등)에 쓴다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 검색+정렬+디바운스 컴포넌트 (SFC)',
+        lang: 'html',
+        code: `<script setup>
+import { ref, computed, watch } from 'vue'
+
+const items = ref([])           // 원본 데이터
+const keyword = ref('')
+const sortKey = ref('name')
+const loading = ref(false)
+let timer
+
+// 파생 목록: 필터 + 정렬 (의존이 바뀔 때만 재계산)
+const view = computed(() =>
+  items.value
+    .filter(i => i.name.includes(keyword.value))
+    .sort((a, b) => String(a[sortKey.value]).localeCompare(String(b[sortKey.value])))
+)
+
+// 검색어 입력은 300ms 디바운스로 API 호출 절감
+watch(keyword, (kw) => {
+  clearTimeout(timer)
+  timer = setTimeout(async () => {
+    loading.value = true
+    const res = await fetch('/api/search?q=' + encodeURIComponent(kw))
+    items.value = await res.json()
+    loading.value = false
+  }, 300)
+})
+</script>
+
+<template>
+  <input v-model="keyword" placeholder="검색" />
+  <select v-model="sortKey"><option value="name">이름</option><option value="price">가격</option></select>
+  <p v-if="loading">불러오는 중…</p>
+  <ul v-else><li v-for="i in view" :key="i.id">{{ i.name }} — {{ i.price }}</li></ul>
+</template>`,
+        note: 'computed로 필터+정렬을 선언적으로 파생하고, watch+setTimeout 디바운스로 입력마다 API를 때리지 않게 한다. 반응성·computed·watch를 한 컴포넌트에서 종합.',
+      },
+    ],
+  },
+  'vue-2': {
+    theory: [
+      {
+        h: '컴포넌트 통신과 합성',
+        body: 'Vue는 단방향 데이터 흐름을 따른다 — 부모는 props로 데이터를 내려주고(자식은 읽기만), 자식은 emit 이벤트로 변경을 부모에 요청한다. 이 규칙이 데이터 출처를 명확히 해 디버깅을 쉽게 한다. 슬롯은 컴포넌트에 마크업을 주입하는 구멍으로 레이아웃 재사용에 쓰이고, Composition API의 composable(use~ 함수)은 상태+로직을 추출해 여러 컴포넌트에서 재사용하게 한다(React 훅과 유사). 라이프사이클 훅(onMounted 등)으로 데이터 패칭·정리 시점을 제어한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 재사용 composable + props/emit 컴포넌트',
+        lang: 'javascript',
+        code: `// composables/useToggle.js — 상태+동작을 추출해 재사용
+import { ref } from 'vue'
+export function useToggle(initial = false) {
+  const state = ref(initial)
+  const toggle = () => (state.value = !state.value)
+  const set = (v) => (state.value = v)
+  return { state, toggle, set }
+}
+
+// composables/useAsync.js — 비동기 로딩/에러 공통 처리
+import { ref } from 'vue'
+export function useAsync(fn) {
+  const data = ref(null), error = ref(null), loading = ref(false)
+  async function run(...args) {
+    loading.value = true; error.value = null
+    try { data.value = await fn(...args) }
+    catch (e) { error.value = e.message }
+    finally { loading.value = false }
+  }
+  return { data, error, loading, run }
+}
+
+/* 사용 (컴포넌트 script setup)
+import { useAsync } from '@/composables/useAsync'
+const { data, error, loading, run } = useAsync((id) => fetch('/api/'+id).then(r=>r.json()))
+run(42)
+*/`,
+        note: '공통 로직(토글·비동기 패칭)을 composable로 추출하면 여러 컴포넌트가 재사용한다. props/emit이 컴포넌트 간 통신이라면 composable은 로직 재사용 수단.',
+      },
+    ],
+  },
+  'vue-3': {
+    theory: [
+      {
+        h: '라우팅과 전역 상태',
+        body: 'SPA는 서버 왕복 없이 URL과 컴포넌트를 매핑한다(History API). Vue Router는 라우트 정의, 동적 파라미터(/detail/:id), 중첩 라우트, 네비게이션 가드(beforeEach로 인증 체크)를 제공한다. 여러 컴포넌트가 공유하는 상태는 Pinia 스토어(state·getters·actions)로 중앙화해 prop 드릴링을 피한다. 상태는 스토어→컴포넌트로 흐르고 변경은 action을 통하므로 예측 가능성과 디버깅성이 좋아진다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: Pinia 스토어 + Router 가드',
+        lang: 'javascript',
+        code: `// stores/auth.js
+import { defineStore } from 'pinia'
+export const useAuth = defineStore('auth', {
+  state: () => ({ user: null, token: localStorage.getItem('token') }),
+  getters: { isAuthed: (s) => !!s.token },
+  actions: {
+    async login(email, pw) {
+      const res = await fetch('/api/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, pw }),
+      })
+      if (!res.ok) throw new Error('로그인 실패')
+      const { token, user } = await res.json()
+      this.token = token; this.user = user
+      localStorage.setItem('token', token)
+    },
+    logout() { this.token = null; this.user = null; localStorage.removeItem('token') },
+  },
+})
+
+// router.js — 인증 가드
+import { createRouter, createWebHistory } from 'vue-router'
+import { useAuth } from '@/stores/auth'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', component: () => import('@/pages/Home.vue') },
+    { path: '/mypage', component: () => import('@/pages/My.vue'), meta: { requiresAuth: true } },
+    { path: '/login', component: () => import('@/pages/Login.vue') },
+  ],
+})
+router.beforeEach((to) => {
+  const auth = useAuth()
+  if (to.meta.requiresAuth && !auth.isAuthed)
+    return { path: '/login', query: { redirect: to.fullPath } }   // 미인증 차단
+})
+export default router`,
+        note: 'Pinia 스토어에 인증 상태·액션을 모으고, router.beforeEach 가드로 보호 라우트 접근을 통제하는 실전 인증 구조. meta.requiresAuth로 보호 페이지를 선언적으로 표시.',
+      },
+    ],
+  },
+  'vue-4': {
+    theory: [
+      {
+        h: 'API 연동과 배포',
+        body: '실데이터 연동은 로딩·에러·빈 상태(3-상태)를 분리 관리해야 UI가 안정적이다. axios 인스턴스에 baseURL·인터셉터를 두면 토큰 주입·공통 에러 처리를 한곳에서 한다. API 주소·키는 환경변수(Vite는 VITE_ 접두어만 클라이언트 노출)로 분리해 개발/운영을 전환한다. 빌드는 소스를 정적 파일(dist)로 변환하며 트리셰이킹·코드분할로 용량을 줄이고, SPA는 서버가 모든 경로를 index.html로 폴백해야 새로고침 404가 나지 않는다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: axios 인스턴스(인터셉터) + 환경변수',
+        lang: 'javascript',
+        code: `// lib/http.js — 공통 axios 인스턴스
+import axios from 'axios'
+
+const http = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE,   // .env: VITE_API_BASE=https://api...
+  timeout: 15000,
+})
+
+// 요청 인터셉터: 토큰 자동 주입
+http.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.Authorization = \`Bearer \${token}\`
+  return config
+})
+
+// 응답 인터셉터: 공통 에러 처리(401 → 로그인 이동)
+http.interceptors.response.use(
+  (res) => res.data,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem('token')
+      location.href = '/login'
+    }
+    return Promise.reject(new Error(err.response?.data?.message || err.message))
+  },
+)
+
+export default http
+// 사용: const items = await http.get('/items')   // res.data 가 바로 반환됨`,
+        note: '인터셉터로 토큰 주입·401 처리·에러 정규화를 한곳에 모은 실전 HTTP 레이어. 환경변수로 API 베이스를 분리해 개발/운영을 전환한다.',
+      },
+    ],
+  },
 }
 
 export const theoryFor = (subjectId, day) => theory[`${subjectId}-${day}`] || null
