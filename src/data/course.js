@@ -19,5 +19,5 @@ export const course = {
     { name: '판교', klass: '3·4반' },
     { name: '광주', klass: '1반' },
   ],
-  contact: 'skala@sk.com',
+  contact: 'aebon@hs.ac.kr',
 }
