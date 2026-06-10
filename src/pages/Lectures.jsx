@@ -6,6 +6,7 @@ import { examplesFor } from '../data/lectureexamples'
 import { conceptsFor } from '../data/lectureconcepts'
 import { detailsFor } from '../data/lecturedetails'
 import { theoryFor } from '../data/lecturetheory'
+import { periodsFor, PERIOD_TIMES } from '../data/lectureperiods'
 import CodeBlock from '../components/CodeBlock'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
@@ -49,6 +50,7 @@ export default function Lectures() {
   const keyConcepts = conceptsFor(current.subjectId, current.day)
   const detail = detailsFor(current.subjectId, current.day)
   const deepTheory = theoryFor(current.subjectId, current.day)
+  const dayPeriods = periodsFor(current.subjectId, current.day)
 
   // 탭 구성: 월별 그룹, 단 한 월에 지역이 여럿이면 지역별로 분리 (예: 10월 판교 / 10월 광주)
   const tabs = []
@@ -245,11 +247,34 @@ export default function Lectures() {
               </>
             )}
 
-            {/* 8시간 시간표 */}
+            {/* 진행 시간표 (교시) */}
             <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
-              ⏱ 진행 시간표
+              ⏱ 진행 시간표 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>(09:00~17:50 · 교시당 50분)</span>
             </h3>
-            {plan ? (
+            {dayPeriods ? (
+              <div className="card" style={{ marginTop: 12 }}>
+                {PERIOD_TIMES.map((slot, j) => {
+                  if (slot.lunch) {
+                    return (
+                      <div key="lunch" className="plan-row">
+                        <div className="plan-time">{slot.time}</div>
+                        <div className="plan-lunch">점심 휴식</div>
+                      </div>
+                    )
+                  }
+                  const ci = j < 3 ? j : j - 1 // 점심 슬롯 건너뛰고 내용 매핑
+                  return (
+                    <div key={slot.label} className="plan-row">
+                      <div className="plan-time">
+                        {slot.label}
+                        <span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>{slot.time}</span>
+                      </div>
+                      <div className="plan-topic">{dayPeriods[ci]}</div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : plan ? (
               <div className="card" style={{ marginTop: 12 }}>
                 {plan.schedule.map((row, i) => (
                   <div key={i} className="plan-row">
