@@ -84,6 +84,8 @@ const emit = defineEmits(['toggle'])
 </template>`,
       note: '데이터는 props 로 내려주고(단방향), 변경은 emit 이벤트로 부모에 위임한다. 자식이 props 를 직접 수정하지 않는다.',
     },
+  ],
+  'vue-3': [
     {
       title: 'Pinia 스토어 + Router',
       lang: 'javascript',
@@ -101,14 +103,69 @@ export default createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: () => import('./pages/List.vue') },
-    { path: '/detail/:id', component: () => import('./pages/Detail.vue') },
+    { path: '/detail/:id', component: () => import('./pages/Detail.vue') },  // 동적 파라미터
   ],
 })`,
       note: '전역 상태는 Pinia, 화면 전환은 Router 로 분리한다. 컴포넌트에서 const todos = useTodos() 로 사용.',
     },
+    {
+      title: '네비게이션 가드 (인증)',
+      lang: 'javascript',
+      code: `// 라우트 진입 전에 인증을 확인해 접근을 제어한다
+router.beforeEach((to) => {
+  const isAuthed = !!localStorage.getItem('token')
+  // meta.requiresAuth 가 true 인데 미인증이면 로그인으로 리다이렉트
+  if (to.meta.requiresAuth && !isAuthed) {
+    return { path: '/login', query: { redirect: to.fullPath } }
+  }
+  // true(또는 반환 없음)면 그대로 진행
+})`,
+      note: 'beforeEach 글로벌 가드로 보호 라우트 접근을 막는다. 객체를 반환하면 해당 경로로 리다이렉트.',
+    },
+  ],
+  'vue-4': [
+    {
+      title: 'API 연동 + 비동기 상태 (composable)',
+      lang: 'javascript',
+      code: `// composables/useFetch.js — 로딩/에러/데이터 3-상태를 재사용
+import { ref } from 'vue'
+
+export function useFetch(url) {
+  const data = ref(null)
+  const error = ref(null)
+  const loading = ref(false)
+
+  async function run() {
+    loading.value = true; error.value = null
+    try {
+      const res = await fetch(url)            // 네트워크 요청
+      if (!res.ok) throw new Error('HTTP ' + res.status)
+      data.value = await res.json()           // 성공
+    } catch (e) {
+      error.value = e.message                 // 실패 메시지
+    } finally {
+      loading.value = false                   // 항상 로딩 해제
+    }
+  }
+  return { data, error, loading, run }
+}`,
+      note: '데이터 패칭 로직을 composable 로 추출해 여러 화면에서 재사용한다. finally 로 로딩 해제를 보장.',
+    },
+    {
+      title: 'API 베이스 환경변수 + 빌드',
+      lang: 'bash',
+      code: `# .env (Vite 는 VITE_ 접두어만 클라이언트에 노출)
+VITE_API_BASE=https://api.example.com
+
+# 코드: import.meta.env.VITE_API_BASE 로 접근
+# 빌드 & 미리보기
+npm run build      # dist/ 생성
+npm run preview    # 로컬에서 배포본 확인`,
+      note: 'API 주소를 환경변수로 분리하면 개발/운영 전환이 쉽다. VITE_ 접두어가 없으면 번들에 포함되지 않는다.',
+    },
   ],
 
-  // ── Spring AI ──
+  // ── Spring AI (현재 미배정 — 참고용 보존) ──
   'spring-ai-1': [
     {
       title: 'ChatClient REST 컨트롤러 (Java)',

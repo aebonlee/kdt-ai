@@ -42,7 +42,7 @@ watch(keyword, (val) => {
       note: 'computed(파생 값) vs watch(부수효과)의 차이를 이해한다. 검색 입력은 디바운스로 호출 폭주를 막는다.',
     },
   ],
-  'vue-2': [
+  'vue-4': [
     {
       title: '비동기 로딩 상태 패턴',
       lang: 'html',

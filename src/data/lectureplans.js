@@ -53,26 +53,68 @@ export const plans = {
   'vue-2': {
     schedule: [
       { time: '09:00–09:30', topic: 'Day1 리뷰', detail: '반응형·디렉티브 복습, 컴포넌트 분리의 필요성' },
-      { time: '09:30–11:00', topic: '컴포넌트 통신', detail: 'props / emit, 슬롯, 컴포넌트 설계 패턴, Composition API(setup)' },
-      { time: '11:00–12:00', topic: '라우팅', detail: 'Vue Router 설치·설정, 동적 라우트, 네비게이션 가드' },
+      { time: '09:30–11:00', topic: '컴포넌트 통신', detail: 'props 로 내려주기 / emit 으로 올리기, 슬롯(slot)' },
+      { time: '11:00–12:00', topic: 'Composition API', detail: 'setup, 라이프사이클 훅, computed / watch 심화' },
       lunch,
-      { time: '13:00–15:00', topic: '상태관리 · API', detail: 'Pinia 스토어, axios/fetch 비동기, 로딩/에러 처리' },
-      { time: '15:00–17:30', topic: '실습: 미니 SPA', detail: '목록·상세·폼을 라우팅+스토어로 통합 구현' },
-      { time: '17:30–18:00', topic: '발표 · 정리', detail: '구현 공유, 빌드/배포 개념 안내' },
+      { time: '13:00–15:30', topic: '실습: 재사용 컴포넌트', detail: 'props/emit 기반 목록·아이템 컴포넌트 분리' },
+      { time: '15:30–17:30', topic: '컴포넌트 설계', detail: '컨테이너/프레젠테이션 분리, 합성(composables)' },
+      { time: '17:30–18:00', topic: '정리 · Q&A', detail: 'Day3 예고(라우팅·상태관리)' },
     ],
     practice: {
-      title: '미니 SPA (목록·상세·폼)',
+      title: '재사용 컴포넌트 구성',
       steps: [
-        'Router 로 /list, /detail/:id, /new 구성',
-        'Pinia 스토어에 데이터·액션 정의',
-        'API(fetch) 연동 + 로딩/에러 상태 표시',
-        '폼에서 생성 후 목록으로 이동',
+        '부모-자식을 props/emit 으로 연결',
+        '슬롯으로 레이아웃 재사용',
+        'composable(use~) 함수로 로직 분리',
+        '리스트-아이템 컴포넌트로 리팩터링',
       ],
-      deliverable: '라우팅·상태관리가 포함된 SPA',
+      deliverable: 'props/emit·슬롯이 적용된 컴포넌트 세트',
+    },
+  },
+  'vue-3': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'Day2 리뷰', detail: '컴포넌트 통신 복습, SPA 라우팅의 필요성' },
+      { time: '09:30–11:00', topic: 'Vue Router', detail: '라우트 정의, 동적 파라미터(:id), 중첩·이름 라우트' },
+      { time: '11:00–12:00', topic: '네비게이션 가드', detail: 'beforeEach 인증 가드, 리다이렉트' },
+      lunch,
+      { time: '13:00–15:00', topic: 'Pinia 상태관리', detail: 'state/getters/actions, 컴포넌트 연동' },
+      { time: '15:00–17:30', topic: '실습: 라우팅+상태', detail: '목록·상세 라우팅 + 전역 상태 공유' },
+      { time: '17:30–18:00', topic: '정리 · Q&A', detail: 'Day4 예고(API·배포)' },
+    ],
+    practice: {
+      title: '라우팅 + 전역 상태',
+      steps: [
+        'Router 로 /list, /detail/:id 구성',
+        '네비게이션 가드로 접근 제어',
+        'Pinia 스토어에 목록 데이터·액션 정의',
+        '상세 화면에서 스토어 데이터 조회',
+      ],
+      deliverable: '라우팅·Pinia 가 연동된 화면',
+    },
+  },
+  'vue-4': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'Day3 리뷰', detail: '라우팅·상태 복습, 실데이터 연동 준비' },
+      { time: '09:30–11:00', topic: 'API 연동', detail: 'fetch/axios, async/await, 로딩·에러 상태' },
+      { time: '11:00–12:00', topic: '폼·유효성', detail: '폼 바인딩, 검증, 제출 흐름' },
+      lunch,
+      { time: '13:00–15:30', topic: '실습: 미니 SPA 완성', detail: '목록·상세·폼을 API와 통합' },
+      { time: '15:30–17:00', topic: '빌드·배포', detail: '환경변수, Vite 빌드, 정적 호스팅 배포' },
+      { time: '17:00–18:00', topic: '발표 · 정리', detail: 'SPA 시연, 4일차 종합' },
+    ],
+    practice: {
+      title: '미니 SPA 완성·배포',
+      steps: [
+        'API(fetch)로 목록·상세 데이터 연동',
+        '로딩/에러/빈 상태 처리',
+        '생성 폼 + 유효성 검사',
+        'Vite 빌드 후 정적 배포',
+      ],
+      deliverable: '배포된 미니 SPA',
     },
   },
 
-  // ── Spring AI ──
+  // ── Spring AI (현재 미배정 — 참고용 보존) ──
   'spring-ai-1': {
     schedule: [
       { time: '09:00–09:30', topic: '도입 · 환경', detail: 'Spring Boot 프로젝트 셋업, Spring AI 의존성, API 키 구성' },

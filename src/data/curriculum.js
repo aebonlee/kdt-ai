@@ -59,69 +59,45 @@ export const subjects = [
         ],
       },
       {
-        title: '컴포넌트·라우팅·상태관리',
+        title: '컴포넌트 통신과 Composition API',
         objectives: [
           '컴포넌트 통신과 재사용 패턴 이해',
-          'SPA 라우팅과 전역 상태 관리 적용',
+          'Composition API 로 로직 구성',
         ],
         contents: [
           '컴포넌트 통신: props / emit, 슬롯(slot)',
-          '라이프사이클과 Composition API(setup) 패턴',
-          'Vue Router 로 페이지 라우팅 구성',
-          'Pinia 로 전역 상태 관리',
-          'API 연동(fetch/axios)과 비동기 데이터 처리',
-          '실습: 미니 SPA(목록·상세·폼) 구현',
-        ],
-      },
-    ],
-  },
-  {
-    id: 'spring-ai',
-    code: '4-2',
-    name: 'Spring AI',
-    category: 'Back-end',
-    summary: 'Spring Boot 기반으로 LLM·RAG·Tool을 통합하는 Spring AI 애플리케이션 개발',
-    days: [
-      {
-        title: 'Spring AI 개요와 LLM 연동',
-        objectives: [
-          'Spring AI 아키텍처와 추상화(ChatClient) 이해',
-          'Spring Boot 애플리케이션에 LLM 연동',
-        ],
-        contents: [
-          'Spring AI 개요와 의존성·환경설정',
-          'ChatClient / ChatModel 추상화',
-          'OpenAI · Anthropic 등 모델 프로바이더 연동',
-          'PromptTemplate 과 구조화된 메시지',
-          '실습: 채팅 응답 REST API 구현',
+          '라이프사이클 훅과 Composition API(setup) 패턴',
+          'computed / watch 심화, 반응형 유틸',
+          '컴포넌트 분리·재사용 설계',
+          '실습: 재사용 컴포넌트(목록·아이템) 구성',
         ],
       },
       {
-        title: 'Spring AI 기반 RAG',
+        title: '라우팅과 상태관리 (Router · Pinia)',
         objectives: [
-          'Embedding 과 VectorStore 개념 이해',
-          'Spring AI 로 문서 기반 질의응답 구현',
+          'SPA 라우팅 구성',
+          '전역 상태 관리(Pinia) 적용',
         ],
         contents: [
-          'Embedding Model 과 벡터화',
-          'VectorStore(예: pgvector) 연동과 문서 적재',
-          'Document Reader / Splitter 로 문서 처리',
-          'Retrieval 결합 프롬프트(RAG) 구성',
-          '실습: 사내 문서 QA API',
+          'Vue Router: 라우트·동적 파라미터·중첩 라우트',
+          '네비게이션 가드(인증 등)',
+          'Pinia 스토어: state / getters / actions',
+          '컴포넌트-스토어 연동 패턴',
+          '실습: 목록·상세 라우팅 + 전역 상태',
         ],
       },
       {
-        title: 'Function Calling·구조화 출력·서비스 통합',
+        title: 'API 연동과 실전 SPA · 배포',
         objectives: [
-          'Tool/Function Calling 으로 외부 기능 연동',
-          'AI 기능을 실제 서비스에 통합',
+          'API 연동과 비동기 상태 처리',
+          'SPA 통합·빌드·배포',
         ],
         contents: [
-          'Function Calling(Tool) 정의와 호출',
-          '구조화 출력(Structured Output) 매핑',
-          '스트리밍 응답과 예외·재시도 처리',
-          'AI 기능의 서비스 통합과 보안 고려사항',
-          '실습: 도구 연동형 AI 기능 서비스',
+          'fetch / axios 비동기 데이터, 로딩·에러 처리',
+          '폼 처리와 유효성 검사',
+          '환경변수와 API 베이스 설정',
+          'Vite 빌드와 정적 배포',
+          '실습: 미니 SPA(목록·상세·폼) 완성·배포',
         ],
       },
     ],
@@ -510,12 +486,10 @@ export const sessions = [
 
   { date: '2026-07-31', weekday: '금', region: '판교', klass: '4반', subjectId: 'vue', day: 1 },
   { date: '2026-08-03', weekday: '월', region: '판교', klass: '4반', subjectId: 'vue', day: 2 },
+  { date: '2026-08-04', weekday: '화', region: '판교', klass: '4반', subjectId: 'vue', day: 3 },
+  { date: '2026-08-05', weekday: '수', region: '판교', klass: '4반', subjectId: 'vue', day: 4 },
   { date: '2026-09-07', weekday: '월', region: '판교', klass: '3반', subjectId: 'vue', day: 1 },
   { date: '2026-09-08', weekday: '화', region: '판교', klass: '3반', subjectId: 'vue', day: 2 },
-
-  { date: '2026-08-18', weekday: '화', region: '판교', klass: '4반', subjectId: 'spring-ai', day: 1 },
-  { date: '2026-08-19', weekday: '수', region: '판교', klass: '4반', subjectId: 'spring-ai', day: 2 },
-  { date: '2026-08-20', weekday: '목', region: '판교', klass: '4반', subjectId: 'spring-ai', day: 3 },
 
   { date: '2026-08-28', weekday: '금', region: '판교', klass: '4반', subjectId: 'sllm', day: 1 },
   { date: '2026-08-31', weekday: '월', region: '판교', klass: '4반', subjectId: 'sllm', day: 2 },
@@ -525,8 +499,7 @@ export const sessions = [
   { date: '2026-09-03', weekday: '목', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 3 },
 
   { date: '2026-09-17', weekday: '목', region: '판교', klass: '4반', subjectId: 'rag', day: 1 },
-  { date: '2026-09-18', weekday: '금', region: '판교', klass: '4반', subjectId: 'rag', day: 2 },
-  { date: '2026-09-21', weekday: '월', region: '판교', klass: '4반', subjectId: 'rag', day: 3 },
+  { date: '2026-09-21', weekday: '월', region: '판교', klass: '4반', subjectId: 'rag', day: 2 },
 
   { date: '2026-09-22', weekday: '화', region: '판교', klass: '4반', subjectId: 'langchain', day: 1 },
   { date: '2026-09-28', weekday: '월', region: '판교', klass: '4반', subjectId: 'langchain', day: 2 },
@@ -536,12 +509,9 @@ export const sessions = [
   { date: '2026-10-01', weekday: '목', region: '판교', klass: '4반', subjectId: 'serving', day: 2 },
   { date: '2026-10-02', weekday: '금', region: '판교', klass: '4반', subjectId: 'serving', day: 3 },
 
-  { date: '2026-10-06', weekday: '화', region: '판교', klass: '4반', subjectId: 'agent', day: 1 },
-  { date: '2026-10-07', weekday: '수', region: '판교', klass: '4반', subjectId: 'agent', day: 2 },
   { date: '2026-10-12', weekday: '월', region: '광주', klass: '1반', subjectId: 'agent', day: 1 },
   { date: '2026-10-13', weekday: '화', region: '광주', klass: '1반', subjectId: 'agent', day: 2 },
 
-  { date: '2026-10-08', weekday: '목', region: '판교', klass: '4반', subjectId: 'vectordb', day: 1 },
   { date: '2026-10-14', weekday: '수', region: '광주', klass: '1반', subjectId: 'vectordb', day: 1 },
 
   { date: '2026-10-15', weekday: '목', region: '광주', klass: '1반', subjectId: 'capstone', day: 1 },
