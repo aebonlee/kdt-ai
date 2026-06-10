@@ -7,7 +7,7 @@ const nav = [
   { to: '/', label: 'About', end: true },
   { to: '/schedule', label: '수업일정표' },
   { to: '/prep', label: '선수학습자료' },
-  { to: '/subjects', label: '과목별 강의' },
+  { to: '/subjects', label: '과목별 안내' },
   { to: '/lectures', label: '강의안' },
   { to: '/team', label: '팀 프로젝트' },
   { to: '/reference', label: '참고자료' },

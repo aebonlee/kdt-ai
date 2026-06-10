@@ -64,7 +64,7 @@ export default function Home() {
             {[
               { to: '/schedule', t: '수업일정표', d: '월별 타임라인 · 지역(분반)별 보기' },
               { to: '/prep', t: '선수학습자료', d: '파이썬·Streamlit·Django·Supabase 등 기초' },
-              { to: '/subjects', t: '과목별 강의', d: '담당 12과목의 일자별 학습 내용' },
+              { to: '/subjects', t: '과목별 안내', d: '담당 과목의 일자별 학습 내용' },
               { to: '/lectures', t: '강의안', d: '날짜별 8시간 강의안 · 시간표·실습' },
               { to: '/team', t: '팀 프로젝트', d: '팀 프로젝트 수행 전 과정 가이드' },
               { to: '/reference', t: '참고자료', d: '과목별 공식 문서·자료 모음' },
