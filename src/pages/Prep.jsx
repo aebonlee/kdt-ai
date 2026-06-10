@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import { prepTopics } from '../data/resources'
 
 const CAT_ORDER = ['필수', '프론트', '백엔드', '데이터', 'AI 데모', '배포', 'BaaS', '실습환경', 'AI 기초']
-const categories = CAT_ORDER.filter((c) => prepTopics.some((t) => t.tag === c))
+const categories = ['전체', ...CAT_ORDER.filter((c) => prepTopics.some((t) => t.tag === c))]
 
 export default function Prep() {
-  const [cat, setCat] = useState(categories[0])
-  const topics = prepTopics.filter((t) => t.tag === cat)
+  const [cat, setCat] = useState('전체')
+  const topics = cat === '전체' ? prepTopics : prepTopics.filter((t) => t.tag === cat)
 
   return (
     <div>
@@ -34,7 +34,7 @@ export default function Prep() {
               >
                 {c}
                 <span style={{ marginLeft: 6, opacity: 0.7, fontWeight: 600 }}>
-                  {prepTopics.filter((t) => t.tag === c).length}
+                  {c === '전체' ? prepTopics.length : prepTopics.filter((t) => t.tag === c).length}
                 </span>
               </button>
             ))}
