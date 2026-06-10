@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { sessionsBySubject, dayOf, referenceSubjects } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 
-const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
 
 export default function Subjects() {
   const groups = sessionsBySubject()
@@ -38,7 +38,7 @@ export default function Subjects() {
                     <Link key={s.date} to={`/day/${s.date}`} className="session-row">
                       <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                         <span className="date">{s.date.slice(5)} ({s.weekday})</span>
-                        <span className={`chip chip-region ${regionClass(s.region)}`}>
+                        <span className={`chip chip-region ${regionClass(s.region, s.klass)}`}>
                           {s.region} {s.klass}
                         </span>
                         <span className="title">{d?.title}</span>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { sessionsByMonth, subjectById, dayOf } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 
-const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
 const monthLabel = (m) => `${m.slice(0, 4)}년 ${Number(m.slice(5))}월`
 
 const FILTERS = ['전체', '판교', '광주']
@@ -57,7 +57,7 @@ export default function Schedule() {
                   return (
                     <Link key={s.date + s.klass} to={`/day/${s.date}`} className="card day-card">
                       <div className="meta">
-                        <span className={`region-dot ${regionClass(s.region)}`} />
+                        <span className={`region-dot ${regionClass(s.region, s.klass)}`} />
                         <span className="chip chip-code" style={{ fontSize: 11 }}>{subj?.code}</span>
                         <span>{s.region} {s.klass}</span>
                       </div>

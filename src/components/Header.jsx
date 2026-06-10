@@ -9,6 +9,7 @@ const nav = [
   { to: '/prep', label: '선수학습자료' },
   { to: '/subjects', label: '과목별 강의' },
   { to: '/lectures', label: '강의안' },
+  { to: '/team', label: '팀 프로젝트' },
   { to: '/reference', label: '참고자료' },
   { to: '/progress', label: '학습관리' },
   { to: '/board', label: '게시판' },

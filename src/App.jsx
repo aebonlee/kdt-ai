@@ -9,6 +9,7 @@ import Schedule from './pages/Schedule'
 import DayDetail from './pages/DayDetail'
 import Prep from './pages/Prep'
 import Lectures from './pages/Lectures'
+import TeamProject from './pages/TeamProject'
 import References from './pages/References'
 import Progress from './pages/Progress'
 import Login from './pages/Login'
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/prep" element={<Prep />} />
           <Route path="/lectures" element={<Lectures />} />
           <Route path="/lectures/:date" element={<Lectures />} />
+          <Route path="/team" element={<TeamProject />} />
           <Route path="/subjects" element={<Subjects />} />
           <Route path="/reference" element={<References />} />
           <Route path="/progress" element={<Progress />} />

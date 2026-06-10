@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { sessionsBySubject, dayOf, totalSessions } from '../data/curriculum'
 import { useProgress, setDone, resetProgress } from '../hooks/useProgress'
 
-const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
 
 export default function Progress() {
   const done = useProgress()
@@ -84,7 +84,7 @@ export default function Progress() {
                           <span className="ctitle">{d?.title}</span>
                           <span style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
                             <span className="cdate">{s.date.slice(5)} ({s.weekday})</span>
-                            <span className={`chip chip-region ${regionClass(s.region)}`} style={{ fontSize: 11 }}>
+                            <span className={`chip chip-region ${regionClass(s.region, s.klass)}`} style={{ fontSize: 11 }}>
                               {s.region} {s.klass}
                             </span>
                           </span>

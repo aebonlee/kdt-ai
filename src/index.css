@@ -30,9 +30,10 @@
   --navy-50:  #F7F8FD;
   --gold:     #3F51FF;
 
-  /* Region accents (광주는 별도 분반) */
-  --pangyo:  #3F51FF;
-  --gwangju: #E0892F;
+  /* 분반 색 구분 (판교4반 / 판교3반 / 광주1반) */
+  --pangyo:  #3F51FF;  /* 판교 4반 — 인디고 */
+  --pangyo3: #0D9488;  /* 판교 3반 — 틸 */
+  --gwangju: #E0892F;  /* 광주 1반 — 앰버 */
 
   --ink: var(--navy-800);
   --ink-soft: var(--navy-500);
@@ -215,9 +216,11 @@ ul { list-style: none; }
 /* Region chips (별도 분반 구분) */
 .chip-region { color: #fff; }
 .chip-region.pangyo  { background: var(--pangyo); }
+.chip-region.pangyo3 { background: var(--pangyo3); }
 .chip-region.gwangju { background: var(--gwangju); }
 .region-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 .region-dot.pangyo { background: var(--pangyo); }
+.region-dot.pangyo3 { background: var(--pangyo3); }
 .region-dot.gwangju { background: var(--gwangju); }
 
 /* ── Subject list ── */
@@ -294,7 +297,13 @@ ul { list-style: none; }
 .side-nav {
   position: sticky; top: 88px; display: flex; flex-direction: column; gap: 3px;
   max-height: calc(100vh - 110px); overflow-y: auto; padding: 6px; padding-right: 4px;
+  /* 스크롤바 항상 표시 (목록이 길 때 더 있음을 알 수 있게) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-300) transparent;
 }
+.side-nav::-webkit-scrollbar { width: 8px; }
+.side-nav::-webkit-scrollbar-thumb { background: var(--navy-300); border-radius: 4px; }
+.side-nav::-webkit-scrollbar-track { background: transparent; }
 .side-nav-title {
   font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--ink-soft); margin: 14px 12px 6px;

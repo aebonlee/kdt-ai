@@ -4,7 +4,7 @@ import { planFor } from '../data/lectureplans'
 import { examplesFor } from '../data/lectureexamples'
 import CodeBlock from '../components/CodeBlock'
 
-const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
 const monthLabel = (m) => `${Number(m.slice(5))}월`
 
 // 참고용 키 파싱: "ref-<subjectId>-<day>"  (subjectId 에 하이픈 포함 가능)
@@ -116,7 +116,7 @@ export default function Lectures() {
               {isRef ? (
                 <span className="chip chip-region gwangju">참고 · 미배정</span>
               ) : (
-                <span className={`chip chip-region ${regionClass(current.region)}`}>
+                <span className={`chip chip-region ${regionClass(current.region, current.klass)}`}>
                   {current.region} {current.klass}
                 </span>
               )}
