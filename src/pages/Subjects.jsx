@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { sessionsBySubject, dayOf } from '../data/curriculum'
+import { sessionsBySubject, dayOf, referenceSubjects } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 
 const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
@@ -50,6 +50,38 @@ export default function Subjects() {
               </div>
             </div>
           ))}
+
+          {/* 참고 (미배정) 과목 */}
+          {referenceSubjects.length > 0 && (
+            <>
+              <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '32px 0 12px' }}>
+                참고 (미배정)
+              </h2>
+              {referenceSubjects.map((subject) => (
+                <div key={subject.id} className="subject" style={{ borderLeftColor: 'var(--gwangju)' }}>
+                  <div className="subject-head">
+                    <span className="chip chip-code">{subject.code}</span>
+                    <h3>{subject.name}</h3>
+                    <span className="chip chip-cat">{subject.category}</span>
+                    <span className="chip chip-region gwangju">참고</span>
+                  </div>
+                  <p className="subject-summary">{subject.summary}</p>
+
+                  <div style={{ marginTop: 12 }}>
+                    {subject.days.map((dd, i) => (
+                      <Link key={i} to={`/lectures/ref-${subject.id}-${i + 1}`} className="session-row">
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                          <span className="chip chip-day">Day {i + 1}</span>
+                          <span className="title">{dd.title}</span>
+                        </span>
+                        <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>강의안 →</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </section>
     </div>
