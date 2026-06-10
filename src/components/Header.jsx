@@ -13,6 +13,7 @@ const nav = [
   { to: '/reference', label: '참고자료' },
   { to: '/progress', label: '학습관리' },
   { to: '/board', label: '게시판' },
+  { href: 'https://padlet.com/aebon/skala4', label: '학습자료실', external: true },
   { to: '/dashboard', label: '대시보드' },
 ]
 
@@ -42,16 +43,22 @@ export default function Header() {
           </Link>
 
           <nav className="nav-menu">
-            {nav.map((n) => (
-              <NavLink
-                key={n.to}
-                to={n.to}
-                end={n.end}
-                className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-              >
-                {n.label}
-              </NavLink>
-            ))}
+            {nav.map((n) =>
+              n.external ? (
+                <a key={n.href} href={n.href} target="_blank" rel="noreferrer" className="nav-link">
+                  {n.label} ↗
+                </a>
+              ) : (
+                <NavLink
+                  key={n.to}
+                  to={n.to}
+                  end={n.end}
+                  className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+                >
+                  {n.label}
+                </NavLink>
+              ),
+            )}
           </nav>
         </div>
       </header>
