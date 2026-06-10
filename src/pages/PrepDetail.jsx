@@ -3,8 +3,6 @@ import { prepTopics, prepById } from '../data/resources'
 import { deepFor } from '../data/prepdeep'
 import CodeBlock from '../components/CodeBlock'
 
-const CAT_ORDER = ['필수', '프론트', '백엔드', '데이터', 'AI 데모', '배포', 'BaaS', '실습환경', 'AI 기초']
-
 function Bullets({ items }) {
   return (
     <ul style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -39,10 +37,8 @@ export default function PrepDetail() {
   const prev = idx > 0 ? prepTopics[idx - 1] : null
   const next = idx < prepTopics.length - 1 ? prepTopics[idx + 1] : null
 
-  // 같은 분류 + 전체를 사이드바에 그룹핑
-  const groups = CAT_ORDER.map((c) => ({ cat: c, items: prepTopics.filter((x) => x.tag === c) })).filter(
-    (g) => g.items.length > 0,
-  )
+  // 좌측 네비는 "현재 분류"의 주제만 (본문보다 길어지지 않게)
+  const siblings = prepTopics.filter((x) => x.tag === t.tag)
 
   return (
     <div>
@@ -56,23 +52,22 @@ export default function PrepDetail() {
 
       <section className="section">
         <div className="container layout-side">
-          {/* 좌측: 분류별 주제 네비 */}
+          {/* 좌측: 현재 분류의 주제만 */}
           <nav className="side-nav" aria-label="선수학습 주제">
-            {groups.map((g) => (
-              <div key={g.cat}>
-                <p className="side-nav-title">{g.cat}</p>
-                {g.items.map((x) => (
-                  <button
-                    key={x.id}
-                    className={`side-link${x.id === id ? ' active' : ''}`}
-                    onClick={() => navigate(`/prep/${x.id}`)}
-                    aria-current={x.id === id ? 'true' : undefined}
-                  >
-                    {x.name}
-                  </button>
-                ))}
-              </div>
+            <p className="side-nav-title">{t.tag}</p>
+            {siblings.map((x) => (
+              <button
+                key={x.id}
+                className={`side-link${x.id === id ? ' active' : ''}`}
+                onClick={() => navigate(`/prep/${x.id}`)}
+                aria-current={x.id === id ? 'true' : undefined}
+              >
+                {x.name}
+              </button>
             ))}
+            <Link to="/prep" className="side-link" style={{ marginTop: 8, color: 'var(--gold)', fontWeight: 700 }}>
+              ← 전체 분류 보기
+            </Link>
           </nav>
 
           {/* 본문 */}
