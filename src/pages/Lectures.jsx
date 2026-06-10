@@ -5,6 +5,7 @@ import { planFor } from '../data/lectureplans'
 import { examplesFor } from '../data/lectureexamples'
 import { conceptsFor } from '../data/lectureconcepts'
 import { detailsFor } from '../data/lecturedetails'
+import { theoryFor } from '../data/lecturetheory'
 import CodeBlock from '../components/CodeBlock'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
@@ -47,6 +48,7 @@ export default function Lectures() {
   const codeExamples = examplesFor(current.subjectId, current.day)
   const keyConcepts = conceptsFor(current.subjectId, current.day)
   const detail = detailsFor(current.subjectId, current.day)
+  const deepTheory = theoryFor(current.subjectId, current.day)
 
   // 탭 구성: 월별 그룹, 단 한 월에 지역이 여럿이면 지역별로 분리 (예: 10월 판교 / 10월 광주)
   const tabs = []
@@ -202,6 +204,23 @@ export default function Lectures() {
               </>
             )}
 
+            {/* 심화 이론 */}
+            {deepTheory?.theory?.length > 0 && (
+              <>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
+                  📘 심화 이론
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 12 }}>
+                  {deepTheory.theory.map((t, i) => (
+                    <div key={i} className="card">
+                      <h4 style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 6 }}>{t.h}</h4>
+                      <p style={{ fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.85 }}>{t.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
             {/* 상세 학습 내용 */}
             {detail?.topics?.length > 0 && (
               <>
@@ -302,6 +321,31 @@ export default function Lectures() {
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
                   {codeExamples.map((ex, i) => (
+                    <div key={i}>
+                      <div className="box-h" style={{ marginBottom: 8 }}>
+                        {ex.title}
+                        <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({ex.lang})</span>
+                      </div>
+                      <CodeBlock code={ex.code} lang={ex.lang} />
+                      {ex.note && (
+                        <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7 }}>
+                          💡 {ex.note}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* 실전 소스 (긴 코드) */}
+            {deepTheory?.realCode?.length > 0 && (
+              <>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
+                  🛠 실전 소스
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
+                  {deepTheory.realCode.map((ex, i) => (
                     <div key={i}>
                       <div className="box-h" style={{ marginBottom: 8 }}>
                         {ex.title}
