@@ -58,6 +58,13 @@ export default function Lectures() {
       }
     }
   }
+  // 참고 탭을 10월 앞에 삽입 (7·8·9월 → 참고 → 10월 판교 → 10월 광주)
+  if (referenceSubjects.length > 0) {
+    const octIdx = tabs.findIndex((t) => t.key.startsWith('2026-10'))
+    const refTab = { key: 'ref', label: '참고' }
+    if (octIdx === -1) tabs.push(refTab)
+    else tabs.splice(octIdx, 0, refTab)
+  }
   const tabKeyFor = (s) => {
     const m = s.date.slice(0, 7)
     const g = months.find((x) => x.m === m)
@@ -100,14 +107,6 @@ export default function Lectures() {
                   {t.label}
                 </button>
               ))}
-              {referenceSubjects.length > 0 && (
-                <button
-                  className={`month-tab${tab === 'ref' ? ' active' : ''}`}
-                  onClick={() => setTab('ref')}
-                >
-                  참고
-                </button>
-              )}
             </div>
 
             {tab === 'ref'
