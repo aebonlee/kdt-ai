@@ -1014,6 +1014,383 @@ export default http
       },
     ],
   },
+
+  // ── AI Agent Capstone ──
+  'capstone-1': {
+    theory: [
+      {
+        h: '캡스톤 설계: 무엇을 먼저 정하나',
+        body: '프로젝트 성공은 문제 정의와 설계에서 갈린다. 사용자·문제·가치를 한 문장으로 좁혀 범위를 통제하고, 시스템 아키텍처(컴포넌트·데이터 흐름)와 API 계약을 먼저 합의하면 프론트·백·AI가 병렬로 일할 수 있다. 평가 루브릭을 착수 시점에 정해 "무엇이 좋은 결과인가"를 명확히 하고, WBS로 작업을 잘게 나눠 담당·기한·리스크를 관리한다. 에이전트 기반이라면 어떤 도구가 필요한지, RAG 지식원은 무엇인지, 휴먼 개입(HITL) 지점은 어디인지를 설계에 포함한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 프로젝트 레포 구조 + API 계약',
+        lang: 'text',
+        code: `capstone/
+ ├─ backend/
+ │   ├─ app.py           # FastAPI 진입점
+ │   ├─ agent/
+ │   │   ├─ graph.py     # LangGraph 에이전트(노드/엣지/State)
+ │   │   ├─ tools.py     # 도구(검색·외부 API)
+ │   │   └─ rag.py       # 인덱싱/검색
+ │   ├─ schemas.py       # 요청/응답 Pydantic 모델(=API 계약)
+ │   └─ requirements.txt
+ ├─ frontend/            # Vue SPA (계약에 맞춰 병렬 개발)
+ ├─ docker-compose.yml   # backend + vectordb 동시 기동
+ └─ README.md            # 실행 방법·아키텍처 도식
+
+# ── API 계약 (contract-first) ──
+# POST /chat
+#   req: { "message": str, "session_id": str }
+#   res: { "answer": str, "sources": [str], "used_tools": [str] }
+# POST /feedback
+#   req: { "answer_id": str, "useful": bool }
+#   res: { "ok": true }`,
+        note: '관심사를 디렉터리로 분리하고 schemas.py(API 계약)를 먼저 확정하면 프론트·백이 목(mock)으로 병렬 개발 가능. README에 아키텍처·실행법을 남겨 재현성을 확보.',
+      },
+    ],
+  },
+  'capstone-2': {
+    theory: [
+      {
+        h: '구현 전략: 수직 슬라이스 + 관측',
+        body: '기능을 가로(전부의 UI→전부의 API→전부의 DB)로 만들면 끝까지 동작하는 게 늦게 나온다. 한 기능을 세로로(UI~DB까지) 먼저 완성하는 수직 슬라이스가 통합 위험을 조기에 줄인다. 매일 통합해 "통합 지옥"을 피하고, 항상 데모 가능한 상태를 유지한다. 멀티스텝 에이전트는 어디서 실패했는지 보이지 않으므로, 각 노드·도구 호출에 로깅·관측을 심어야 디버깅이 가능하다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 에이전트 + RAG 통합 골격 (관측 포함)',
+        lang: 'python',
+        code: `import logging, time, functools
+from langgraph.prebuilt import create_react_agent
+from langchain_core.tools import tool
+from langchain_openai import ChatOpenAI
+
+log = logging.getLogger("capstone")
+
+def traced(fn):
+    """노드·도구 실행을 추적해 디버깅을 쉽게."""
+    @functools.wraps(fn)
+    def wrap(*a, **k):
+        t0 = time.perf_counter()
+        try:
+            r = fn(*a, **k)
+            log.info("%s ok %.2fs", fn.__name__, time.perf_counter() - t0)
+            return r
+        except Exception as e:
+            log.exception("%s FAIL: %s", fn.__name__, e)
+            raise
+    return wrap
+
+@tool
+@traced
+def search_docs(query: str) -> str:
+    """사내 문서에서 관련 내용을 검색(RAG)."""
+    hits = vectordb.similarity_search(query, k=4)
+    return "\\n---\\n".join(d.page_content for d in hits)
+
+@tool
+@traced
+def call_api(endpoint: str) -> str:
+    """승인된 외부 API를 호출."""
+    return external.get(endpoint)
+
+agent = create_react_agent(ChatOpenAI(model="gpt-4o-mini"), tools=[search_docs, call_api])
+
+def answer(message: str) -> dict:
+    out = agent.invoke({"messages": [("user", message)]})
+    return {"answer": out["messages"][-1].content}`,
+        note: 'RAG 검색을 "도구"로 감싸면 에이전트가 필요할 때만 문서를 찾는다. @traced 데코레이터로 각 단계의 성공/지연/오류를 로깅해 멀티스텝 디버깅을 가능하게 한다.',
+      },
+    ],
+  },
+  'capstone-3': {
+    theory: [
+      {
+        h: '완성·검증·발표',
+        body: '발표 직전의 수정은 회귀(잘 되던 게 깨짐)를 부른다. 핵심 시나리오를 엔드투엔드 테스트로 고정하면 막판 변경에도 안전하고, 그 테스트가 곧 데모 스크립트가 된다. 시연은 라이브를 우선하되 실패에 대비해 녹화·백업을 준비하고 리허설로 시간을 맞춘다. 마무리로 KPT 회고와 README·재현 환경을 정리하면 결과물이 포트폴리오가 된다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: E2E 테스트 + 발표용 스모크 스크립트',
+        lang: 'python',
+        code: `# tests/test_e2e.py — 핵심 시나리오를 고정(회귀 방지 + 데모 대본)
+import pytest
+from backend.app import answer
+
+@pytest.mark.parametrize("q,expect", [
+    ("환불 절차 알려줘", "환불"),
+    ("영업시간은?", "시간"),
+    ("", None),                      # 엣지: 빈 입력
+])
+def test_answer(q, expect):
+    if expect is None:
+        with pytest.raises(Exception):
+            answer(q)
+    else:
+        res = answer(q)
+        assert expect in res["answer"] and len(res["answer"]) > 10
+
+# demo.sh — 발표 직전 스모크 테스트
+# set -e
+# curl -sf localhost:8000/health
+# curl -sf -X POST localhost:8000/chat -d '{"message":"핵심 질문","session_id":"demo"}'
+# echo "데모 준비 완료"`,
+        note: '핵심 시나리오 + 엣지(빈 입력)를 파라미터라이즈드 테스트로 고정. 발표 전 스모크 스크립트로 서버·핵심 경로를 한 번에 점검해 라이브 데모 실패를 예방.',
+      },
+    ],
+  },
+
+  // ── AI 서비스 개발 Mini-project ──
+  'miniproject-1': {
+    theory: [
+      {
+        h: '기획·설계: 계약 우선',
+        body: '미니 프로젝트는 기간이 짧아 범위 통제가 생명이다. 요구사항을 MoSCoW(Must/Should/Could/Won’t)로 우선순위화하고, MVP(핵심 가설을 검증할 최소 기능)부터 만든다. API 계약을 먼저 합의(contract-first)하면 프론트·백이 목으로 병렬 개발할 수 있고, 데이터 플로우(입력→처리→출력)를 그려 병목·의존을 파악한다. 기술 스택은 화려함보다 팀 역량·배포 용이성으로 고른다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 프로젝트 골격 + 환경 분리',
+        lang: 'text',
+        code: `app/
+ ├─ api.py        # FastAPI 엔드포인트(얇게)
+ ├─ chain.py      # LLM/RAG/Agent 핵심 로직
+ ├─ db.py         # Vector/RDB 접근
+ ├─ schemas.py    # 요청/응답 모델(API 계약)
+ ├─ settings.py   # 환경변수 로딩(pydantic-settings)
+ ├─ requirements.txt
+ └─ .env          # OPENAI_API_KEY, DB_URL ... (git 제외!)
+
+# settings.py — 비밀값은 코드가 아닌 환경변수에서
+from pydantic_settings import BaseSettings
+class Settings(BaseSettings):
+    openai_api_key: str
+    db_url: str = "sqlite:///app.db"
+    class Config: env_file = ".env"
+settings = Settings()
+
+# .gitignore 에 반드시: .env`,
+        note: '역할별 파일 분리(관심사 분리)로 협업·테스트가 쉬워진다. pydantic-settings로 환경변수를 타입 안전하게 읽고, .env는 .gitignore로 보호한다.',
+      },
+    ],
+  },
+  'miniproject-2': {
+    theory: [
+      {
+        h: '구현: 모듈화·안정화',
+        body: 'AI 로직(chain)과 API 계층을 분리하면 테스트·교체가 쉽다. 외부 호출(LLM·DB)은 실패할 수 있으므로 예외를 잡아 사용자 친화 메시지를 반환하고, 반복 질의가 많으면 캐싱으로 비용·지연을 줄인다. 로깅으로 요청·오류를 남겨 운영 가시성을 확보하고, 입력은 검증해 비정상 입력이 핵심 로직까지 가지 않게 한다. 매일 통합·중간 시연으로 방향을 조기 교정한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 모듈 분리 + 캐싱 + 예외 처리',
+        lang: 'python',
+        code: `# chain.py — AI 로직(API와 분리)
+import hashlib, functools
+from langchain_openai import ChatOpenAI
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3, timeout=30, max_retries=2)
+
+@functools.lru_cache(maxsize=512)         # 동일 질문 캐싱(비용·지연↓)
+def _cached(q_hash: str, q: str) -> str:
+    return llm.invoke(q).content
+
+def answer(question: str) -> str:
+    key = hashlib.sha256(question.encode()).hexdigest()
+    return _cached(key, question)
+
+# api.py — 얇은 API 계층
+from fastapi import FastAPI
+from pydantic import BaseModel
+from chain import answer
+app = FastAPI()
+
+class Ask(BaseModel):
+    question: str
+
+@app.post("/ask")
+def ask(req: Ask):
+    if not req.question.strip():
+        return {"error": "질문이 비어 있습니다."}
+    try:
+        return {"answer": answer(req.question)}
+    except Exception as e:
+        return {"error": f"잠시 후 다시 시도해주세요: {e}"}`,
+        note: 'chain(로직)과 api(인터페이스)를 분리하고, lru_cache로 반복 질의를 캐싱, 예외를 잡아 안전한 메시지를 반환하는 실전 구조. 입력 검증으로 빈 질문을 차단.',
+      },
+    ],
+  },
+  'miniproject-3': {
+    theory: [
+      {
+        h: '테스트·배포',
+        body: '발표 전 핵심 경로와 엣지 케이스(빈 입력·긴 입력·오류)를 점검하고, 동시 요청 부하로 병목·타임아웃을 확인한다. 배포는 환경변수·시크릿을 분리하고 재현 가능한 빌드(컨테이너/고정 의존성)로 한다. 무료 호스팅은 유휴 시 슬립(콜드스타트)이 있으니 첫 응답 지연을 감안하고, 문제 시 즉시 이전 버전으로 롤백할 수 있게 한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: Dockerfile + 배포 + 부하 스모크',
+        lang: 'bash',
+        code: `# Dockerfile
+# FROM python:3.11-slim
+# WORKDIR /app
+# COPY requirements.txt . && RUN pip install -r requirements.txt
+# COPY . .
+# CMD ["gunicorn","-k","uvicorn.workers.UvicornWorker","app.api:app","--bind","0.0.0.0:8000"]
+
+# 1) 로컬 동작 확인
+uvicorn app.api:app --reload &
+
+# 2) 핵심·엣지 스모크 테스트
+curl -sf localhost:8000/ask -X POST -H "Content-Type: application/json" \\
+     -d '{"question":"테스트 질문"}'
+curl -s  localhost:8000/ask -X POST -H "Content-Type: application/json" \\
+     -d '{"question":""}'                       # 엣지: 빈 입력
+
+# 3) 동시 50요청 부하 (간이)
+seq 50 | xargs -P10 -I{} curl -s -o /dev/null -w "%{http_code} " \\
+     localhost:8000/ask -X POST -H "Content-Type: application/json" \\
+     -d '{"question":"부하"}'; echo`,
+        note: '컨테이너로 재현 가능한 배포본을 만들고, 정상·엣지·부하를 스모크 테스트한다. xargs -P10 으로 동시 요청을 흘려 콜드스타트·타임아웃·에러율을 점검.',
+      },
+    ],
+  },
+
+  // ── 참고용 (Spring AI) ──
+  'spring-ai-1': {
+    theory: [
+      {
+        h: 'Spring AI: ChatClient 추상화',
+        body: 'Spring AI는 LLM 호출을 ChatClient/ChatModel로 추상화해 OpenAI·Anthropic·Ollama 등 프로바이더를 설정만으로 교체할 수 있다. ChatClient.Builder로 시스템 프롬프트·기본 옵션을 고정하고, prompt().user(..).call().content()의 유창한 API로 호출한다. 모델·키는 application.yml에 두고 환경변수로 주입하며, 스트리밍은 Flux로 받는다. Spring의 의존성 주입·자동설정 덕분에 기존 백엔드에 자연스럽게 통합된다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: Spring AI 채팅 컨트롤러 + 설정',
+        lang: 'java',
+        code: `// application.yml
+// spring:
+//   ai:
+//     openai:
+//       api-key: \${OPENAI_API_KEY}
+//       chat:
+//         options: { model: gpt-4o-mini, temperature: 0.3 }
+
+@RestController
+@RequestMapping("/api")
+class ChatController {
+    private final ChatClient chat;
+
+    ChatController(ChatClient.Builder builder) {
+        this.chat = builder
+            .defaultSystem("너는 친절한 한국어 상담원이다.")
+            .build();
+    }
+
+    record ChatReq(String message) {}
+    record ChatRes(String answer) {}
+
+    @PostMapping("/chat")
+    ChatRes chat(@RequestBody ChatReq req) {
+        String answer = chat.prompt()
+                .user(req.message())
+                .call()
+                .content();
+        return new ChatRes(answer);
+    }
+
+    // 스트리밍 (SSE)
+    @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    Flux<String> stream(@RequestParam String q) {
+        return chat.prompt().user(q).stream().content();
+    }
+}`,
+        note: 'ChatClient.Builder로 시스템 프롬프트를 고정하고, record로 요청/응답 DTO를 정의. call()은 동기, stream()은 SSE 스트리밍. 키·모델은 application.yml에서 환경변수로 주입.',
+      },
+    ],
+  },
+  'spring-ai-2': {
+    theory: [
+      {
+        h: 'Spring AI 기반 RAG',
+        body: 'Spring AI는 EmbeddingModel과 VectorStore(pgvector·Redis 등) 추상화를 제공한다. 문서를 TokenTextSplitter로 청킹해 vectorStore.add()로 적재하고, similaritySearch로 질의와 가까운 청크를 가져와 system 컨텍스트로 주입하면 RAG가 된다. 임베딩 차원이 VectorStore 설정과 일치해야 하며, 출처(메타데이터)를 함께 저장해 답변에 근거를 표기한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 문서 적재 + RAG 질의 서비스 (Java)',
+        lang: 'java',
+        code: `@Service
+class RagService {
+    private final VectorStore store;
+    private final ChatClient chat;
+
+    RagService(VectorStore store, ChatClient.Builder b) {
+        this.store = store;
+        this.chat = b.build();
+    }
+
+    // 1) 문서 적재: 청킹 → 임베딩 → 저장
+    void ingest(String text) {
+        var docs = new TokenTextSplitter().apply(List.of(new Document(text)));
+        store.add(docs);
+    }
+
+    // 2) RAG 질의: 검색 → 컨텍스트 결합 → 생성
+    String ask(String question) {
+        var hits = store.similaritySearch(
+            SearchRequest.query(question).withTopK(4));
+        String context = hits.stream()
+            .map(Document::getText)
+            .collect(Collectors.joining("\\n---\\n"));
+        return chat.prompt()
+            .system("아래 컨텍스트만 근거로 답하라. 없으면 '자료에 없음'.\\n" + context)
+            .user(question)
+            .call().content();
+    }
+}`,
+        note: 'TokenTextSplitter로 청킹 후 VectorStore에 적재하고, similaritySearch 결과를 system 컨텍스트로 주입하는 Spring AI RAG 패턴. "없으면 없다" 지시로 환각을 억제.',
+      },
+    ],
+  },
+  'spring-ai-3': {
+    theory: [
+      {
+        h: 'Function Calling · 구조화 출력 · 보안',
+        body: 'Function Calling은 모델이 필요할 때 등록된 함수(외부 API·DB 조회)를 호출하게 한다. @Description 메타데이터가 "언제 부를지" 판단 근거가 되고, 결과는 다시 모델에 전달돼 답변에 반영된다. 응답을 record/POJO로 매핑(entity)하면 후속 처리가 안전하다. 보안상 사용자 입력은 system 지시와 분리·검증해 프롬프트 인젝션을 막고, 도구가 외부에 영향을 주는 경우 권한·검증을 둔다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: Function Calling + 구조화 출력 (Java)',
+        lang: 'java',
+        code: `// 1) 도구(함수) 등록 — 설명이 호출 판단 근거
+public record WeatherReq(String city) {}
+public record WeatherRes(String city, int tempC) {}
+
+@Bean
+@Description("도시의 현재 날씨를 조회한다")
+Function<WeatherReq, WeatherRes> currentWeather(WeatherApi api) {
+    return req -> new WeatherRes(req.city(), api.tempOf(req.city()));
+}
+
+// 2) 호출 시 도구 활성화 + 구조화 출력
+record TravelTip(String city, String advice, int tempC) {}
+
+@PostMapping("/tip")
+TravelTip tip(@RequestBody String city) {
+    return chat.prompt()
+        .user("%s 날씨를 확인하고 옷차림을 조언해줘".formatted(city))
+        .functions("currentWeather")          // 모델이 필요 시 호출
+        .call()
+        .entity(TravelTip.class);             // JSON → record 자동 매핑
+}`,
+        note: '@Description으로 도구 호출 판단을 돕고, .functions()로 활성화, .entity()로 응답을 record로 매핑. 모델이 currentWeather를 호출해 실시간 값을 답변에 반영한다.',
+      },
+    ],
+  },
 }
 
 export const theoryFor = (subjectId, day) => theory[`${subjectId}-${day}`] || null
