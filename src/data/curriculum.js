@@ -552,7 +552,8 @@ export const sessions = [
   { date: '2026-09-03', weekday: '목', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 3 },
 
   { date: '2026-09-17', weekday: '목', region: '판교', klass: '4반', subjectId: 'rag', day: 1 },
-  { date: '2026-09-21', weekday: '월', region: '판교', klass: '4반', subjectId: 'rag', day: 2 },
+  // 09/18(검색·생성, Day2)은 타 강사 → 담당 강의는 Day1·Day3
+  { date: '2026-09-21', weekday: '월', region: '판교', klass: '4반', subjectId: 'rag', day: 3 },
 
   { date: '2026-09-22', weekday: '화', region: '판교', klass: '4반', subjectId: 'langchain', day: 1 },
   { date: '2026-09-28', weekday: '월', region: '판교', klass: '4반', subjectId: 'langchain', day: 2 },
