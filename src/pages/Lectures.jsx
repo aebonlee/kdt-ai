@@ -6,6 +6,7 @@ import { examplesFor } from '../data/lectureexamples'
 import { conceptsFor } from '../data/lectureconcepts'
 import { detailsFor } from '../data/lecturedetails'
 import { theoryFor } from '../data/lecturetheory'
+import { realCodeExtraFor } from '../data/lecturetheory2'
 import { periodsFor, PERIOD_TIMES } from '../data/lectureperiods'
 import CodeBlock from '../components/CodeBlock'
 
@@ -50,6 +51,10 @@ export default function Lectures() {
   const keyConcepts = conceptsFor(current.subjectId, current.day)
   const detail = detailsFor(current.subjectId, current.day)
   const deepTheory = theoryFor(current.subjectId, current.day)
+  const realCodes = [
+    ...(deepTheory?.realCode || []),
+    ...realCodeExtraFor(current.subjectId, current.day),
+  ]
   const dayPeriods = periodsFor(current.subjectId, current.day)
 
   // 탭 구성: 월별 그룹, 단 한 월에 지역이 여럿이면 지역별로 분리 (예: 10월 판교 / 10월 광주)
@@ -364,13 +369,13 @@ export default function Lectures() {
             )}
 
             {/* 실전 소스 (긴 코드) */}
-            {deepTheory?.realCode?.length > 0 && (
+            {realCodes.length > 0 && (
               <>
                 <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
                   🛠 실전 소스
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
-                  {deepTheory.realCode.map((ex, i) => (
+                  {realCodes.map((ex, i) => (
                     <div key={i}>
                       <div className="box-h" style={{ marginBottom: 8 }}>
                         {ex.title}

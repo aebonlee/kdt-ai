@@ -1,6 +1,7 @@
-// 코드 블록 — 주석을 녹색으로 표기.
+// 코드 블록 — 주석을 녹색으로 표기 + 복사 버튼.
 // 언어별 라인 주석 토큰을 감지해 주석 부분만 .cmt(녹색)로 감싼다.
 // URL의 '//'(앞이 ':') 같은 오탐을 피하려고 토큰 앞이 공백/줄머리일 때만 주석으로 본다.
+import { useState } from 'react'
 
 const LINE_TOKEN = {
   python: '#',
@@ -40,25 +41,48 @@ function segments(line, lang) {
 }
 
 export default function CodeBlock({ code, lang }) {
+  const [copied, setCopied] = useState(false)
   const lines = String(code).split('\n')
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(String(code))
+    } catch {
+      // 폴백: 임시 textarea
+      const ta = document.createElement('textarea')
+      ta.value = String(code)
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
   return (
-    <pre className="codeblock">
-      <code>
-        {lines.map((ln, i) => (
-          <span key={i}>
-            {segments(ln, lang).map((s, j) =>
-              s.c ? (
-                <span key={j} className="cmt">
-                  {s.t}
-                </span>
-              ) : (
-                <span key={j}>{s.t}</span>
-              ),
-            )}
-            {'\n'}
-          </span>
-        ))}
-      </code>
-    </pre>
+    <div className="codewrap">
+      <button className="code-copy" onClick={copy} aria-label="코드 복사">
+        {copied ? '✓ 복사됨' : '📋 복사'}
+      </button>
+      <pre className="codeblock">
+        <code>
+          {lines.map((ln, i) => (
+            <span key={i}>
+              {segments(ln, lang).map((s, j) =>
+                s.c ? (
+                  <span key={j} className="cmt">
+                    {s.t}
+                  </span>
+                ) : (
+                  <span key={j}>{s.t}</span>
+                ),
+              )}
+              {'\n'}
+            </span>
+          ))}
+        </code>
+      </pre>
+    </div>
   )
 }
