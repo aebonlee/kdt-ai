@@ -11,6 +11,11 @@ import Prep from './pages/Prep'
 import Lectures from './pages/Lectures'
 import References from './pages/References'
 import Progress from './pages/Progress'
+import Login from './pages/Login'
+import Board from './pages/Board'
+import BoardDetail from './pages/BoardDetail'
+import Dashboard from './pages/Dashboard'
+import RequireAuth from './components/RequireAuth'
 
 export default function App() {
   return (
@@ -28,6 +33,12 @@ export default function App() {
           <Route path="/reference" element={<References />} />
           <Route path="/progress" element={<Progress />} />
           <Route path="/day/:date" element={<DayDetail />} />
+
+          {/* 로그인 / 게시판 / 대시보드 */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/board" element={<RequireAuth><Board /></RequireAuth>} />
+          <Route path="/board/:id" element={<RequireAuth><BoardDetail /></RequireAuth>} />
+          <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>

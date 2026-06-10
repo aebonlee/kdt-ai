@@ -1,6 +1,7 @@
 import { NavLink, Link } from 'react-router-dom'
 import { course } from '../data/course'
 import ThemeToggle from './ThemeToggle'
+import AuthButtons from './AuthButtons'
 
 const nav = [
   { to: '/', label: 'About', end: true },
@@ -10,6 +11,8 @@ const nav = [
   { to: '/subjects', label: '과목별 강의' },
   { to: '/reference', label: '참고자료' },
   { to: '/progress', label: '학습관리' },
+  { to: '/board', label: '게시판' },
+  { to: '/dashboard', label: '대시보드' },
 ]
 
 export default function Header() {
@@ -21,8 +24,7 @@ export default function Header() {
             {course.subtitle} · {course.cohort}
           </span>
           <span className="topbar-right">
-            <span>{course.overview.range}</span>
-            <span>판교 · 광주</span>
+            <AuthButtons />
             <ThemeToggle />
           </span>
         </div>
