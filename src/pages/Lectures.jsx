@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { sortedSessions, subjectById, dayOf, sessionByDate } from '../data/curriculum'
+import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } from '../data/curriculum'
 import { planFor } from '../data/lectureplans'
 import { examplesFor } from '../data/lectureexamples'
 import CodeBlock from '../components/CodeBlock'
@@ -7,11 +7,24 @@ import CodeBlock from '../components/CodeBlock'
 const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
 const monthLabel = (m) => `${Number(m.slice(5))}월`
 
+// 참고용 키 파싱: "ref-<subjectId>-<day>"  (subjectId 에 하이픈 포함 가능)
+function parseRef(param) {
+  if (!param || !param.startsWith('ref-')) return null
+  const m = param.slice(4).match(/^(.+)-(\d+)$/)
+  if (!m) return null
+  return { subjectId: m[1], day: Number(m[2]), isRef: true }
+}
+
 export default function Lectures() {
   const { date } = useParams()
   const navigate = useNavigate()
   const all = sortedSessions()
-  const current = sessionByDate(date) || all[0]
+
+  const ref = parseRef(date)
+  const session = !ref ? sessionByDate(date) : null
+  const current = session || ref || all[0]
+  const isRef = !!current.isRef
+  const activeKey = isRef ? `ref-${current.subjectId}-${current.day}` : current.date
 
   // 월별 그룹
   const months = []
@@ -38,21 +51,21 @@ export default function Lectures() {
           <h1>강의안</h1>
           <p>
             <span style={{ display: 'block' }}>날짜별 8시간(09:00~18:00) 상세 강의안입니다.</span>
-            <span style={{ display: 'block' }}>좌측에서 날짜를 선택하면 해당 일자의 시간표와 실습을 볼 수 있습니다.</span>
+            <span style={{ display: 'block' }}>좌측에서 날짜를 선택하면 시간표와 실습을 볼 수 있습니다. (하단 "참고"는 미배정 과목)</span>
           </p>
         </div>
       </div>
 
       <section className="section">
         <div className="container layout-side">
-          {/* 좌측 날짜 메뉴 */}
+          {/* 좌측 메뉴 */}
           <nav className="side-nav" aria-label="강의 날짜">
             {months.map((g) => (
               <div key={g.m}>
                 <p className="side-nav-title">{monthLabel(g.m)}</p>
                 {g.items.map((s) => {
                   const sj = subjectById(s.subjectId)
-                  const isActive = s.date === current.date
+                  const isActive = !isRef && s.date === activeKey
                   return (
                     <button
                       key={s.date}
@@ -69,6 +82,30 @@ export default function Lectures() {
                 })}
               </div>
             ))}
+
+            {/* 참고(미배정) 그룹 */}
+            {referenceSubjects.length > 0 && (
+              <div>
+                <p className="side-nav-title">참고 (미배정)</p>
+                {referenceSubjects.flatMap((rs) =>
+                  rs.days.map((dd, i) => {
+                    const key = `ref-${rs.id}-${i + 1}`
+                    const isActive = key === activeKey
+                    return (
+                      <button
+                        key={key}
+                        className={`side-link${isActive ? ' active' : ''}`}
+                        onClick={() => navigate(`/lectures/${key}`)}
+                        aria-current={isActive ? 'true' : undefined}
+                      >
+                        {rs.name} · Day {i + 1}
+                        <span className="sl-sub">참고 자료</span>
+                      </button>
+                    )
+                  }),
+                )}
+              </div>
+            )}
           </nav>
 
           {/* 본문 — 강의안 */}
@@ -76,9 +113,13 @@ export default function Lectures() {
             <div className="detail-meta">
               <span className="chip chip-code">{subj?.code}</span>
               <span className="chip chip-cat">{subj?.category}</span>
-              <span className={`chip chip-region ${regionClass(current.region)}`}>
-                {current.region} {current.klass}
-              </span>
+              {isRef ? (
+                <span className="chip chip-region gwangju">참고 · 미배정</span>
+              ) : (
+                <span className={`chip chip-region ${regionClass(current.region)}`}>
+                  {current.region} {current.klass}
+                </span>
+              )}
               <span className="chip chip-day">Day {current.day} / {subj?.days.length}</span>
             </div>
 
@@ -86,7 +127,10 @@ export default function Lectures() {
               {d?.title}
             </h2>
             <p style={{ color: 'var(--ink-soft)', marginTop: 4 }}>
-              {subj?.name} · {current.date} ({current.weekday}) · 09:00~18:00 (8H)
+              {subj?.name} ·{' '}
+              {isRef
+                ? '참고 강의안 (현재 강의 미배정)'
+                : `${current.date} (${current.weekday}) · 09:00~18:00 (8H)`}
             </p>
 
             {/* 학습 목표 */}

@@ -103,6 +103,59 @@ export const subjects = [
     ],
   },
   {
+    // 현재 강의 배정 없음(세션 없음) → 일정·과목별 강의엔 표시 안 됨. 강의안에 "참고용"으로만 노출.
+    id: 'spring-ai',
+    code: '4-2',
+    name: 'Spring AI',
+    category: 'Back-end',
+    reference: true,
+    summary: 'Spring Boot 기반으로 LLM·RAG·Tool을 통합하는 Spring AI 애플리케이션 개발',
+    days: [
+      {
+        title: 'Spring AI 개요와 LLM 연동',
+        objectives: [
+          'Spring AI 아키텍처와 추상화(ChatClient) 이해',
+          'Spring Boot 애플리케이션에 LLM 연동',
+        ],
+        contents: [
+          'Spring AI 개요와 의존성·환경설정',
+          'ChatClient / ChatModel 추상화',
+          'OpenAI · Anthropic 등 모델 프로바이더 연동',
+          'PromptTemplate 과 구조화된 메시지',
+          '실습: 채팅 응답 REST API 구현',
+        ],
+      },
+      {
+        title: 'Spring AI 기반 RAG',
+        objectives: [
+          'Embedding 과 VectorStore 개념 이해',
+          'Spring AI 로 문서 기반 질의응답 구현',
+        ],
+        contents: [
+          'Embedding Model 과 벡터화',
+          'VectorStore(예: pgvector) 연동과 문서 적재',
+          'Document Reader / Splitter 로 문서 처리',
+          'Retrieval 결합 프롬프트(RAG) 구성',
+          '실습: 사내 문서 QA API',
+        ],
+      },
+      {
+        title: 'Function Calling·구조화 출력·서비스 통합',
+        objectives: [
+          'Tool/Function Calling 으로 외부 기능 연동',
+          'AI 기능을 실제 서비스에 통합',
+        ],
+        contents: [
+          'Function Calling(Tool) 정의와 호출',
+          '구조화 출력(Structured Output) 매핑',
+          '스트리밍 응답과 예외·재시도 처리',
+          'AI 기능의 서비스 통합과 보안 고려사항',
+          '실습: 도구 연동형 AI 기능 서비스',
+        ],
+      },
+    ],
+  },
+  {
     id: 'sllm',
     code: '8-3',
     name: 'sLLM 구현 및 Fine Tunning',
@@ -532,6 +585,9 @@ export const subjectById = (id) => subjects.find((s) => s.id === id)
 export const sortedSessions = () => [...sessions].sort((a, b) => a.date.localeCompare(b.date))
 
 export const sessionByDate = (date) => sessions.find((s) => s.date === date)
+
+// 참고용(미배정) 과목 — 강의안에 참고로만 노출
+export const referenceSubjects = subjects.filter((s) => s.reference)
 
 // 과목별로 묶은 세션 { subject, items[] } (담당 과목만, 첫 강의일 순)
 export const sessionsBySubject = () =>
