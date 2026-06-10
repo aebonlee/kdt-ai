@@ -16,6 +16,22 @@
         }
       })()
     </script>
+    <script>
+      // SPA 경로 복원 (GitHub Pages 404.html 폴백과 연동)
+      // 404.html이 '/?/prep' 형태로 보낸 경로를 원래 URL(/prep)로 되돌린다.
+      (function (l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search
+            .slice(1)
+            .split('&')
+            .map(function (s) {
+              return s.replace(/~and~/g, '&')
+            })
+            .join('?')
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash)
+        }
+      })(window.location)
+    </script>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"

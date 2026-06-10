@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>SKALA 4기</title>
+    <script>
+      // GitHub Pages SPA 폴백:
+      // 서버에 없는 경로(예: /prep, /lectures/ref-...)로 직접 접속·새로고침하면
+      // Pages가 이 404.html을 서빙한다. 원래 경로를 쿼리로 인코딩해 index.html로 보낸 뒤,
+      // index.html의 복원 스크립트가 history.replaceState로 원래 URL을 복구한다.
+      // (커스텀 도메인 루트 배포 기준 — segmentCount = 0)
+      var l = window.location
+      l.replace(
+        l.protocol +
+          '//' +
+          l.hostname +
+          (l.port ? ':' + l.port : '') +
+          '/?/' +
+          l.pathname.slice(1).replace(/&/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash,
+      )
+    </script>
+  </head>
+  <body></body>
+</html>
