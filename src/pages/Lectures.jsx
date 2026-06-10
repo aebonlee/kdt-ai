@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate } from '../data/curriculum'
 import { planFor } from '../data/lectureplans'
+import { examplesFor } from '../data/lectureexamples'
 
 const regionClass = (r) => (r === '광주' ? 'gwangju' : 'pangyo')
 const monthLabel = (m) => `${Number(m.slice(5))}월`
@@ -26,6 +27,7 @@ export default function Lectures() {
   const subj = subjectById(current.subjectId)
   const d = dayOf(current)
   const plan = planFor(current.subjectId, current.day)
+  const codeExamples = examplesFor(current.subjectId, current.day)
 
   return (
     <div>
@@ -141,6 +143,31 @@ export default function Lectures() {
                     <strong style={{ color: 'var(--gold)' }}>📦 산출물 · </strong>
                     {plan.practice.deliverable}
                   </p>
+                </div>
+              </>
+            )}
+
+            {/* 실습 예제 (기술 코드) */}
+            {codeExamples.length > 0 && (
+              <>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
+                  💻 실습 예제
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
+                  {codeExamples.map((ex, i) => (
+                    <div key={i}>
+                      <div className="box-h" style={{ marginBottom: 8 }}>
+                        {ex.title}
+                        <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({ex.lang})</span>
+                      </div>
+                      <pre className="codeblock"><code>{ex.code}</code></pre>
+                      {ex.note && (
+                        <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7 }}>
+                          💡 {ex.note}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </>
             )}
