@@ -8,6 +8,7 @@ import Subjects from './pages/Subjects'
 import Schedule from './pages/Schedule'
 import DayDetail from './pages/DayDetail'
 import Prep from './pages/Prep'
+import Lectures from './pages/Lectures'
 import References from './pages/References'
 import Progress from './pages/Progress'
 
@@ -21,6 +22,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/prep" element={<Prep />} />
+          <Route path="/lectures" element={<Lectures />} />
+          <Route path="/lectures/:date" element={<Lectures />} />
           <Route path="/subjects" element={<Subjects />} />
           <Route path="/reference" element={<References />} />
           <Route path="/progress" element={<Progress />} />

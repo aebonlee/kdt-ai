@@ -1,6 +1,35 @@
+import { useEffect, useState, useRef } from 'react'
 import { prepTopics } from '../data/resources'
 
 export default function Prep() {
+  const [active, setActive] = useState(prepTopics[0].id)
+  const observer = useRef(null)
+
+  // 스크롤 스파이 — 현재 보이는 주제를 좌측 메뉴에 표시
+  useEffect(() => {
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting)
+        if (visible.length) {
+          visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+          setActive(visible[0].target.id)
+        }
+      },
+      { rootMargin: '-80px 0px -65% 0px', threshold: 0 },
+    )
+    prepTopics.forEach((t) => {
+      const el = document.getElementById(t.id)
+      if (el) observer.current.observe(el)
+    })
+    return () => observer.current?.disconnect()
+  }, [])
+
+  const go = (id) => {
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    setActive(id)
+  }
+
   return (
     <div>
       <div className="page-header-ed">
@@ -9,64 +38,97 @@ export default function Prep() {
           <h1>선수학습자료</h1>
           <p>
             <span style={{ display: 'block' }}>수업 전·후 스스로 다져두면 좋은 기초 자료입니다.</span>
-            <span style={{ display: 'block' }}>각 주제의 핵심 항목과 공식 문서 링크를 함께 제공합니다.</span>
+            <span style={{ display: 'block' }}>개념·실습 과제·팁·코드 예시·공식 문서를 주제별로 정리했습니다.</span>
           </p>
         </div>
       </div>
 
       <section className="section">
-        <div className="container">
-          {/* 빠른 이동 */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 28 }}>
+        <div className="container layout-side">
+          {/* 좌측 메뉴 */}
+          <nav className="side-nav" aria-label="선수학습 주제">
+            <p className="side-nav-title">주제</p>
             {prepTopics.map((t) => (
-              <a key={t.id} href={`#${t.id}`} className="chip" style={{ textDecoration: 'none' }}>
+              <button
+                key={t.id}
+                className={`side-link${active === t.id ? ' active' : ''}`}
+                onClick={() => go(t.id)}
+                aria-current={active === t.id ? 'true' : undefined}
+              >
                 {t.name}
-              </a>
+                <span className="sl-sub">{t.tag}</span>
+              </button>
             ))}
-          </div>
+          </nav>
 
-          {prepTopics.map((t) => (
-            <div key={t.id} id={t.id} className="subject" style={{ scrollMarginTop: 90 }}>
-              <div className="subject-head">
-                <h3>{t.name}</h3>
-                <span className="chip chip-cat">{t.tag}</span>
-              </div>
-              <p className="subject-summary">{t.desc}</p>
+          {/* 본문 */}
+          <div>
+            {prepTopics.map((t) => (
+              <article key={t.id} id={t.id} className="subject" style={{ scrollMarginTop: 84 }}>
+                <div className="subject-head">
+                  <h3>{t.name}</h3>
+                  <span className="chip chip-cat">{t.tag}</span>
+                </div>
+                <p className="subject-summary">{t.desc}</p>
 
-              <div className="grid grid-2" style={{ marginTop: 16 }}>
-                {t.sections.map((sec) => (
-                  <div key={sec.h} className="card">
-                    <h4 style={{ fontSize: 13, fontWeight: 800, letterSpacing: '0.04em', color: 'var(--gold)', marginBottom: 8 }}>
-                      {sec.h}
-                    </h4>
-                    <ul style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      {sec.items.map((it, i) => (
-                        <li key={i} style={{ position: 'relative', paddingLeft: 16, fontSize: 14, color: 'var(--navy-700)' }}>
-                          <span style={{ position: 'absolute', left: 2, top: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)' }} />
-                          {it}
-                        </li>
+                {/* 핵심 개념 */}
+                <div className="grid grid-2" style={{ marginTop: 16 }}>
+                  {t.sections.map((sec) => (
+                    <div key={sec.h} className="card">
+                      <h4 style={{ fontSize: 13, fontWeight: 800, color: 'var(--gold)', marginBottom: 8 }}>{sec.h}</h4>
+                      <ul style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {sec.items.map((it, i) => (
+                          <li key={i} style={{ position: 'relative', paddingLeft: 16, fontSize: 14, color: 'var(--navy-700)' }}>
+                            <span style={{ position: 'absolute', left: 2, top: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)' }} />
+                            {it}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 실습 + 팁 */}
+                <div className="grid grid-2" style={{ marginTop: 16 }}>
+                  <div className="box box-practice">
+                    <div className="box-h">🧪 실습 과제</div>
+                    <ol>
+                      {t.practice.map((p, i) => (
+                        <li key={i}>{p}</li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div className="box box-tips">
+                    <div className="box-h">💡 팁</div>
+                    <ul>
+                      {t.tips.map((p, i) => (
+                        <li key={i}>{p}</li>
                       ))}
                     </ul>
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
-                {t.links.map((l) => (
-                  <a
-                    key={l.url}
-                    href={l.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn btn-ghost"
-                    style={{ fontSize: 13, padding: '9px 16px' }}
-                  >
-                    {l.label} ↗
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
+                {/* 코드 예시 */}
+                {t.snippet && (
+                  <div style={{ marginTop: 16 }}>
+                    <div className="box-h" style={{ marginBottom: 8 }}>
+                      ⌨️ 코드 예시 <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({t.snippet.lang})</span>
+                    </div>
+                    <pre className="codeblock"><code>{t.snippet.code}</code></pre>
+                  </div>
+                )}
+
+                {/* 링크 */}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
+                  {t.links.map((l) => (
+                    <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ fontSize: 13, padding: '9px 16px' }}>
+                      {l.label} ↗
+                    </a>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     </div>

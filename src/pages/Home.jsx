@@ -64,10 +64,10 @@ export default function Home() {
             {[
               { to: '/schedule', t: '수업일정표', d: '월별 타임라인 · 지역(분반)별 보기' },
               { to: '/prep', t: '선수학습자료', d: '파이썬·Streamlit·Django·Supabase 등 기초' },
+              { to: '/lectures', t: '강의안', d: '날짜별 8시간 강의안 · 시간표·실습' },
               { to: '/subjects', t: '과목별 강의', d: '담당 12과목의 일자별 학습 내용' },
               { to: '/reference', t: '참고자료', d: '과목별 공식 문서·자료 모음' },
               { to: '/progress', t: '학습관리', d: '이해도 자가평가로 진도율 체크' },
-              { to: '/schedule', t: '바로 시작', d: '오늘 수업부터 확인하기' },
             ].map((c) => (
               <Link key={c.t + c.to} to={c.to} className="card">
                 <h3 style={{ fontSize: 16, fontWeight: 800, color: 'var(--navy-800)' }}>{c.t}</h3>
