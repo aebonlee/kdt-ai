@@ -1,12 +1,33 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { sessionsByMonth, subjectById, dayOf } from '../data/curriculum'
+import { sessionsByMonth, subjectById, dayOf, sortedSessions } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
 const monthLabel = (m) => `${m.slice(0, 4)}년 ${Number(m.slice(5))}월`
 
 const FILTERS = ['전체', '판교', '광주']
+const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
+// 달력: 2026년 7~10월 (month0: 6=7월 … 9=10월)
+const CAL_MONTHS = [
+  [2026, 6],
+  [2026, 7],
+  [2026, 8],
+  [2026, 9],
+]
+
+// 한 달의 셀 배열 (앞쪽 빈칸 포함)
+function buildCells(year, m0) {
+  const firstDow = new Date(Date.UTC(year, m0, 1)).getUTCDay()
+  const days = new Date(Date.UTC(year, m0 + 1, 0)).getUTCDate()
+  const arr = []
+  for (let i = 0; i < firstDow; i++) arr.push(null)
+  for (let d = 1; d <= days; d++) {
+    const ds = `${year}-${String(m0 + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    arr.push({ d, ds })
+  }
+  return arr
+}
 
 export default function Schedule() {
   const [region, setRegion] = useState('전체')
@@ -16,6 +37,12 @@ export default function Schedule() {
       items: items.filter((s) => region === '전체' || s.region === region),
     }))
     .filter((g) => g.items.length > 0)
+
+  // 날짜 → 세션 맵 (지역 필터 적용)
+  const byDate = {}
+  for (const s of sortedSessions()) {
+    if (region === '전체' || s.region === region) byDate[s.date] = s
+  }
 
   return (
     <div>
@@ -47,6 +74,45 @@ export default function Schedule() {
             ))}
           </div>
 
+          {/* 달력 (7~10월) */}
+          {CAL_MONTHS.map(([y, m0]) => {
+            const cells = buildCells(y, m0)
+            return (
+              <div key={`${y}-${m0}`} style={{ marginBottom: 32 }}>
+                <span className="month-label">{y}년 {m0 + 1}월</span>
+                <div className="cal">
+                  {WEEKDAYS.map((w, i) => (
+                    <div key={w} className={`cal-head${i === 0 ? ' sun' : i === 6 ? ' sat' : ''}`}>{w}</div>
+                  ))}
+                  {cells.map((cell, i) => {
+                    if (!cell) return <div key={`e${i}`} className="cal-cell empty" />
+                    const s = byDate[cell.ds]
+                    const sun = i % 7 === 0
+                    const subj = s && subjectById(s.subjectId)
+                    return (
+                      <div key={cell.ds} className={`cal-cell${sun ? ' sun' : ''}`}>
+                        <div className="cal-dnum">{cell.d}</div>
+                        {s && (
+                          <Link
+                            to={`/day/${s.date}`}
+                            className={`cal-ev ${regionClass(s.region, s.klass)}`}
+                            title={`${subj?.name} · ${s.region} ${s.klass} · Day ${s.day}`}
+                          >
+                            {subj?.name}
+                          </Link>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+
+          {/* 타임라인 */}
+          <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--navy-800)', margin: '8px 0 16px' }}>
+            타임라인
+          </h2>
           {months.map(({ month, items }) => (
             <div key={month} style={{ marginBottom: 40 }}>
               <span className="month-label">{monthLabel(month)}</span>
