@@ -11,8 +11,8 @@ create extension if not exists pgcrypto;
 create or replace function public.skala_is_admin()
 returns boolean language sql stable as $$
   select coalesce(auth.jwt() ->> 'email', '') = any (array[
-    'aebon@kyonggi.ac.kr',
-    'aebonlee@gmail.com'
+    'aebon@kyonggi.ac.kr',   -- 구글 로그인
+    'aebon@kakao.com'        -- 카카오 로그인(주 사용)
   ]);
 $$;
 

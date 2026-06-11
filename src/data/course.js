@@ -3,7 +3,7 @@ export const course = {
   title: 'SKALA',
   subtitle: 'SK AI Leader Academy',
   cohort: '4기',
-  instructor: '이애본',
+  instructor: 'Ph.D 이애본',
   tagline: 'SKALA 4기 담당 강의 — 과목·일자별 학습 커리큘럼',
 
   // ── 교육 Overview ──
