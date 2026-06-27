@@ -3,6 +3,259 @@
 // (lectureplans.js 의 schedule/practice 를 보완하는 기술 코드 예제)
 
 export const examples = {
+  // ── 데이터 분석을 위한 Python 이해 ──
+  'python-1': [
+    {
+      title: '자료구조 + 컴프리헨션',
+      lang: 'python',
+      code: `scores = [88, 92, 79, 95, 60]
+
+# 기본 통계
+print("평균:", sum(scores) / len(scores))
+print("최고:", max(scores), "최저:", min(scores))
+
+# 컴프리헨션: 80점 이상만 추출
+passed = [s for s in scores if s >= 80]
+print("합격:", passed)
+
+# 딕셔너리로 단어 빈도수
+text = "data is data and code is code"
+freq = {}
+for w in text.split():
+    freq[w] = freq.get(w, 0) + 1
+print(freq)  # {'data': 2, 'is': 2, ...}`,
+      note: 'get(w, 0)으로 키가 없을 때 기본값 0을 써서 안전하게 누적한다. 컴프리헨션은 반복+조건을 한 줄로.',
+    },
+    {
+      title: 'NumPy 벡터 연산 vs 반복문',
+      lang: 'python',
+      code: `import numpy as np
+
+a = np.array([1, 2, 3, 4, 5])
+
+# 벡터화: 반복문 없이 일괄 연산
+print(a * 2)            # [ 2  4  6  8 10]
+print(a.mean(), a.std())
+
+# 표준화(평균 0, 표준편차 1)
+z = (a - a.mean()) / a.std()
+print(z)
+
+# 조건 인덱싱 — 3보다 큰 값만
+print(a[a > 3])         # [4 5]`,
+      note: '배열 단위 연산(벡터화)은 파이썬 반복문보다 훨씬 빠르고 코드가 간결하다.',
+    },
+  ],
+  'python-2': [
+    {
+      title: 'Pandas 적재·정제·집계',
+      lang: 'python',
+      code: `import pandas as pd
+
+df = pd.read_csv("sales.csv")
+print(df.info())              # 자료형·결측 확인
+
+# 결측치 처리
+df["amount"] = df["amount"].fillna(df["amount"].median())
+df = df.drop_duplicates()
+
+# 조건 선택(loc)
+vip = df.loc[df["amount"] >= 100000, ["user", "amount"]]
+
+# 그룹 집계
+by_region = df.groupby("region")["amount"].agg(["sum", "mean", "count"])
+print(by_region.sort_values("sum", ascending=False))`,
+      note: 'fillna(median)로 결측을 중앙값 대체. groupby+agg로 범주별 합계·평균·건수를 한 번에 산출.',
+    },
+    {
+      title: '시각화 (matplotlib · seaborn)',
+      lang: 'python',
+      code: `import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 분포
+sns.histplot(df["amount"], bins=30)
+plt.title("금액 분포")
+plt.show()
+
+# 상관 히트맵
+corr = df.select_dtypes("number").corr()
+sns.heatmap(corr, annot=True, cmap="Blues")
+plt.show()`,
+      note: 'select_dtypes("number")로 수치형만 골라 상관계수를 구하고 히트맵으로 관계를 한눈에 본다.',
+    },
+  ],
+
+  // ── 웹 서비스 개발 mini-Project ──
+  'webproject-1': [
+    {
+      title: 'API 설계서 예시 (REST)',
+      lang: 'text',
+      code: `엔티티: Post(id, title, body, author, createdAt)
+
+GET    /api/posts        목록 조회   → 200 [Post]
+GET    /api/posts/:id    상세 조회   → 200 Post / 404
+POST   /api/posts        생성        → 201 Post
+PUT    /api/posts/:id    수정        → 200 Post
+DELETE /api/posts/:id    삭제        → 204
+
+예) POST /api/posts
+요청  { "title": "첫 글", "body": "내용", "author": "kim" }
+응답  { "id": 1, "title": "첫 글", ... , "createdAt": "2026-09-08T01:00:00Z" }`,
+      note: '엔드포인트·메서드·상태코드·요청/응답 예시를 표로 먼저 합의하면 프론트/백 병행 개발이 쉬워진다.',
+    },
+  ],
+  'webproject-2': [
+    {
+      title: '목록-상세 데이터 연동 (React)',
+      lang: 'javascript',
+      code: `import { useEffect, useState } from "react"
+
+function PostList() {
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch("/api/posts")
+      .then((r) => {
+        if (!r.ok) throw new Error("불러오기 실패")
+        return r.json()
+      })
+      .then(setPosts)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) return <p>불러오는 중…</p>
+  if (error) return <p>에러: {error}</p>
+  if (posts.length === 0) return <p>게시글이 없습니다.</p>
+
+  return (
+    <ul>
+      {posts.map((p) => (
+        <li key={p.id}><a href={\`/posts/\${p.id}\`}>{p.title}</a></li>
+      ))}
+    </ul>
+  )
+}`,
+      note: '로딩·에러·빈 상태 3가지를 항상 처리하는 것이 실전 UI의 기본. key에는 고유 id를 쓴다.',
+    },
+  ],
+  'webproject-3': [
+    {
+      title: '환경변수 분리 + 빌드·배포',
+      lang: 'bash',
+      code: `# .env (커밋 금지 — .gitignore 에 추가)
+VITE_API_BASE=https://api.example.com
+
+# 코드에서 사용
+#   const base = import.meta.env.VITE_API_BASE
+
+# 프로덕션 빌드
+npm run build        # dist/ 생성
+
+# 정적 호스팅 배포 예 (GitHub Pages)
+#   dist 를 gh-pages 브랜치로 배포하거나 Actions 사용
+npm run preview      # 빌드 결과 로컬 확인`,
+      note: 'API 주소·키는 .env로 분리하고 커밋하지 않는다. preview로 배포 전 빌드본을 검증한다.',
+    },
+  ],
+
+  // ── 실전 Feature Engineering ──
+  'feature-1': [
+    {
+      title: '전처리 + 인코딩 파이프라인 (sklearn)',
+      lang: 'python',
+      code: `from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+
+num = ["age", "income"]
+cat = ["city", "grade"]
+
+num_pipe = Pipeline([
+    ("impute", SimpleImputer(strategy="median")),
+    ("scale", StandardScaler()),
+])
+cat_pipe = Pipeline([
+    ("impute", SimpleImputer(strategy="most_frequent")),
+    ("oh", OneHotEncoder(handle_unknown="ignore")),
+])
+
+pre = ColumnTransformer([
+    ("num", num_pipe, num),
+    ("cat", cat_pipe, cat),
+])
+X_processed = pre.fit_transform(X_train)   # fit은 train에서만!`,
+      note: 'fit은 train에만 적용하고 valid/test는 transform만 해야 데이터 누수를 막는다. ColumnTransformer로 수치·범주를 따로 처리.',
+    },
+    {
+      title: '파생 피처 — 날짜·상호작용',
+      lang: 'python',
+      code: `import pandas as pd
+
+df["dt"] = pd.to_datetime(df["dt"])
+df["dow"] = df["dt"].dt.dayofweek          # 요일(0~6)
+df["is_weekend"] = (df["dow"] >= 5).astype(int)
+df["month"] = df["dt"].dt.month
+
+# 상호작용·비율 피처
+df["price_per_qty"] = df["price"] / (df["qty"] + 1)
+
+# 구간화(binning)
+df["age_band"] = pd.cut(df["age"], bins=[0, 20, 40, 60, 100],
+                        labels=["10s", "30s", "50s", "60+"])`,
+      note: '날짜에서 요일·월·주말 여부를 뽑고, 비율·구간 같은 파생 피처를 더하면 모델이 잡지 못한 패턴을 보강한다.',
+    },
+  ],
+
+  // ── 모델 개발 및 최적화 ──
+  'modeldev-1': [
+    {
+      title: '파이프라인 + 교차검증 베이스라인',
+      lang: 'python',
+      code: `from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+models = {
+    "logreg": LogisticRegression(max_iter=1000),
+    "rf": RandomForestClassifier(random_state=42),
+}
+for name, model in models.items():
+    scores = cross_val_score(model, X, y, cv=cv, scoring="f1_macro")
+    print(f"{name}: F1={scores.mean():.3f} (+/-{scores.std():.3f})")`,
+      note: 'StratifiedKFold로 클래스 비율을 유지하며 교차검증. 평균과 표준편차를 함께 봐서 안정성까지 비교한다.',
+    },
+  ],
+  'modeldev-2': [
+    {
+      title: 'Optuna 하이퍼파라미터 튜닝',
+      lang: 'python',
+      code: `import optuna
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+
+def objective(trial):
+    params = {
+        "n_estimators": trial.suggest_int("n_estimators", 100, 600),
+        "max_depth": trial.suggest_int("max_depth", 3, 20),
+        "min_samples_split": trial.suggest_int("min_samples_split", 2, 10),
+    }
+    model = RandomForestClassifier(**params, random_state=42)
+    return cross_val_score(model, X, y, cv=5, scoring="f1_macro").mean()
+
+study = optuna.create_study(direction="maximize")
+study.optimize(objective, n_trials=30)
+print("best:", study.best_params, study.best_value)`,
+      note: 'Optuna는 이전 시도 결과를 바탕으로 다음 후보를 똑똑하게 고른다(Grid보다 적은 시도로 더 좋은 값). 목적함수는 CV 점수를 반환.',
+    },
+  ],
+
   // ── Prompt 설계와 Context Engineering ──
   'prompt-1': [
     {

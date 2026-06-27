@@ -5,6 +5,190 @@
 const lunch = { time: '12:00–13:00', topic: '점심 휴식', lunch: true }
 
 export const plans = {
+  // ── 데이터 분석을 위한 Python 이해 ──
+  'python-1': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'OT · 분석 환경 점검', detail: 'Colab/Jupyter 셋업, 셀 실행, 강의 목표·데이터 분석 흐름 소개' },
+      { time: '09:30–11:00', topic: '기본 문법', detail: '변수·자료형·연산자, 문자열 포매팅(f-string), 입출력' },
+      { time: '11:00–12:00', topic: '자료구조', detail: '리스트·튜플·딕셔너리·집합, 인덱싱·슬라이싱, 컴프리헨션' },
+      lunch,
+      { time: '13:00–15:00', topic: '실습: 자료구조 다루기', detail: '점수 통계·단어 빈도·중복 제거 미니 문제' },
+      { time: '15:00–16:30', topic: '제어문·함수·예외', detail: '조건문·반복문(enumerate/zip), 함수·예외 처리' },
+      { time: '16:30–17:30', topic: 'NumPy 기초', detail: '배열 생성·벡터 연산·브로드캐스팅·집계' },
+      { time: '17:30–18:00', topic: '정리 · Q&A', detail: '핵심 정리, Day2(Pandas) 예고, 과제 안내' },
+    ],
+    practice: {
+      title: '자료구조 + NumPy로 데이터 요약하기',
+      steps: [
+        'csv 한 개를 골라 리스트/딕셔너리로 적재',
+        '합계·평균·최대/최소 등 요약 통계 계산',
+        '같은 계산을 NumPy 벡터 연산으로 다시 구현',
+        '반복문 버전과 속도·코드 길이 비교',
+      ],
+      deliverable: '요약 통계 노트북(반복문·NumPy 두 버전 포함)',
+    },
+  },
+  'python-2': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'Day1 리뷰 · Pandas 개요', detail: 'Pandas의 역할, Series/DataFrame 구조 소개' },
+      { time: '09:30–11:00', topic: 'DataFrame 다루기', detail: 'read_csv, head/info/describe, loc/iloc, 조건 선택' },
+      { time: '11:00–12:00', topic: '데이터 정제', detail: '결측치 dropna/fillna, 자료형 변환, 중복 제거' },
+      lunch,
+      { time: '13:00–15:00', topic: '실습: 적재·정제', detail: '실데이터 결측·이상치 진단 후 규칙대로 처리' },
+      { time: '15:00–16:30', topic: '집계·결합', detail: 'groupby·agg, merge·pivot_table 로 재구조화' },
+      { time: '16:30–17:30', topic: '시각화', detail: 'matplotlib 기본 차트, seaborn 분포·상관 히트맵' },
+      { time: '17:30–18:00', topic: '발표 · 회고', detail: 'EDA 결과 공유, 인사이트 정리' },
+    ],
+    practice: {
+      title: '실데이터 EDA 노트북 완성',
+      steps: [
+        '데이터 적재 후 결측·이상치 처리',
+        'groupby로 범주별 집계표 작성',
+        '분포·상관 차트 3종 시각화',
+        '발견한 인사이트 3가지 마크다운 정리',
+      ],
+      deliverable: '정제→집계→시각화→인사이트가 담긴 EDA 노트북',
+    },
+  },
+
+  // ── 웹 서비스 개발 mini-Project ──
+  'webproject-1': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'OT · 미니프로젝트 안내', detail: '진행 방식·산출물·평가 기준, 팀 구성' },
+      { time: '09:30–11:00', topic: '주제·요구사항', detail: '문제 정의, MVP 선정, 사용자 시나리오, 기능 우선순위' },
+      { time: '11:00–12:00', topic: '화면 설계', detail: '와이어프레임으로 핵심 화면·흐름 구성' },
+      lunch,
+      { time: '13:00–15:00', topic: '실습: 데이터·API 설계', detail: '엔티티/관계 모델링, CRUD 엔드포인트 정의' },
+      { time: '15:00–16:30', topic: '아키텍처·스택', detail: '프론트/백 구조, 기술 스택 선정 근거' },
+      { time: '16:30–17:30', topic: '셋업·분담', detail: '리포 초기화, 작업 분담·일정(WBS), 협업 규칙' },
+      { time: '17:30–18:00', topic: '계획 발표', detail: '팀별 기획·설계 공유, Day2 예고' },
+    ],
+    practice: {
+      title: '프로젝트 기획·설계 패키지 만들기',
+      steps: [
+        '문제·MVP·사용자 시나리오 정리',
+        '핵심 3화면 와이어프레임 작성',
+        '데이터 모델 + API 설계서 작성',
+        '작업 분담·일정 보드 구성',
+      ],
+      deliverable: '기획서 + 와이어프레임 + API 설계서',
+    },
+  },
+  'webproject-2': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'Day1 리뷰 · 환경 세팅', detail: '설계 확인, 개발 환경·공통 모듈 정리' },
+      { time: '09:30–11:00', topic: '구조 구현', detail: '공통 레이아웃·라우팅·재사용 컴포넌트' },
+      { time: '11:00–12:00', topic: 'UI 구현', detail: '목록·상세·폼 화면 골격' },
+      lunch,
+      { time: '13:00–15:00', topic: '실습: API 연동', detail: '목록-상세 데이터 연동, 로딩·에러 처리' },
+      { time: '15:00–16:30', topic: '폼·상태 관리', detail: '입력 폼·유효성 검사, 전역/지역 상태' },
+      { time: '16:30–17:30', topic: '기능 통합', detail: '컴포넌트 합치고 시나리오대로 동작 확인' },
+      { time: '17:30–18:00', topic: '중간 점검', detail: '진척 공유·이슈 정리, Day3 예고' },
+    ],
+    practice: {
+      title: '핵심 기능 동작까지 구현',
+      steps: [
+        '목록 화면 API 연동·렌더',
+        '상세 라우팅·파라미터 처리',
+        '입력 폼 유효성 검사·제출',
+        '로딩·에러·빈 상태 UI 처리',
+      ],
+      deliverable: '핵심 사용자 흐름이 동작하는 중간 빌드',
+    },
+  },
+  'webproject-3': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'Day2 리뷰 · 잔여 정리', detail: '남은 기능·이슈 점검, 오늘 목표 합의' },
+      { time: '09:30–11:00', topic: '통합·안정화', detail: '기능 통합, 버그 수정, 예외 보강' },
+      { time: '11:00–12:00', topic: 'UI/UX 다듬기', detail: '반응형·접근성, 시각 정리' },
+      lunch,
+      { time: '13:00–15:00', topic: '실습: QA·디버깅', detail: '체크리스트로 점검 후 수정·회귀 확인' },
+      { time: '15:00–16:30', topic: '빌드·배포', detail: '환경변수 분리, 프로덕션 빌드, 정적 배포' },
+      { time: '16:30–17:30', topic: '발표 준비·리허설', detail: '데모 시나리오·자료·역할 분담' },
+      { time: '17:30–18:00', topic: '발표 · 회고', detail: '데모 발표, 상호 피드백, 회고' },
+    ],
+    practice: {
+      title: '배포 + 데모 발표',
+      steps: [
+        'QA 체크리스트로 버그 수정',
+        '환경변수 설정 후 프로덕션 빌드',
+        '정적 호스팅에 배포·동작 검증',
+        '데모 시나리오로 발표',
+      ],
+      deliverable: '배포 URL + 리포 + 회고 노트',
+    },
+  },
+
+  // ── 실전 Feature Engineering ──
+  'feature-1': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'OT · 피처 엔지니어링 개요', detail: '피처가 성능에 미치는 영향, 전체 워크플로' },
+      { time: '09:30–11:00', topic: '수치형 처리', detail: '결측치 대체, 이상치 탐지(IQR/z-score), 스케일링' },
+      { time: '11:00–12:00', topic: '변환', detail: '로그·박스콕스 변환, 구간화(binning)' },
+      lunch,
+      { time: '13:00–14:30', topic: '실습: 수치형 전처리', detail: '결측·이상치·스케일링 파이프라인 구성' },
+      { time: '14:30–16:00', topic: '범주·파생 피처', detail: '원-핫/타깃 인코딩, 날짜·텍스트·상호작용 피처' },
+      { time: '16:00–17:00', topic: '피처 선택·축소', detail: '중요도·상관 기반 선택, PCA, 누수 차단' },
+      { time: '17:00–18:00', topic: '실습: 전후 성능 비교 · 정리', detail: '피처 추가 전후 검증 점수 비교, 해석' },
+    ],
+    practice: {
+      title: '피처 엔지니어링으로 성능 끌어올리기',
+      steps: [
+        '베이스라인 피처로 검증 점수 측정',
+        '인코딩·파생·스케일링 피처 5종 이상 생성',
+        '교차검증 내 타깃 인코딩으로 누수 방지',
+        '전후 점수 비교·중요 피처 해석',
+      ],
+      deliverable: '피처 생성 노트북 + 전후 성능 비교표',
+    },
+  },
+
+  // ── 모델 개발 및 최적화 ──
+  'modeldev-1': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'OT · 모델 개발 워크플로', detail: '문제→베이스라인→검증→비교의 흐름' },
+      { time: '09:30–11:00', topic: '문제·모델 선택', detail: '분류/회귀 정의, 지표 선택, 모델 후보' },
+      { time: '11:00–12:00', topic: '검증 설계', detail: 'train/valid/test, K-fold, 계층적 분할, 누수' },
+      lunch,
+      { time: '13:00–15:00', topic: '실습: 베이스라인', detail: '더미·선형 모델 학습, 교차검증 점수' },
+      { time: '15:00–16:30', topic: '파이프라인', detail: 'Pipeline·ColumnTransformer, 재현성 관리' },
+      { time: '16:30–17:30', topic: '실습: 모델 비교', detail: '3개 모델 동일 검증, 점수·시간 비교' },
+      { time: '17:30–18:00', topic: '정리 · Q&A', detail: '선정 근거 정리, Day2(튜닝) 예고' },
+    ],
+    practice: {
+      title: '베이스라인 수립과 모델 비교',
+      steps: [
+        '전처리+모델 파이프라인 구성',
+        '베이스라인 교차검증 점수 측정',
+        '모델 2종 추가 후 동일 검증',
+        '점수·학습시간 비교표로 후보 선정',
+      ],
+      deliverable: '모델 비교표 + 선정 근거 노트',
+    },
+  },
+  'modeldev-2': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'Day1 리뷰 · 튜닝 목표', detail: '베이스라인 확인, 개선 목표 설정' },
+      { time: '09:30–11:00', topic: '하이퍼파라미터 탐색', detail: 'Grid/Random Search, 탐색 공간 설계' },
+      { time: '11:00–12:00', topic: 'Bayesian 최적화', detail: 'Optuna study, CV와 결합한 튜닝' },
+      lunch,
+      { time: '13:00–15:00', topic: '실습: 튜닝 실행', detail: 'Optuna로 best params 탐색, 전후 비교' },
+      { time: '15:00–16:00', topic: '과적합 제어', detail: '규제·조기종료, 학습곡선, 편향-분산' },
+      { time: '16:00–17:00', topic: '앙상블·경량화', detail: '배깅·부스팅·스태킹, 가지치기·양자화' },
+      { time: '17:00–18:00', topic: '발표 · 회고', detail: '성능 개선 결과 공유, 모델 카드 작성' },
+    ],
+    practice: {
+      title: '튜닝과 앙상블로 성능 개선',
+      steps: [
+        'Optuna 탐색 공간 정의·실행',
+        '튜닝 전후 검증 점수 비교',
+        '상위 모델 보팅/스태킹 앙상블',
+        '최종 모델 카드(설정·점수·한계) 작성',
+      ],
+      deliverable: '튜닝·앙상블 결과 보고 + 모델 카드',
+    },
+  },
+
   // ── Prompt 설계와 Context Engineering ──
   'prompt-1': {
     schedule: [

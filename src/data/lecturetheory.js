@@ -4,6 +4,355 @@
 // (1차: LLM·Agent 핵심 / 이후 ML·DL·Vue·서빙·프로젝트로 확장)
 
 export const theory = {
+  // ── 데이터 분석을 위한 Python 이해 ──
+  'python-1': {
+    theory: [
+      {
+        h: '파이썬이 데이터 분석의 표준이 된 이유',
+        body: '파이썬은 문법이 간결해 분석 로직을 빠르게 표현할 수 있고, NumPy·Pandas·scikit-learn·matplotlib로 이어지는 데이터 생태계가 촘촘하다. 특히 NumPy 배열은 C로 구현된 연속 메모리 블록 위에서 벡터화 연산을 수행하기 때문에, 같은 계산을 순수 파이썬 반복문으로 하는 것보다 수십~수백 배 빠르다. 분석에서 반복문 대신 배열·시리즈 단위 연산을 쓰는 습관이 성능과 가독성을 동시에 좌우한다.',
+      },
+      {
+        h: '자료구조를 올바르게 고르는 기준',
+        body: '리스트는 순서가 있고 가변이라 일반적인 시퀀스에, 튜플은 불변이라 변경되면 안 되는 묶음(좌표·레코드)에 적합하다. 딕셔너리는 키로 O(1) 조회가 가능해 집계·매핑에 강하고, 집합은 중복 제거와 멤버십 테스트(in)가 빠르다. 예를 들어 "이미 본 항목인가?"를 리스트로 확인하면 O(n)이지만 집합이면 O(1)이다. 자료구조 선택만으로도 코드의 시간복잡도가 달라진다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: CSV 요약 통계 — 반복문 vs NumPy',
+        lang: 'python',
+        code: `import csv, time
+import numpy as np
+
+# 1) 순수 파이썬으로 평균·표준편차
+def py_stats(values):
+    n = len(values)
+    mean = sum(values) / n
+    var = sum((v - mean) ** 2 for v in values) / n
+    return mean, var ** 0.5
+
+# 2) NumPy 벡터화
+def np_stats(values):
+    a = np.array(values)
+    return a.mean(), a.std()
+
+data = list(range(1, 1_000_001))
+
+t0 = time.time(); py_stats(data);  t_py = time.time() - t0
+t0 = time.time(); np_stats(data);  t_np = time.time() - t0
+print(f"순수 파이썬: {t_py:.3f}s / NumPy: {t_np:.3f}s")  # NumPy가 훨씬 빠름`,
+        note: '동일 통계를 두 방식으로 구현해 속도를 직접 비교한다. 데이터가 커질수록 벡터화의 이점이 극적으로 벌어진다.',
+      },
+    ],
+  },
+  'python-2': {
+    theory: [
+      {
+        h: 'DataFrame은 "열 단위"로 생각한다',
+        body: 'Pandas DataFrame은 각 열이 하나의 NumPy 배열(Series)인 열-지향 구조다. 그래서 행을 한 줄씩 반복(iterrows)하는 방식은 느리고, 열 단위 벡터 연산이나 groupby·apply 같은 일괄 연산이 훨씬 빠르다. 결측치는 부동소수 NaN으로 표현되어 자료형에 영향을 주며, 분석 전 fillna/dropna로 처리해야 집계가 왜곡되지 않는다. 인덱싱은 라벨 기반 loc와 정수 위치 기반 iloc를 구분해서 쓰는 것이 핵심이다.',
+      },
+      {
+        h: 'groupby: 분할-적용-결합',
+        body: 'groupby는 데이터를 키별로 나누고(split), 각 그룹에 집계 함수를 적용(apply)한 뒤, 결과를 다시 합치는(combine) 패턴이다. SQL의 GROUP BY와 같은 발상이지만, agg로 여러 통계를 동시에 구하거나 transform으로 그룹 통계를 원래 행에 되돌려 붙이는 등 더 유연하다. 예를 들어 "고객별 평균 구매액"을 구해 각 거래행에 결합하면 이상치 탐지나 파생 피처 생성에 바로 쓸 수 있다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 정제→집계→시각화 EDA 파이프라인',
+        lang: 'python',
+        code: `import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("orders.csv", parse_dates=["ordered_at"])
+
+# 1) 정제
+df = df.drop_duplicates()
+df["amount"] = df["amount"].fillna(df["amount"].median())
+df = df[df["amount"] > 0]                      # 이상치 제거
+
+# 2) 파생 + 집계
+df["month"] = df["ordered_at"].dt.to_period("M").astype(str)
+monthly = df.groupby("month")["amount"].agg(["sum", "mean", "count"])
+print(monthly)
+
+# 3) 시각화
+monthly["sum"].plot(kind="bar", title="월별 매출")
+plt.tight_layout(); plt.savefig("monthly_sales.png")`,
+        note: '정제→파생→집계→시각화로 이어지는 전형적 EDA 흐름. parse_dates로 날짜를 바로 datetime으로 읽는 점에 주목.',
+      },
+    ],
+  },
+
+  // ── 웹 서비스 개발 mini-Project ──
+  'webproject-1': {
+    theory: [
+      {
+        h: '범위(scope)를 먼저 줄여라 — MVP 사고',
+        body: '미니 프로젝트가 실패하는 가장 흔한 이유는 기능 욕심이다. MVP(Minimum Viable Product)는 "핵심 가치를 검증할 수 있는 최소 기능"만 먼저 만드는 전략이다. 사용자 시나리오에서 가장 중요한 한 줄(예: "글을 쓰고 목록에서 본다")을 정하고, 그 흐름을 끝까지 동작시키는 데 집중한다. 부가 기능은 백로그로 미룬다. 설계 단계에서 화면·데이터·API를 시나리오 기준으로 정렬하면, 구현 단계에서 무엇부터 만들지 자연스럽게 정해진다.',
+      },
+      {
+        h: '화면-데이터-API를 한 표로 잇기',
+        body: '좋은 설계는 세 가지를 일관되게 연결한다: 화면(무엇을 보여줄지)·데이터 모델(무엇을 저장할지)·API(어떻게 주고받을지). 와이어프레임의 각 화면이 어떤 API를 호출하고, 그 API가 어떤 엔티티를 다루는지 매핑표로 정리하면 누락과 중복이 드러난다. 이 매핑이 곧 작업 분담의 단위가 되어, 프론트와 백엔드가 API 명세(요청/응답 예시)만 합의하면 병행 개발이 가능하다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '설계 산출물: 화면-API 매핑표',
+        lang: 'text',
+        code: `[와이어프레임 → API 매핑]
+
+화면            동작            호출 API                  사용 엔티티
+─────────────────────────────────────────────────────────
+목록 페이지      진입 시 조회     GET  /api/posts           Post[]
+상세 페이지      진입 시 조회     GET  /api/posts/:id       Post
+글쓰기 폼        제출            POST /api/posts           Post(생성)
+수정 폼          제출            PUT  /api/posts/:id       Post(수정)
+목록 내 삭제     클릭            DELETE /api/posts/:id     Post(삭제)
+
+[작업 분담]
+- 프론트: 목록/상세/폼 화면, API 연동, 상태 관리
+- 백엔드: posts CRUD API, 데이터 검증, 저장소
+- 공통: API 명세(요청/응답 예시) 합의 후 병행`,
+        note: '화면·API·엔티티를 한 표로 묶으면 누락이 보이고, 그대로 작업 분담 단위가 된다. 명세 합의가 병행 개발의 전제.',
+      },
+    ],
+  },
+  'webproject-2': {
+    theory: [
+      {
+        h: '비동기 UI의 3상태를 항상 다뤄라',
+        body: '네트워크로 데이터를 가져오는 화면은 반드시 세 가지 상태를 가진다: 로딩 중, 성공(데이터 있음/없음), 에러. 초보 구현은 성공만 처리하다가 느린 네트워크나 서버 오류에서 빈 화면·깨진 UI를 보여준다. 로딩 스피너, 에러 메시지와 재시도, "데이터 없음" 빈 상태를 각각 명시적으로 렌더링해야 실제 사용자가 쓸 수 있는 화면이 된다. 이 패턴은 프레임워크와 무관하게 동일하게 적용된다.',
+      },
+      {
+        h: '상태의 단일 출처와 컴포넌트 분리',
+        body: '같은 데이터를 여러 곳에서 따로 들고 있으면 화면이 어긋난다. 상태는 "단일 출처(source of truth)"를 두고, 필요한 컴포넌트가 그것을 구독해 파생값을 계산하도록 설계한다. UI는 작은 재사용 컴포넌트로 쪼개되, 데이터를 가져오는 책임(컨테이너)과 보여주는 책임(프레젠테이션)을 분리하면 테스트와 협업이 쉬워진다. 관심사 분리는 코드량이 늘어도 복잡도를 낮춘다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 입력 폼 — 유효성 검사 + 제출',
+        lang: 'javascript',
+        code: `import { useState } from "react"
+
+export function PostForm({ onCreated }) {
+  const [form, setForm] = useState({ title: "", body: "" })
+  const [errors, setErrors] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+
+  function validate(f) {
+    const e = {}
+    if (!f.title.trim()) e.title = "제목을 입력하세요"
+    if (f.body.trim().length < 5) e.body = "본문은 5자 이상"
+    return e
+  }
+
+  async function handleSubmit(ev) {
+    ev.preventDefault()
+    const e = validate(form)
+    setErrors(e)
+    if (Object.keys(e).length) return        // 검증 실패 시 중단
+
+    setSubmitting(true)
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error("저장 실패")
+      onCreated(await res.json())
+      setForm({ title: "", body: "" })
+    } catch (err) {
+      setErrors({ submit: err.message })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input value={form.title}
+        onChange={(e) => setForm({ ...form, title: e.target.value })} />
+      {errors.title && <small>{errors.title}</small>}
+      <textarea value={form.body}
+        onChange={(e) => setForm({ ...form, body: e.target.value })} />
+      {errors.body && <small>{errors.body}</small>}
+      <button disabled={submitting}>{submitting ? "저장 중…" : "등록"}</button>
+      {errors.submit && <p>{errors.submit}</p>}
+    </form>
+  )
+}`,
+        note: '제출 전 검증→실패 시 중단, 제출 중 버튼 비활성화, 에러 표시까지 폼의 실전 요소를 모두 담았다.',
+      },
+    ],
+  },
+  'webproject-3': {
+    theory: [
+      {
+        h: '"동작한다"와 "배포된다" 사이',
+        body: '내 PC에서 동작하는 것과 사용자가 접속해 쓰는 것은 다르다. 배포에서는 API 주소·키 같은 설정을 코드에서 분리해 환경변수로 주입하고(개발/운영 분리), 빌드 단계에서 소스를 번들·압축한 정적 산출물을 만든다. SPA는 서버가 모든 경로를 index.html로 폴백해야 새로고침 시 404가 나지 않는다. 배포본은 반드시 한 번 직접 접속해 핵심 흐름을 검증한 뒤 발표에 사용한다.',
+      },
+      {
+        h: 'QA는 체크리스트로, 회고는 구체적으로',
+        body: '마감 직전의 버그 수정은 새 버그를 부른다. 핵심 사용자 시나리오를 체크리스트로 만들어 통과 여부를 점검하고, 수정 후에는 기존 기능이 깨지지 않았는지 회귀 확인한다. 발표 후 회고는 "좋았다/아쉬웠다"에 그치지 말고, 잘된 점·아쉬운 점·다음에 바꿀 것(action)을 구체적으로 적어야 다음 프로젝트의 개선으로 이어진다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: GitHub Actions 정적 배포 워크플로',
+        lang: 'yaml',
+        code: `name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_API_BASE: \${{ secrets.VITE_API_BASE }}   # 운영 API 주소
+      - uses: actions/deploy-pages@v4
+        with: { path: ./dist }`,
+        note: 'main 푸시 → 빌드 → 배포 자동화. API 주소는 코드가 아닌 Actions secrets에서 주입해 환경을 분리한다.',
+      },
+    ],
+  },
+
+  // ── 실전 Feature Engineering ──
+  'feature-1': {
+    theory: [
+      {
+        h: '모델보다 피처가 성능을 가른다',
+        body: '같은 데이터라도 어떤 피처를 주느냐에 따라 단순 모델이 복잡한 모델을 이기기도 한다. 피처 엔지니어링은 도메인 지식을 수치로 번역하는 작업이다. 예컨대 "가입일"이라는 원시 컬럼보다 "가입 후 경과일", "주말 가입 여부" 같은 파생 피처가 모델에 훨씬 유용한 신호를 준다. 스케일링·인코딩 같은 형식 변환부터 비율·구간·상호작용 같은 의미 있는 파생까지, 피처 품질이 모델 상한을 결정한다.',
+      },
+      {
+        h: '데이터 누수: 가장 치명적인 실수',
+        body: '데이터 누수(leakage)는 학습 시점에 알 수 없어야 할 정보가 피처에 섞여 들어가 검증 점수를 비현실적으로 높이는 오류다. 대표적으로 전체 데이터로 스케일러·인코더를 fit하면 test 정보가 train에 새어든다. 반드시 train에서만 fit하고 valid/test에는 transform만 적용해야 한다. 타깃 인코딩은 특히 위험해서, 교차검증의 각 fold 내부에서만 타깃 평균을 계산해야 한다. 누수를 막지 못하면 실서비스에서 성능이 급락한다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 누수 없는 타깃 인코딩 (CV 내부 fit)',
+        lang: 'python',
+        code: `import numpy as np
+import pandas as pd
+from sklearn.model_selection import StratifiedKFold
+
+def target_encode_cv(df, col, target, n_splits=5, smoothing=10):
+    """교차검증 fold 안에서만 타깃 평균을 계산해 누수를 방지"""
+    oof = pd.Series(np.nan, index=df.index)          # out-of-fold 인코딩
+    global_mean = df[target].mean()
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+
+    for tr_idx, val_idx in skf.split(df, df[target]):
+        tr = df.iloc[tr_idx]
+        stats = tr.groupby(col)[target].agg(["mean", "count"])
+        # 스무딩: 표본이 적은 범주는 전체 평균 쪽으로 보정
+        enc = (stats["mean"] * stats["count"] + global_mean * smoothing) \\
+              / (stats["count"] + smoothing)
+        oof.iloc[val_idx] = df.iloc[val_idx][col].map(enc).fillna(global_mean)
+
+    return oof
+
+df["city_te"] = target_encode_cv(df, "city", "y")`,
+        note: 'fold마다 train 부분으로만 타깃 평균을 구해 val에 적용한다. 스무딩으로 희귀 범주의 과적합을 완화하는 것이 실전 포인트.',
+      },
+    ],
+  },
+
+  // ── 모델 개발 및 최적화 ──
+  'modeldev-1': {
+    theory: [
+      {
+        h: '베이스라인 없이는 개선도 없다',
+        body: '모델 개발은 화려한 모델부터가 아니라 단순한 베이스라인에서 출발해야 한다. 더미 분류기나 로지스틱 회귀로 기준 점수를 잡아두면, 이후 어떤 시도가 실제로 효과가 있었는지 정량적으로 판단할 수 있다. 베이스라인이 의외로 높다면 문제 자체가 쉬운 것이고, 복잡한 모델이 베이스라인을 못 넘으면 피처나 검증 설계를 의심해야 한다. 모든 개선은 "베이스라인 대비 얼마나"로 이야기한다.',
+      },
+      {
+        h: '교차검증과 데이터 분할의 원칙',
+        body: '단일 train/test 분할은 운에 따라 점수가 출렁인다. K-fold 교차검증은 데이터를 K등분해 번갈아 검증함으로써 일반화 성능을 더 안정적으로 추정한다. 클래스가 불균형하면 StratifiedKFold로 각 fold의 클래스 비율을 유지하고, 시계열이면 미래로 검증하는 시간 분할을 써야 한다. test 세트는 최종 평가 한 번에만 사용하고, 그 전까지의 모든 선택은 valid(또는 CV)로 결정해 과대평가를 막는다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 전처리 파이프라인 + 모델 비교',
+        lang: 'python',
+        code: `from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.model_selection import cross_validate, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+
+pre = ColumnTransformer([
+    ("num", Pipeline([("imp", SimpleImputer(strategy="median")),
+                      ("sc", StandardScaler())]), num_cols),
+    ("cat", Pipeline([("imp", SimpleImputer(strategy="most_frequent")),
+                      ("oh", OneHotEncoder(handle_unknown="ignore"))]), cat_cols),
+])
+
+cv = StratifiedKFold(5, shuffle=True, random_state=42)
+rows = []
+for name, clf in [("logreg", LogisticRegression(max_iter=1000)),
+                  ("rf", RandomForestClassifier(random_state=42))]:
+    pipe = Pipeline([("pre", pre), ("clf", clf)])
+    r = cross_validate(pipe, X, y, cv=cv, scoring=["f1_macro", "roc_auc"])
+    rows.append({"model": name,
+                 "f1": r["test_f1_macro"].mean(),
+                 "auc": r["test_roc_auc"].mean()})
+print(pd.DataFrame(rows).sort_values("f1", ascending=False))`,
+        note: '전처리를 파이프라인에 포함해 CV의 매 fold에서 fit되도록 했다(누수 방지). 여러 지표를 한 번에 받아 모델을 표로 비교한다.',
+      },
+    ],
+  },
+  'modeldev-2': {
+    theory: [
+      {
+        h: '하이퍼파라미터 탐색: Grid에서 Bayesian으로',
+        body: 'Grid Search는 정의한 격자의 모든 조합을 시도해 확실하지만 차원이 늘면 조합 수가 폭발한다. Random Search는 무작위 샘플링으로 적은 시도로도 중요한 파라미터의 좋은 값을 자주 찾는다. Bayesian 최적화(Optuna 등)는 지금까지의 시도 결과로 "다음에 시도하면 좋을 후보"를 확률모델로 추정해, 같은 예산으로 더 좋은 조합에 빠르게 수렴한다. 핵심은 탐색을 항상 교차검증 점수 위에서 수행해, 검증 세트에 과적합되지 않게 하는 것이다.',
+      },
+      {
+        h: '편향-분산과 앙상블',
+        body: '과소적합(높은 편향)은 모델이 단순해 패턴을 못 잡는 상태, 과적합(높은 분산)은 학습 데이터에만 맞춰진 상태다. 규제·조기종료는 분산을 줄이고, 더 풍부한 피처·복잡한 모델은 편향을 줄인다. 앙상블은 이 트레이드오프를 완화한다: 배깅(랜덤포레스트)은 분산을 낮추고, 부스팅(XGBoost·LightGBM)은 약한 학습기를 순차 보정해 편향을 낮춘다. 스태킹은 서로 다른 모델의 예측을 메타모델이 결합해 단일 모델의 한계를 넘는다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 튜닝된 모델들로 스태킹 앙상블',
+        lang: 'python',
+        code: `from sklearn.ensemble import StackingClassifier, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.model_selection import cross_val_score
+
+# 1) 서로 다른 성격의 베이스 모델 (각자 튜닝된 설정 가정)
+base = [
+    ("rf", RandomForestClassifier(n_estimators=400, max_depth=12, random_state=42)),
+    ("svc", SVC(C=2.0, probability=True, random_state=42)),
+]
+
+# 2) 베이스 예측을 결합하는 메타모델
+stack = StackingClassifier(
+    estimators=base,
+    final_estimator=LogisticRegression(max_iter=1000),
+    cv=5,                       # 베이스 예측도 OOF로 생성 → 누수 방지
+)
+
+score = cross_val_score(stack, X, y, cv=5, scoring="f1_macro")
+print(f"스태킹 F1={score.mean():.3f} (+/-{score.std():.3f})")
+# 단일 모델 점수와 비교해 앙상블 효과를 확인`,
+        note: '성격이 다른 모델(트리+커널)을 섞어야 앙상블 효과가 크다. cv=5로 베이스 예측을 OOF 생성해 메타모델 학습 시 누수를 막는다.',
+      },
+    ],
+  },
+
   // ── Prompt 설계와 Context Engineering ──
   'prompt-1': {
     theory: [
