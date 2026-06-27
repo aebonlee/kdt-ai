@@ -14,7 +14,7 @@ export default function Subjects() {
           <span className="eyebrow">By Subject</span>
           <h1>과목별 보기</h1>
           <p>
-            <Sentences text="담당 과목(모듈)별로 일자별 수업 내용을 확인합니다. 광주는 별도 분반으로 구분 표시됩니다." />
+            <Sentences text="담당 과목(모듈)별로 일자별 수업 내용을 확인합니다. 지역(분반)은 색상으로 구분 표시됩니다." />
           </p>
         </div>
       </div>

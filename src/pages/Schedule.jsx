@@ -51,7 +51,7 @@ export default function Schedule() {
           <span className="eyebrow">Schedule</span>
           <h1>전체 일정</h1>
           <p>
-            <Sentences text="월별 타임라인입니다. 날짜를 클릭하면 일자별 상세로 이동합니다. (광주는 별도 분반)" />
+            <Sentences text="월별 타임라인입니다. 날짜를 클릭하면 일자별 상세로 이동합니다. (울산 · 판교 4·5층 · 광주 — 지역별 분반)" />
           </p>
         </div>
       </div>

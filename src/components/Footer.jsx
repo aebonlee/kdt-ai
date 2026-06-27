@@ -16,7 +16,7 @@ export default function Footer() {
           {course.overview.format}
         </p>
         <p>
-          담당 분반: {course.regions.map((r) => `${r.name} ${r.klass}`).join(' · ')} · 문의:{' '}
+          담당 지역: {course.regions.map((r) => `${r.name} ${r.klass}`.trim()).join(' · ')} · 문의:{' '}
           {course.contact}
         </p>
         <p className="fine">SKALA 4기 학습자용 커리큘럼 안내 페이지 · 강사 담당 일정 기준</p>

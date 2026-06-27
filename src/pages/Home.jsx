@@ -3,11 +3,15 @@ import { course } from '../data/course'
 import { sessionsBySubject, totalSessions, totalSubjects, sortedSessions } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 
+const regionClass = (r) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : 'pangyo')
+const REGION_ORDER = ['판교', '광주', '울산']
+
 export default function Home() {
   const groups = sessionsBySubject()
   const all = sortedSessions()
   const first = all[0]?.date
   const last = all[all.length - 1]?.date
+  const regions = REGION_ORDER.filter((r) => all.some((s) => s.region === r))
 
   return (
     <div>
@@ -20,7 +24,7 @@ export default function Home() {
               SKALA <span className="accent">4기</span><br />담당 강의 커리큘럼
             </h1>
             <p className="hero-lead">
-              <Sentences text={`${course.instructor} 강사 담당 일정 기준입니다. 과목별·일자별 학습 목표와 내용을 확인하세요. (판교 3·4반, 광주 1반 — 광주는 별도 분반)`} />
+              <Sentences text={`${course.instructor} 강사 담당 일정 기준입니다. 과목별·일자별 학습 목표와 내용을 확인하세요. (울산 · 판교 4·5층 · 광주 — 지역별 분반 진행)`} />
             </p>
             <div className="hero-actions">
               <Link to="/schedule" className="btn btn-cta">
@@ -41,8 +45,8 @@ export default function Home() {
                 <div className="metric-label">담당 과목</div>
               </div>
               <div className="metric">
-                <div className="metric-num">2<span className="unit">지역</span></div>
-                <div className="metric-label">판교 · 광주</div>
+                <div className="metric-num">{regions.length}<span className="unit">지역</span></div>
+                <div className="metric-label">{regions.join(' · ')}</div>
               </div>
               <div className="metric">
                 <div className="metric-num" style={{ fontSize: 22 }}>{first?.slice(5)}</div>
@@ -134,7 +138,7 @@ export default function Home() {
                   <div style={{ display: 'flex', gap: 6, marginTop: 12, flexWrap: 'wrap' }}>
                     <span className="chip chip-day">{items.length}일</span>
                     {regions.map((r) => (
-                      <span key={r} className={`chip chip-region ${r === '광주' ? 'gwangju' : 'pangyo'}`}>{r}</span>
+                      <span key={r} className={`chip chip-region ${regionClass(r)}`}>{r}</span>
                     ))}
                   </div>
                 </Link>
