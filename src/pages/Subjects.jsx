@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { sessionsBySubject, dayOf, referenceSubjects } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 
-const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 
 export default function Subjects() {
   const groups = sessionsBySubject()

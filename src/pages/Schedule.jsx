@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import { sessionsByMonth, subjectById, dayOf, sortedSessions } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 
-const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 const monthLabel = (m) => `${m.slice(0, 4)}년 ${Number(m.slice(5))}월`
 
-const FILTERS = ['전체', '판교', '광주']
+const FILTERS = ['전체', '판교', '광주', '울산']
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 // 달력: 2026년 7~10월 (month0: 6=7월 … 9=10월)
 const CAL_MONTHS = [
@@ -69,7 +69,7 @@ export default function Schedule() {
                 {f !== '전체' && (
                   <span className={`region-dot ${regionClass(f)}`} />
                 )}
-                {f === '전체' ? '전체' : f === '판교' ? '판교 (3·4반)' : '광주 (1반)'}
+                {f === '전체' ? '전체' : f === '판교' ? '판교 (4·5층)' : f === '광주' ? '광주 (1반)' : '울산'}
               </button>
             ))}
           </div>

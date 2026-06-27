@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { sessionByDate, subjectById, dayOf, sortedSessions } from '../data/curriculum'
 import { useProgress, setDone } from '../hooks/useProgress'
 
-const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 
 function Block({ title, items }) {
   if (!items || items.length === 0) return null

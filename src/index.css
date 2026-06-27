@@ -30,10 +30,11 @@
   --navy-50:  #F7F8FD;
   --gold:     #3F51FF;
 
-  /* 분반 색 구분 (판교4반 / 판교3반 / 광주1반) */
-  --pangyo:  #3F51FF;  /* 판교 4반 — 인디고 */
-  --pangyo3: #0D9488;  /* 판교 3반 — 틸 */
-  --gwangju: #E0892F;  /* 광주 1반 — 앰버 */
+  /* 지역·층 색 구분 (판교5층 / 판교4층 / 광주 / 울산) */
+  --pangyo:  #3F51FF;  /* 판교 5층 — 인디고 */
+  --pangyo3: #0D9488;  /* 판교 4층 — 틸 */
+  --gwangju: #E0892F;  /* 광주 — 앰버 */
+  --ulsan:   #9333EA;  /* 울산 — 퍼플 */
 
   --ink: var(--navy-800);
   --ink-soft: var(--navy-500);
@@ -218,10 +219,12 @@ ul { list-style: none; }
 .chip-region.pangyo  { background: var(--pangyo); }
 .chip-region.pangyo3 { background: var(--pangyo3); }
 .chip-region.gwangju { background: var(--gwangju); }
+.chip-region.ulsan   { background: var(--ulsan); }
 .region-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 .region-dot.pangyo { background: var(--pangyo); }
 .region-dot.pangyo3 { background: var(--pangyo3); }
 .region-dot.gwangju { background: var(--gwangju); }
+.region-dot.ulsan { background: var(--ulsan); }
 
 /* ── Subject list ── */
 .subject {
@@ -257,6 +260,7 @@ ul { list-style: none; }
 .cal-ev.pangyo { background: var(--pangyo); }
 .cal-ev.pangyo3 { background: var(--pangyo3); }
 .cal-ev.gwangju { background: var(--gwangju); }
+.cal-ev.ulsan { background: var(--ulsan); }
 .cal-ev:hover { filter: brightness(1.1); }
 @media (max-width: 640px) {
   .cal-cell { min-height: 54px; padding: 3px; }

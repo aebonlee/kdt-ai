@@ -8,16 +8,17 @@ export const course = {
 
   // ── 교육 Overview ──
   overview: {
-    period: '2026년 7월 ~ 11월',
-    range: '07.14 ~ 11.05',
+    period: '2026년 7월 ~ 10월',
+    range: '07.15 ~ 10.28',
     time: '평일 09:00 ~ 18:00',
     format: '100% 오프라인 출석',
   },
 
-  // 담당 분반 (광주는 별도 분반)
+  // 담당 지역 (판교는 강의장 층, 광주는 별도 분반, 울산 단기)
   regions: [
-    { name: '판교', klass: '3·4반' },
+    { name: '판교', klass: '4·5층' },
     { name: '광주', klass: '1반' },
+    { name: '울산', klass: '' },
   ],
   contact: 'aebon@hs.ac.kr',
 }

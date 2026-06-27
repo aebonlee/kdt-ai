@@ -1,16 +1,56 @@
 // ─────────────────────────────────────────────────────────────
 // SKALA 4기 — 이애본 강사 담당 강의 커리큘럼
 //
-// 출처: [SK] SKALA AI 캠퍼스 과정 강사 강의분야/스케쥴 확정표
-//   → "확정" 일정 중 비고(기타) 열에 동그라미(o) 표시된 일자 = 담당 강의일
-//   교육기간 2026.07.14 ~ 11.05, 평일 09:00~18:00 (100% 오프라인)
+// 출처: [SK] SKALA AI 캠퍼스 과정 강사 강의분야/스케쥴 확정표 (최종 반영)
+//   교육기간 2026.07.15 ~ 10.28, 평일 09:00~18:00 (100% 오프라인)
+//   지역: 울산 · 판교(4·5층) · 광주
 //
 // 데이터 모델
 //   subject : 과목(모듈). days[] 에 일차별 학습내용(목표/내용) 보유
-//   session : 실제 강의가 잡힌 "일자" 인스턴스 (날짜·요일·지역·반 + 해당 과목의 day)
+//   session : 실제 강의가 잡힌 "일자" 인스턴스 (날짜·요일·지역·층/반 + 해당 과목의 day)
+//             동일 과목을 여러 지역(분반)에 진행하면 day 는 분반마다 1부터 다시 시작
 // ─────────────────────────────────────────────────────────────
 
 export const subjects = [
+  {
+    id: 'python',
+    code: '7-1',
+    name: '데이터 분석을 위한 Python 이해',
+    category: '데이터분석 · MLOps',
+    summary: '데이터 분석을 위한 Python 문법과 핵심 라이브러리(Pandas) 기반 데이터 처리·시각화',
+    days: [
+      {
+        title: 'Python 기초와 데이터 다루기',
+        objectives: [
+          '데이터 분석 관점의 Python 문법 이해',
+          '자료구조와 함수로 데이터 처리 로직 작성',
+        ],
+        contents: [
+          '데이터 분석 환경(Jupyter/Colab) 셋업',
+          '변수·자료형·연산자, 문자열 처리',
+          '리스트·딕셔너리·튜플·집합 등 자료구조',
+          '조건문·반복문·함수·컴프리헨션',
+          'NumPy 배열과 벡터 연산 기초',
+          '실습: 데이터 전처리 기본 스크립트',
+        ],
+      },
+      {
+        title: 'Pandas·시각화로 데이터 분석',
+        objectives: [
+          'Pandas 로 데이터 적재·정제·집계',
+          '시각화로 데이터 인사이트 도출',
+        ],
+        contents: [
+          'Series · DataFrame 구조와 인덱싱',
+          '결측치·이상치 처리와 데이터 정제',
+          '필터링·정렬·그룹별 집계(groupby)',
+          '병합(merge)·피벗·재구조화',
+          'matplotlib · seaborn 시각화',
+          '실습: 실데이터 탐색적 분석(EDA)',
+        ],
+      },
+    ],
+  },
   {
     id: 'prompt',
     code: '8-1',
@@ -98,6 +138,45 @@ export const subjects = [
           '환경변수와 API 베이스 설정',
           'Vite 빌드와 정적 배포',
           '실습: 미니 SPA(목록·상세·폼) 완성·배포',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'webproject',
+    code: '2-2',
+    name: '웹 서비스 개발 mini-Project',
+    category: 'Front-End',
+    summary: '기획부터 배포까지 한 사이클로 진행하는 웹 서비스 개발 미니 프로젝트',
+    days: [
+      {
+        title: '기획·설계',
+        objectives: ['웹 서비스 주제 기획과 요구사항 정의', '화면·데이터·아키텍처 설계'],
+        contents: [
+          '주제 선정과 사용자 시나리오 정의',
+          '화면 흐름(와이어프레임)과 기능 명세',
+          '프론트/백엔드 아키텍처·데이터 모델 설계',
+          '기술 스택 선정과 작업 분담·일정',
+        ],
+      },
+      {
+        title: '구현',
+        objectives: ['설계 기반 핵심 화면·기능 구현'],
+        contents: [
+          'UI 컴포넌트와 화면 라우팅 구현',
+          'API 연동과 상태 관리',
+          '폼 처리·유효성 검사·예외 처리',
+          '중간 점검과 피드백 반영',
+        ],
+      },
+      {
+        title: '통합·배포·발표',
+        objectives: ['통합 테스트 후 배포하고 결과 발표'],
+        contents: [
+          '기능 통합과 버그 수정',
+          '빌드와 정적 배포(환경 구성)',
+          '시연 준비와 결과 발표',
+          '회고와 개선점 정리',
         ],
       },
     ],
@@ -239,6 +318,67 @@ export const subjects = [
           '과적합 방지: 드롭아웃·정규화·데이터 증강',
           '하이퍼파라미터 튜닝과 전이학습',
           '실습: 모델 개선 미니 과제',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'feature',
+    code: '7-2',
+    name: '실전 Feature Engineering',
+    category: '데이터분석 · MLOps',
+    summary: '모델 성능을 끌어올리는 실전 피처 엔지니어링 기법',
+    days: [
+      {
+        title: '실전 Feature Engineering',
+        objectives: [
+          '피처 엔지니어링이 모델 성능에 미치는 영향 이해',
+          '데이터 유형별 피처 생성·선택·변환 기법 적용',
+        ],
+        contents: [
+          '피처 엔지니어링 개요와 워크플로',
+          '결측치·이상치 처리, 스케일링·정규화',
+          '범주형 인코딩(원-핫·타깃·임베딩)',
+          '수치·날짜·텍스트 파생 피처 생성',
+          '피처 선택(중요도·상관·정규화)과 차원 축소',
+          '실습: 피처 엔지니어링 전후 성능 비교',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'modeldev',
+    code: '7-4',
+    name: '모델 개발 및 최적화',
+    category: '데이터분석 · MLOps',
+    summary: '모델 학습 파이프라인 구성과 하이퍼파라미터·성능 최적화',
+    days: [
+      {
+        title: '모델 개발과 학습',
+        objectives: [
+          '문제 정의에 맞는 모델 선택과 학습 파이프라인 구성',
+          '교차검증으로 일반화 성능 평가',
+        ],
+        contents: [
+          '문제 유형별 모델 선택 기준',
+          '학습/검증/테스트 분할과 교차검증',
+          '파이프라인 구성(전처리→학습→평가)',
+          '평가지표 설계와 베이스라인 수립',
+          '실습: 베이스라인 모델 학습·평가',
+        ],
+      },
+      {
+        title: '모델 최적화·튜닝',
+        objectives: [
+          '하이퍼파라미터 튜닝으로 성능 개선',
+          '과적합 제어와 모델 경량화·앙상블 적용',
+        ],
+        contents: [
+          '하이퍼파라미터 탐색(Grid/Random/Bayesian)',
+          '정규화·조기종료로 과적합 제어',
+          '앙상블(배깅·부스팅·스태킹)',
+          '모델 경량화와 추론 성능 최적화',
+          '실습: 튜닝으로 성능 개선·비교',
         ],
       },
     ],
@@ -533,51 +673,72 @@ export const subjects = [
   },
 ]
 
-// 실제 강의가 잡힌 일자(확정 + 동그라미) — 날짜·요일·지역·반 + 과목 day
+// 실제 강의가 잡힌 일자(최종 확정) — 날짜·요일·지역·층/반 + 과목 day
+// klass: 판교는 강의장 층('4층'·'5층'), 광주는 분반('1반'), 울산은 단일('')
 export const sessions = [
-  { date: '2026-07-21', weekday: '화', region: '판교', klass: '4반', subjectId: 'prompt', day: 1 },
+  // ── 7월 (3일) ──
+  { date: '2026-07-15', weekday: '수', region: '울산', klass: '', subjectId: 'python', day: 1 },
+  { date: '2026-07-16', weekday: '목', region: '울산', klass: '', subjectId: 'python', day: 2 },
+  { date: '2026-07-31', weekday: '금', region: '판교', klass: '5층', subjectId: 'vue', day: 1 },
 
-  { date: '2026-07-31', weekday: '금', region: '판교', klass: '4반', subjectId: 'vue', day: 1 },
-  { date: '2026-08-03', weekday: '월', region: '판교', klass: '4반', subjectId: 'vue', day: 2 },
-  { date: '2026-08-04', weekday: '화', region: '판교', klass: '4반', subjectId: 'vue', day: 3 },
-  { date: '2026-08-05', weekday: '수', region: '판교', klass: '4반', subjectId: 'vue', day: 4 },
-  { date: '2026-09-07', weekday: '월', region: '판교', klass: '3반', subjectId: 'vue', day: 1 },
-  { date: '2026-09-08', weekday: '화', region: '판교', klass: '3반', subjectId: 'vue', day: 2 },
+  // ── 8월 (9일) ──
+  // Vue.js — 판교 분반 (Day1~4)
+  { date: '2026-08-03', weekday: '월', region: '판교', klass: '5층', subjectId: 'vue', day: 2 },
+  { date: '2026-08-04', weekday: '화', region: '판교', klass: '5층', subjectId: 'vue', day: 3 },
+  { date: '2026-08-05', weekday: '수', region: '판교', klass: '5층', subjectId: 'vue', day: 4 },
+  // Vue.js — 광주 분반 (Day1~4)
+  { date: '2026-08-18', weekday: '화', region: '광주', klass: '1반', subjectId: 'vue', day: 1 },
+  { date: '2026-08-19', weekday: '수', region: '광주', klass: '1반', subjectId: 'vue', day: 2 },
+  { date: '2026-08-20', weekday: '목', region: '광주', klass: '1반', subjectId: 'vue', day: 3 },
+  { date: '2026-08-21', weekday: '금', region: '광주', klass: '1반', subjectId: 'vue', day: 4 },
+  // sLLM
+  { date: '2026-08-28', weekday: '금', region: '판교', klass: '5층', subjectId: 'sllm', day: 1 },
+  { date: '2026-08-31', weekday: '월', region: '판교', klass: '5층', subjectId: 'sllm', day: 2 },
 
-  { date: '2026-08-28', weekday: '금', region: '판교', klass: '4반', subjectId: 'sllm', day: 1 },
-  { date: '2026-08-31', weekday: '월', region: '판교', klass: '4반', subjectId: 'sllm', day: 2 },
+  // ── 9월 (14일) ──
+  { date: '2026-09-01', weekday: '화', region: '판교', klass: '5층', subjectId: 'ml-dl', day: 1 },
+  { date: '2026-09-02', weekday: '수', region: '판교', klass: '5층', subjectId: 'ml-dl', day: 2 },
+  { date: '2026-09-03', weekday: '목', region: '판교', klass: '5층', subjectId: 'ml-dl', day: 3 },
+  // 웹 서비스 mini-Project — 판교 4층 분반 (Day1~3)
+  { date: '2026-09-08', weekday: '화', region: '판교', klass: '4층', subjectId: 'webproject', day: 1 },
+  { date: '2026-09-09', weekday: '수', region: '판교', klass: '4층', subjectId: 'webproject', day: 2 },
+  { date: '2026-09-10', weekday: '목', region: '판교', klass: '4층', subjectId: 'webproject', day: 3 },
+  { date: '2026-09-11', weekday: '금', region: '판교', klass: '4층', subjectId: 'langchain', day: 1 },
+  { date: '2026-09-14', weekday: '월', region: '판교', klass: '5층', subjectId: 'feature', day: 1 },
+  // 웹 서비스 mini-Project — 판교 5층 분반 (Day1~3)
+  { date: '2026-09-15', weekday: '화', region: '판교', klass: '5층', subjectId: 'webproject', day: 1 },
+  { date: '2026-09-16', weekday: '수', region: '판교', klass: '5층', subjectId: 'webproject', day: 2 },
+  { date: '2026-09-17', weekday: '목', region: '판교', klass: '5층', subjectId: 'webproject', day: 3 },
+  // 모델 개발 및 최적화
+  { date: '2026-09-28', weekday: '월', region: '판교', klass: '5층', subjectId: 'modeldev', day: 1 },
+  { date: '2026-09-29', weekday: '화', region: '판교', klass: '5층', subjectId: 'modeldev', day: 2 },
+  // 모델 서빙 및 AIOps — 판교 분반 (Day1~3)
+  { date: '2026-09-30', weekday: '수', region: '판교', klass: '5층', subjectId: 'serving', day: 1 },
 
-  { date: '2026-09-01', weekday: '화', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 1 },
-  { date: '2026-09-02', weekday: '수', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 2 },
-  { date: '2026-09-03', weekday: '목', region: '판교', klass: '4반', subjectId: 'ml-dl', day: 3 },
-
-  { date: '2026-09-17', weekday: '목', region: '판교', klass: '4반', subjectId: 'rag', day: 1 },
-  // 09/18(검색·생성, Day2)은 타 강사 → 담당 강의는 Day1·Day3
-  { date: '2026-09-21', weekday: '월', region: '판교', klass: '4반', subjectId: 'rag', day: 3 },
-
-  { date: '2026-09-22', weekday: '화', region: '판교', klass: '4반', subjectId: 'langchain', day: 1 },
-  { date: '2026-09-28', weekday: '월', region: '판교', klass: '4반', subjectId: 'langchain', day: 2 },
-  { date: '2026-09-29', weekday: '화', region: '판교', klass: '4반', subjectId: 'langchain', day: 3 },
-
-  { date: '2026-09-30', weekday: '수', region: '판교', klass: '4반', subjectId: 'serving', day: 1 },
-  { date: '2026-10-01', weekday: '목', region: '판교', klass: '4반', subjectId: 'serving', day: 2 },
-  { date: '2026-10-02', weekday: '금', region: '판교', klass: '4반', subjectId: 'serving', day: 3 },
-
+  // ── 10월 (17일) ──
+  { date: '2026-10-01', weekday: '목', region: '판교', klass: '5층', subjectId: 'serving', day: 2 },
+  { date: '2026-10-02', weekday: '금', region: '판교', klass: '5층', subjectId: 'serving', day: 3 },
+  // 모델 서빙 및 AIOps — 광주 분반 (Day1~3)
+  { date: '2026-10-06', weekday: '화', region: '광주', klass: '1반', subjectId: 'serving', day: 1 },
+  { date: '2026-10-07', weekday: '수', region: '광주', klass: '1반', subjectId: 'serving', day: 2 },
+  { date: '2026-10-08', weekday: '목', region: '광주', klass: '1반', subjectId: 'serving', day: 3 },
+  // AI Agent
   { date: '2026-10-12', weekday: '월', region: '광주', klass: '1반', subjectId: 'agent', day: 1 },
   { date: '2026-10-13', weekday: '화', region: '광주', klass: '1반', subjectId: 'agent', day: 2 },
-
+  // Vector DB
   { date: '2026-10-14', weekday: '수', region: '광주', klass: '1반', subjectId: 'vectordb', day: 1 },
-
+  // AI Agent Capstone
   { date: '2026-10-15', weekday: '목', region: '광주', klass: '1반', subjectId: 'capstone', day: 1 },
   { date: '2026-10-16', weekday: '금', region: '광주', klass: '1반', subjectId: 'capstone', day: 2 },
   { date: '2026-10-19', weekday: '월', region: '광주', klass: '1반', subjectId: 'capstone', day: 3 },
-
+  // AI 서비스 개발 Mini-project — 광주 분반 (Day1~3)
   { date: '2026-10-20', weekday: '화', region: '광주', klass: '1반', subjectId: 'miniproject', day: 1 },
   { date: '2026-10-21', weekday: '수', region: '광주', klass: '1반', subjectId: 'miniproject', day: 2 },
   { date: '2026-10-22', weekday: '목', region: '광주', klass: '1반', subjectId: 'miniproject', day: 3 },
-  { date: '2026-10-26', weekday: '월', region: '판교', klass: '4반', subjectId: 'miniproject', day: 1 },
-  { date: '2026-10-27', weekday: '화', region: '판교', klass: '4반', subjectId: 'miniproject', day: 2 },
-  { date: '2026-10-28', weekday: '수', region: '판교', klass: '4반', subjectId: 'miniproject', day: 3 },
+  // AI 서비스 개발 Mini-project — 판교 분반 (Day1~3)
+  { date: '2026-10-26', weekday: '월', region: '판교', klass: '5층', subjectId: 'miniproject', day: 1 },
+  { date: '2026-10-27', weekday: '화', region: '판교', klass: '5층', subjectId: 'miniproject', day: 2 },
+  { date: '2026-10-28', weekday: '수', region: '판교', klass: '5층', subjectId: 'miniproject', day: 3 },
 ]
 
 // ── 조회 헬퍼 ──

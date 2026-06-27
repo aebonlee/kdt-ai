@@ -10,7 +10,7 @@ import { realCodeExtraFor } from '../data/lecturetheory2'
 import { periodsFor, PERIOD_TIMES } from '../data/lectureperiods'
 import CodeBlock from '../components/CodeBlock'
 
-const regionClass = (r, k) => (r === '광주' ? 'gwangju' : k === '3반' ? 'pangyo3' : 'pangyo')
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 const monthLabel = (m) => `${Number(m.slice(5))}월`
 
 // 참고용 키 파싱: "ref-<subjectId>-<day>"  (subjectId 에 하이픈 포함 가능)
