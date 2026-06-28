@@ -52,10 +52,12 @@ export const subjects = [
     ],
   },
   {
+    // 최종 일정 미배정 → 일정·과목별엔 표시 안 됨. 강의안 "참고"에만 노출.
     id: 'prompt',
     code: '8-1',
     name: 'Prompt 설계와 Context Engineering',
     category: 'LLM · Agent',
+    reference: true,
     summary: 'LLM의 입력을 설계·최적화하는 프롬프트 엔지니어링과 컨텍스트 구성 기법',
     days: [
       {
@@ -384,10 +386,12 @@ export const subjects = [
     ],
   },
   {
+    // 최종 일정 미배정 → 일정·과목별엔 표시 안 됨. 강의안 "참고"에만 노출.
     id: 'rag',
     code: '8-7',
     name: 'RAG Pipeline 설계 및 구축',
     category: 'LLM · Agent',
+    reference: true,
     summary: '검색 증강 생성(RAG) 파이프라인의 설계·구축·평가·고도화',
     days: [
       {
