@@ -78,118 +78,130 @@ export const details = {
   "transformer-1": {
     "topics": [
       {
-        "h": "LLM의 입력 처리 흐름",
+        "h": "입력을 숫자로 바꾸는 단계",
         "items": [
-          "원문 텍스트",
-          "토큰화(BPE)",
-          "정수 ID 변환",
-          "임베딩 벡터로 변환",
-          "모델 입력"
+          "토큰화(BPE/WordPiece)와 어휘집(vocabulary)",
+          "토큰 ID와 특수 토큰([CLS]/[SEP])",
+          "임베딩 벡터와 의미 공간",
+          "벡터 유사도(가까운 단어=비슷한 뜻)"
         ]
       },
       {
-        "h": "Attention의 3요소",
+        "h": "기존 시퀀스 모델의 한계",
         "items": [
-          "Query: 무엇을 찾는가(질문)",
-          "Key: 후보의 이름표(색인)",
-          "Value: 실제 가져올 내용",
-          "Score: Q·K의 닮은 정도",
-          "Softmax: 합이 1인 집중 비율"
+          "RNN의 순차 처리와 느린 학습",
+          "장기 의존성(앞 내용을 잊어버림) 문제",
+          "기울기 소실(gradient vanishing)",
+          "병렬화가 어려운 구조적 한계"
         ]
       },
       {
-        "h": "RNN/LSTM의 한계 vs Attention의 장점",
+        "h": "Attention의 구성 요소",
         "items": [
-          "순차 처리라 병렬화가 어려움",
-          "긴 문장의 장기 의존성 약함",
-          "Attention은 모든 단어를 동시에 봄",
-          "먼 단어 관계도 직접 연결"
+          "Query·Key·Value의 역할 구분",
+          "내적(dot-product)으로 유사도 측정",
+          "스케일링(sqrt(d_k))의 이유",
+          "softmax 가중치와 가중합(weighted sum)"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab1. Colab에서 토크나이저 체험하기",
+        "title": "Lab 1. 토크나이저와 임베딩 직접 만져보기",
         "steps": [
-          "Colab 새 노트를 만들고 첫 셀에 '!pip install transformers' 를 입력해 실행한다.",
-          "'from transformers import AutoTokenizer' 로 토크나이저를 불러온다.",
-          "tok = AutoTokenizer.from_pretrained('bert-base-uncased') 로 모델 토크나이저를 준비한다.",
-          "내가 좋아하는 한 문장을 정해 tok.tokenize(문장) 결과를 print 로 확인한다.",
-          "긴 단어(예: 'unbelievable')가 여러 조각으로 쪼개지는지 눈으로 관찰하고 메모한다."
+          "`pip install transformers torch` 로 라이브러리를 설치한다.",
+          "AutoTokenizer로 'bert-base-uncased'를 불러온다.",
+          "좋아하는 영어 문장 하나를 토큰화해 input_ids를 출력한다.",
+          "convert_ids_to_tokens로 ID가 어떤 토큰인지 확인한다.",
+          "AutoModel로 같은 모델을 불러와 문장의 last_hidden_state.shape를 출력하고 (1, 토큰수, 768)인지 확인한다."
         ]
       },
       {
-        "title": "Lab2. softmax로 집중 비율 만들기",
+        "title": "Lab 2. softmax로 집중도 바꿔보기",
         "steps": [
-          "새 셀에 'import torch' 를 입력한다.",
-          "scores = torch.tensor([3.0, 1.0, 0.5]) 처럼 점수 3개를 만든다.",
-          "torch.softmax(scores, dim=0) 을 print 로 출력해 합이 1인지 확인한다.",
-          "점수 중 하나를 아주 크게(예: 10.0) 바꿔 다시 실행하고, 그 단어의 비율이 1에 가까워지는지 관찰한다.",
-          "관찰 내용을 '점수가 클수록 집중이 쏠린다' 한 줄로 정리한다."
+          "NumPy로 점수 배열 [2.0, 1.0, 0.1]을 만든다.",
+          "softmax를 적용해 가중치를 출력한다.",
+          "점수를 [5.0, 1.0, 0.1]로 키워 다시 계산하고, 1등에 더 쏠리는지 비교한다.",
+          "모든 점수를 똑같이 [1,1,1]로 두면 가중치가 균등(1/3)해지는지 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 3. Attention 가중치 시각화",
+        "steps": [
+          "메인 실습의 attention 행렬을 가져온다.",
+          "plt.imshow(attention)로 히트맵을 그린다.",
+          "plt.xticks/plt.yticks로 토큰 이름을 축에 붙인다.",
+          "어떤 토큰이 자기 자신을 많이 보는지, 어떤 토큰을 많이 보는지 한 줄로 해석을 적는다."
         ]
       }
     ],
     "homework": [
-      "오늘 만든 Self-Attention 코드에서 입력 문장을 'I love my cute cat'(단어 5개)으로 바꿔 5x5 Attention 히트맵을 만들고, 어떤 단어쌍의 가중치가 높은지 3줄로 설명해 제출한다.",
-      "RNN/LSTM과 Transformer의 차이를 '병렬 처리'와 '장기 의존성' 두 키워드로 비교해 5문장 이내로 정리한다."
+      "오늘 만든 NumPy Self-Attention 코드에서 토큰을 4개(예: '나는 오늘 학교에 갔다')로 늘려 attention 행렬이 (4,4)가 되는지 확인하고 히트맵을 캡처해 제출한다.",
+      "'언어모델은 다음 토큰을 맞히는 모델이다'를 비유 하나를 넣어 5문장으로 설명하는 짧은 글을 작성한다."
     ]
   },
   "transformer-2": {
     "topics": [
       {
-        "h": "Transformer 블록의 구성요소",
+        "h": "Transformer 블록의 구성 요소",
         "items": [
-          "Multi-Head Attention",
-          "Positional Encoding",
-          "Feed-Forward Network",
-          "잔차연결(Residual)",
-          "Layer Normalization"
+          "Multi-Head Attention과 표현 부공간",
+          "Positional Encoding(사인·코사인)",
+          "Feed-Forward Network(FFN)",
+          "잔차연결과 Layer Normalization"
         ]
       },
       {
-        "h": "구조별 대표 모델과 용도",
+        "h": "대표 모델과 구조 차이",
         "items": [
-          "Encoder형 BERT: 분류·검색·이해",
-          "Decoder형 GPT: 생성·대화",
-          "Encoder-Decoder형 T5: 번역·요약",
-          "용도에 맞게 골라 쓰기"
+          "Encoder-only: BERT(이해·분류)",
+          "Decoder-only: GPT(생성)",
+          "Encoder-Decoder: T5(번역·요약)",
+          "양방향 vs 단방향(왼쪽→오른쪽) 읽기"
         ]
       },
       {
-        "h": "LLM 학습 2단계와 스케일링",
+        "h": "사전학습과 활용",
         "items": [
-          "사전학습: 방대한 글로 기초 실력",
-          "파인튜닝: 특정 업무로 다듬기",
-          "스케일링 법칙: 크게 키울수록 좋아짐",
-          "비용·데이터 한계 고려"
+          "사전학습(pre-training)의 목표",
+          "파인튜닝과 전이학습",
+          "스케일링 법칙(데이터·모델·연산)",
+          "추론·임베딩 추출 활용"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab1. 사전학습 모델 불러와 빈칸 채우기(BERT)",
+        "title": "Lab 1. Positional Encoding 그려보기",
         "steps": [
-          "Colab 새 셀에 '!pip install transformers' 를 실행한다.",
-          "'from transformers import pipeline' 을 입력한다.",
-          "fill = pipeline('fill-mask', model='bert-base-uncased') 로 빈칸 채우기 모델을 준비한다.",
-          "fill('The capital of France is [MASK].') 를 실행해 모델이 채운 후보 단어들을 본다.",
-          "가장 점수 높은 후보가 'paris' 인지 확인하고, 다른 문장으로도 바꿔 실험한다."
+          "realCode의 positional_encoding 함수를 그대로 입력한다.",
+          "seq_len=50, d_model=64로 PE를 만든다.",
+          "plt.imshow로 히트맵을 그려 줄무늬 패턴을 확인한다.",
+          "d_model을 16으로 줄여 다시 그려 무늬가 어떻게 단순해지는지 비교한다."
         ]
       },
       {
-        "title": "Lab2. 임베딩 거리로 비슷한 문장 찾기",
+        "title": "Lab 2. BERT로 빈칸 채우기",
         "steps": [
-          "오늘 메인 실습의 임베딩 코드를 새 노트에 복사해 실행한다.",
-          "sents 리스트에 내 관심 주제 문장 4개를 넣는다(2개는 비슷, 2개는 다르게).",
-          "모든 문장쌍에 대해 torch.cosine_similarity 로 유사도를 계산한다.",
-          "유사도 점수가 가장 높은 문장쌍을 print 로 찾아낸다.",
-          "그 쌍이 실제로 의미가 비슷한지 사람 눈으로 확인하고 한 줄 메모한다."
+          "pipeline('fill-mask', model='bert-base-uncased')를 만든다.",
+          "'The capital of Korea is [MASK].' 를 입력해 예측 단어를 본다.",
+          "result 상위 5개 후보와 점수를 출력한다.",
+          "[MASK] 위치를 바꾼 다른 문장으로도 시험해 본다."
+        ]
+      },
+      {
+        "title": "Lab 3. GPT-2로 이어 쓰기 비교",
+        "steps": [
+          "pipeline('text-generation', model='gpt2')를 만든다.",
+          "프롬프트 'Once upon a time'으로 문장을 생성한다.",
+          "max_length를 30, 50으로 바꿔 생성 길이 차이를 본다.",
+          "같은 프롬프트를 두 번 실행해 결과가 달라지는지(샘플링) 확인한다."
         ]
       }
     ],
     "homework": [
-      "BERT(Encoder)·GPT(Decoder)·T5(Encoder-Decoder)를 각각 '어떤 업무에 쓰면 좋은지' 실제 예시 1개씩과 함께 표로 정리해 제출한다.",
-      "오늘 만든 문장 임베딩 코드로 내 업무에서 자주 쓰는 문장 5개의 유사도 표(5x5)를 만들고, 가장 비슷한 쌍과 가장 다른 쌍을 찾아 3줄로 설명한다."
+      "GPT-2 실습에서 서로 다른 프롬프트 3개를 넣어 'top-5 다음 토큰'을 각각 표로 정리하고, 프롬프트에 따라 예측이 어떻게 달라지는지 3문장으로 해석해 제출한다.",
+      "BERT(Encoder)와 GPT(Decoder)의 차이를 '이해 vs 생성' 관점에서 비유 하나를 넣어 한 문단으로 정리한다."
     ]
   },
   "python-1": {
@@ -772,304 +784,304 @@ export const details = {
   "spring-ai-1": {
     "topics": [
       {
-        "h": "Spring AI 시작에 필요한 것",
+        "h": "Spring AI 시작에 필요한 준비물",
         "items": [
-          "Spring Boot 3.x + Java 17 이상",
-          "Spring AI BOM과 모델 스타터(spring-ai-starter-model-openai 등)",
-          "발급받은 API 키와 환경변수 등록",
-          "application.yml의 model·temperature 설정"
+          "JDK 17 이상 설치 확인",
+          "Spring Boot 3.x 프로젝트 생성(start.spring.io)",
+          "Spring Web + 모델 프로바이더(Anthropic/OpenAI) 의존성",
+          "API 키를 환경변수로 등록"
         ]
       },
       {
-        "h": "ChatClient 핵심 메서드",
+        "h": "ChatClient 사용 4단계",
         "items": [
-          "prompt(): 요청 시작",
-          "system(): AI 역할·규칙 지정",
-          "user(): 사용자 입력 전달",
-          "call().content(): 호출과 텍스트 추출",
-          "call().chatResponse(): 토큰 사용량 등 메타데이터 포함 응답"
+          "prompt() — 주문서 펼치기",
+          "user()/system() — 메시지 채우기",
+          "call() — 요청 전송",
+          "content() — 답변 본문 추출"
         ]
       },
       {
-        "h": "운영 시 주의점",
+        "h": "프로바이더 교체 시 바꾸는 것",
         "items": [
-          "키는 절대 코드·깃에 노출 금지",
-          "모델별 요금·토큰 한도 확인",
-          "타임아웃·재시도 설정",
-          "프로바이더 교체는 의존성+설정만 변경"
+          "build.gradle 의존성",
+          "application.yml 설정 키",
+          "API 키 환경변수",
+          "자바 코드는 대부분 그대로"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. 5분 만에 첫 호출 성공하기",
+        "title": "Lab1. 첫 채팅 API 띄우기",
         "steps": [
-          "start.spring.io에서 OpenAI + Spring Web 의존성으로 프로젝트를 생성한다.",
-          "터미널에서 export OPENAI_API_KEY=발급키 를 입력해 키를 등록한다.",
-          "application.yml에 api-key: ${OPENAI_API_KEY} 와 model: gpt-4o-mini 를 적는다.",
-          "DemoApplication의 main 옆에 CommandLineRunner 빈을 추가해 chatClient.prompt().user(\"안녕\").call().content()를 출력한다.",
-          "./gradlew bootRun 실행 후 콘솔에 AI 답변이 찍히면 성공이다."
+          "start.spring.io에서 Spring Web + Anthropic을 추가해 프로젝트를 생성한다.",
+          "application.yml에 api-key와 model을 적는다.",
+          "ChatController를 만들어 GET /api/chat을 구현한다.",
+          "./gradlew bootRun으로 서버를 띄운다.",
+          "브라우저에서 ?message= 로 질문하고 답이 오는지 확인한다."
         ]
       },
       {
-        "title": "Lab 2. system 지시로 말투 바꾸기",
+        "title": "Lab2. 말투 바꿔 보기(System 메시지)",
         "steps": [
-          "Lab 1의 호출에 .system(\"모든 답을 한 문장으로 짧게 해줘\")를 추가한다.",
-          "같은 질문 '스프링이 뭐야?'를 보내 답이 짧아졌는지 확인한다.",
-          "system 문구를 '초등학생도 알게 비유로 설명해줘'로 바꿔 다시 실행한다.",
-          "두 답변을 나란히 적어 system 지시가 출력에 주는 영향을 정리한다."
+          "프롬프트에 .system(\"너는 해적처럼 말한다\")를 추가한다.",
+          "같은 질문을 다시 호출한다.",
+          "답변 말투가 바뀌는지 비교한다.",
+          "temperature 값을 0.1과 0.9로 바꿔 결과 다양성을 비교한다."
         ]
       }
     ],
     "homework": [
-      "/chat 엔드포인트에 ?style=formal|casual 파라미터를 추가하고, 값에 따라 system 지시를 바꿔 말투가 달라지게 구현해 제출하라.",
-      "OpenAI와 Anthropic 두 프로바이더를 각각 application.yml 설정으로 전환해 동일 질문을 보내고, 응답 길이·말투 차이를 표로 정리해 제출하라."
+      "/api/chat 에 system 파라미터를 추가로 받아, 호출할 때마다 AI의 역할(예: 통역사·요약가)을 바꿀 수 있게 개선하라.",
+      "OpenAI 의존성·설정으로 프로바이더를 교체해 동일 API가 그대로 동작하는지 확인하고, 바꾼 부분을 3줄로 정리하라."
     ]
   },
   "spring-ai-2": {
     "topics": [
       {
-        "h": "RAG 파이프라인 단계",
+        "h": "RAG 준비 단계 구성요소",
         "items": [
-          "문서 로딩(Reader)",
-          "청킹(TokenTextSplitter)",
-          "임베딩(EmbeddingModel)",
-          "색인(VectorStore.add)",
-          "검색(similaritySearch)",
-          "프롬프트 결합·생성"
+          "DocumentReader(파일 읽기)",
+          "TextSplitter(조각 내기)",
+          "EmbeddingModel(벡터화)",
+          "VectorStore.add(저장)"
         ]
       },
       {
-        "h": "VectorStore 선택지",
+        "h": "RAG 질문 단계 구성요소",
         "items": [
-          "pgvector(PostgreSQL 확장, 운영 친숙)",
-          "Chroma(가볍게 로컬 실험)",
-          "Redis/Milvus 등 대규모",
-          "초기엔 SimpleVectorStore(메모리)로 빠른 테스트"
+          "질문 임베딩",
+          "similaritySearch(top-k)",
+          "근거 결합 프롬프트",
+          "LLM 생성 + 출처 제시"
         ]
       },
       {
-        "h": "검색 품질을 좌우하는 요소",
+        "h": "검색 품질에 영향을 주는 손잡이",
         "items": [
-          "청크 크기와 겹침(overlap)",
+          "청크 크기·겹침",
           "top-k 개수",
-          "임베딩 모델 성능",
-          "메타데이터 필터링",
-          "원문 정제(불필요 잡음 제거)"
+          "임베딩 모델 종류",
+          "메타데이터 필터"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. pgvector 띄우고 연결 확인",
+        "title": "Lab1. 문서 한 개 적재하기",
         "steps": [
-          "docker run으로 pgvector/pgvector:pg16 컨테이너를 5432 포트로 실행한다.",
-          "application.yml에 datasource url(jdbc:postgresql://localhost:5432/postgres)과 계정을 적는다.",
-          "spring.ai.vectorstore.pgvector.initialize-schema: true 를 추가한다.",
-          "앱을 실행해 시작 로그에 에러 없이 스키마가 생성되면 연결 성공이다."
+          "resources/docs에 회사소개.txt를 넣는다.",
+          "TextReader로 읽고 TokenTextSplitter로 자른다.",
+          "vectorStore.add(chunks)로 저장한다.",
+          "콘솔에 찍힌 조각 개수를 확인한다."
         ]
       },
       {
-        "title": "Lab 2. 텍스트 1개 색인하고 검색",
+        "title": "Lab2. 유사 검색 결과 들여다보기",
         "steps": [
-          "resources에 faq.txt를 만들어 환불·배송 관련 문장 5줄을 적는다.",
-          "CommandLineRunner에서 파일을 읽어 ingest(text)를 호출해 색인한다.",
-          "vectorStore.similaritySearch(SearchRequest.query(\"환불\").withTopK(1))로 검색한다.",
-          "검색된 조각이 환불 관련 문장인지 콘솔로 확인한다."
-        ]
-      },
-      {
-        "title": "Lab 3. 없는 정보 처리 확인",
-        "steps": [
-          "/ask?q= 로 문서에 없는 질문을 보낸다.",
-          "system 지시 덕분에 '모른다'고 답하는지 확인한다.",
-          "지시 문구를 빼고 다시 호출해 환각이 생기는지 비교한다.",
-          "두 결과 차이를 정리해 system 지시의 중요성을 메모한다."
+          "similaritySearch에 질문을 넣어 top-k 결과를 받는다.",
+          "각 결과의 getText()를 출력한다.",
+          "topK 값을 2와 6으로 바꿔 검색 결과 차이를 비교한다.",
+          "질문 단어를 동의어로 바꿔도 같은 문단이 잡히는지 확인한다."
         ]
       }
     ],
     "homework": [
-      "여러 파일(.txt 3개 이상)을 색인하고, 답변에 어떤 파일의 어느 조각을 참고했는지 출처(파일명)를 함께 표시하도록 개선해 제출하라.",
-      "청크 크기를 작게/크게 두 가지로 바꿔 같은 질문을 검색하고, 검색 정확도가 어떻게 달라지는지 비교 메모를 작성하라."
+      "QnA 응답에 '참고한 문단의 출처(파일명·일부 텍스트)'를 함께 반환하도록 ask()를 개선하라.",
+      "청크 크기(TokenTextSplitter 설정)를 작게/크게 두 가지로 바꿔 같은 질문의 답 품질을 비교하고 3줄로 정리하라."
     ]
   },
   "spring-ai-3": {
     "topics": [
       {
-        "h": "Function Calling 설계",
+        "h": "Function Calling 동작 순서",
         "items": [
-          "@Tool + 명확한 description",
-          "인자·반환 타입은 단순하게",
-          "부작용 있는 도구는 신중히",
-          "여러 도구 등록과 자동 선택",
-          "도구 실행 로그로 동작 추적"
+          "LLM이 도구 필요 판단",
+          "함수명·인자 요청 생성",
+          "Spring AI가 자바 메서드 실행",
+          "결과를 LLM에 되돌려 최종 답 생성"
         ]
       },
       {
-        "h": "구조화 출력 활용",
+        "h": "출력 받는 세 가지 방식",
         "items": [
-          "record/클래스로 출력 스키마 정의",
-          "call().entity(타입)로 매핑",
-          "리스트·중첩 객체도 가능",
-          "검증 실패 시 재요청 전략"
+          ".content() — 문자열",
+          ".entity(클래스) — 자바 객체",
+          ".stream().content() — 실시간 조각"
         ]
       },
       {
-        "h": "운영·보안 고려사항",
+        "h": "서비스 통합 체크리스트",
         "items": [
-          "프롬프트 인젝션 방어(도구 권한 최소화)",
-          "타임아웃·재시도·서킷브레이커",
-          "키·민감정보 마스킹",
-          "비용·토큰 모니터링",
-          "사용자 입력 검증"
+          "타임아웃·재시도",
+          "예외→친화 메시지",
+          "API 키·비밀 분리",
+          "토큰 비용·프롬프트 길이 관리"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. 첫 도구 연결하기",
+        "title": "Lab1. 첫 도구 붙이기",
         "steps": [
-          "@Tool description이 달린 getTime() 메서드(현재 시각 문자열 반환)를 만든다.",
-          "chatClient.prompt().user(\"지금 몇 시야?\").tools(new MyTools()).call().content()로 호출한다.",
-          "LLM이 getTime을 호출해 실제 시각으로 답하는지 확인한다.",
-          "도구를 등록하지 않고 같은 질문을 보내 답이 어떻게 달라지는지 비교한다."
+          "getWeather(String city)에 @Tool과 description을 붙인다.",
+          "컨트롤러에서 .tools(this)로 도구를 등록한다.",
+          "'부산 날씨 알려줘'로 호출해 함수가 불리는지 확인한다.",
+          "'안녕'으로 호출해 도구가 안 불리는 경우도 확인한다."
         ]
       },
       {
-        "title": "Lab 2. record로 구조화 받기",
+        "title": "Lab2. 객체로 답받기(구조화 출력)",
         "steps": [
-          "record Profile(String name, int age)를 정의한다.",
-          "user(\"홍길동, 30세 프로필 만들어줘\") 후 .entity(Profile.class)로 받는다.",
-          "받은 객체의 name(), age()를 출력해 값이 들어왔는지 확인한다.",
-          "필드를 하나 더(city) 추가하고 질문도 바꿔 매핑이 되는지 본다."
+          "WeatherReport record를 만든다.",
+          ".entity(WeatherReport.class)로 답을 받는다.",
+          "report.temperature() 값을 콘솔에 출력한다.",
+          "JSON 응답으로 도시·기온·하늘 상태가 분리돼 오는지 확인한다."
         ]
       },
       {
-        "title": "Lab 3. 예외에 강하게 만들기",
+        "title": "Lab3. 스트리밍 체험",
         "steps": [
-          "도구 메서드에서 일부러 예외를 던지게 한 뒤 호출해 본다.",
-          "컨트롤러를 try-catch로 감싸 사용자에게 친절한 메시지를 반환한다.",
-          "application.yml에 재시도 옵션을 켜고 일시 오류 시 재시도되는지 로그로 확인한다.",
-          "정상·예외 두 경우의 응답을 비교 메모한다."
+          "/api/stream 엔드포인트를 추가한다.",
+          ".stream().content()로 Flux를 반환한다.",
+          "브라우저로 호출해 글자가 실시간으로 나오는지 본다."
         ]
       }
     ],
     "homework": [
-      "도구 2개 이상(예: 환율 조회, 시간 조회)을 등록하고, 질문에 따라 LLM이 적절한 도구를 골라 호출하는지 확인한 결과를 정리해 제출하라.",
-      "Day2의 RAG와 Day3의 도구 호출을 한 서비스에 합쳐, 문서 검색이 필요하면 검색하고 실시간 데이터가 필요하면 도구를 부르는 통합 엔드포인트를 설계 다이어그램과 함께 제출하라."
+      "getWeather 외에 '현재 시간 조회' 도구를 하나 더 추가하고, '지금 몇 시이고 서울 날씨는?' 질문에 두 도구가 함께 호출되는지 확인하라.",
+      "외부 호출 실패를 흉내 내(예: 일부러 예외 throw) try-catch·재시도가 동작하는지 점검하고, 사용자에게 보이는 메시지를 캡처해 제출하라."
     ]
   },
   "sllm-1": {
     "topics": [
       {
-        "h": "sLLM을 고를 때 보는 것",
+        "h": "대표 오픈소스 sLLM 한눈에",
         "items": [
-          "파라미터 크기(0.5B·1.5B·7B)",
-          "지원 언어(한국어 품질)",
-          "라이선스(상업적 사용 가능 여부)",
-          "Instruct(대화용) vs Base(원형) 구분"
+          "Meta Llama 3.x (1B·3B·8B): 폭넓게 쓰이는 표준격",
+          "Alibaba Qwen2.5 (0.5B~7B): 다국어·한국어에 강함",
+          "Google Gemma 2 (2B·9B): 가볍고 안정적",
+          "Microsoft Phi-3 (mini): 작아도 추론력 좋음",
+          "모델 카드에서 라이선스·언어·용도 꼭 확인하기"
         ]
       },
       {
-        "h": "로컬 실행 도구 3가지",
+        "h": "로컬 서빙 도구 비교",
         "items": [
-          "Ollama: 가장 쉬운 한 줄 실행",
-          "vLLM: 빠른 대량 서빙에 강함",
-          "Transformers: 세밀한 제어와 학습에 적합"
+          "Ollama: 설치 한 번이면 끝, 가장 쉬움(입문 추천)",
+          "vLLM: 빠른 동시 처리, 서버용 고성능 서빙",
+          "Hugging Face Transformers: 코드로 세밀하게 제어",
+          "GGUF·llama.cpp: CPU만으로도 돌리는 양자화 포맷",
+          "용도: 빠른 체험=Ollama, 운영=vLLM"
         ]
       },
       {
-        "h": "경량화 키워드",
+        "h": "양자화 방식 맛보기",
         "items": [
-          "양자화(4bit·8bit)",
-          "GGUF 포맷",
-          "KV 캐시",
-          "메모리(VRAM) 요구량 가늠하기"
+          "FP16/BF16: 절반 정밀도, 품질 거의 그대로",
+          "INT8: 8비트, 용량 절반·속도 향상",
+          "INT4(Q4): 4비트, 용량 1/4·노트북용 대세",
+          "GPTQ·AWQ·GGUF: 대표 양자화 포맷 이름",
+          "트레이드오프: 비트 낮을수록 가볍지만 품질 손실"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. Ollama로 첫 로컬 모델 실행",
+        "title": "Lab 1 — Ollama로 첫 모델 띄우기",
         "steps": [
-          "ollama.com에서 설치 파일을 받아 설치한다.",
+          "ollama.com에서 Ollama를 설치한다.",
           "터미널에 'ollama pull gemma2:2b' 를 입력해 모델을 받는다.",
-          "'ollama run gemma2:2b' 를 실행한다.",
-          "'대한민국 수도는?' 이라고 물어 답을 확인한다.",
+          "'ollama list' 로 받은 모델 목록을 확인한다.",
+          "'ollama run gemma2:2b' 후 '한국의 수도는?' 이라고 물어본다.",
           "/bye 를 입력해 대화를 종료한다."
         ]
       },
       {
-        "title": "Lab 2. 두 모델 비교 체험",
+        "title": "Lab 2 — Transformers로 모델 정보 들여다보기",
         "steps": [
-          "'ollama pull qwen2.5:0.5b' 와 'ollama pull qwen2.5:1.5b' 를 각각 받는다.",
-          "같은 질문 '재귀함수를 쉽게 설명해줘'를 두 모델에 던진다.",
-          "각 답변의 길이와 정확도를 표로 정리한다.",
-          "응답 체감 속도를 빠름/보통/느림으로 메모한다.",
-          "어떤 업무에 어떤 크기가 맞을지 한 줄 결론을 적는다."
+          "'pip install transformers torch' 로 라이브러리를 설치한다.",
+          "파이썬에서 AutoModelForCausalLM 으로 'Qwen/Qwen2.5-0.5B' 를 불러온다.",
+          "model.num_parameters() 를 출력해 파라미터 개수를 확인한다.",
+          "숫자가 약 5억(0.5B)인지 눈으로 확인한다.",
+          "메모리가 부족하면 더 작은 모델로 바꿔 다시 시도한다."
         ]
       }
     ],
     "homework": [
-      "내 노트북 사양(메모리·GPU 유무)을 적고, 무리 없이 돌릴 수 있는 sLLM 크기를 한 가지 정해 그 이유를 3줄로 써 온다.",
-      "실습으로 만든 FastAPI 챗봇에 /health 엔드포인트(서버 상태 'ok' 반환)를 추가하고 코드를 캡처해 제출한다."
+      "Ollama로 서로 다른 모델 2개(예: qwen2.5:0.5b, gemma2:2b)에 같은 질문 5개를 던지고, 답변 품질·속도를 표로 비교 정리하기.",
+      "내 노트북 사양(RAM·GPU 유무)을 적고, 양자화 용량 공식으로 돌릴 수 있는 최대 모델 크기를 추정해 한 문단으로 설명하기."
     ]
   },
   "sllm-2": {
     "topics": [
       {
-        "h": "좋은 데이터셋의 조건",
+        "h": "좋은 학습 데이터의 조건",
         "items": [
-          "지시와 답이 명확히 1:1로 짝지음",
-          "답변 톤·형식이 일관됨",
-          "오타·중복 제거",
-          "다양한 질문 유형 포함"
+          "지시-출력이 명확하고 일관된 형식일 것",
+          "다양한 표현·상황을 골고루 담을 것",
+          "정답(출력)의 품질이 높아야 모델이 잘 배움",
+          "양보다 질: 잘 만든 50개가 엉성한 500개보다 나음",
+          "민감정보·저작권 데이터는 제외하기"
         ]
       },
       {
         "h": "핵심 하이퍼파라미터",
         "items": [
-          "epoch(반복 횟수)",
-          "learning_rate(학습 보폭)",
-          "LoRA r(어댑터 크기)",
-          "batch_size(한 번에 묶는 양)"
+          "learning_rate: 학습 속도, LoRA는 1e-4~3e-4 흔함",
+          "epoch: 반복 횟수, 너무 크면 과적합",
+          "r(rank): LoRA 보조 행렬 크기(8·16·32)",
+          "batch_size: 한 번에 보는 데이터 수(메모리에 맞춰)",
+          "target_modules: 어떤 층에 LoRA를 붙일지"
         ]
       },
       {
-        "h": "파인튜닝 후 할 일",
+        "h": "평가와 검증 방법",
         "items": [
-          "보류 질문으로 평가",
-          "과적합 여부 확인",
-          "어댑터 저장·버전 관리",
-          "서빙 연결(Ollama/서버)"
+          "loss 곡선이 안정적으로 내려가는지 보기",
+          "학습 전·후 같은 질문으로 답변 비교",
+          "학습에 안 쓴 테스트 질문으로 일반화 확인",
+          "과적합 징후: 학습셋만 잘하고 새 질문은 못함",
+          "사람이 직접 읽어보는 정성 평가 병행"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. 나만의 instruction 데이터 10개 만들기",
+        "title": "Lab 1 — 내 학습셋 5장 만들기",
         "steps": [
-          "메모장으로 data.jsonl 파일을 연다.",
-          "한 줄에 {\"instruction\": \"질문\", \"output\": \"답\"} 형식으로 작성한다.",
-          "우리 도메인(예: 사내 규정)에 맞는 질문-답 10쌍을 채운다.",
-          "줄마다 콤마 없이 한 줄에 하나씩만 둔다(JSON Lines 규칙).",
-          "examples의 검증 코드를 실행해 '형식 OK'가 뜨는지 확인한다."
+          "우리 팀·도메인에서 자주 묻는 질문 5개를 고른다.",
+          "각 질문의 모범답안을 직접 작성한다.",
+          "examples의 JSONL 코드로 'text' 형식 카드 5장을 만든다.",
+          "data.jsonl 파일을 열어 5줄이 잘 들어갔는지 확인한다.",
+          "오타·형식 불일치가 없는지 한 줄씩 점검한다."
         ]
       },
       {
-        "title": "Lab 2. 학습 전/후 답변 비교하기",
+        "title": "Lab 2 — 학습 전후 답변 비교",
         "steps": [
-          "원본 모델에 '우리 회사 환불 규정?'을 물어 답을 기록한다.",
-          "train.py로 짧게(epoch 1) 학습을 돌린다.",
-          "어댑터를 얹은 모델에 같은 질문을 다시 던진다.",
-          "두 답변을 표로 나란히 붙여 차이를 표시한다.",
-          "달라진 점(톤·정확도)을 한 줄 결론으로 적는다."
+          "학습 전 베이스 모델에 테스트 질문 3개를 던져 답을 메모한다.",
+          "train_lora.py 로 3에폭 학습을 돌린다.",
+          "학습 후 어댑터를 끼운 모델에 같은 질문 3개를 던진다.",
+          "전·후 답변을 나란히 표로 정리한다.",
+          "어떤 점이 의도대로 바뀌었는지 한 줄 코멘트를 단다."
+        ]
+      },
+      {
+        "title": "Lab 3 — 어댑터 저장·재사용",
+        "steps": [
+          "model.save_pretrained('my-lora') 로 어댑터를 저장한다.",
+          "my-lora 폴더 용량이 수십 MB인지 확인한다.",
+          "런타임을 새로 시작한다(메모리 비우기).",
+          "PeftModel로 베이스+my-lora를 다시 불러온다.",
+          "질문을 던져 학습 결과가 그대로 재현되는지 확인한다."
         ]
       }
     ],
     "homework": [
-      "내 업무 도메인에서 instruction-output 쌍 30개 이상을 모아 data.jsonl로 만들어 제출한다(주제 한 줄 설명 포함).",
-      "epoch를 1·3·5로 바꿔 학습한 뒤 같은 질문에 대한 답변 품질 변화를 표로 정리해 온다."
+      "내 도메인 학습셋을 20장으로 늘려 다시 파인튜닝하고, 데이터를 5장·20장으로 늘렸을 때 답변 품질이 어떻게 달라졌는지 비교 보고서를 한 페이지로 작성하기.",
+      "learning_rate 또는 epoch 중 하나를 두 가지 값으로 바꿔 학습해 loss 곡선과 답변 품질 차이를 캡처와 함께 정리하기."
     ]
   },
   "ml-dl-1": {

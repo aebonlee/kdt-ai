@@ -35,48 +35,54 @@ export const theory = {
   "transformer-1": {
     "theory": [
       {
-        "h": "언어모델은 '다음 단어 맞히기' 게임이다",
-        "body": "언어모델은 사실 아주 단순한 게임을 반복합니다.\n앞에 나온 단어들을 보고 '그다음에 올 가장 그럴듯한 단어'를 확률로 고르는 일입니다.\n예를 들어 '오늘 점심은 김치'까지 봤다면 다음은 '찌개'일 확률이 높다고 판단합니다.\n\n이 게임을 수억 번 연습한 것이 바로 GPT 같은 거대 언어모델(LLM)입니다.\n사람처럼 '이해'한다기보다, 엄청난 양의 글에서 통계적으로 자연스러운 다음 단어를 잘 고르는 것입니다.\n그래서 좋은 입력(프롬프트)을 주면 좋은 다음 단어들이 줄줄이 나오는 구조입니다."
+        "h": "LLM은 결국 '다음 단어 맞히기' 선수다",
+        "body": "거대언어모델(LLM)이라고 하면 어렵게 들리지만, 핵심은 끝말잇기처럼 '다음에 올 말'을 맞히는 게임 선수다.\n스마트폰에서 '오늘 점심' 까지 치면 '뭐 먹지'를 추천해주는 그 기능을 어마어마하게 키운 것이라고 보면 된다.\n\n조금 더 정확히 말하면, 언어모델은 앞에 주어진 토큰들을 보고 '다음 토큰이 무엇일 확률이 가장 높은가'를 계산한다.\n예를 들어 '하늘이 ___' 다음에는 '파랗다'가 0.7, '빨갛다'가 0.05 같은 식으로 확률을 매긴다.\n이 다음-토큰-확률을 아주 잘 맞히도록 인터넷의 방대한 글로 훈련한 모델이 바로 GPT 같은 LLM이다.\n그래서 우리가 배울 모든 구조는 결국 '이 확률을 더 잘 맞히기 위한 장치'라는 한 문장으로 꿸 수 있다."
       },
       {
-        "h": "RNN은 왜 한 줄씩 읽어서 느릴까",
-        "body": "Transformer 이전의 RNN·LSTM은 글을 사람이 소리 내어 읽듯 '앞에서부터 한 단어씩' 차례로 처리했습니다.\n앞 단어를 다 읽어야 다음 단어를 읽을 수 있어서, 여러 개를 동시에(병렬로) 계산하기 어려웠습니다.\n또한 문장이 길어지면 맨 앞에서 본 정보를 뒤까지 기억하기 힘든 '장기 의존성' 문제가 생겼습니다.\n\n이것은 긴 전화 통화에서 첫마디를 끝까지 기억하기 어려운 것과 비슷합니다.\nTransformer의 Attention은 모든 단어를 한꺼번에 펼쳐놓고 서로의 관계를 동시에 보기 때문에, 빠르고 먼 단어도 잘 연결합니다."
+        "h": "왜 컴퓨터는 글자를 숫자로 바꿔야 할까",
+        "body": "컴퓨터는 글자를 모른다.\n오직 숫자만 계산할 수 있기 때문에, 우리가 쓰는 '학교'라는 단어도 숫자 묶음으로 번역해줘야 한다.\n\n첫 단계가 토큰화로, 문장을 '학교/에/갔다' 처럼 작은 조각으로 자른다.\nBPE라는 방식은 자주 붙어 다니는 글자쌍을 묶어서, 처음 보는 단어도 익숙한 조각의 조합으로 표현하게 해준다.\n그 다음 단계가 임베딩으로, 각 토큰을 좌표(벡터)로 바꿔 '의미 지도' 위의 점으로 만든다.\n이 지도에서는 '왕'과 '여왕'이 가깝게, '왕'과 '사과'가 멀게 놓이도록 학습되어, 컴퓨터가 의미의 거리까지 숫자로 다룰 수 있게 된다."
       },
       {
-        "h": "Attention은 형광펜으로 핵심을 칠하는 일",
-        "body": "Attention의 핵심 아이디어는 '모든 단어를 똑같이 보지 말고, 중요한 단어에 더 집중하자'입니다.\n각 단어가 다른 단어들에게 '너는 나랑 얼마나 관련 있니?'라고 묻고, 관련도가 높을수록 큰 가중치를 줍니다.\n이때 질문지를 Query, 후보의 이름표를 Key, 실제 내용을 Value라고 부릅니다.\n\nQuery와 Key의 닮은 정도를 점수로 매기고, softmax로 합이 1인 확률로 바꾼 뒤, 그 비율대로 Value를 섞어 새 표현을 만듭니다.\n결과적으로 'it'이 가리키는 대상이 'cat'인지 'box'인지 같은 문맥 관계를 모델이 스스로 칠해내는 셈입니다."
+        "h": "Attention은 문장에 형광펜을 치는 일",
+        "body": "긴 문장을 이해할 때 우리는 모든 단어를 똑같이 보지 않고, 핵심 단어에 형광펜을 친다.\n'그 영화는 정말 지루했지만 음악은 좋았다'에서 '좋았다'를 이해하려면 '음악'에 더 집중해야 하는 것과 같다.\n\nAttention은 바로 이 '어디에 얼마나 집중할지'를 숫자로 계산하는 장치다.\n과거의 RNN처럼 단어를 한 줄로 세워 차례차례 읽는 대신, Attention은 모든 단어를 한눈에 펼쳐놓고 서로를 직접 비교한다.\n그래서 문장이 길어도 멀리 떨어진 단어끼리 관계를 바로 연결할 수 있고, 동시에 처리하니 속도도 빠르다.\n이 '형광펜 치기'를 자기 문장 안에서 스스로 하기 때문에 Self-Attention(셀프 어텐션)이라고 부른다."
       }
     ],
     "realCode": [
       {
-        "title": "Scaled Dot-Product Self-Attention 직접 구현 (엔드투엔드)",
+        "title": "NumPy로 처음부터 만드는 Self-Attention (엔드투엔드)",
         "lang": "python",
-        "code": "import torch                      # 파이토치: 행렬 계산과 딥러닝의 기본 도구\nimport torch.nn.functional as F   # softmax 같은 함수 모음을 F 라는 짧은 이름으로 사용\n\n# 1) 문장 'I love cats' 의 단어 3개를 각각 4차원 벡터(임베딩)로 가정\n#    실제로는 학습으로 정해지지만, 여기선 이해를 위해 직접 숫자를 적는다\nX = torch.tensor([[1.0, 0.0, 1.0, 0.0],   # 'I' 의 벡터\n                  [0.0, 2.0, 0.0, 2.0],   # 'love' 의 벡터\n                  [1.0, 1.0, 1.0, 1.0]])  # 'cats' 의 벡터  (모양: 3x4)\n\nd_k = X.shape[1]                   # 벡터 차원 수(4) — 점수 크기 조절에 사용\n\n# 2) Q,K,V 를 만드는 가중치 행렬(학습 대상). 재현을 위해 seed 고정 후 무작위 생성\ntorch.manual_seed(0)               # 매번 같은 난수가 나오게 고정(결과 재현용)\nWq = torch.randn(d_k, d_k)         # Query 변환 행렬 (4x4)\nWk = torch.randn(d_k, d_k)         # Key 변환 행렬 (4x4)\nWv = torch.randn(d_k, d_k)         # Value 변환 행렬 (4x4)\n\nQ = X @ Wq                         # 각 단어의 '질문' 벡터 (3x4)\nK = X @ Wk                         # 각 단어의 '이름표' 벡터 (3x4)\nV = X @ Wv                         # 각 단어의 '내용' 벡터 (3x4)\n\n# 3) 점수 = Q와 K의 닮은 정도(내적), 그리고 sqrt(d_k)로 나눠 값이 너무 커지는 것을 방지\nscores = Q @ K.transpose(0, 1) / (d_k ** 0.5)   # (3x3) 단어쌍 점수표\n\n# 4) softmax 로 각 행의 합이 1인 '집중 비율'(Attention 가중치)로 변환\nattn = F.softmax(scores, dim=-1)   # (3x3), 각 행 합 = 1\n\n# 5) 가중치대로 Value 를 섞어 문맥이 반영된 새 표현을 만든다\nout = attn @ V                     # (3x4) 최종 출력\n\nprint(\"Attention 가중치:\\n\", attn.round(decimals=2))  # 결과: 0~1 사이 값의 3x3 표\nprint(\"각 행의 합:\", attn.sum(dim=-1))                 # 결과: tensor([1., 1., 1.])",
-        "note": "Q·K로 점수를 내고 softmax로 집중 비율을 구한 뒤 V를 섞는 Attention의 전 과정을 한 흐름에 담았다.\n각 행의 합이 1로 나오면 정상 동작이다."
+        "code": "import numpy as np                      # 행렬 계산을 위한 핵심 라이브러리 불러오기\n\nnp.random.seed(0)                        # 난수를 고정해 매번 같은 결과가 나오게 함(재현성)\n\n# 1) 입력 임베딩 만들기: 토큰 3개, 각 토큰은 4차원 벡터\ntokens = [\"나는\", \"학교에\", \"갔다\"]      # 예문을 3개 토큰으로 가정\nX = np.random.rand(3, 4)                  # (3토큰 x 4차원) 임베딩 행렬을 난수로 생성\n\n# 2) Q, K, V를 만드는 가중치 행렬(학습으로 정해지는 값, 여기선 난수)\nWq = np.random.rand(4, 4)                 # Query 변환용 가중치 (4 -> 4)\nWk = np.random.rand(4, 4)                 # Key 변환용 가중치 (4 -> 4)\nWv = np.random.rand(4, 4)                 # Value 변환용 가중치 (4 -> 4)\n\n# 3) 입력 X를 Q, K, V 세 가지 역할로 변환\nQ = X @ Wq                                # '내가 찾는 질문' 벡터들 (3 x 4)\nK = X @ Wk                                # '각 토큰의 이름표' 벡터들 (3 x 4)\nV = X @ Wv                                # '각 토큰의 알맹이 정보' 벡터들 (3 x 4)\n\n# 4) 점수 계산: Query와 Key를 내적해 '얼마나 잘 맞나' 측정\nscores = Q @ K.T                          # (3 x 3) 각 토큰이 각 토큰을 보는 원점수\nd_k = Q.shape[1]                          # Key의 차원 수(=4), 스케일링에 사용\nscores = scores / np.sqrt(d_k)            # sqrt(차원)로 나눠 값이 너무 커지는 것 방지\n\n# 5) softmax로 점수를 합이 1인 '집중 비율'로 변환\ndef softmax(x):                           # 행 단위 softmax 함수 직접 정의\n    e = np.exp(x - x.max(axis=1, keepdims=True))  # 최댓값을 빼서 수치 오버플로 방지\n    return e / e.sum(axis=1, keepdims=True)       # 각 행을 합이 1인 확률로 정규화\n\nattention = softmax(scores)               # (3 x 3) attention 가중치 행렬 완성\nprint(\"가중치 합:\", attention.sum(axis=1))  # 결과: 가중치 합: [1. 1. 1.]\n\n# 6) 가중치로 Value를 가중합해 최종 출력 만들기\noutput = attention @ V                     # (3 x 4) 각 토큰의 문맥 반영 결과\nprint(\"출력 shape:\", output.shape)          # 결과: 출력 shape: (3, 4)",
+        "note": "임베딩→Q/K/V 변환→점수→softmax→가중합 이라는 Self-Attention의 전 과정을 외부 라이브러리 없이 NumPy만으로 재현한다.\n출력 shape이 입력과 같은 (3,4)로 유지되는 점이 핵심이다."
       }
     ]
   },
   "transformer-2": {
     "theory": [
       {
-        "h": "Multi-Head: 한 글을 여러 시선으로 동시에 읽기",
-        "body": "Attention 한 개는 문장을 한 가지 관점에서만 봅니다.\nMulti-Head Attention은 그런 Attention을 여러 개(예: 8개) 나란히 두고 동시에 돌립니다.\n어떤 헤드는 문법 관계를, 다른 헤드는 의미 관계를 보는 식으로 서로 다른 '시선'을 학습합니다.\n\n이는 같은 보고서를 마케팅·법무·개발 담당자가 각자 다른 눈으로 읽고 의견을 모으는 회의와 비슷합니다.\n여러 시선의 결과를 이어 붙여 합치면, 한 가지 시선보다 훨씬 풍부한 문맥 표현을 얻습니다."
+        "h": "Multi-Head Attention은 여러 전문가의 회의다",
+        "body": "어려운 문서를 혼자 읽는 것보다 여러 사람이 각자 관점으로 읽고 의견을 합치면 더 정확하다.\n문법을 보는 사람, 주제를 보는 사람, 어순을 보는 사람이 따로 읽고 회의로 종합하는 장면을 떠올리면 된다.\n\nMulti-Head Attention이 바로 이 회의다.\n하나의 Attention만 쓰지 않고, 여러 개(head)를 두어 같은 문장을 서로 다른 표현 부공간에서 동시에 바라본다.\n각 head가 만든 결과를 옆으로 이어 붙인 뒤 한 번 더 섞어서 최종 표현을 만든다.\n덕분에 모델은 '이 단어가 주어인가'와 '이 단어가 감정 표현인가' 같은 여러 관계를 한꺼번에 포착할 수 있다."
       },
       {
-        "h": "순서를 모르는 모델에 자리표를 붙이는 Positional Encoding",
-        "body": "Transformer는 단어를 한 줄씩 읽지 않고 한꺼번에 펼쳐 봅니다.\n덕분에 빠르지만, 대신 '누가 먼저인지'라는 순서 정보를 자연스럽게 알 수 없습니다.\n'나는 너를 좋아해'와 '너는 나를 좋아해'는 단어가 같아도 순서 때문에 뜻이 완전히 다릅니다.\n\n그래서 각 단어 임베딩에 '몇 번째 자리'를 뜻하는 위치 신호를 더해줍니다.\n극장 좌석에 번호표를 붙여 누가 어디 앉았는지 알게 하는 것과 같습니다.\n이 위치표 덕분에 모델이 순서가 중요한 문장도 올바르게 이해합니다."
+        "h": "순서를 모르는 Attention에 번호표 주기",
+        "body": "Self-Attention은 모든 단어를 한눈에 펼쳐 보는 대신, 단어가 몇 번째에 있었는지를 잊어버린다.\n'개가 사람을 물었다'와 '사람이 개를 물었다'는 순서만 다른데, 순서를 모르면 뜻이 뒤섞인다.\n\n그래서 각 단어 임베딩에 '몇 번째 자리'라는 정보를 숫자로 더해주는데, 이것이 Positional Encoding이다.\n원래 Transformer는 사인·코사인 곡선을 이용해 자리마다 고유한 무늬의 숫자를 만들어 더한다.\n이렇게 하면 모델은 단어의 뜻뿐 아니라 '어디쯤에 있었는지'까지 함께 알게 된다.\n줄 선 사람들에게 1번·2번 번호표를 나눠줘 순서를 기억시키는 것과 똑같은 아이디어다."
       },
       {
-        "h": "BERT는 독해, GPT는 작문에 강하다",
-        "body": "Transformer는 Encoder와 Decoder 두 부분으로 나뉩니다.\nEncoder만 쓰는 BERT는 문장을 앞뒤 양방향으로 읽어 '이해·분류·검색'에 강합니다.\n빈칸 채우기 시험을 잘 보는 학생이라고 생각하면 됩니다.\n\nDecoder만 쓰는 GPT는 앞 단어들만 보고 다음 단어를 이어 쓰는 데 특화돼 '생성·대화'에 강합니다.\n글을 술술 써 내려가는 작가에 가깝습니다.\nT5는 둘 다 써서 '번역·요약'처럼 입력을 받아 새 글을 출력하는 작업을 잘합니다.\n그래서 분류엔 BERT, 챗봇엔 GPT처럼 목적에 맞게 골라 씁니다."
+        "h": "Transformer 블록은 레고처럼 쌓는다",
+        "body": "Transformer는 마법 상자가 아니라, 똑같이 생긴 블록을 여러 층 쌓아 만든 탑이다.\n블록 하나에는 Multi-Head Attention과 작은 신경망(FFN)이 들어 있고, 그 사이사이에 잔차연결과 LayerNorm이라는 안전장치가 끼워진다.\n\n잔차연결은 층을 통과한 결과에 원래 입력을 더해, 깊이 쌓아도 정보가 사라지지 않게 비상 통로를 만들어준다.\nLayerNorm은 숫자 크기를 고르게 다듬어 학습이 흔들리지 않게 잡아준다.\n이 블록을 BERT는 양방향으로 읽도록, GPT는 왼쪽부터만 읽도록 배치해 각각 이해와 생성에 특화시킨다.\n결국 거대한 LLM도 이 단순한 블록을 아주 많이 쌓고, 아주 많은 글로 훈련한 결과일 뿐이다."
       }
     ],
     "realCode": [
       {
-        "title": "사전학습 모델로 문장 임베딩 추출 후 유사도 비교 (엔드투엔드)",
+        "title": "Positional Encoding 만들고 시각화하기 (엔드투엔드)",
         "lang": "python",
-        "code": "from transformers import AutoTokenizer, AutoModel   # 토크나이저와 모델 본체를 불러옴\nimport torch                                         # 텐서 계산과 평균/유사도 계산용\n\nname = \"sentence-transformers/all-MiniLM-L6-v2\"      # 문장 임베딩에 특화된 가벼운 사전학습 모델\ntokenizer = AutoTokenizer.from_pretrained(name)       # 텍스트를 토큰 ID로 바꿀 도구\nmodel = AutoModel.from_pretrained(name)               # 임베딩을 만들어내는 신경망\n\nsents = [\"강아지가 공을 문다\",                        # 0번 문장\n         \"개가 공놀이를 한다\",                        # 1번 문장(0번과 의미 비슷)\n         \"주식 시장이 폭락했다\"]                       # 2번 문장(전혀 다른 주제)\n\nenc = tokenizer(sents, padding=True, truncation=True, return_tensors=\"pt\")  # 한꺼번에 토큰화\n\nwith torch.no_grad():                                 # 추론만 할 거라 기울기 계산을 꺼서 빠르게\n    out = model(**enc)                                # 모델 통과 → 토큰별 벡터(last_hidden_state)\n\n# mean pooling: 토큰 벡터들을 평균내 문장 1개당 벡터 1개로 압축\nmask = enc[\"attention_mask\"].unsqueeze(-1)            # 실제 단어 위치만 1로 표시(패딩 제외)\nsummed = (out.last_hidden_state * mask).sum(dim=1)    # 실제 토큰 벡터만 더함\ncounts = mask.sum(dim=1)                              # 문장별 실제 토큰 개수\nemb = summed / counts                                 # 평균 = 문장 임베딩 (문장수 x 차원)\n\n# 코사인 유사도: 1에 가까울수록 의미가 비슷\nsim_01 = torch.cosine_similarity(emb[0], emb[1], dim=0)  # 0번 vs 1번(비슷한 쌍)\nsim_02 = torch.cosine_similarity(emb[0], emb[2], dim=0)  # 0번 vs 2번(다른 쌍)\n\nprint(\"비슷한 문장 유사도:\", round(sim_01.item(), 3))   # 결과: 0.7 안팎의 높은 값\nprint(\"다른 문장 유사도:\", round(sim_02.item(), 3))     # 결과: 0.2 안팎의 낮은 값",
-        "note": "사전학습 모델로 문장을 벡터로 바꾼 뒤 코사인 유사도를 재면, 의미가 비슷한 문장끼리 점수가 높게 나온다.\n이것이 RAG·검색의 기본 원리다."
+        "code": "import numpy as np                       # 수치 계산 라이브러리\nimport matplotlib.pyplot as plt           # 그래프 시각화 라이브러리\n\ndef positional_encoding(seq_len, d_model):    # 길이와 차원을 받아 위치 인코딩 생성\n    pe = np.zeros((seq_len, d_model))         # (위치 x 차원) 0으로 채운 빈 표 준비\n    position = np.arange(seq_len)[:, None]    # 0,1,2,... 위치 번호를 세로 벡터로\n    # 차원 인덱스마다 주기를 다르게 하는 분모 계산\n    div = np.exp(np.arange(0, d_model, 2) * (-np.log(10000.0) / d_model))\n    pe[:, 0::2] = np.sin(position * div)      # 짝수 차원은 사인 곡선 값으로 채움\n    pe[:, 1::2] = np.cos(position * div)      # 홀수 차원은 코사인 곡선 값으로 채움\n    return pe                                 # 완성된 위치 인코딩 표 반환\n\nseq_len, d_model = 50, 64                     # 토큰 50개, 차원 64로 설정\npe = positional_encoding(seq_len, d_model)    # 위치 인코딩 표 생성\nprint(\"PE shape:\", pe.shape)                  # 결과: PE shape: (50, 64)\n\nplt.imshow(pe, aspect=\"auto\", cmap=\"viridis\") # 표를 색상 무늬 이미지로 그림\nplt.xlabel(\"차원(dimension)\")                  # 가로축: 임베딩 차원\nplt.ylabel(\"위치(position)\")                   # 세로축: 토큰 위치\nplt.colorbar()                                # 값-색 대응 막대 추가\nplt.title(\"Positional Encoding\")              # 그래프 제목\nplt.show()                                    # 화면에 출력(줄무늬 패턴이 보임)",
+        "note": "자리마다 사인·코사인이 만들어내는 고유한 줄무늬 패턴을 눈으로 확인할 수 있다.\n이 표를 단어 임베딩에 더하면 모델이 순서를 알게 된다."
+      },
+      {
+        "title": "사전학습 BERT로 문장 임베딩 뽑아 유사도 비교 (엔드투엔드)",
+        "lang": "python",
+        "code": "import torch                                   # 딥러닝 텐서 연산 라이브러리\nfrom transformers import AutoTokenizer, AutoModel  # 토크나이저와 모델 불러오기\n\ntok = AutoTokenizer.from_pretrained(\"bert-base-uncased\")  # BERT 토크나이저 로드\nmodel = AutoModel.from_pretrained(\"bert-base-uncased\")    # BERT 본체 모델 로드\nmodel.eval()                                    # 추론 모드(학습 끔)로 전환\n\ndef embed(text):                                # 문장을 하나의 벡터로 바꾸는 함수\n    inputs = tok(text, return_tensors=\"pt\")     # 문장을 텐서 형태로 토큰화\n    with torch.no_grad():                       # 기울기 계산 끔(추론이라 불필요)\n        out = model(**inputs)                   # 모델에 넣어 출력 얻기\n    return out.last_hidden_state.mean(dim=1)    # 토큰 벡터 평균으로 문장 벡터화\n\na = embed(\"I love cats\")                         # 1번 문장 임베딩\nb = embed(\"I adore kittens\")                     # 2번 문장(비슷한 뜻) 임베딩\nc = embed(\"The stock market crashed\")            # 3번 문장(다른 뜻) 임베딩\n\ncos = torch.nn.functional.cosine_similarity     # 코사인 유사도 함수 별칭\nprint(\"비슷한 문장:\", round(cos(a, b).item(), 3))   # 결과 예: 비슷한 문장: 0.9 근처(높음)\nprint(\"다른 문장:\", round(cos(a, c).item(), 3))     # 결과 예: 다른 문장: 0.6 근처(낮음)",
+        "note": "뜻이 비슷한 문장끼리는 코사인 유사도가 높고, 다른 주제 문장과는 낮게 나오는 것을 통해 임베딩이 의미를 담고 있음을 확인한다."
       }
     ]
   },
@@ -313,24 +319,24 @@ export const theory = {
   "spring-ai-1": {
     "theory": [
       {
-        "h": "Spring AI는 왜 필요할까",
-        "body": "예전에는 자바에서 LLM을 쓰려면 모델 회사마다 다른 HTTP 요청 형식, 인증, 응답 파싱을 직접 짜야 했다.\n회사마다 규격이 달라서 OpenAI에서 Anthropic으로 바꾸면 코드를 대부분 다시 써야 했다.\n\nSpring AI는 이 복잡함을 한 겹의 표준 인터페이스로 덮어 준다.\n마치 TV 리모컨처럼, 안에 든 회로(모델 회사)가 무엇이든 우리는 같은 버튼(메서드)만 누르면 된다.\n덕분에 비즈니스 로직에 집중하고 모델 교체는 설정 한 줄로 처리할 수 있다."
+        "h": "Spring AI가 왜 필요한가",
+        "body": "예전에는 자바에서 LLM을 쓰려면 HTTP 요청을 직접 만들고 JSON을 손으로 파싱해야 했다.\n이 과정은 길고 실수하기 쉬워서 초보자에게는 큰 벽이었다.\nSpring AI는 이런 번거로운 일을 대신 처리해 주는 '중간 통역사' 같은 라이브러리다.\n우리는 '무엇을 물어볼지'만 신경 쓰면 되고, 통신·인증·파싱은 Spring AI가 알아서 해 준다.\n덕분에 자바 개발자도 단 몇 줄로 AI 기능을 백엔드에 붙일 수 있다."
       },
       {
-        "h": "ChatClient로 대화하는 흐름",
-        "body": "ChatClient는 'prompt() → user(...) → call() → content()' 라는 체인으로 한 번의 대화를 만든다.\nprompt()로 요청을 시작하고, user()에 사용자의 질문을 담고, call()로 모델에 보낸 뒤, content()로 글자 답을 꺼낸다.\n\n이 흐름은 카페 주문과 닮았다.\nprompt()는 카운터에 서는 것, user()는 메뉴를 말하는 것, call()은 결제와 주문 전달, content()는 완성된 음료를 받는 것이다.\n단계가 명확하게 나뉘어 있어 중간에 옵션(온도·시스템 지시 등)을 끼워 넣기도 쉽다."
+        "h": "ChatClient 한 줄이 하는 일",
+        "body": "ChatClient는 식당의 '주문 키오스크'에 비유할 수 있다.\n우리는 메뉴(질문)를 고르고 버튼을 누르기만 하면 된다.\n주방(LLM 서버)에 주문을 전달하고 요리(답변)를 받아 오는 일은 키오스크가 다 한다.\nprompt()로 주문서를 펼치고, user()로 질문을 적고, call()로 주문을 보내고, content()로 음식을 받는 흐름이다.\n이 네 단계만 외우면 첫 AI API를 만들 수 있다."
       },
       {
-        "h": "설정과 비밀키 관리",
-        "body": "API 키는 돈이 나가는 비밀번호라서 절대 코드에 직접 적으면 안 된다.\n깃허브에 올라가는 순간 누군가 훔쳐 쓸 수 있기 때문이다.\n\n그래서 키는 운영체제의 환경변수에 넣고, application.yml에서는 ${OPENAI_API_KEY}처럼 이름만 참조한다.\n이렇게 하면 코드에는 비밀이 남지 않고, 서버마다 다른 키를 안전하게 주입할 수 있다.\n비밀번호를 메모지에 적어 모니터에 붙이지 않고 금고에 보관하는 것과 같은 원리다."
+        "h": "프로바이더는 설정으로 갈아 끼운다",
+        "body": "Spring AI의 큰 장점은 모델 공급사를 코드 수정 없이 바꿀 수 있다는 점이다.\n비유하자면 콘센트 규격이 같으면 어떤 회사의 전구든 꽂아 쓸 수 있는 것과 같다.\nOpenAI를 쓰다가 Anthropic(클로드)으로 바꾸고 싶으면 application.yml 설정과 의존성만 바꾸면 된다.\n컨트롤러나 서비스의 자바 코드는 거의 그대로 둘 수 있어 유지보수가 쉽다.\n이런 '추상화' 덕분에 한 번 배운 사용법을 여러 모델에 재활용할 수 있다."
       }
     ],
     "realCode": [
       {
-        "title": "채팅 응답 REST API 컨트롤러 (엔드투엔드)",
+        "title": "채팅 응답 REST API (Controller 전체)",
         "lang": "java",
-        "code": "package com.example.demo;  // 우리 애플리케이션의 패키지(폴더) 선언\n\nimport org.springframework.ai.chat.client.ChatClient;       // 대화를 보내는 만능 클라이언트\nimport org.springframework.web.bind.annotation.GetMapping;  // GET 요청을 메서드에 연결\nimport org.springframework.web.bind.annotation.RequestParam;// URL의 ?key=값 을 받아오는 어노테이션\nimport org.springframework.web.bind.annotation.RestController;// 이 클래스가 REST API임을 표시\n\n@RestController  // 메서드의 반환값을 그대로 HTTP 응답 본문으로 보냄\npublic class ChatController {\n\n    private final ChatClient chatClient;  // LLM에게 말을 거는 도구를 담을 변수\n\n    // 스프링이 ChatClient.Builder(조립기)를 자동으로 넣어줌(의존성 주입)\n    public ChatController(ChatClient.Builder builder) {\n        this.chatClient = builder.build();  // 조립기로 실제 ChatClient를 완성해 보관\n    }\n\n    @GetMapping(\"/chat\")  // http://localhost:8080/chat 주소로 들어오는 GET 요청을 처리\n    public String chat(@RequestParam String message) {  // ?message=... 의 값을 message에 담음\n        return chatClient.prompt()   // 1) 새 대화 요청 시작\n                .user(message)       // 2) 사용자의 질문을 넣음\n                .call()              // 3) 모델 서버로 전송하고 응답을 기다림\n                .content();          // 4) 응답에서 글자(텍스트)만 꺼내 반환\n    }\n}\n// 실행 후 /chat?message=안녕 호출 시: LLM이 만든 한국어 답변 문자열이 그대로 화면에 출력됨",
-        "note": "ChatClient.Builder를 주입받아 build()로 클라이언트를 만들고, prompt→user→call→content 체인으로 한 번의 질의응답을 완성한다.\n키와 모델은 코드가 아니라 application.yml에서 읽어오므로 컨트롤러 코드는 모델 회사와 무관하게 동일하다."
+        "code": "// 이 클래스가 속한 패키지(폴더) 경로를 선언한다\npackage com.example.springai.chat;\n\n// LLM에게 말을 거는 핵심 도구 ChatClient 를 가져온다\nimport org.springframework.ai.chat.client.ChatClient;\n// 웹 요청을 처리하는 애너테이션들을 한 번에 가져온다(@RestController 등)\nimport org.springframework.web.bind.annotation.*;\n\n// 이 클래스가 HTTP 요청을 받아 문자열로 응답하는 컨트롤러임을 선언\n@RestController\n// 이 컨트롤러의 모든 주소 앞에 /api/chat 을 공통으로 붙인다\n@RequestMapping(\"/api/chat\")\npublic class ChatController {\n\n    // LLM 호출 도구를 담아 둘 변수(한 번 만들고 계속 재사용)\n    private final ChatClient chatClient;\n\n    // 생성자: 스프링이 ChatClient.Builder 를 자동으로 넣어 준다(의존성 주입)\n    public ChatController(ChatClient.Builder builder) {\n        // 빌더를 build() 해서 완성된 ChatClient 를 변수에 저장한다\n        this.chatClient = builder.build();\n    }\n\n    // GET /api/chat?message=... 형태의 요청을 이 메서드가 담당한다\n    @GetMapping\n    public String chat(@RequestParam String message) {\n        // 사용자의 질문을 LLM에 보내고 답변 문자열을 받아 그대로 반환한다\n        return chatClient.prompt()   // 새 프롬프트(주문서) 작성을 시작\n                .user(message)        // 사용자 역할 메시지로 질문 내용을 채운다\n                .call()               // LLM 서버로 요청을 실제 전송한다\n                .content();           // 응답에서 텍스트 본문만 꺼내 온다\n    }\n}",
+        "note": "ChatClient.Builder를 주입받아 build()로 클라이언트를 만들고, prompt-user-call-content 4단계로 답변을 얻는 가장 기본적인 채팅 API다.\n@RequestParam은 주소의 ?message= 값을 자바 변수로 받아 준다."
       }
     ]
   },
@@ -338,87 +344,95 @@ export const theory = {
     "theory": [
       {
         "h": "왜 RAG가 필요한가",
-        "body": "LLM은 학습이 끝난 시점까지의 지식만 기억하고, 우리 회사 내부 문서는 본 적이 없다.\n그래서 사내 규정이나 최신 정보를 물으면 모르거나 그럴듯한 거짓말(환각)을 만들어낸다.\n\nRAG는 답하기 전에 먼저 관련 문서를 검색해 LLM에게 '이 자료를 참고해서 답해'라고 함께 건넨다.\n시험을 외워서 보는 대신, 오픈북으로 교재를 펴 놓고 푸는 것과 같다.\n덕분에 최신·사내 정보를 근거로 정확하게 답하고 출처도 제시할 수 있다."
+        "body": "LLM은 학습한 시점까지의 일반 지식만 알고, 우리 회사의 내부 규정이나 최신 문서는 모른다.\n그래서 사내 정보를 물으면 그럴듯하지만 틀린 답(환각)을 만들어 내기 쉽다.\nRAG는 '시험 볼 때 정답 자료를 옆에 펼쳐 두는 오픈북 시험'에 비유할 수 있다.\n질문이 오면 먼저 관련 문서 조각을 찾아 프롬프트에 붙여 주고, LLM은 그 자료를 보고 답한다.\n덕분에 최신·내부 정보에도 정확하게 답하고, 근거 문장을 함께 제시할 수 있다."
       },
       {
-        "h": "임베딩과 벡터 검색의 직관",
-        "body": "임베딩은 문장의 '의미'를 좌표로 바꾸는 일이다.\n'강아지'와 '반려견'은 글자는 달라도 좌표가 가깝게 찍히고, '강아지'와 '세금'은 멀리 찍힌다.\n\n검색은 질문도 같은 방식으로 좌표로 바꾼 뒤, 그 점에서 가장 가까운 문서 조각들을 고르는 것이다.\n도서관에서 책을 주제별로 가까운 책장에 꽂아 두면, 원하는 주제 근처만 둘러봐도 관련 책을 빨리 찾는 것과 같다.\n그래서 단어가 정확히 일치하지 않아도 의미가 통하면 찾아낼 수 있다."
+        "h": "임베딩과 벡터 거리의 직관",
+        "body": "임베딩은 문장을 '의미 좌표'로 바꾸는 일이라고 생각하면 쉽다.\n예를 들어 '강아지'와 '개'는 좌표가 매우 가깝고, '강아지'와 '자동차'는 멀리 떨어진다.\n그래서 질문도 벡터로 바꾸면, 질문과 가까운 문단이 곧 '관련 있는 문단'이 된다.\n이 거리를 재는 흔한 방법이 코사인 유사도인데, 방향이 비슷할수록 1에 가깝다.\nVectorStore는 이 계산을 대신해 가장 가까운 조각들을 순식간에 찾아 준다."
+      },
+      {
+        "h": "RAG 파이프라인 두 단계",
+        "body": "RAG는 크게 '미리 준비하는 단계'와 '질문에 답하는 단계'로 나뉜다.\n준비 단계에서는 문서를 읽고, 조각으로 자르고, 임베딩해서 VectorStore에 저장한다.\n이 작업은 보통 서비스 시작 시 한 번 또는 문서가 바뀔 때만 수행한다.\n질문 단계에서는 질문을 임베딩해 비슷한 조각을 찾고, 그 조각을 프롬프트에 넣어 LLM에 보낸다.\n이 두 단계를 분리해서 생각하면 RAG 코드 구조가 한결 명확해진다."
       }
     ],
     "realCode": [
       {
-        "title": "문서 적재(인덱싱) + RAG 질의응답 서비스",
+        "title": "문서 적재(Ingestion) + 질의응답(QnA) 서비스",
         "lang": "java",
-        "code": "package com.example.demo;\n\nimport org.springframework.ai.chat.client.ChatClient;          // LLM 호출\nimport org.springframework.ai.document.Document;               // 문서 조각 한 개를 표현\nimport org.springframework.ai.transformer.splitter.TokenTextSplitter; // 긴 글을 토막내는 도구\nimport org.springframework.ai.vectorstore.SearchRequest;       // 유사도 검색 요청\nimport org.springframework.ai.vectorstore.VectorStore;         // 벡터 저장·검색소\nimport org.springframework.web.bind.annotation.*;\nimport java.util.List;\nimport java.util.stream.Collectors;\n\n@RestController\npublic class QaService {\n\n    private final ChatClient chatClient;   // 답변 생성용\n    private final VectorStore vectorStore; // 문서 검색용\n\n    public QaService(ChatClient.Builder b, VectorStore vs) {\n        this.chatClient = b.build();       // 클라이언트 완성\n        this.vectorStore = vs;             // 스프링이 주입한 벡터 저장소 보관\n    }\n\n    // 1) 문서를 잘라 벡터로 저장(앱 시작 시 1회 호출)\n    public void ingest(String raw) {\n        Document doc = new Document(raw);                 // 원문을 Document로 감쌈\n        List<Document> chunks = new TokenTextSplitter()   // 기본 길이로 조각냄\n                .split(List.of(doc));\n        vectorStore.add(chunks);                          // 임베딩되어 DB에 색인됨\n    }\n\n    // 2) 질문을 받아 검색 후 근거로 답함\n    @GetMapping(\"/ask\")\n    public String ask(@RequestParam String q) {\n        List<Document> hits = vectorStore.similaritySearch(  // 질문과 가까운 조각 검색\n                SearchRequest.query(q).withTopK(3));         // 상위 3개만\n        String context = hits.stream()                       // 찾은 조각들을\n                .map(Document::getContent)                   // 본문 텍스트만 뽑아\n                .collect(Collectors.joining(\"\\n---\\n\"));     // 하나의 참고자료로 합침\n        return chatClient.prompt()\n                .system(\"아래 자료만 근거로 한국어로 답하고, 없으면 모른다고 해\")\n                .user(\"자료:\\n\" + context + \"\\n\\n질문: \" + q) // 자료+질문을 함께 전달\n                .call().content();                            // LLM 답변 반환\n    }\n}\n// /ask?q=설립연도 호출 시: 문서에 적힌 연도를 근거로 한 답변 출력",
-        "note": "ingest로 문서를 청킹·임베딩해 vectorStore에 넣고, ask에서 similaritySearch로 찾은 top-3 조각을 프롬프트의 '자료'로 끼워 LLM이 근거 기반으로 답하게 한다.\n자료에 없으면 모른다고 답하라는 system 지시가 환각을 줄인다."
+        "code": "// 이 서비스 클래스가 속한 패키지 경로를 선언한다\npackage com.example.springai.rag;\n\n// 텍스트 파일을 읽어 Document로 만들어 주는 리더를 가져온다\nimport org.springframework.ai.reader.TextReader;\n// 긴 문서를 토큰 기준으로 잘라 주는 분할기를 가져온다\nimport org.springframework.ai.transformer.splitter.TokenTextSplitter;\n// 문서 한 조각을 표현하는 타입을 가져온다\nimport org.springframework.ai.document.Document;\n// 벡터 저장·검색을 담당하는 인터페이스를 가져온다\nimport org.springframework.ai.vectorstore.VectorStore;\n// 검색 조건(질문·top-k)을 담는 요청 객체를 가져온다\nimport org.springframework.ai.vectorstore.SearchRequest;\n// LLM에 말을 거는 ChatClient 를 가져온다\nimport org.springframework.ai.chat.client.ChatClient;\n// 클래스패스의 파일을 자원으로 읽기 위한 타입을 가져온다\nimport org.springframework.core.io.ClassPathResource;\nimport org.springframework.stereotype.Service;\nimport java.util.List;\nimport java.util.stream.Collectors;\n\n// 이 클래스가 스프링이 관리하는 서비스 빈임을 선언\n@Service\npublic class QnaService {\n\n    // 벡터 저장소(문서 벡터 보관·검색)를 담을 변수\n    private final VectorStore vectorStore;\n    // LLM 호출 도구를 담을 변수\n    private final ChatClient chatClient;\n\n    // 생성자: 두 의존성을 스프링이 자동으로 주입해 준다\n    public QnaService(VectorStore vectorStore, ChatClient.Builder builder) {\n        this.vectorStore = vectorStore;        // 주입받은 벡터 저장소 보관\n        this.chatClient = builder.build();     // 빌더로 ChatClient 완성\n    }\n\n    // [준비 단계] 문서를 읽어 조각내고 벡터로 저장한다\n    public void ingest() {\n        // resources/docs/employee_guide.txt 파일을 텍스트 리더로 연다\n        TextReader reader = new TextReader(new ClassPathResource(\"docs/employee_guide.txt\"));\n        // 파일을 읽어 Document 목록으로 만든다(아직 통째로 큰 상태)\n        List<Document> docs = reader.get();\n        // 긴 문서를 토큰 기준으로 작은 조각들로 나눈다\n        List<Document> chunks = new TokenTextSplitter().apply(docs);\n        // 나눈 조각들을 임베딩해서 벡터 저장소에 저장한다\n        vectorStore.add(chunks);\n        // 적재 결과를 콘솔에 출력한다 (결과: 적재된 조각 개수 = N)\n        System.out.println(\"적재된 조각 개수 = \" + chunks.size());\n    }\n\n    // [질문 단계] 질문을 받아 근거 기반 답변을 만든다\n    public String ask(String question) {\n        // 질문과 가장 비슷한 상위 4개 조각을 벡터 저장소에서 찾는다\n        List<Document> hits = vectorStore.similaritySearch(\n                SearchRequest.builder().query(question).topK(4).build());\n        // 찾은 조각들의 본문만 모아 하나의 '근거 텍스트'로 합친다\n        String context = hits.stream()\n                .map(Document::getText)            // 각 조각에서 본문 텍스트만 추출\n                .collect(Collectors.joining(\"\\n---\\n\")); // 구분선으로 이어 붙임\n        // 근거를 system, 질문을 user로 넣어 LLM에 답을 요청한다\n        return chatClient.prompt()\n                .system(\"아래 문서 근거만 사용해 한국어로 답하라. 없으면 모른다고 답하라.\\n\" + context)\n                .user(question)                   // 사용자의 실제 질문\n                .call()                            // LLM 호출\n                .content();                        // 답변 본문 추출\n    }\n}",
+        "note": "ingest()는 '읽기→자르기→벡터 저장'의 준비 단계, ask()는 '유사검색→근거결합→LLM호출'의 질문 단계다.\nsimilaritySearch가 질문과 가까운 문단을 골라 주고, 그 근거만 쓰도록 system 메시지로 못 박아 환각을 줄인다."
       }
     ]
   },
   "spring-ai-3": {
     "theory": [
       {
-        "h": "도구 호출이 여는 세계",
-        "body": "LLM은 똑똑하지만 '지금 서울 날씨'나 'DB의 주문 상태'처럼 실시간·내부 데이터는 알 수 없다.\n그냥 물으면 모르거나 지어낸다.\n\nFunction Calling은 LLM에게 '필요하면 이 함수를 불러도 돼'라고 도구 목록을 쥐여 주는 것이다.\nLLM은 질문을 보고 스스로 어떤 도구를 어떤 인자로 부를지 정하고, 우리 코드가 실제로 실행해 결과를 돌려준다.\n비서에게 '모르면 옆 부서에 전화해서 물어봐'라고 권한을 준 것과 같아서, AI가 현실 데이터와 연결된다."
+        "h": "Function Calling이 여는 세상",
+        "body": "기본 LLM은 글만 쓸 수 있어서 '오늘 서울 날씨'처럼 실시간 정보를 물으면 추측하거나 모른다고 한다.\nFunction Calling은 LLM에게 '필요하면 이 함수를 써도 돼'라고 도구 목록을 쥐여 주는 일이다.\n비유하자면 똑똑한 직원에게 사내 시스템 사용 권한을 주는 것과 같다.\nLLM은 질문을 보고 'getWeather 함수를 서울 인자로 부르면 되겠다'고 판단해 호출을 요청한다.\nSpring AI가 실제 자바 메서드를 실행하고 그 결과를 다시 LLM에 돌려주면, LLM은 그것을 자연스러운 문장으로 정리해 답한다."
       },
       {
-        "h": "왜 구조화 출력이 중요한가",
-        "body": "사람에게는 자연스러운 문장이 좋지만, 프로그램끼리는 정해진 모양의 데이터가 필요하다.\n'서울은 24도쯤 되고 맑아요'라는 문장에서 숫자만 골라 쓰기는 번거롭고 깨지기 쉽다.\n\n구조화 출력은 LLM에게 'city, celsius, summary 필드를 가진 객체로 답해'라고 시키고, Spring AI가 그 답을 자바 객체로 자동 변환해 준다.\n자유 서술을 정해진 서식(엑셀 칸)에 맞춰 받는 것과 같아서, 이후 계산·저장·화면 표시에 바로 쓸 수 있다.\n덕분에 AI 응답을 안정적으로 시스템에 통합할 수 있다."
+        "h": "구조화 출력이 중요한 이유",
+        "body": "사람에게 보여 줄 답은 문장이 좋지만, 프로그램끼리 주고받을 답은 정해진 모양이 필요하다.\n예를 들어 날씨 답을 화면 카드로 그리려면 도시·기온·상태가 각각 분리된 값이어야 한다.\n문장에서 숫자를 일일이 추출하는 것은 깨지기 쉽고 번거롭다.\n구조화 출력은 LLM에게 'WeatherReport 모양으로 답해'라고 요구해, 자바 객체로 바로 받게 해 준다.\n그러면 report.temperature() 처럼 코드에서 안전하게 값을 꺼내 쓸 수 있다."
+      },
+      {
+        "h": "서비스에 통합할 때의 안전장치",
+        "body": "AI 기능을 실제 서비스에 붙일 때는 '잘 될 때'보다 '안 될 때'를 먼저 대비해야 한다.\n외부 모델 서버는 가끔 느리거나 일시적으로 실패하므로 타임아웃과 재시도를 둔다.\n사용자 입력을 그대로 프롬프트에 넣으면 프롬프트 인젝션 공격에 노출되니, 도구의 권한과 입력을 제한한다.\nAPI 키 같은 비밀은 코드가 아니라 환경변수나 비밀저장소에 둔다.\n또 토큰 사용량은 곧 비용이므로, 너무 긴 프롬프트와 불필요한 호출을 줄이는 습관이 필요하다."
       }
     ],
     "realCode": [
       {
-        "title": "도구 호출 + 구조화 출력 결합 서비스",
+        "title": "도구(@Tool) + 구조화 출력 + 스트리밍 컨트롤러",
         "lang": "java",
-        "code": "package com.example.demo;\n\nimport org.springframework.ai.chat.client.ChatClient;\nimport org.springframework.ai.tool.annotation.Tool;   // 도구 표시 어노테이션\nimport org.springframework.web.bind.annotation.*;\n\n@RestController\npublic class WeatherController {\n\n    private final ChatClient chatClient;\n    public WeatherController(ChatClient.Builder b) { this.chatClient = b.build(); }\n\n    // AI가 답으로 채워줄 데이터 모양(불변 객체)\n    public record WeatherReport(String city, int celsius, String summary) {}\n\n    // AI가 필요할 때 호출하는 도구 모음\n    static class WeatherTools {\n        @Tool(description = \"도시 이름을 받아 현재 기온(섭씨)을 돌려준다\")\n        public int getWeather(String city) {           // AI가 인자 city를 채워 호출\n            return switch (city) {                       // 데모용 고정값(실제론 외부 API)\n                case \"서울\" -> 24;\n                case \"부산\" -> 27;\n                default -> 20;                           // 모르는 도시는 기본값\n            };\n        }\n    }\n\n    @GetMapping(\"/weather\")\n    public WeatherReport weather(@RequestParam String city) {\n        return chatClient.prompt()\n                .system(\"날씨를 묻는 질문에는 반드시 제공된 도구를 사용해 답해\")\n                .user(city + \" 날씨를 알려줘\")            // 사용자 질문\n                .tools(new WeatherTools())               // 사용할 수 있는 도구 등록\n                .call()\n                .entity(WeatherReport.class);            // 답을 record 객체로 변환해 받음\n    }\n}\n// /weather?city=서울 호출 시: {\"city\":\"서울\",\"celsius\":24,\"summary\":\"맑음\"} 형태 JSON 반환",
-        "note": "tools(new WeatherTools())로 도구를 등록하면 LLM이 스스로 getWeather를 호출해 실데이터를 얻고, entity(WeatherReport.class)가 그 답을 자바 record로 자동 매핑해 바로 JSON 응답으로 쓸 수 있게 한다."
+        "code": "// 이 클래스가 속한 패키지 경로를 선언한다\npackage com.example.springai.tool;\n\n// LLM 호출 도구 ChatClient 를 가져온다\nimport org.springframework.ai.chat.client.ChatClient;\n// 메서드를 LLM 도구로 등록하는 @Tool 애너테이션을 가져온다\nimport org.springframework.ai.tool.annotation.Tool;\n// 실시간 스트리밍 응답을 표현하는 리액터 타입을 가져온다\nimport reactor.core.publisher.Flux;\nimport org.springframework.web.bind.annotation.*;\n\n// 이 클래스가 HTTP 요청을 처리하는 컨트롤러임을 선언\n@RestController\n@RequestMapping(\"/api\")\npublic class ToolController {\n\n    // LLM 호출 도구를 담을 변수\n    private final ChatClient chatClient;\n\n    // 생성자: ChatClient.Builder 를 주입받아 클라이언트를 만든다\n    public ToolController(ChatClient.Builder builder) {\n        this.chatClient = builder.build();     // 빌더로 ChatClient 완성\n    }\n\n    // LLM이 호출할 수 있는 도구(함수). description 이 사용 설명서 역할\n    @Tool(description = \"특정 도시의 현재 날씨를 조회한다\")\n    public String getWeather(String city) {\n        // 실제로는 외부 날씨 API를 부르지만, 예제는 고정값을 돌려준다\n        return city + \"은(는) 맑음, 기온 26도\";\n    }\n\n    // 구조화 출력을 담을 데이터 그릇(자바 record)\n    public record WeatherReport(String city, int temperature, String sky) {}\n\n    // [도구 호출] GET /api/tool?message=... — LLM이 필요시 getWeather 호출\n    @GetMapping(\"/tool\")\n    public String tool(@RequestParam String message) {\n        try {                                   // 일시적 오류에 대비해 감싼다\n            return chatClient.prompt()          // 프롬프트 작성 시작\n                    .user(message)              // 사용자 질문 넣기\n                    .tools(this)                // this 안의 @Tool 메서드를 도구로 등록\n                    .call()                     // LLM 호출(필요시 도구 자동 실행)\n                    .content();                 // 최종 답변 텍스트 추출\n        } catch (Exception e) {                 // 호출 실패 시\n            return \"일시적인 오류가 발생했어요. 잠시 후 다시 시도해 주세요.\"; // 친화 메시지\n        }\n    }\n\n    // [구조화 출력] GET /api/report?message=... — 답을 객체로 받는다\n    @GetMapping(\"/report\")\n    public WeatherReport report(@RequestParam String message) {\n        return chatClient.prompt()              // 프롬프트 작성 시작\n                .user(message)                  // 사용자 질문\n                .tools(this)                    // 날씨 도구 등록\n                .call()                         // LLM 호출\n                .entity(WeatherReport.class);   // 답을 WeatherReport 객체로 변환\n    }\n\n    // [스트리밍] GET /api/stream?message=... — 글자를 실시간으로 흘려보낸다\n    @GetMapping(\"/stream\")\n    public Flux<String> stream(@RequestParam String message) {\n        return chatClient.prompt()              // 프롬프트 작성 시작\n                .user(message)                  // 사용자 질문\n                .stream()                       // 한꺼번에 말고 조각으로 받기\n                .content();                     // 생성되는 텍스트 조각을 순차 전달\n    }\n}",
+        "note": "@Tool 메서드를 .tools(this)로 넘기면 LLM이 필요할 때 스스로 호출한다.\n.entity(클래스)는 답을 자바 객체로, .stream().content()는 토큰을 실시간으로 받아 준다.\ntry-catch로 일시적 실패를 사용자 친화 메시지로 바꾸는 것이 서비스 통합의 기본기다."
       }
     ]
   },
   "sllm-1": {
     "theory": [
       {
-        "h": "왜 작은 모델(sLLM)을 쓰는가",
-        "body": "GPT 같은 초대형 모델은 똑똑하지만, 한 번 돌릴 때마다 거대한 그래픽카드(GPU) 여러 장이 필요하고 비용도 크다.\n반면 sLLM은 파라미터 수가 작아서 노트북이나 작은 서버에서도 돌아간다.\n이는 마치 트럭(대형 LLM) 대신 오토바이(sLLM)로 동네 배달을 하는 것과 같다.\n무거운 짐은 트럭이 낫지만, 가까운 거리를 빠르고 싸게 다니기엔 오토바이가 훨씬 효율적이다.\n\n특히 회사 내부 문서처럼 밖으로 새면 안 되는 데이터는 내 컴퓨터 안에서만 도는 sLLM이 안전하다.\n또한 한 가지 업무에 특화시키면, 작은 모델도 그 분야에서는 대형 모델 못지않게 잘한다."
+        "h": "sLLM은 '경차'다 — 작아도 충분히 일한다",
+        "body": "거대한 LLM을 슈퍼컴퓨터급 대형 트럭이라고 하면, sLLM은 좁은 골목까지 다니는 경차다.\n트럭은 짐을 많이 싣지만 주차장도 기름값도 부담이고, 경차는 짐은 적게 싣지만 어디든 쉽게 다닌다.\nsLLM도 마찬가지여서, 아주 어려운 추론은 큰 모델보다 약하지만 요약·분류·간단한 챗봇 같은 일상 업무는 충분히 해낸다.\n\n작다는 것의 진짜 장점은 '내 컴퓨터에서 돈다'는 점이다.\n회사 기밀 문서를 외부 서버에 안 보내고 처리할 수 있고, 인터넷이 없어도 동작하며, 호출할 때마다 돈이 나가지 않는다.\n그래서 실무에서는 '모든 일을 큰 모델에 맡기지 말고, 가벼운 일은 sLLM에 맡기자'는 흐름이 점점 커지고 있다."
       },
       {
-        "h": "양자화로 모델을 가볍게 만들기",
-        "body": "모델 속 숫자들은 원래 32비트(아주 정밀한 소수)로 저장되어 용량이 크다.\n양자화는 이 숫자를 4비트나 8비트로 '반올림해 짧게' 저장하는 압축 기술이다.\n사진을 고화질 RAW 대신 JPG로 저장하면 용량이 확 줄지만 보기엔 큰 차이가 없는 것과 비슷하다.\n\n4비트로 양자화하면 모델 용량이 1/4 정도로 줄어, 7B 모델도 일반 노트북 메모리에 올라간다.\n약간의 정확도 손실은 있지만, 실무에서 체감 차이는 작아서 로컬 실행에 널리 쓰인다."
+        "h": "오픈소스 모델 생태계 — 누구나 받아서 고칠 수 있다",
+        "body": "예전에는 똑똑한 LLM은 회사 서버 안에만 있고 우리는 API로 빌려 쓰기만 했다.\n지금은 Meta의 Llama, 알리바바의 Qwen, 구글의 Gemma처럼 모델의 '속'을 통째로 공개한 오픈소스 모델이 많아졌다.\n공개된 모델은 Hugging Face라는 '모델 앱스토어' 같은 사이트에서 내려받아 바로 쓸 수 있다.\n\n오픈소스라서 좋은 점은 자유롭게 고칠 수 있다는 것이다.\n내 회사 말투, 내 업무 데이터에 맞게 뒤에서 배울 LoRA로 살짝 다듬으면 '우리 회사 전용 비서'를 만들 수 있다.\n이번 과정의 목표가 바로 이 '내 것으로 만들기'의 첫걸음이다."
       },
       {
-        "h": "오픈소스 모델 생태계 한눈에 보기",
-        "body": "Llama는 Meta가 공개한 대표 오픈 모델로, 커뮤니티가 가장 활발하다.\nQwen은 알리바바가 만든 모델로 한국어를 포함한 다국어와 코딩에 강하다.\nGemma는 구글이 공개한 가볍고 효율 좋은 모델이다.\n\n이 모델들은 0.5B처럼 아주 작은 버전부터 70B처럼 큰 버전까지 '같은 이름 다른 크기'로 나온다.\n처음에는 가장 작은 버전으로 빠르게 실험하고, 품질이 부족하면 한 단계 큰 모델로 올리는 순서가 좋다."
+        "h": "양자화 — 큰 모델을 작은 가방에 욱여넣기",
+        "body": "모델은 수십억 개의 숫자(가중치)로 되어 있고, 원래는 각 숫자를 아주 정밀한 소수(32비트)로 저장한다.\n양자화는 이 정밀한 소수를 더 거친 정수(예: 4비트)로 바꿔 저장하는 기술이다.\n고화질 사진을 용량 작은 압축본으로 바꾸면 약간 흐려지지만 알아보는 데는 문제없는 것과 똑같다.\n\n4비트로 양자화하면 모델 용량이 대략 4분의 1로 줄어 노트북 메모리에도 들어간다.\n품질은 조금 떨어지지만 대부분의 업무에서는 차이를 느끼기 어려울 정도다.\n그래서 '로컬에서 LLM 돌리기'는 거의 항상 양자화와 함께 간다."
       }
     ],
     "realCode": [
       {
-        "title": "Ollama로 띄운 sLLM을 감싸는 FastAPI 챗봇 서버",
+        "title": "로컬 Ollama 모델과 대화하는 미니 챗봇 (chat.py)",
         "lang": "python",
-        "code": "# app.py : 로컬 Ollama 모델을 호출하는 미니 챗봇 API 서버\nimport time                                  # 응답 시간을 재기 위한 표준 시간 모듈\nimport requests                              # Ollama 로컬 서버에 HTTP 요청을 보내기 위한 라이브러리\nfrom fastapi import FastAPI                   # 웹 API를 쉽게 만들어 주는 프레임워크\nfrom pydantic import BaseModel               # 요청 본문의 형식(스키마)을 정의하는 도구\n\napp = FastAPI()                              # FastAPI 앱(서버) 객체를 하나 생성\nOLLAMA_URL = \"http://localhost:11434/api/generate\"  # Ollama가 기본으로 여는 로컬 주소\nMODEL_NAME = \"qwen2.5:0.5b\"                 # 사용할 소형 모델 이름(미리 ollama pull 해 둔 모델)\n\nclass ChatRequest(BaseModel):                # 클라이언트가 보낼 요청의 형태를 정의하는 클래스\n    message: str                             # message 라는 문자열 한 개만 받는다는 뜻\n\n@app.post(\"/chat\")                          # POST 방식의 /chat 주소로 들어오는 요청을 처리\ndef chat(req: ChatRequest):                  # 위에서 정의한 형식으로 자동 검증된 요청을 받음\n    start = time.time()                      # 응답 시간 측정을 위해 시작 시각을 기록\n    payload = {                              # Ollama에 보낼 요청 데이터(JSON)를 구성\n        \"model\": MODEL_NAME,                # 어떤 모델로 답할지 지정\n        \"prompt\": req.message,              # 사용자가 입력한 질문을 프롬프트로 전달\n        \"stream\": False,                    # 한 번에 전체 답을 받기 위해 스트리밍은 끔\n    }\n    res = requests.post(OLLAMA_URL, json=payload)  # Ollama 로컬 서버에 질문을 전송\n    reply = res.json()[\"response\"]          # 응답 JSON에서 모델이 생성한 답변 텍스트만 꺼냄\n    latency_ms = int((time.time() - start) * 1000)  # 걸린 시간을 밀리초 단위 정수로 계산\n    return {\"reply\": reply, \"latency_ms\": latency_ms}  # 답변과 응답 시간을 함께 반환\n",
-        "note": "Ollama가 11434 포트에서 떠 있어야 동작한다.\n서버 실행 후 /docs 에서 바로 테스트할 수 있다."
+        "code": "import requests          # HTTP 요청을 보내는 라이브러리(로컬 모델 서버에 말을 건다)\nimport json              # 모델이 한 줄씩 보내주는 JSON 응답을 해석하기 위해 사용\n\nURL = \"http://localhost:11434/api/chat\"   # Ollama가 켜지면 이 주소로 채팅 요청을 받는다\nMODEL = \"qwen2.5:0.5b\"                       # 미리 pull 해 둔 아주 작은 모델 이름\n\n# system 메시지로 모델의 '역할·말투'를 고정한다(대화 내내 유지됨)\nmessages = [\n    {\"role\": \"system\", \"content\": \"너는 친절한 한국어 비서야. 짧고 쉽게 답해줘.\"}\n]\n\ndef ask(question):                          # 질문 한 번을 보내고 답을 받아오는 함수\n    messages.append({\"role\": \"user\", \"content\": question})  # 사용자 질문을 대화에 추가\n    payload = {                             # 모델 서버에 보낼 요청 내용을 만든다\n        \"model\": MODEL,                     # 어떤 모델을 쓸지 지정\n        \"messages\": messages,               # 지금까지의 전체 대화(기억 역할)\n        \"stream\": False,                    # True면 한 글자씩, False면 완성된 답을 한 번에 받음\n        \"options\": {\"temperature\": 0.2}     # 0에 가까울수록 일관되고 차분한 답을 함\n    }\n    res = requests.post(URL, json=payload)  # 로컬 모델 서버에 POST 요청을 보낸다\n    answer = res.json()[\"message\"][\"content\"]  # 응답 JSON에서 모델이 쓴 글만 꺼낸다\n    messages.append({\"role\": \"assistant\", \"content\": answer})  # 답도 대화에 저장(다음 질문이 맥락 기억)\n    return answer                           # 답변 문자열을 돌려준다\n\nif __name__ == \"__main__\":                  # 이 파일을 직접 실행했을 때만 아래가 돈다\n    reply = ask(\"파이썬으로 1부터 10까지 더하는 법 알려줘\")  # 첫 질문을 던진다\n    print(\"모델 답변:\", reply)              # 결과: 한국어 설명 + 짧은 파이썬 코드가 출력됨\n    with open(\"result.txt\", \"w\", encoding=\"utf-8\") as f:  # 대화 결과를 파일로 저장 준비\n        f.write(reply)                      # 모델 답변을 result.txt에 기록(증빙용)",
+        "note": "Ollama가 켜진 상태에서 'python chat.py'만 실행하면 인터넷 없이 내 컴퓨터의 모델과 대화하고, 그 결과를 result.txt로 남긴다.\nsystem 메시지로 말투를 고정하고 messages 리스트로 대화를 기억시키는 것이 핵심이다."
       }
     ]
   },
   "sllm-2": {
     "theory": [
       {
-        "h": "파인튜닝은 왜 필요한가",
-        "body": "사전학습된 모델은 세상 지식을 두루 알지만, 우리 회사 용어나 원하는 말투까지는 모른다.\n파인튜닝은 그 모델에게 우리만의 예시를 보여 주며 '이 분야에선 이렇게 답해'라고 가르치는 일이다.\n이는 똑똑한 신입사원에게 회사 업무 매뉴얼을 며칠 교육시키는 것과 같다.\n기본기는 이미 갖췄으니, 우리 상황에 맞는 부분만 보충하면 금방 전력이 된다.\n\n그래서 데이터가 많지 않아도, 질 좋은 예시 수백 개만으로도 효과를 볼 수 있다.\n중요한 것은 양보다 '일관되고 정확한 모범 답안'을 모으는 것이다."
+        "h": "파인튜닝은 '신입 재교육'이다",
+        "body": "이미 한국어와 상식을 두루 아는 똑똑한 신입사원이 들어왔다고 생각해 보자.\n이 신입은 일반 지식은 풍부하지만 우리 회사의 용어·규정·말투는 아직 모른다.\n파인튜닝은 바로 이 신입을 우리 회사 사례로 며칠 더 교육해 '우리식으로' 답하게 만드는 과정이다.\n\n그래서 파인튜닝은 모델에게 새 지식을 통째로 주입하는 것이 아니라, 이미 아는 것을 '우리 방식'으로 정렬하는 데 강하다.\n말투를 통일하거나, 정해진 형식(JSON 등)으로 답하게 하거나, 특정 도메인 질문에 일관되게 답하게 할 때 효과가 크다.\n반대로 최신 사실을 알려주는 일은 파인튜닝보다 RAG(검색 붙이기)가 더 잘 맞는다는 점도 함께 기억하자."
       },
       {
-        "h": "LoRA가 학습을 가볍게 만드는 원리",
-        "body": "모델 전체를 다시 학습하려면 수억~수십억 개 숫자를 전부 고쳐야 해서 메모리가 엄청나게 든다.\nLoRA는 원본 숫자는 그대로 얼려 두고, 옆에 아주 작은 '보정용 행렬' 두 개만 새로 학습한다.\n원본 그림은 손대지 않고, 투명한 트레이싱지 위에만 덧칠하는 것과 비슷하다.\n덧칠한 종이는 가볍고, 마음에 안 들면 떼어내고 다른 종이를 끼울 수도 있다.\n\n그 결과 학습해야 할 숫자가 전체의 1% 미만으로 줄어, 노트북 GPU로도 학습이 가능해진다.\nQLoRA는 여기에 4비트 양자화까지 더해 메모리를 한 번 더 아끼는 발전된 방식이다."
+        "h": "LoRA — 책에 포스트잇만 붙이기",
+        "body": "두꺼운 전공책 전체를 내 마음대로 다시 쓰려면 시간도 종이도 엄청나게 든다.\nLoRA는 책 본문은 그대로 두고, 필요한 곳에 작은 포스트잇(보조 행렬)만 붙여 내용을 보완하는 방식이다.\n모델의 거대한 가중치는 그대로 얼려 두고, 그 옆에 끼우는 작은 행렬 두 개만 새로 학습하기 때문이다.\n\n이렇게 하면 학습해야 할 숫자가 전체의 1% 미만으로 줄어 메모리와 시간이 크게 절약된다.\n게다가 배운 결과가 수십 MB짜리 '어댑터' 파일로만 나와서, 본체에 끼웠다 뺐다 하며 여러 버전을 쉽게 관리할 수 있다.\nQLoRA는 여기에 더해 본체를 4비트로 압축해 불러오므로, 무료 Colab GPU에서도 작은 모델 파인튜닝이 가능해진다."
       },
       {
-        "h": "학습이 잘 되는지 확인하는 법",
-        "body": "학습 중에는 loss(손실) 값을 지켜보는 것이 가장 기본이다.\nloss가 꾸준히 내려가면 모델이 데이터를 잘 배우고 있다는 신호다.\n반대로 loss가 안 줄거나 들쭉날쭉하면 학습률(learning rate)이 너무 크거나 데이터에 문제가 있을 수 있다.\n\n또한 학습 데이터에만 너무 맞춰져 새로운 질문에 약해지는 '과적합'을 조심해야 한다.\n그래서 학습에 쓰지 않은 질문 몇 개를 따로 두고, 학습 후 그 질문으로 답을 검증하는 습관이 중요하다."
+        "h": "잘 배웠는지 확인하기 — loss와 눈으로 보는 검증",
+        "body": "학습 중에는 loss라는 점수를 본다.\nloss는 모델의 답이 정답에서 얼마나 벗어났는지를 나타내며, 학습이 잘 되면 이 숫자가 계단을 내려가듯 점점 작아진다.\n다만 loss가 줄었다고 무조건 좋은 것은 아니어서, 학습 데이터만 통째로 외워버리는 '과적합'도 조심해야 한다.\n\n그래서 숫자만 믿지 말고 사람이 직접 물어보는 검증을 함께 한다.\n학습 전 모델과 학습 후 모델에 같은 질문을 던져 답변이 의도대로 바뀌었는지 눈으로 비교하는 것이다.\n이 '전·후 비교'가 파인튜닝이 성공했는지 가장 직관적으로 확인하는 방법이다."
       }
     ],
     "realCode": [
       {
-        "title": "TRL SFTTrainer로 sLLM을 QLoRA 파인튜닝하는 엔드투엔드 스크립트",
+        "title": "QLoRA로 작은 모델 파인튜닝하기 (train_lora.py)",
         "lang": "python",
-        "code": "# train.py : data.jsonl을 읽어 sLLM을 QLoRA로 파인튜닝하는 전체 스크립트\nimport torch                                       # 딥러닝 연산을 담당하는 핵심 라이브러리\nfrom datasets import load_dataset                 # 로컬/허브 데이터셋을 불러오는 도구\nfrom transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig  # 모델·토크나이저·양자화 설정\nfrom peft import LoraConfig                       # LoRA(보조 메모지) 설정을 정의하는 도구\nfrom trl import SFTTrainer, SFTConfig             # 지도학습 파인튜닝을 쉽게 돌려 주는 트레이너\n\nMODEL = \"Qwen/Qwen2.5-0.5B-Instruct\"           # 베이스로 삼을 소형 모델 이름\n\nqcfg = BitsAndBytesConfig(                        # 4비트 양자화 설정(QLoRA의 Q에 해당)\n    load_in_4bit=True,                            # 가중치를 4비트로 압축해 메모리를 절약\n    bnb_4bit_compute_dtype=torch.float16,         # 계산은 16비트로 수행해 정확도를 보전\n)\ntokenizer = AutoTokenizer.from_pretrained(MODEL)  # 글자를 토큰(숫자)으로 바꾸는 토크나이저 로드\nmodel = AutoModelForCausalLM.from_pretrained(     # 베이스 모델을 4비트로 메모리에 적재\n    MODEL, quantization_config=qcfg, device_map=\"auto\",  # 양자화 적용 + 자동 장치 배치\n)\n\nlora = LoraConfig(                                # 새로 학습할 LoRA 어댑터의 설정\n    r=8,                                          # 보조 행렬의 크기(작을수록 가볍고 클수록 표현력↑)\n    lora_alpha=16,                                # 학습된 변화량을 얼마나 강하게 반영할지 스케일\n    lora_dropout=0.05,                            # 과적합을 막기 위해 일부 연결을 무작위로 끔\n    target_modules=[\"q_proj\", \"v_proj\"],      # 어텐션의 Q·V 부분에만 어댑터를 붙임\n)\n\ndef to_text(ex):                                  # 데이터 한 건을 학습용 한 문장으로 합치는 함수\n    return {\"text\": f\"### 질문:\\n{ex['instruction']}\\n### 답변:\\n{ex['output']}\"}  # 지시+답변을 한 텍스트로\n\nds = load_dataset(\"json\", data_files=\"data.jsonl\", split=\"train\")  # 내가 만든 데이터셋을 읽어옴\nds = ds.map(to_text)                              # 각 행을 위 함수로 학습용 text 컬럼으로 변환\n\ncfg = SFTConfig(                                  # 학습 전반의 설정값 묶음\n    output_dir=\"./lora-out\",                    # 학습 결과(어댑터)를 저장할 폴더\n    num_train_epochs=3,                           # 데이터 전체를 3번 반복 학습\n    per_device_train_batch_size=2,                # 한 번에 2개 샘플씩 묶어 학습(메모리에 맞춰 조절)\n    learning_rate=2e-4,                           # 학습 보폭(너무 크면 불안정, 작으면 느림)\n    logging_steps=10,                             # 10스텝마다 loss를 화면에 출력\n    dataset_text_field=\"text\",                  # 학습에 사용할 컬럼 이름 지정\n)\ntrainer = SFTTrainer(                             # 위 재료들을 모아 트레이너를 구성\n    model=model, args=cfg, train_dataset=ds, peft_config=lora,  # 모델·설정·데이터·LoRA 연결\n)\ntrainer.train()                                   # 실제 학습 시작(loss가 줄어드는 로그가 출력됨)\ntrainer.save_model(\"./lora-out\")               # 학습된 LoRA 어댑터를 폴더에 저장\n",
-        "note": "양자화된 베이스 모델은 얼려 두고 작은 LoRA 어댑터만 학습한다.\n학습이 끝나면 lora-out 폴더의 어댑터만 배포하면 된다."
+        "code": "import torch                                   # 딥러닝 연산을 담당하는 핵심 라이브러리\nfrom datasets import load_dataset              # 학습 데이터를 불러오는 도구\nfrom transformers import (AutoModelForCausalLM,  # 사전학습 언어모델을 불러오는 클래스\n                          AutoTokenizer,         # 문장을 토큰(숫자)으로 바꾸는 도구\n                          BitsAndBytesConfig,    # 4비트 양자화 설정용\n                          TrainingArguments)     # 학습 옵션(에폭·배치 등) 설정용\nfrom peft import LoraConfig, get_peft_model     # LoRA 어댑터를 모델에 붙이는 도구\nfrom trl import SFTTrainer                       # 지시학습(SFT)을 쉽게 해주는 학습기\n\nMODEL = \"Qwen/Qwen2.5-0.5B\"                      # 파인튜닝할 작은 베이스 모델\n\n# 베이스 모델을 4비트로 양자화해 메모리를 아끼는 설정(QLoRA의 핵심)\nbnb = BitsAndBytesConfig(load_in_4bit=True,            # 4비트로 불러오기 켜기\n                         bnb_4bit_compute_dtype=torch.float16)  # 계산은 16비트로\n\ntok = AutoTokenizer.from_pretrained(MODEL)      # 모델에 맞는 토크나이저 불러오기\ntok.pad_token = tok.eos_token                   # 빈자리 채움 토큰을 문장끝 토큰으로 지정\n\nmodel = AutoModelForCausalLM.from_pretrained(   # 양자화 설정을 적용해 모델 불러오기\n    MODEL, quantization_config=bnb, device_map=\"auto\")  # GPU에 자동 배치\n\n# LoRA 설정: r은 보조 행렬 크기, 어떤 층에 붙일지 지정\nlora = LoraConfig(r=8, lora_alpha=16,           # r=8 작은 보조 행렬, alpha는 학습 강도\n                  target_modules=[\"q_proj\", \"v_proj\"],  # 어텐션의 Q·V 부분에만 부착\n                  lora_dropout=0.05, task_type=\"CAUSAL_LM\")  # 과적합 방지 드롭아웃\nmodel = get_peft_model(model, lora)             # 베이스 모델에 LoRA 어댑터를 끼운다\n\nds = load_dataset(\"json\", data_files=\"data.jsonl\")[\"train\"]  # 내 학습 데이터 불러오기\n\nargs = TrainingArguments(output_dir=\"out\",       # 결과 저장 폴더\n                         num_train_epochs=3,      # 데이터를 3번 반복 학습\n                         per_device_train_batch_size=2,  # 한 번에 2개씩 학습\n                         learning_rate=2e-4,      # 학습 속도(LoRA는 보통 큰 편)\n                         logging_steps=5)         # 5스텝마다 loss 출력\n\ntrainer = SFTTrainer(model=model, train_dataset=ds,  # 모델·데이터 연결\n                     args=args, dataset_text_field=\"text\")  # text 열을 학습에 사용\ntrainer.train()                                  # 학습 시작(loss가 줄어드는 로그가 나옴)\n\nmodel.save_pretrained(\"my-lora\")                 # 학습된 LoRA 어댑터만 저장(수십 MB)\nprint(\"학습 완료! my-lora 폴더에 어댑터 저장됨\")  # 결과: 완료 메시지 출력",
+        "note": "베이스 모델은 4비트로 얼려 두고 q_proj·v_proj에 붙인 작은 LoRA만 학습하므로 무료 GPU에서도 돌아간다.\n학습이 끝나면 본체가 아니라 가벼운 어댑터(my-lora)만 저장되는 것이 LoRA의 가장 큰 장점이다."
       }
     ]
   },

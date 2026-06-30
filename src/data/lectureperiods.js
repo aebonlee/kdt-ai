@@ -26,24 +26,24 @@ export const periods = {
     "GitHub 원격: clone·push·pull · PR"
   ],
   "transformer-1": [
-    "1교시 OT·언어모델이란? 다음 단어 맞히기 게임",
-    "2교시 토큰화(BPE)와 임베딩 직접 돌려보기 [실습]",
-    "3교시 RNN·LSTM의 한계 체험: 왜 순서대로만 읽으면 느릴까",
-    "4교시 Attention의 직관: '어디에 집중할까' 손계산 [실습]",
-    "5교시 Self-Attention과 Query·Key·Value 이해",
-    "6교시 Scaled Dot-Product Attention 코드로 구현 [실습]",
-    "7교시 메인 실습: Attention 가중치 계산·히트맵 시각화 [실습]",
-    "8교시 결과 해석·발표·정리 Q&A"
+    "[강의] LLM이 뭐길래? '다음 단어 맞히기' 게임으로 시작하기",
+    "[강의] 토큰화(BPE)와 임베딩 — 글자를 숫자 벡터로 바꾸기",
+    "[실습] 토크나이저로 문장 쪼개고 임베딩 벡터 직접 꺼내보기",
+    "[강의] RNN·LSTM의 한계 — 한 줄로 서서 차례차례 읽기의 답답함",
+    "[강의] Attention의 직관 — 중요한 문장에 형광펜 치기",
+    "[강의] Self-Attention과 Query·Key·Value 삼총사",
+    "[실습] Scaled Dot-Product Attention 손으로·NumPy로 계산하기",
+    "[실습] Attention 가중치 히트맵으로 시각화하기"
   ],
   "transformer-2": [
-    "1교시 복습·Multi-Head Attention: 여러 시선으로 보기",
-    "2교시 Positional Encoding으로 순서 정보 넣기 [실습]",
-    "3교시 FFN·잔차연결(Residual)·LayerNorm 한 블록 조립",
-    "4교시 Encoder-Decoder vs Decoder-only 구조 비교",
-    "5교시 대표 모델 BERT·GPT·T5의 쓰임새 정리",
-    "6교시 사전학습 모델로 추론 돌려보기 [실습]",
-    "7교시 메인 실습: 사전학습 모델로 임베딩 추출·문장 유사도 비교 [실습]",
-    "8교시 결과 공유·스케일링 법칙 토의·마무리"
+    "[강의] Multi-Head Attention — 여러 명이 각자 관점으로 읽기",
+    "[강의] Positional Encoding — 단어에 '몇 번째인지' 번호표 붙이기",
+    "[실습] Positional Encoding 직접 만들고 그려보기",
+    "[강의] FFN·잔차연결(Residual)·LayerNorm — 블록 조립하기",
+    "[강의] Encoder vs Decoder, 그리고 BERT·GPT·T5",
+    "[실습] 사전학습 BERT로 문장 임베딩 뽑아 유사도 비교하기",
+    "[강의] 사전학습·파인튜닝과 스케일링 법칙",
+    "[실습] GPT-2로 문장 생성하고 다음 토큰 확률 들여다보기"
   ],
   "python-1": [
     "1교시 데이터 분석과 Python 시작하기 · 환경 둘러보기",
@@ -146,54 +146,54 @@ export const periods = {
     "8교시 회고(잘된 점·아쉬운 점·개선점)와 과정 마무리"
   ],
   "spring-ai-1": [
-    "1교시 Spring AI란? 자바로 LLM을 다룬다는 것",
-    "2교시 프로젝트 생성과 의존성(Spring AI BOM) 추가",
-    "3교시 [실습] application.yml 설정·API 키 연결·헬스체크",
-    "4교시 ChatClient / ChatModel 추상화 이해",
-    "5교시 [실습] 첫 채팅 호출 만들고 콘솔에서 응답 받기",
-    "6교시 PromptTemplate과 System/User 메시지 설계",
-    "7교시 [실습] 채팅 응답 REST API(/chat) 구현·테스트",
-    "8교시 멀티 프로바이더(OpenAI·Anthropic) 전환과 정리"
+    "1교시 Spring AI란? — 자바 백엔드와 LLM을 잇는 다리",
+    "2교시 [실습] 개발환경 준비 — JDK·Spring Boot·의존성 추가",
+    "3교시 [실습] ChatClient/ChatModel 추상화 첫 호출",
+    "4교시 [실습] application.yml로 모델 프로바이더(OpenAI·Anthropic) 설정",
+    "5교시 PromptTemplate과 구조화된 메시지(System/User) 설계",
+    "6교시 [실습] 채팅 응답 REST API 만들기 — Controller·Service",
+    "7교시 [실습·메인] 채팅 API 엔드투엔드 완성",
+    "8교시 [실습] 응답 확인·트러블슈팅·정리"
   ],
   "spring-ai-2": [
-    "1교시 RAG란 무엇인가: LLM의 '모르는 것'을 채워주기",
-    "2교시 Embedding(임베딩)과 벡터 공간의 직관",
-    "3교시 [실습] EmbeddingModel로 문장 벡터 뽑아보기",
-    "4교시 VectorStore와 pgvector 연동·문서 적재",
-    "5교시 [실습] 문서 청킹·임베딩·색인 파이프라인",
-    "6교시 Retrieval과 RAG 프롬프트 결합 원리",
-    "7교시 [실습] 사내 문서 QA REST API 만들기",
-    "8교시 출처 표시·한계와 품질 점검"
+    "1교시 RAG가 필요한 이유 — LLM이 '모르는 것'을 문서로 채우기",
+    "2교시 임베딩(Embedding)이란 — 문장을 숫자 벡터로 바꾸기",
+    "3교시 [실습] VectorStore와 pgvector 연동·설정",
+    "4교시 [실습] 문서 읽기·쪼개기 — DocumentReader/TextSplitter",
+    "5교시 [실습] 문서를 벡터로 저장하기 — VectorStore 적재",
+    "6교시 검색 결합 프롬프트(RAG) 구성 원리",
+    "7교시 [실습·메인] 사내 문서 QA API 만들기",
+    "8교시 [실습] 질의 테스트·정확도 점검·정리"
   ],
   "spring-ai-3": [
-    "1교시 Function Calling(도구 호출)이란 무엇인가",
-    "2교시 Spring AI에서 Tool(@Tool) 정의하기",
-    "3교시 [실습] 날씨 조회 도구를 LLM에 연결",
-    "4교시 구조화 출력(Structured Output)으로 객체 받기",
-    "5교시 [실습] 답변을 자바 record로 매핑하기",
-    "6교시 스트리밍 응답과 예외·재시도 처리",
-    "7교시 [실습] 도구+구조화 출력 결합 서비스 만들기",
-    "8교시 서비스 통합·보안·정리"
+    "1교시 Function Calling이란 — LLM이 우리 함수를 호출하게 하기",
+    "2교시 [실습] Tool(함수) 정의 — @Tool 애너테이션",
+    "3교시 [실습] 구조화 출력(Structured Output) — 답을 자바 객체로 받기",
+    "4교시 [실습] 스트리밍 응답 — 토큰을 실시간으로 흘려보내기",
+    "5교시 예외·재시도 처리와 보안 고려사항",
+    "6교시 [실습] AI 기능을 실제 서비스에 통합",
+    "7교시 [실습·메인] 도구 연동형 AI 기능 서비스 완성",
+    "8교시 [실습] 통합 테스트·시연·정리"
   ],
   "sllm-1": [
-    "1교시 sLLM이란? 대형 LLM과 무엇이 다른가",
-    "2교시 오픈소스 모델 생태계(Llama·Qwen·Gemma) 둘러보기",
-    "3교시 [실습] Hugging Face에서 소형 모델 불러와 추론하기",
-    "4교시 양자화(quantization)와 경량화의 원리",
-    "5교시 [실습] Ollama 설치하고 로컬에서 모델 돌리기",
-    "6교시 서빙 방식 비교: Ollama vs vLLM vs Transformers",
-    "7교시 PEFT·LoRA 개념 첫걸음",
-    "8교시 [실습] 로컬 sLLM으로 미니 챗봇 API 만들기"
+    "1교시 — sLLM이 뭐길래? 작은 LLM의 정체와 쓰는 이유 (비유로 시작)",
+    "2교시 — 대표 오픈소스 모델 둘러보기: Llama·Qwen·Gemma 한눈에",
+    "3교시 [실습] Hugging Face 모델 카드 읽고 내 노트북에서 첫 추론 돌려보기",
+    "4교시 — 양자화(quantization): 큰 모델을 작은 가방에 넣는 기술",
+    "5교시 [실습] Ollama 설치하고 로컬에서 모델 채팅 띄우기",
+    "6교시 [실습] vLLM·Transformers로 같은 모델을 서로 다른 방식으로 서빙해 보기",
+    "7교시 — PEFT·LoRA 맛보기: 통째로 안 바꾸고 살짝만 고치는 학습",
+    "8교시 [실습] 로컬 모델을 API로 호출하는 미니 챗봇 완성·점검"
   ],
   "sllm-2": [
-    "1교시 파인튜닝이란? 사전학습 모델을 내 데이터로 길들이기",
-    "2교시 instruction 데이터셋 설계와 포맷",
-    "3교시 [실습] 학습용 데이터셋 만들고 검증하기",
-    "4교시 LoRA·QLoRA 원리와 차이",
-    "5교시 [실습] LoRA 학습 파이프라인 구성하기",
-    "6교시 학습 모니터링과 하이퍼파라미터 튜닝",
-    "7교시 [실습] 파인튜닝 모델 평가·추론 검증",
-    "8교시 [실습] 도메인 특화 sLLM 완성·저장·배포"
+    "1교시 — 파인튜닝이 뭐고 언제 쓰나? '재교육' 비유로 이해하기",
+    "2교시 — 학습 데이터 만들기: instruction 포맷(지시-입력-출력) 설계",
+    "3교시 [실습] 내 도메인 데이터를 JSONL 학습셋으로 가공하기",
+    "4교시 — LoRA·QLoRA 원리: 부품만 끼워 가볍게 가르치기",
+    "5교시 [실습] LoRA 학습 코드 작성하고 첫 학습 돌려보기",
+    "6교시 [실습] 학습 곡선(loss) 보며 하이퍼파라미터 조정하기",
+    "7교시 — 평가와 추론 검증: 잘 배웠는지 어떻게 확인하나",
+    "8교시 [실습] 학습한 LoRA 어댑터 합쳐 추론·비교·저장하고 마무리"
   ],
   "ml-dl-1": [
     "1교시 · 머신러닝이 뭐길래? 학습 유형(지도·비지도·강화) 한눈에",

@@ -64,15 +64,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 OT·언어모델이란? 다음 단어 맞히기 게임"
+        "topic": "[강의] LLM이 뭐길래? '다음 단어 맞히기' 게임으로 시작하기"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 토큰화(BPE)와 임베딩 직접 돌려보기 [실습]"
+        "topic": "[강의] 토큰화(BPE)와 임베딩 — 글자를 숫자 벡터로 바꾸기"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 RNN·LSTM의 한계 체험: 왜 순서대로만 읽으면 느릴까"
+        "topic": "[실습] 토크나이저로 문장 쪼개고 임베딩 벡터 직접 꺼내보기"
       },
       {
         "time": "12:00–13:00",
@@ -81,53 +81,54 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 Attention의 직관: '어디에 집중할까' 손계산 [실습]"
+        "topic": "[강의] RNN·LSTM의 한계 — 한 줄로 서서 차례차례 읽기의 답답함"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 Self-Attention과 Query·Key·Value 이해"
+        "topic": "[강의] Attention의 직관 — 중요한 문장에 형광펜 치기"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 Scaled Dot-Product Attention 코드로 구현 [실습]"
+        "topic": "[강의] Self-Attention과 Query·Key·Value 삼총사"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 메인 실습: Attention 가중치 계산·히트맵 시각화 [실습]"
+        "topic": "[실습] Scaled Dot-Product Attention 손으로·NumPy로 계산하기"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 결과 해석·발표·정리 Q&A"
+        "topic": "[실습] Attention 가중치 히트맵으로 시각화하기"
       }
     ],
     "practice": {
-      "title": "문장 하나로 Attention 가중치 계산하고 히트맵으로 시각화하기",
+      "title": "Self-Attention을 NumPy로 한 줄씩 만들고 가중치를 시각화하기",
       "steps": [
-        "Google Colab(colab.research.google.com)에 접속해 '새 노트'를 만들고, 첫 셀에 '!pip install torch matplotlib' 를 입력해 실행(▶ 버튼)한다.",
-        "두 번째 셀에 'import torch' 와 'import matplotlib.pyplot as plt' 를 적어 도구를 불러온다.",
-        "예시 문장 'I love cats' 의 단어 3개를 각각 4차원 숫자 벡터로 직접 만들어 torch.tensor 로 X 라는 변수에 담는다(모양: 3x4).",
-        "Q, K, V 를 만들기 위한 가중치 행렬 Wq, Wk, Wv 를 torch.randn(4,4) 로 무작위 생성하고, X 와 곱해 Q=X@Wq, K=X@Wk, V=X@Wv 를 계산한다.",
-        "점수(score) = Q @ K.transpose(0,1) 를 계산하고, 차원 크기 4의 제곱근으로 나눠 scaled score 를 만든다.",
-        "torch.softmax(scaled, dim=-1) 로 Attention 가중치(합이 1인 확률)를 구해 attn 변수에 담고 print 로 출력해 값이 0~1 사이인지 확인한다.",
-        "plt.imshow(attn.detach().numpy()) 와 plt.colorbar() 로 히트맵을 그리고, x·y축에 단어 라벨을 붙여 어떤 단어가 어디에 집중했는지 색으로 확인한다.",
-        "결과 화면(3x3 색깔 격자)을 캡처하고, '어느 단어가 어느 단어를 가장 많이 참고했는지' 한 줄 해석을 적는다."
+        "Colab 새 노트북을 열고 첫 셀에 `import numpy as np` 와 `import matplotlib.pyplot as plt` 를 입력해 실행한다.",
+        "예문 '나는 학교에 갔다' 를 3개 토큰으로 보고, 각 토큰의 임베딩을 4차원 난수 행렬 X(3x4)로 만든다(np.random.seed(0)로 고정).",
+        "가중치 행렬 Wq, Wk, Wv 를 각각 4x4 난수로 만들고 Q=X@Wq, K=X@Wk, V=X@Wv 를 계산한다.",
+        "점수 행렬 scores = Q@K.T 를 구하고 sqrt(차원수=4)로 나눠 스케일링한다.",
+        "softmax 함수를 직접 정의해 scores 의 각 행을 확률(합=1)로 바꿔 attention 가중치 A 를 만든다.",
+        "print(A.sum(axis=1)) 로 각 행의 합이 1.0 인지 확인한다(기대 결과: [1. 1. 1.]).",
+        "출력 output = A@V 를 계산하고 shape 이 (3,4)인지 print(output.shape)로 확인한다(기대 결과: (3, 4)).",
+        "plt.imshow(A) 와 plt.colorbar() 로 가중치 히트맵을 그리고, 어떤 토큰이 어떤 토큰을 많이 보는지 눈으로 확인한다.",
+        "토큰 라벨(나는/학교에/갔다)을 x·y축에 붙여 그림을 캡처한다."
       ],
-      "deliverable": "Attention 가중치 히트맵 이미지 1장 + 해석 3줄이 담긴 Colab 노트(.ipynb) 링크"
+      "deliverable": "Self-Attention 계산 노트북(.ipynb)과 attention 가중치 히트맵 이미지 1장"
     }
   },
   "transformer-2": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 복습·Multi-Head Attention: 여러 시선으로 보기"
+        "topic": "[강의] Multi-Head Attention — 여러 명이 각자 관점으로 읽기"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 Positional Encoding으로 순서 정보 넣기 [실습]"
+        "topic": "[강의] Positional Encoding — 단어에 '몇 번째인지' 번호표 붙이기"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 FFN·잔차연결(Residual)·LayerNorm 한 블록 조립"
+        "topic": "[실습] Positional Encoding 직접 만들고 그려보기"
       },
       {
         "time": "12:00–13:00",
@@ -136,38 +137,39 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 Encoder-Decoder vs Decoder-only 구조 비교"
+        "topic": "[강의] FFN·잔차연결(Residual)·LayerNorm — 블록 조립하기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 대표 모델 BERT·GPT·T5의 쓰임새 정리"
+        "topic": "[강의] Encoder vs Decoder, 그리고 BERT·GPT·T5"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 사전학습 모델로 추론 돌려보기 [실습]"
+        "topic": "[실습] 사전학습 BERT로 문장 임베딩 뽑아 유사도 비교하기"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 메인 실습: 사전학습 모델로 임베딩 추출·문장 유사도 비교 [실습]"
+        "topic": "[강의] 사전학습·파인튜닝과 스케일링 법칙"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 결과 공유·스케일링 법칙 토의·마무리"
+        "topic": "[실습] GPT-2로 문장 생성하고 다음 토큰 확률 들여다보기"
       }
     ],
     "practice": {
-      "title": "사전학습 모델로 문장 임베딩을 뽑아 문장끼리 유사도 비교하기",
+      "title": "사전학습 모델(GPT-2)로 텍스트 생성하고 '다음 토큰 확률' 직접 확인하기",
       "steps": [
-        "Colab 새 노트 첫 셀에 '!pip install transformers torch' 를 입력해 실행한다.",
-        "두 번째 셀에서 'from transformers import AutoTokenizer, AutoModel' 과 'import torch' 로 도구를 불러온다.",
-        "tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2') 와 model = AutoModel.from_pretrained(같은 이름) 으로 사전학습 모델을 내려받는다.",
-        "비교할 문장 3개를 리스트 sents = ['강아지가 공을 문다', '개가 공놀이를 한다', '주식 시장이 폭락했다'] 로 만든다.",
-        "tokenizer(sents, padding=True, return_tensors='pt') 로 토큰화하고, with torch.no_grad(): out = model(**enc) 로 모델에 통과시킨다.",
-        "out.last_hidden_state 를 토큰 길이 방향으로 평균(mean pooling)내 문장 1개당 벡터 하나를 만든다.",
-        "torch.cosine_similarity 로 문장1-문장2, 문장1-문장3 의 유사도를 각각 계산해 print 한다.",
-        "비슷한 뜻의 두 문장(1·2)이 다른 뜻 문장(3)보다 유사도가 높게 나오는지 결과 숫자로 확인하고 한 줄 해석을 적는다."
+        "Colab에서 `pip install transformers torch` 로 라이브러리를 설치한다.",
+        "from transformers import GPT2LMHeadModel, GPT2Tokenizer 로 GPT-2 모델·토크나이저를 불러온다.",
+        "model = GPT2LMHeadModel.from_pretrained('gpt2') 와 tokenizer = GPT2Tokenizer.from_pretrained('gpt2') 를 실행한다.",
+        "프롬프트 'The future of AI is' 를 tokenizer로 인코딩해 input_ids 텐서를 만든다.",
+        "model.generate(input_ids, max_length=20) 로 문장을 이어 생성하고 decode 해 출력한다(기대 결과: 영어 문장이 자연스럽게 이어짐).",
+        "다음 토큰 확률을 보려고 model(input_ids).logits 의 마지막 위치를 꺼내 softmax를 적용한다.",
+        "torch.topk(probs, 5) 로 가장 확률 높은 다음 토큰 5개와 확률을 출력한다.",
+        "tokenizer.decode 로 그 5개 토큰을 사람이 읽는 단어로 바꿔 무엇을 예측했는지 확인한다.",
+        "프롬프트를 'The future of AI is' 와 'I love' 두 가지로 바꿔, 예측 단어가 어떻게 달라지는지 비교 캡처한다."
       ],
-      "deliverable": "세 문장의 유사도 점수 출력 화면 캡처 + '의미가 비슷할수록 점수가 높다'를 확인한 해석 3줄이 담긴 Colab 노트"
+      "deliverable": "GPT-2 생성 결과와 'top-5 다음 토큰 확률' 표가 담긴 노트북(.ipynb)"
     }
   },
   "python-1": {
@@ -734,15 +736,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 Spring AI란? 자바로 LLM을 다룬다는 것"
+        "topic": "1교시 Spring AI란? — 자바 백엔드와 LLM을 잇는 다리"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 프로젝트 생성과 의존성(Spring AI BOM) 추가"
+        "topic": "2교시 [실습] 개발환경 준비 — JDK·Spring Boot·의존성 추가"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 [실습] application.yml 설정·API 키 연결·헬스체크"
+        "topic": "3교시 [실습] ChatClient/ChatModel 추상화 첫 호출"
       },
       {
         "time": "12:00–13:00",
@@ -751,55 +753,54 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 ChatClient / ChatModel 추상화 이해"
+        "topic": "4교시 [실습] application.yml로 모델 프로바이더(OpenAI·Anthropic) 설정"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 [실습] 첫 채팅 호출 만들고 콘솔에서 응답 받기"
+        "topic": "5교시 PromptTemplate과 구조화된 메시지(System/User) 설계"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 PromptTemplate과 System/User 메시지 설계"
+        "topic": "6교시 [실습] 채팅 응답 REST API 만들기 — Controller·Service"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 [실습] 채팅 응답 REST API(/chat) 구현·테스트"
+        "topic": "7교시 [실습·메인] 채팅 API 엔드투엔드 완성"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 멀티 프로바이더(OpenAI·Anthropic) 전환과 정리"
+        "topic": "8교시 [실습] 응답 확인·트러블슈팅·정리"
       }
     ],
     "practice": {
-      "title": "Spring Boot에 LLM 붙여 채팅 REST API 만들기",
+      "title": "채팅 응답 REST API 구현 (브라우저에서 질문하면 LLM이 답하는 API)",
       "steps": [
-        "https://start.spring.io 에 접속해 Project=Gradle, Language=Java, Spring Boot 3.3+, Java 17을 선택한다.",
-        "Dependencies 검색창에 'OpenAI'를 입력해 'OpenAI'(Spring AI) 스타터와 'Spring Web'을 추가하고 GENERATE 버튼으로 zip을 받아 IDE로 연다.",
-        "프로젝트 루트에서 환경변수로 키를 등록한다: 터미널에 export OPENAI_API_KEY=sk-... 를 입력한다(키는 OpenAI 콘솔에서 발급).",
-        "src/main/resources/application.yml 을 열어 spring.ai.openai.api-key를 ${OPENAI_API_KEY}로, model을 gpt-4o-mini로 설정한다.",
-        "com.example.demo 패키지에 ChatController 클래스를 만들고 생성자에서 ChatClient.Builder를 주입받아 chatClient 필드를 만든다.",
-        "@GetMapping(\"/chat\") 메서드를 추가해 @RequestParam String message를 받아 chatClient.prompt().user(message).call().content() 로 답을 돌려준다.",
-        "터미널에서 ./gradlew bootRun 을 실행해 애플리케이션을 8080 포트로 띄운다.",
-        "브라우저나 curl로 http://localhost:8080/chat?message=안녕 을 호출한다.",
-        "기대 결과: 화면에 '안녕하세요! 무엇을 도와드릴까요?' 같은 LLM의 한국어 답변 문자열이 그대로 출력된다.",
-        "application.yml의 model을 다른 값으로 바꿔 재실행하며 응답 차이를 비교하고 기록한다."
+        "start.spring.io에 접속해 Project=Gradle, Language=Java, Spring Boot 3.x를 고르고 Dependencies에 'Spring Web'과 'Anthropic'(또는 OpenAI)을 추가해 프로젝트 zip을 내려받는다.",
+        "내려받은 zip을 풀고 IntelliJ로 폴더를 열어 Gradle 동기화가 끝날 때까지 기다린다(오른쪽 아래 진행바가 사라지면 완료).",
+        "터미널에서 'export ANTHROPIC_API_KEY=발급받은키' 를 입력해 API 키를 환경변수로 등록한다(코드에 키를 직접 적지 않기 위함).",
+        "src/main/resources/application.yml 파일을 만들고 spring.ai.anthropic.api-key 등 모델 설정을 적는다.",
+        "com.example.springai.chat 패키지를 만들고 ChatController.java 를 작성해 GET /api/chat 엔드포인트를 만든다.",
+        "터미널에서 './gradlew bootRun' 을 실행해 서버를 8080 포트로 띄운다(콘솔에 'Started ...Application' 이 보이면 성공).",
+        "브라우저 주소창에 'http://localhost:8080/api/chat?message=스프링을 한 문장으로 소개해줘' 를 입력해 호출한다.",
+        "기대 결과: 화면에 LLM이 생성한 한국어 답변 문장이 그대로 출력된다.",
+        "답변이 깨지지 않는지 확인하고 message 값을 바꿔가며 2~3번 더 테스트한다."
       ],
-      "deliverable": "GET /chat?message=... 호출 시 LLM 답변을 반환하는 Spring Boot 프로젝트(소스+application.yml)와, 두 모델 응답을 비교한 1쪽 메모"
+      "deliverable": "GET /api/chat?message=... 호출 시 LLM 답변을 반환하는 동작하는 Spring Boot 프로젝트(스크린샷 포함)"
     }
   },
   "spring-ai-2": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 RAG란 무엇인가: LLM의 '모르는 것'을 채워주기"
+        "topic": "1교시 RAG가 필요한 이유 — LLM이 '모르는 것'을 문서로 채우기"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 Embedding(임베딩)과 벡터 공간의 직관"
+        "topic": "2교시 임베딩(Embedding)이란 — 문장을 숫자 벡터로 바꾸기"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 [실습] EmbeddingModel로 문장 벡터 뽑아보기"
+        "topic": "3교시 [실습] VectorStore와 pgvector 연동·설정"
       },
       {
         "time": "12:00–13:00",
@@ -808,55 +809,55 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 VectorStore와 pgvector 연동·문서 적재"
+        "topic": "4교시 [실습] 문서 읽기·쪼개기 — DocumentReader/TextSplitter"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 [실습] 문서 청킹·임베딩·색인 파이프라인"
+        "topic": "5교시 [실습] 문서를 벡터로 저장하기 — VectorStore 적재"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 Retrieval과 RAG 프롬프트 결합 원리"
+        "topic": "6교시 검색 결합 프롬프트(RAG) 구성 원리"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 [실습] 사내 문서 QA REST API 만들기"
+        "topic": "7교시 [실습·메인] 사내 문서 QA API 만들기"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 출처 표시·한계와 품질 점검"
+        "topic": "8교시 [실습] 질의 테스트·정확도 점검·정리"
       }
     ],
     "practice": {
-      "title": "사내 문서로 답하는 RAG 질의응답 API 구축",
+      "title": "사내 문서 QA API (문서를 읽고 질문하면 근거 기반으로 답하는 API)",
       "steps": [
-        "docker로 pgvector를 띄운다: docker run -d --name pg -e POSTGRES_PASSWORD=pass -p 5432:5432 pgvector/pgvector:pg16 을 실행한다.",
-        "프로젝트에 Spring AI 'OpenAI', 'PGvector Vector Store', 'JDBC', 'Spring Web' 의존성을 추가한다.",
-        "application.yml에 datasource(url/username/password)와 spring.ai.vectorstore.pgvector.initialize-schema=true 를 설정한다.",
-        "src/main/resources에 회사소개.txt 같은 텍스트 문서 2~3개를 넣는다.",
-        "IngestService를 만들어 TextReader로 문서를 읽고 TokenTextSplitter로 잘게 나눈 뒤 vectorStore.add(documents)로 색인한다.",
-        "앱 시작 시 CommandLineRunner로 ingest를 1회 실행해 DB에 벡터가 저장되게 한다.",
-        "QaController에 /ask 엔드포인트를 만들어 질문을 임베딩→유사 문서 검색→프롬프트에 끼워 LLM 호출하도록 구현한다.",
-        "./gradlew bootRun 으로 실행한 뒤 curl 'http://localhost:8080/ask?q=회사 설립연도가 언제야' 를 호출한다.",
-        "기대 결과: 문서에 적힌 실제 설립연도를 근거로 한 답변과, 참고한 문서 조각이 함께 출력된다.",
-        "문서에 없는 질문(예: 오늘 날씨)을 보내 '문서에서 찾을 수 없습니다' 류로 답하는지 확인한다."
+        "docker로 pgvector(벡터 저장이 가능한 PostgreSQL)를 띄운다: 'docker run -d --name pgvector -e POSTGRES_PASSWORD=pass -p 5432:5432 pgvector/pgvector:pg16'.",
+        "build.gradle에 'spring-ai-starter-vector-store-pgvector'와 임베딩 모델 의존성을 추가하고 Gradle을 동기화한다.",
+        "application.yml에 datasource(DB 접속 정보)와 spring.ai 임베딩 모델 설정을 적는다.",
+        "src/main/resources/docs 폴더에 사내 규정 텍스트 파일(employee_guide.txt)을 하나 넣는다.",
+        "IngestionService(또는 QnaService.ingest)를 만들어 TextReader로 문서를 읽고 TokenTextSplitter로 쪼갠 뒤 vectorStore.add()로 저장한다.",
+        "애플리케이션을 한 번 실행해 문서가 DB에 벡터로 적재되는지 확인한다(콘솔 로그로 적재 개수 출력).",
+        "QnaService.ask를 만들어 질문을 임베딩→유사 문단 검색→프롬프트 결합→LLM 호출 순서로 처리한다.",
+        "GET /api/qa?question=연차는 며칠인가요 를 호출한다.",
+        "기대 결과: 문서 내용에 근거한 답변이 반환된다.",
+        "문서에 없는 질문을 던져 '문서에서 찾을 수 없음'에 가까운 답이 나오는지(환각이 줄었는지) 확인한다."
       ],
-      "deliverable": "pgvector에 사내 문서를 색인하고 /ask로 근거 기반 답을 주는 RAG API 프로젝트와, 정상·없는질문 각 1건의 응답 캡처"
+      "deliverable": "문서를 벡터로 적재하고 GET /api/qa?question=... 로 근거 기반 답변을 주는 RAG API 프로젝트"
     }
   },
   "spring-ai-3": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 Function Calling(도구 호출)이란 무엇인가"
+        "topic": "1교시 Function Calling이란 — LLM이 우리 함수를 호출하게 하기"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 Spring AI에서 Tool(@Tool) 정의하기"
+        "topic": "2교시 [실습] Tool(함수) 정의 — @Tool 애너테이션"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 [실습] 날씨 조회 도구를 LLM에 연결"
+        "topic": "3교시 [실습] 구조화 출력(Structured Output) — 답을 자바 객체로 받기"
       },
       {
         "time": "12:00–13:00",
@@ -865,55 +866,55 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 구조화 출력(Structured Output)으로 객체 받기"
+        "topic": "4교시 [실습] 스트리밍 응답 — 토큰을 실시간으로 흘려보내기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 [실습] 답변을 자바 record로 매핑하기"
+        "topic": "5교시 예외·재시도 처리와 보안 고려사항"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 스트리밍 응답과 예외·재시도 처리"
+        "topic": "6교시 [실습] AI 기능을 실제 서비스에 통합"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 [실습] 도구+구조화 출력 결합 서비스 만들기"
+        "topic": "7교시 [실습·메인] 도구 연동형 AI 기능 서비스 완성"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 서비스 통합·보안·정리"
+        "topic": "8교시 [실습] 통합 테스트·시연·정리"
       }
     ],
     "practice": {
-      "title": "도구를 호출하고 결과를 객체로 받는 AI 기능 서비스",
+      "title": "도구 연동형 AI 기능 서비스 (LLM이 필요할 때 날씨 조회 함수를 스스로 호출해 답하는 API)",
       "steps": [
-        "WeatherTools 클래스를 만들고 getWeather(String city) 메서드에 @Tool 어노테이션과 한국어 description을 단다.",
-        "메서드 내부는 실제 API 대신 도시별 더미 온도를 반환하도록 간단히 구현한다(예: 서울 24도).",
-        "ChatController에서 chatClient.prompt().tools(new WeatherTools())로 도구를 등록한다.",
-        "사용자 질문 '서울 날씨 알려줘'를 user()에 넣고 call().content()로 호출한다.",
-        "LLM이 스스로 getWeather(\"서울\")를 호출하고 그 결과를 문장에 녹여 답하는지 콘솔 로그로 확인한다.",
-        "다음으로 record WeatherReport(String city, int celsius, String summary)를 정의한다.",
-        "call().entity(WeatherReport.class)를 사용해 답변을 문자열이 아닌 자바 객체로 받는다.",
-        "./gradlew bootRun 실행 후 /weather?city=서울 을 호출한다.",
-        "기대 결과: {\"city\":\"서울\",\"celsius\":24,\"summary\":\"맑음\"} 형태의 JSON이 구조화되어 반환된다.",
-        "존재하지 않는 도시를 넣어 예외가 나면 try-catch로 잡아 친절한 메시지를 돌려주도록 보강한다."
+        "com.example.springai.tool 패키지에 ToolController(또는 WeatherTools) 클래스를 만들고 getWeather(String city) 메서드에 @Tool 애너테이션을 붙인다.",
+        "@Tool의 description에 '특정 도시의 현재 날씨를 조회한다' 처럼 LLM이 언제 쓸지 알 수 있는 설명을 적는다.",
+        "컨트롤러에서 chatClient.prompt().user(질문).tools(this) 형태로 도구를 함께 넘긴다.",
+        "구조화 출력을 위해 WeatherReport(record) 클래스를 만들고 .entity(WeatherReport.class)로 객체를 직접 받는 코드를 추가한다.",
+        "예외·재시도를 위해 호출을 try-catch로 감싸고 실패 시 사용자 친화 메시지를 반환하도록 처리한다.",
+        "./gradlew bootRun으로 서버를 띄운다.",
+        "GET /api/tool?message=서울 날씨 알려줘 를 호출한다.",
+        "기대 결과: LLM이 getWeather(\"서울\")를 스스로 호출하고, 그 결과를 녹여 '서울은 맑고 26도입니다' 같은 자연스러운 문장으로 답한다.",
+        "도구가 필요 없는 질문(예: '안녕')을 보냈을 때는 함수 호출 없이 일반 답이 오는지 확인한다.",
+        "/api/stream?message=... 로 스트리밍 엔드포인트를 호출해 글자가 실시간으로 흘러나오는지 확인한다."
       ],
-      "deliverable": "@Tool로 날씨를 조회하고 결과를 record로 구조화해 반환하는 /weather API 프로젝트와, 정상·예외 응답 캡처"
+      "deliverable": "@Tool 함수 호출 + 구조화 출력 + 스트리밍 + 예외처리를 갖춘 도구 연동형 AI 서비스 프로젝트"
     }
   },
   "sllm-1": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 sLLM이란? 대형 LLM과 무엇이 다른가"
+        "topic": "1교시 — sLLM이 뭐길래? 작은 LLM의 정체와 쓰는 이유 (비유로 시작)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 오픈소스 모델 생태계(Llama·Qwen·Gemma) 둘러보기"
+        "topic": "2교시 — 대표 오픈소스 모델 둘러보기: Llama·Qwen·Gemma 한눈에"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 [실습] Hugging Face에서 소형 모델 불러와 추론하기"
+        "topic": "3교시 [실습] Hugging Face 모델 카드 읽고 내 노트북에서 첫 추론 돌려보기"
       },
       {
         "time": "12:00–13:00",
@@ -922,55 +923,55 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 양자화(quantization)와 경량화의 원리"
+        "topic": "4교시 — 양자화(quantization): 큰 모델을 작은 가방에 넣는 기술"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 [실습] Ollama 설치하고 로컬에서 모델 돌리기"
+        "topic": "5교시 [실습] Ollama 설치하고 로컬에서 모델 채팅 띄우기"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 서빙 방식 비교: Ollama vs vLLM vs Transformers"
+        "topic": "6교시 [실습] vLLM·Transformers로 같은 모델을 서로 다른 방식으로 서빙해 보기"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 PEFT·LoRA 개념 첫걸음"
+        "topic": "7교시 — PEFT·LoRA 맛보기: 통째로 안 바꾸고 살짝만 고치는 학습"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습] 로컬 sLLM으로 미니 챗봇 API 만들기"
+        "topic": "8교시 [실습] 로컬 모델을 API로 호출하는 미니 챗봇 완성·점검"
       }
     ],
     "practice": {
-      "title": "내 노트북에서 도는 sLLM 챗봇 만들기 (Ollama + FastAPI)",
+      "title": "내 컴퓨터에 작은 LLM 올려서 채팅 API 만들기 (Ollama + Python)",
       "steps": [
-        "터미널을 열고 'pip install fastapi uvicorn requests' 를 실행해 필요한 라이브러리를 설치한다(설치 완료 메시지가 보이면 성공).",
-        "Ollama 공식 사이트(ollama.com)에서 설치 파일을 받아 설치한 뒤, 터미널에서 'ollama --version' 으로 버전이 출력되는지 확인한다.",
-        "터미널에 'ollama pull qwen2.5:0.5b' 를 입력해 0.5B(5억 파라미터) 소형 모델을 내려받는다(다운로드 진행바가 끝나면 완료).",
-        "'ollama run qwen2.5:0.5b' 로 모델을 띄우고 '안녕'이라고 입력해 한국어 응답이 나오는지 눈으로 확인한다.",
-        "프로젝트 폴더에 app.py 파일을 만들고, 아래 realCode의 FastAPI 서버 코드를 그대로 붙여넣는다.",
-        "터미널에서 'uvicorn app:app --reload --port 8000' 을 실행해 서버를 띄운다(Uvicorn running on http://127.0.0.1:8000 메시지 확인).",
-        "브라우저에서 'http://127.0.0.1:8000/docs' 에 접속해 자동 생성된 Swagger 문서를 열고 /chat 엔드포인트를 펼친다.",
-        "'Try it out' 을 누르고 message 칸에 '파이썬으로 1부터 10까지 더하는 코드 알려줘'를 넣어 Execute 한다.",
-        "응답 JSON의 reply 필드에 모델이 만든 답변이 들어오는지 확인한다(기대 결과: sum 또는 for문 코드가 텍스트로 반환).",
-        "마지막으로 응답 시간(latency_ms)을 보고, 모델 크기를 1.5b로 바꿔 받아 같은 질문을 던져 속도·품질 차이를 비교 메모한다."
+        "터미널을 열고 'ollama --version' 을 입력해 Ollama가 설치되어 있는지 확인한다(없으면 ollama.com에서 설치).",
+        "'ollama pull qwen2.5:0.5b' 명령으로 0.5B 크기의 아주 작은 모델을 내려받는다(용량이 작아 노트북에서도 돈다).",
+        "'ollama run qwen2.5:0.5b' 를 실행하고 '안녕? 너 누구야?' 라고 입력해 모델이 한국어로 답하는지 본다.",
+        "새 터미널에서 'pip install requests' 로 HTTP 요청 라이브러리를 설치한다.",
+        "VS Code에서 chat.py 파일을 만들고, localhost:11434/api/chat 으로 요청을 보내는 코드를 작성한다(아래 realCode 참고).",
+        "코드에 system 메시지로 '너는 친절한 한국어 비서야' 라는 역할을 넣어 모델의 말투를 고정한다.",
+        "'python chat.py' 로 실행하고 '파이썬으로 1부터 10까지 더하는 법 알려줘' 라고 물어본다.",
+        "기대 결과: 터미널에 모델이 생성한 한국어 답변과 짧은 파이썬 코드가 출력된다.",
+        "temperature 값을 0.2와 1.0으로 각각 바꿔 실행해 답변의 일관성·창의성 차이를 비교한다.",
+        "마지막으로 대화 내용을 result.txt 파일로 저장하는 코드를 추가해 결과를 남긴다."
       ],
-      "deliverable": "로컬에서 동작하는 sLLM 챗봇 서버(app.py)와, 0.5b/1.5b 두 모델의 응답 속도·품질을 비교한 한 페이지 메모"
+      "deliverable": "로컬 sLLM과 대화한 chat.py 소스 + 실행 화면 캡처 + 저장된 result.txt"
     }
   },
   "sllm-2": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 파인튜닝이란? 사전학습 모델을 내 데이터로 길들이기"
+        "topic": "1교시 — 파인튜닝이 뭐고 언제 쓰나? '재교육' 비유로 이해하기"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 instruction 데이터셋 설계와 포맷"
+        "topic": "2교시 — 학습 데이터 만들기: instruction 포맷(지시-입력-출력) 설계"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 [실습] 학습용 데이터셋 만들고 검증하기"
+        "topic": "3교시 [실습] 내 도메인 데이터를 JSONL 학습셋으로 가공하기"
       },
       {
         "time": "12:00–13:00",
@@ -979,39 +980,40 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 LoRA·QLoRA 원리와 차이"
+        "topic": "4교시 — LoRA·QLoRA 원리: 부품만 끼워 가볍게 가르치기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 [실습] LoRA 학습 파이프라인 구성하기"
+        "topic": "5교시 [실습] LoRA 학습 코드 작성하고 첫 학습 돌려보기"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 학습 모니터링과 하이퍼파라미터 튜닝"
+        "topic": "6교시 [실습] 학습 곡선(loss) 보며 하이퍼파라미터 조정하기"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 [실습] 파인튜닝 모델 평가·추론 검증"
+        "topic": "7교시 — 평가와 추론 검증: 잘 배웠는지 어떻게 확인하나"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습] 도메인 특화 sLLM 완성·저장·배포"
+        "topic": "8교시 [실습] 학습한 LoRA 어댑터 합쳐 추론·비교·저장하고 마무리"
       }
     ],
     "practice": {
-      "title": "QLoRA로 내 도메인 말투를 배우는 sLLM 파인튜닝하기",
+      "title": "내 말투·도메인으로 sLLM 파인튜닝하기 (QLoRA, Colab)",
       "steps": [
-        "터미널에서 'pip install transformers datasets peft trl bitsandbytes accelerate' 로 학습에 필요한 라이브러리를 모두 설치한다.",
-        "프로젝트 폴더에 data.jsonl 파일을 만들고, 한 줄에 하나씩 {\"instruction\": \"...\", \"output\": \"...\"} 형식의 예시 30개 이상을 작성한다.",
-        "examples의 데이터 로딩 코드를 실행해 데이터셋이 정상적으로 읽히는지(개수가 출력되는지) 확인한다.",
-        "realCode의 train.py 학습 스크립트를 폴더에 저장한다.",
-        "터미널에서 'python train.py' 를 실행해 학습을 시작한다(loss 값이 한 줄씩 출력되며 점점 줄어드는지 본다).",
-        "학습이 끝나면 './lora-out' 폴더에 adapter 파일들이 생성되었는지 확인한다(어댑터 용량이 수십 MB로 작은지 체크).",
-        "추론 코드로 학습한 어댑터를 원본 모델에 얹어, 학습에 쓴 말투/지식이 반영된 답이 나오는지 테스트한다.",
-        "학습 전 원본 모델과 학습 후 모델에 같은 질문을 던져 답변 차이를 나란히 비교한다(기대 결과: 학습 후 답이 내 도메인 톤에 가까워짐).",
-        "마지막으로 모델을 GGUF나 어댑터 형태로 저장해, Day1에서 만든 챗봇 서버에 연결할 수 있도록 경로를 정리한다."
+        "Google Colab에서 새 노트북을 만들고 메뉴 '런타임 > 런타임 유형 변경'에서 GPU(T4)를 선택한다.",
+        "첫 셀에 '!pip install transformers peft datasets bitsandbytes accelerate trl' 를 입력해 라이브러리를 설치한다.",
+        "지시-출력 쌍 10~20개를 직접 만들어 data.jsonl 파일로 저장한다(예: 사내 용어를 설명하게 가르치기).",
+        "datasets.load_dataset 으로 data.jsonl 을 불러와 학습 형식(프롬프트 템플릿)으로 변환한다.",
+        "4비트 양자화 설정(BitsAndBytesConfig)으로 베이스 모델을 메모리 적게 불러온다.",
+        "LoraConfig 로 r=8, target_modules 를 지정해 LoRA 어댑터를 모델에 붙인다.",
+        "SFTTrainer 에 모델·데이터·학습설정을 넣고 trainer.train() 으로 학습을 시작한다.",
+        "기대 결과: 셀 출력에 step마다 loss 값이 점점 줄어드는 로그가 나타난다.",
+        "학습이 끝나면 같은 질문을 '학습 전 모델'과 '학습 후 모델'에 각각 물어 답변 변화를 비교한다.",
+        "model.save_pretrained('my-lora') 로 학습된 LoRA 어댑터(수십 MB)만 저장해 결과로 제출한다."
       ],
-      "deliverable": "직접 만든 instruction 데이터셋(data.jsonl), 학습된 LoRA 어댑터(lora-out 폴더), 학습 전/후 답변을 비교한 검증 리포트"
+      "deliverable": "data.jsonl 학습셋 + 학습 노트북(.ipynb) + 학습 전후 답변 비교표 + 저장된 LoRA 어댑터 폴더"
     }
   },
   "ml-dl-1": {

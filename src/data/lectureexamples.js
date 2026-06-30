@@ -23,30 +23,30 @@ export const examples = {
   ],
   "transformer-1": [
     {
-      "title": "토큰화: 문장을 토큰으로 쪼개기",
+      "title": "토크나이저로 문장을 토큰으로 쪼개기",
       "lang": "python",
-      "code": "from transformers import AutoTokenizer            # 허깅페이스의 토크나이저 불러오기\n\ntok = AutoTokenizer.from_pretrained(\"bert-base-uncased\")  # BERT용 토크나이저 다운로드\ntext = \"Transformers are amazing!\"                # 쪼갤 예시 문장\n\ntokens = tok.tokenize(text)                       # 문장을 토큰(단어 조각) 리스트로 변환\nids = tok.convert_tokens_to_ids(tokens)           # 각 토큰을 숫자 ID로 변환\n\nprint(tokens)   # 결과: ['transformers', 'are', 'amazing', '!']\nprint(ids)      # 결과: 각 토큰에 대응하는 정수 ID 리스트",
-      "note": "글자가 아니라 '토큰' 단위로 잘리고, 각 토큰이 고유 숫자 ID로 바뀌는 것을 눈으로 확인하는 예제다."
+      "code": "from transformers import AutoTokenizer            # 허깅페이스 토크나이저 불러오기\n\ntok = AutoTokenizer.from_pretrained(\"bert-base-uncased\")  # 사전학습 BERT 토크나이저 로드\nsentence = \"Transformers are amazing!\"             # 쪼갤 예문\nids = tok(sentence)[\"input_ids\"]                   # 문장을 토큰 ID 리스트로 변환\nprint(tok.convert_ids_to_tokens(ids))              # 결과: ['[CLS]', 'transformers', 'are', 'amazing', '!', '[SEP]']",
+      "note": "한 단어가 여러 부분단어로 쪼개질 수 있고, 문장 앞뒤에 [CLS]·[SEP] 특수 토큰이 붙는 것을 확인한다."
     },
     {
-      "title": "Softmax로 점수를 확률(집중 비율)로 바꾸기",
+      "title": "softmax로 '집중 비율' 만들어 보기",
       "lang": "python",
-      "code": "import torch                                  # 텐서 계산 도구\n\nscores = torch.tensor([2.0, 1.0, 0.1])        # 단어 3개에 대한 관련도 점수(예시)\nweights = torch.softmax(scores, dim=0)        # 합이 1인 확률로 변환\n\nprint(weights.round(decimals=2))  # 결과: tensor([0.66, 0.24, 0.10]) 처럼 합=1\nprint(weights.sum())              # 결과: tensor(1.0000)",
-      "note": "점수가 클수록 더 큰 비율을 갖고, 전체 합은 항상 1이 된다는 Attention의 핵심을 보여준다."
+      "code": "import numpy as np                                # 수치 계산 라이브러리\n\nscores = np.array([2.0, 1.0, 0.1])                 # 세 토큰에 대한 원점수(아무 값)\nexp = np.exp(scores - scores.max())                # 최댓값 빼고 지수화(오버플로 방지)\nweights = exp / exp.sum()                           # 합이 1이 되도록 정규화\nprint(np.round(weights, 3))                         # 결과: [0.659 0.242 0.099]\nprint(\"합:\", weights.sum())                         # 결과: 합: 1.0",
+      "note": "점수가 가장 큰 항목이 가장 큰 비율을 가져가고, 전체 합은 항상 1이 된다."
     }
   ],
   "transformer-2": [
     {
-      "title": "Positional Encoding 값 만들어 보기",
+      "title": "BERT(빈칸 채우기)로 [MASK] 예측하기",
       "lang": "python",
-      "code": "import torch                                  # 텐서 계산 도구\nimport math                                   # sin/cos 함수 사용\n\npos, d_model = 4, 6                            # 자리 4개, 임베딩 차원 6\npe = torch.zeros(pos, d_model)                # 위치표를 담을 빈 표(4x6)\n\nfor p in range(pos):                          # 각 자리(0~3)마다\n    for i in range(0, d_model, 2):            # 짝수 차원마다 sin, 홀수엔 cos\n        denom = 10000 ** (i / d_model)        # 차원이 클수록 천천히 변하는 주기\n        pe[p, i] = math.sin(p / denom)        # 짝수 위치: sin 값\n        pe[p, i + 1] = math.cos(p / denom)    # 홀수 위치: cos 값\n\nprint(pe.round(decimals=2))   # 결과: 자리마다 다른 6개 숫자(위치 지문)가 찍힌 4x6 표",
-      "note": "자리마다 sin·cos로 서로 다른 '위치 지문'이 만들어져, 모델이 단어 순서를 구분할 수 있게 된다."
+      "code": "from transformers import pipeline                  # 간편 추론 파이프라인 불러오기\n\nfill = pipeline(\"fill-mask\", model=\"bert-base-uncased\")  # 빈칸 채우기 파이프라인 생성\nresult = fill(\"Paris is the [MASK] of France.\")     # [MASK] 자리에 올 단어 예측\nprint(result[0][\"token_str\"], round(result[0][\"score\"], 3))  # 결과: capital 0.9 근처",
+      "note": "BERT는 양방향으로 문맥을 읽어 빈칸에 가장 어울리는 단어를 높은 확률로 채운다."
     },
     {
-      "title": "GPT 계열 모델로 다음 문장 생성해 보기",
+      "title": "GPT-2(이어 쓰기)로 문장 생성하기",
       "lang": "python",
-      "code": "from transformers import pipeline             # 복잡한 과정을 한 줄로 묶어주는 도구\n\ngen = pipeline(\"text-generation\", model=\"distilgpt2\")  # 가벼운 GPT 모델 준비\n\nresult = gen(\"Artificial intelligence will\",   # 시작 문장(프롬프트)\n             max_new_tokens=20)                 # 새로 생성할 토큰 수 제한\n\nprint(result[0][\"generated_text\"])  # 결과: 시작 문장에 이어 자연스러운 영어 문장이 생성됨",
-      "note": "GPT(Decoder-only)는 앞 문장을 보고 다음 단어를 이어 쓰며 글을 생성한다는 것을 직접 확인하는 예제다."
+      "code": "from transformers import pipeline                  # 추론 파이프라인 불러오기\n\ngen = pipeline(\"text-generation\", model=\"gpt2\")     # 텍스트 생성 파이프라인 생성\nout = gen(\"The future of AI is\", max_length=20, num_return_sequences=1)  # 문장 이어쓰기\nprint(out[0][\"generated_text\"])                     # 결과: 입력에 이어 자연스러운 영어 문장 출력",
+      "note": "GPT-2는 왼쪽부터 다음 토큰을 차례로 예측하며 문장을 만들어내는 Decoder-only 모델이다."
     }
   ],
   "python-1": [
@@ -203,72 +203,72 @@ export const examples = {
   ],
   "spring-ai-1": [
     {
-      "title": "application.yml 기본 설정",
+      "title": "application.yml — Anthropic(클로드) 프로바이더 설정",
       "lang": "yaml",
-      "code": "spring:\n  ai:\n    openai:\n      api-key: ${OPENAI_API_KEY}   # 환경변수에서 비밀키를 읽어옴(코드에 직접 X)\n      chat:\n        options:\n          model: gpt-4o-mini        # 사용할 모델 이름(가볍고 저렴한 모델로 시작)\n          temperature: 0.7          # 답변의 창의성(0=딱딱·일관, 1에 가까울수록 자유로움)",
-      "note": "키는 환경변수로 분리하고 모델·온도는 설정에서 바꾼다."
+      "code": "# Spring 관련 설정의 최상위 키\nspring:\n  ai:\n    # Anthropic(클로드) 공급사 설정 묶음\n    anthropic:\n      # 클로드 API 키를 환경변수에서 읽어 온다(코드에 키를 노출하지 않기 위함)\n      api-key: ${ANTHROPIC_API_KEY}\n      # 채팅 모델의 세부 옵션 묶음\n      chat:\n        options:\n          # 사용할 모델 식별자(클로드 계열 모델 이름)\n          model: claude-sonnet-4-20250514\n          # 창의성 정도: 0에 가까우면 일관적, 1에 가까우면 다양\n          temperature: 0.7",
+      "note": "키를 코드가 아닌 환경변수(${...})로 읽어 보안을 지키는 것이 핵심 포인트다."
     },
     {
-      "title": "프롬프트에 시스템 지시 더하기",
+      "title": "System 메시지로 역할 지정하기",
       "lang": "java",
-      "code": "String answer = chatClient.prompt()       // 대화 시작\n        .system(\"너는 친절한 한국어 비서야\")  // AI의 역할·말투를 고정하는 지시\n        .user(\"점심 메뉴 3개 추천해줘\")        // 실제 사용자 질문\n        .call()                            // 모델로 전송\n        .content();                        // 텍스트 답만 추출\nSystem.out.println(answer);                // 결과: \"1. 비빔밥 ...\" 형태의 추천 목록 출력",
-      "note": "system()으로 역할을 주면 답변 톤이 일관되게 유지된다."
+      "code": "// 빌더에서 system 메시지로 AI의 역할을 먼저 정한다\nString answer = chatClient.prompt()        // 프롬프트 작성 시작\n        .system(\"너는 친절한 자바 강사야. 쉬운 말로 답해.\")  // AI의 역할·말투를 지정\n        .user(\"제네릭이 뭐야?\")                 // 사용자의 실제 질문\n        .call()                                // LLM 호출\n        .content();                            // 답변 텍스트만 추출\n// 화면/로그에 답변을 출력한다 (결과: 초보자 눈높이의 제네릭 설명 문장)\nSystem.out.println(answer);",
+      "note": "system()으로 역할과 말투를 먼저 정하면 답변 톤이 일관되게 유지된다."
     }
   ],
   "spring-ai-2": [
     {
-      "title": "문장을 임베딩 벡터로 변환",
-      "lang": "java",
-      "code": "float[] vector = embeddingModel.embed(\"강아지가 귀엽다\"); // 문장을 숫자 좌표로 변환\nSystem.out.println(vector.length); // 결과: 1536 (모델이 쓰는 차원 수만큼의 숫자 개수)",
-      "note": "임베딩 결과는 의미를 담은 고정 길이 숫자 배열이다."
+      "title": "build.gradle — pgvector VectorStore 의존성",
+      "lang": "bash",
+      "code": "# build.gradle 의 dependencies 블록에 아래 줄들을 추가한다\ndependencies {\n  # pgvector 기반 VectorStore 자동설정을 가져온다\n  implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'\n  # 문장을 벡터로 바꿔 줄 임베딩 모델(여기서는 OpenAI 임베딩) 스타터\n  implementation 'org.springframework.ai:spring-ai-starter-model-openai'\n}",
+      "note": "VectorStore 스타터와 임베딩 모델 스타터를 함께 넣어야 적재·검색이 동작한다."
     },
     {
-      "title": "VectorStore 유사도 검색",
-      "lang": "java",
-      "code": "List<Document> hits = vectorStore.similaritySearch(   // 비슷한 문서 찾기\n        SearchRequest.query(\"환불 규정\").withTopK(2));   // 가장 가까운 2개\nhits.forEach(d -> System.out.println(d.getContent())); // 결과: 환불 관련 문단 2개 출력",
-      "note": "키워드가 정확히 같지 않아도 의미가 가까우면 검색된다."
+      "title": "pgvector 컨테이너 띄우기",
+      "lang": "bash",
+      "code": "# pgvector가 미리 깔린 PostgreSQL 이미지를 백그라운드로 실행한다\ndocker run -d \\\n  --name pgvector \\\n  -e POSTGRES_PASSWORD=pass \\\n  -p 5432:5432 \\\n  pgvector/pgvector:pg16\n# 위 옵션: --name 컨테이너 이름, -e 비밀번호, -p 포트연결(내PC:컨테이너)\n# 결과: docker ps 로 보면 pgvector 컨테이너가 Up 상태로 보인다",
+      "note": "별도 설치 없이 한 줄로 벡터 검색용 DB를 띄울 수 있다."
     }
   ],
   "spring-ai-3": [
     {
-      "title": "답변을 객체로 받기",
+      "title": "구조화 출력 — 답을 record 리스트로 받기",
       "lang": "java",
-      "code": "record Movie(String title, int year) {}            // 받고 싶은 데이터 모양\nMovie m = chatClient.prompt()\n        .user(\"기생충 영화 정보를 알려줘\")            // 질문\n        .call()\n        .entity(Movie.class);                       // 문장이 아닌 Movie 객체로 변환\nSystem.out.println(m.title() + \"/\" + m.year());     // 결과: 기생충/2019",
-      "note": "entity()를 쓰면 문자열 파싱 없이 바로 객체 필드를 쓴다."
+      "code": "// 영화 추천 한 건을 담을 데이터 그릇(record)\npublic record Movie(String title, int year) {}\n\n// LLM에게 영화 3편을 Movie 리스트 모양으로 답하라고 요청한다\nList<Movie> movies = chatClient.prompt()      // 프롬프트 작성 시작\n        .user(\"가벼운 코미디 영화 3편 추천해줘\")   // 사용자 질문\n        .call()                                // LLM 호출\n        .entity(new ParameterizedTypeReference<List<Movie>>() {}); // List<Movie>로 변환\n// 결과를 반복하며 출력한다 (결과 예: 제목 (연도) 형태로 3줄)\nmovies.forEach(m -> System.out.println(m.title() + \" (\" + m.year() + \")\"));",
+      "note": "복잡한 제네릭 타입은 ParameterizedTypeReference로 알려 줘야 List<Movie>로 정확히 매핑된다."
     },
     {
-      "title": "스트리밍으로 답 받기",
+      "title": "스트리밍 응답 콘솔로 확인",
       "lang": "java",
-      "code": "chatClient.prompt()\n        .user(\"스프링을 3문장으로 설명해줘\")          // 질문\n        .stream()                                   // 한 번에 안 받고 조각으로 받음\n        .content()                                  // 글자 조각들의 흐름(Flux)\n        .subscribe(chunk -> System.out.print(chunk)); // 도착하는 대로 즉시 출력",
-      "note": "stream()은 긴 답을 타자치듯 실시간으로 보여줄 때 쓴다."
+      "code": "// 스트리밍으로 텍스트 조각(Flux)을 받는다\nFlux<String> flux = chatClient.prompt()       // 프롬프트 작성 시작\n        .user(\"스프링 AI를 5문장으로 설명해줘\")    // 사용자 질문\n        .stream()                              // 조각 단위 응답 모드\n        .content();                            // 텍스트 조각 스트림 추출\n// 조각이 도착할 때마다 줄바꿈 없이 이어서 출력한다(타자 치듯 보임)\nflux.doOnNext(System.out::print)               // 각 조각을 즉시 출력\n    .blockLast();                              // 마지막 조각까지 기다림(예제용)",
+      "note": "blockLast()는 예제에서 끝까지 기다리려고 쓴 것이고, 실제 웹에서는 Flux를 그대로 반환한다."
     }
   ],
   "sllm-1": [
     {
-      "title": "Transformers로 소형 모델 불러와 한 문장 생성하기",
+      "title": "Hugging Face로 작은 모델 받아 한 줄 생성하기",
       "lang": "python",
-      "code": "# Hugging Face Transformers로 sLLM을 직접 불러와 추론하는 가장 단순한 예제\nfrom transformers import pipeline             # 모델 로드+추론을 한 줄로 묶어 주는 도우미\n\npipe = pipeline(                             # 텍스트 생성 파이프라인을 생성\n    task=\"text-generation\",                 # 할 일: 다음 단어를 이어 쓰는 '텍스트 생성'\n    model=\"Qwen/Qwen2.5-0.5B-Instruct\",     # 사용할 0.5B 소형 모델 이름\n)\nprompt = \"인공지능을 한 문장으로 설명하면\"      # 모델에게 줄 시작 문장(프롬프트)\nout = pipe(prompt, max_new_tokens=40)        # 최대 40개 토큰까지 새로 생성하도록 호출\nprint(out[0][\"generated_text\"])             # 결과: 프롬프트 뒤에 모델이 이어 쓴 문장이 출력됨\n",
-      "note": "max_new_tokens 값을 키우면 더 긴 답이 나온다."
+      "code": "from transformers import pipeline   # 복잡한 단계를 한 번에 묶어주는 편의 도구\n\n# 'text-generation' 작업과 쓸 모델 이름만 주면 알아서 내려받아 준비한다\ngen = pipeline(\"text-generation\", model=\"Qwen/Qwen2.5-0.5B\")\n\nresult = gen(\"인공지능을 한 문장으로 설명하면\", max_new_tokens=30)  # 최대 30토큰까지 이어 쓰게 함\nprint(result[0][\"generated_text\"])   # 결과: 입력 문장 + 모델이 이어 쓴 설명이 출력됨",
+      "note": "pipeline 한 줄이면 모델 다운로드부터 추론까지 자동으로 처리된다."
     },
     {
-      "title": "양자화로 메모리를 줄여 모델 올리기",
+      "title": "모델 용량 가늠하기 — 파라미터 수로 메모리 추정",
       "lang": "python",
-      "code": "# 4비트 양자화로 모델을 가볍게 메모리에 올리는 예제(GPU 환경 기준)\nimport torch                                 # 딥러닝 텐서 연산 라이브러리\nfrom transformers import AutoModelForCausalLM, BitsAndBytesConfig  # 모델과 양자화 설정 도구\n\nqcfg = BitsAndBytesConfig(                   # 양자화(압축) 옵션을 모아 두는 설정 객체\n    load_in_4bit=True,                       # 가중치를 4비트로 압축해 메모리를 1/4 수준으로 절감\n    bnb_4bit_compute_dtype=torch.float16,    # 실제 계산은 16비트로 해 속도와 정확도의 균형을 맞춤\n)\nmodel = AutoModelForCausalLM.from_pretrained(  # 모델을 다운로드하며 메모리에 적재\n    \"Qwen/Qwen2.5-1.5B-Instruct\",           # 적재할 모델 이름\n    quantization_config=qcfg,                # 위에서 만든 4비트 양자화 설정을 적용\n    device_map=\"auto\",                      # 사용 가능한 GPU/CPU에 자동으로 배치\n)\nprint(model.get_memory_footprint() / 1e9, \"GB\")  # 결과: 모델이 차지하는 메모리를 GB 단위로 출력\n",
-      "note": "load_in_4bit=True 한 줄로 용량이 크게 줄어든다."
+      "code": "params_billion = 7      # 모델 크기(예: 7B = 70억 파라미터)\nbits = 4                # 양자화 비트 수(4비트로 압축했다고 가정)\n\n# 대략적인 용량(GB) = 파라미터 수(10억) x 비트 / 8(=1바이트)\napprox_gb = params_billion * bits / 8   # 7 * 4 / 8 = 3.5\nprint(f\"필요 메모리 약 {approx_gb} GB\")   # 결과: 필요 메모리 약 3.5 GB",
+      "note": "4비트 양자화를 쓰면 7B 모델도 약 3.5GB라 일반 노트북 메모리에 들어간다."
     }
   ],
   "sllm-2": [
     {
-      "title": "instruction 데이터셋을 읽고 개수·형식 점검하기",
+      "title": "instruction 학습 데이터 한 줄 만들기 (JSONL)",
       "lang": "python",
-      "code": "# data.jsonl이 제대로 만들어졌는지 빠르게 검증하는 예제\nfrom datasets import load_dataset                 # 데이터셋 로딩 도구\n\nds = load_dataset(\"json\", data_files=\"data.jsonl\", split=\"train\")  # 내 데이터 파일을 읽어옴\nprint(\"샘플 개수:\", len(ds))                   # 결과: 작성한 학습 예시의 총 개수가 출력됨\nprint(\"첫 샘플:\", ds[0])                        # 결과: 첫 줄의 instruction/output 한 쌍이 출력됨\n\nassert \"instruction\" in ds[0] and \"output\" in ds[0]  # 두 필드가 모두 있는지 자동 점검\nprint(\"형식 OK\")                                # 통과하면 형식이 올바르다는 뜻\n",
-      "note": "학습 전에 데이터 형식을 먼저 검증하면 오류를 미리 막는다."
+      "code": "import json   # 파이썬 딕셔너리를 JSON 문자열로 바꾸기 위해 사용\n\n# 모델에게 줄 '모범답안 카드' 한 장(지시 + 모범 출력)\nsample = {\n    \"text\": \"### 지시:\\nDreamIT의 약자를 풀어줘\\n### 응답:\\nDream + IT, 꿈을 IT로 이룬다는 뜻입니다.\"\n}\n\n# JSONL은 한 줄에 하나의 JSON, 여러 줄을 모아 학습셋이 된다\nwith open(\"data.jsonl\", \"a\", encoding=\"utf-8\") as f:  # 이어쓰기(a) 모드로 열기\n    f.write(json.dumps(sample, ensure_ascii=False) + \"\\n\")  # 카드 한 장을 파일에 추가\nprint(\"한 줄 추가 완료\")   # 결과: 한 줄 추가 완료",
+      "note": "이런 카드를 10~20장 모으면 작은 도메인 파인튜닝 학습셋이 된다."
     },
     {
-      "title": "학습한 LoRA 어댑터를 얹어 추론하기",
+      "title": "학습한 LoRA 어댑터로 추론하기",
       "lang": "python",
-      "code": "# 베이스 모델 위에 학습된 어댑터를 끼워 답변을 받아 보는 예제\nfrom transformers import AutoModelForCausalLM, AutoTokenizer  # 모델·토크나이저 로드 도구\nfrom peft import PeftModel                        # 어댑터를 모델에 결합해 주는 도구\n\nbase = AutoModelForCausalLM.from_pretrained(\"Qwen/Qwen2.5-0.5B-Instruct\")  # 원본 베이스 모델 로드\nmodel = PeftModel.from_pretrained(base, \"./lora-out\")  # 학습한 LoRA 어댑터를 베이스에 얹음\ntok = AutoTokenizer.from_pretrained(\"Qwen/Qwen2.5-0.5B-Instruct\")  # 같은 토크나이저 로드\n\nids = tok(\"### 질문:\\n환불 규정 알려줘\\n### 답변:\\n\", return_tensors=\"pt\")  # 질문을 토큰으로 변환\nout = model.generate(**ids, max_new_tokens=60)   # 최대 60토큰까지 답변을 생성\nprint(tok.decode(out[0]))                        # 결과: 학습한 도메인 말투가 반영된 답변이 출력됨\n",
-      "note": "어댑터만 바꿔 끼우면 같은 베이스로 여러 도메인 모델을 만들 수 있다."
+      "code": "from transformers import AutoModelForCausalLM, AutoTokenizer  # 모델·토크나이저\nfrom peft import PeftModel   # 저장한 LoRA 어댑터를 본체에 다시 끼우는 도구\n\nbase = \"Qwen/Qwen2.5-0.5B\"           # 학습에 썼던 베이스 모델\ntok = AutoTokenizer.from_pretrained(base)        # 토크나이저 불러오기\nmodel = AutoModelForCausalLM.from_pretrained(base)  # 베이스 모델 불러오기\nmodel = PeftModel.from_pretrained(model, \"my-lora\")  # 저장해 둔 LoRA 어댑터 결합\n\nprompt = \"### 지시:\\nDreamIT의 약자를 풀어줘\\n### 응답:\\n\"  # 학습 때와 같은 형식으로 질문\nids = tok(prompt, return_tensors=\"pt\").input_ids   # 문장을 토큰 숫자로 변환\nout = model.generate(ids, max_new_tokens=40)       # 최대 40토큰 답 생성\nprint(tok.decode(out[0], skip_special_tokens=True))  # 결과: 학습한 말투로 답이 출력됨",
+      "note": "본체 + LoRA 어댑터를 합쳐 불러오면 파인튜닝된 모델로 추론할 수 있다."
     }
   ],
   "ml-dl-1": [
