@@ -105,58 +105,58 @@ export const examples = {
   ],
   "vue-1": [
     {
-      "title": "ref로 숫자 1개 반응형으로 만들기",
-      "lang": "javascript",
-      "code": "// Vue에서 반응형 도구 ref를 가져온다\nimport { ref } from 'vue'\n\n// 반응형 숫자 변수 만들기(상자에 0을 담는다)\nconst age = ref(0)\n\n// 값을 바꿀 때는 .value 로 접근한다\nage.value = 25\n\n// 현재 값 확인(콘솔 출력)\nconsole.log(age.value) // 결과: 25",
-      "note": "ref는 값을 '상자'에 넣는 것이라 JS 코드에서는 .value로 꺼내고 넣는다."
+      "title": "ref 로 만든 반응형 카운터",
+      "lang": "vue",
+      "code": "<script setup>\n// 반응형 값을 만드는 ref 함수를 가져온다\nimport { ref } from 'vue'\n// 숫자 0 을 반응형으로 감싼 카운터 상태를 만든다\nconst count = ref(0)\n// 버튼을 누르면 카운터를 1 증가시키는 함수(자바스크립트에서는 .value 필요)\nfunction plus() { count.value++ }\n</script>\n\n<template>\n  <!-- 현재 카운트를 화면에 출력한다(템플릿에서는 .value 없이 바로 사용) -->\n  <p>현재 값: {{ count }}</p>\n  <!-- 버튼 클릭 시 plus 실행, 누를 때마다 위 숫자가 1씩 증가 -->\n  <button @click=\"plus\">+1</button>\n</template>",
+      "note": "버튼을 누르면 count.value 만 바꿔도 화면 숫자가 자동으로 올라간다."
     },
     {
-      "title": "reactive로 객체 묶음 반응형으로 만들기",
-      "lang": "javascript",
-      "code": "// 객체용 반응형 도구 reactive를 가져온다\nimport { reactive } from 'vue'\n\n// 여러 값을 한 묶음(객체)으로 반응형 만들기\nconst user = reactive({ name: '홍길동', age: 20 })\n\n// reactive 객체는 .value 없이 바로 속성에 접근한다\nuser.age = 21\n\n// 변경된 값 확인\nconsole.log(user.name, user.age) // 결과: 홍길동 21",
-      "note": "값 하나면 ref, 여러 값을 묶으면 reactive를 쓰면 편하다."
+      "title": "v-if 와 v-for 디렉티브",
+      "lang": "vue",
+      "code": "<script setup>\n// 반응형 배열을 만들기 위해 ref 를 가져온다\nimport { ref } from 'vue'\n// 과일 이름 3개를 담은 반응형 배열\nconst fruits = ref(['사과', '바나나', '포도'])\n</script>\n\n<template>\n  <!-- 배열이 비어 있지 않을 때만(v-if 조건 참) 목록을 보여준다 -->\n  <ul v-if=\"fruits.length > 0\">\n    <!-- v-for 로 과일을 하나씩 꺼내 li 로 출력, key 로 인덱스 i 사용 -->\n    <li v-for=\"(f, i) in fruits\" :key=\"i\">{{ i + 1 }}. {{ f }}</li>\n  </ul>\n  <!-- 위 조건이 거짓이면(배열이 비면) 이 문구를 대신 보여준다 -->\n  <p v-else>과일이 없습니다.</p>\n</template>",
+      "note": "v-for 는 반복 출력을, v-if/v-else 는 조건에 따른 화면 분기를 담당한다."
     }
   ],
   "vue-2": [
     {
-      "title": "defineProps로 데이터 받기",
+      "title": "props 로 값 내려주기",
       "lang": "vue",
-      "code": "<script setup>\n// 부모가 내려준 title과 count를 받는다\nconst props = defineProps(['title', 'count'])\n</script>\n\n<template>\n  <!-- 받은 props를 화면에 그대로 출력 -->\n  <h3>{{ props.title }} ({{ props.count }})</h3>\n</template>",
-      "note": "props로 받은 값은 자식 화면에서 읽기 전용으로 사용한다."
+      "code": "<script setup>\n// 부모에게서 메시지 문자열을 props 로 받는다\ndefineProps({ message: String })\n</script>\n\n<template>\n  <!-- 받은 message 를 그대로 화면에 출력한다 -->\n  <p>부모가 보낸 말: {{ message }}</p>\n</template>",
+      "note": "자식은 props 로 받은 값을 읽어 화면에 보여주기만 한다."
     },
     {
       "title": "onMounted 라이프사이클 훅",
       "lang": "vue",
-      "code": "<script setup>\n// 컴포넌트가 화면에 나타날 때 실행되는 훅을 가져온다\nimport { onMounted } from 'vue'\n\n// 컴포넌트가 화면에 붙는 순간 자동 실행된다\nonMounted(() => {\n  console.log('화면에 나타났어요!') // 결과: 콘솔에 메시지 출력\n})\n</script>",
-      "note": "onMounted는 데이터 불러오기(API 호출) 시작점으로 자주 쓰인다."
+      "code": "<script setup>\n// 컴포넌트가 화면에 나타날 때 실행되는 훅을 가져온다\nimport { onMounted, ref } from 'vue'\n// 표시할 메시지 상태\nconst msg = ref('로딩 중...')\n// 컴포넌트가 화면에 붙은 직후 한 번 실행된다(보통 데이터 불러오기에 사용)\nonMounted(() => {\n  msg.value = '화면이 준비되었습니다!' // 마운트 후 메시지를 바꾼다\n})\n</script>\n\n<template>\n  <!-- 처음엔 '로딩 중', 마운트 후엔 준비 완료 문구가 보인다 -->\n  <p>{{ msg }}</p>\n</template>",
+      "note": "onMounted 안은 화면이 그려진 직후 딱 한 번 실행된다."
     }
   ],
   "vue-3": [
     {
-      "title": "router-link로 페이지 이동",
+      "title": "router-link 로 페이지 이동",
       "lang": "vue",
-      "code": "<template>\n  <!-- to에 적은 주소로 이동하는 링크(새로고침 없음) -->\n  <router-link to=\"/\">홈</router-link>\n  <router-link to=\"/about\">소개</router-link>\n  <!-- 위 링크가 가리키는 화면이 여기에 그려진다 -->\n  <router-view />\n</template>",
-      "note": "router-link는 a 태그처럼 보이지만 새로고침 없이 화면만 바꾼다."
+      "code": "<template>\n  <!-- 클릭하면 새로고침 없이 '/' 화면으로 이동 -->\n  <router-link to=\"/\">홈</router-link>\n  <!-- 클릭하면 1번 상품 상세로 이동 -->\n  <router-link to=\"/product/1\">1번 상품</router-link>\n  <!-- 현재 주소에 맞는 컴포넌트가 이 자리에 그려진다 -->\n  <router-view />\n</template>",
+      "note": "router-link 는 이동 버튼, router-view 는 화면이 그려지는 자리다."
     },
     {
       "title": "Pinia 스토어 값 사용하기",
       "lang": "vue",
-      "code": "<script setup>\n// 전역 장바구니 스토어를 가져온다\nimport { useCartStore } from '../stores/cart'\n\n// 스토어 인스턴스 생성\nconst cart = useCartStore()\n</script>\n\n<template>\n  <!-- 전역 상태(담긴 개수)를 헤더 어디서든 표시 -->\n  <span>장바구니: {{ cart.count }}개</span>\n</template>",
-      "note": "스토어 값은 화면이 달라도 항상 같은 최신 값을 보여준다."
+      "code": "<script setup>\n// 장바구니 스토어를 가져온다\nimport { useCartStore } from '../stores/cart'\n// 스토어 인스턴스를 얻는다(전역 데이터 접근)\nconst cart = useCartStore()\n</script>\n\n<template>\n  <!-- 스토어의 count 게터로 담긴 개수를 헤더에 표시 -->\n  <header>장바구니: {{ cart.count }}개</header>\n</template>",
+      "note": "어느 컴포넌트에서든 useCartStore 로 같은 데이터를 바로 읽을 수 있다."
     }
   ],
   "vue-4": [
     {
-      "title": "axios로 데이터 한 번 불러오기",
+      "title": "async/await 로 데이터 불러오기",
       "lang": "javascript",
-      "code": "// HTTP 요청 도구 axios를 가져온다\nimport axios from 'axios'\n\n// 비동기 함수: 서버에서 글 목록을 받아온다\nasync function getPosts() {\n  const res = await axios.get('https://jsonplaceholder.typicode.com/posts') // 응답 대기\n  console.log(res.data.length) // 결과: 100 (받아온 글 개수)\n}\n\n// 함수 실행\ngetPosts()",
-      "note": "await는 '응답이 올 때까지 기다렸다가 다음 줄로' 라는 뜻이다."
+      "code": "// HTTP 요청 라이브러리를 가져온다\nimport axios from 'axios'\n\n// 사용자 정보를 비동기로 불러오는 함수\nasync function getUser() {\n  // 1번 사용자 정보를 요청하고 응답을 기다린다\n  const res = await axios.get('https://jsonplaceholder.typicode.com/users/1')\n  // 받은 데이터에서 이름을 출력한다(예: Leanne Graham)\n  console.log(res.data.name)\n}\n\n// 함수를 실행해 결과를 확인한다\ngetUser()",
+      "note": "await 는 응답이 올 때까지 기다린 뒤 다음 줄로 넘어간다."
     },
     {
-      "title": "환경변수(.env) 값 읽기",
-      "lang": "javascript",
-      "code": "// .env 파일 예시: VITE_API_URL=https://api.example.com\n\n// Vite에서는 import.meta.env로 환경변수를 읽는다(VITE_ 로 시작해야 함)\nconst apiUrl = import.meta.env.VITE_API_URL\n\n// 읽어온 주소 확인\nconsole.log(apiUrl) // 결과: https://api.example.com",
-      "note": "비밀 값이나 환경마다 다른 주소는 코드가 아니라 .env에 둔다."
+      "title": "폼 유효성 검사",
+      "lang": "vue",
+      "code": "<script setup>\n// 반응형 상태를 위해 ref 를 가져온다\nimport { ref } from 'vue'\n// 입력값과 경고 메시지 상태\nconst title = ref('')\nconst warn = ref('')\n\n// 제출 시 제목이 비었는지 검사하는 함수\nfunction submit() {\n  // 공백 제거 후 비어 있으면 경고를 띄우고 중단\n  if (title.value.trim() === '') { warn.value = '제목을 입력하세요'; return }\n  // 통과하면 경고를 지운다(실제로는 서버 전송)\n  warn.value = ''\n}\n</script>\n\n<template>\n  <!-- 제목 입력창을 title 과 양방향 연결 -->\n  <input v-model=\"title\" placeholder=\"제목\" />\n  <!-- 제출 버튼: 클릭 시 submit 실행 -->\n  <button @click=\"submit\">등록</button>\n  <!-- 경고가 있을 때만 빨간 문구 표시 -->\n  <p v-if=\"warn\" style=\"color:red\">{{ warn }}</p>\n</template>",
+      "note": "입력값을 검사해 비어 있으면 서버 전송 전에 막아 준다."
     }
   ],
   "webproject-1": [
@@ -405,44 +405,50 @@ export const examples = {
   ],
   "langchain-1": [
     {
-      "title": "가장 짧은 LangChain: 모델 하나만 직접 불러 답 받기",
+      "title": "모델 한 번 호출해 보기 (가장 단순한 형태)",
       "lang": "python",
-      "code": "# .env의 API 키를 불러오는 도구\nfrom dotenv import load_dotenv\n# OpenAI 채팅 모델 클래스\nfrom langchain_openai import ChatOpenAI\n\n# 환경변수(API 키) 로드\nload_dotenv()\n\n# 모델 객체 생성(가장 기본 설정)\nllm = ChatOpenAI(model=\"gpt-4o-mini\")\n\n# 모델에 질문을 직접 보내고 답(메시지 객체)을 받는다\nanswer = llm.invoke(\"LangChain을 한 문장으로 설명해줘\")\n\n# 답 객체에서 본문 텍스트만 꺼내 출력 (예상: 한 문장 설명)\nprint(answer.content)",
-      "note": "체인 없이 모델만 invoke해도 동작한다.\ncontent 속성에 실제 답 텍스트가 들어 있다."
+      "code": "# Anthropic 채팅 모델 연동 클래스를 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 모델 객체를 만든다(어떤 모델을 쓸지 이름으로 지정)\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\")\n# invoke에 질문 문자열을 넣어 모델을 한 번 실행한다\nanswer = model.invoke(\"LangChain을 한 문장으로 설명해줘\")\n# 모델 답 객체의 content에 실제 답 글자가 들어 있으므로 그것을 출력한다\nprint(answer.content)  # 결과 예: 'LangChain은 LLM 앱을 부품처럼 조립하게 돕는 도구다.'",
+      "note": "체인을 만들기 전에 모델만 단독으로 불러 보는 가장 기초 예제다."
     },
     {
-      "title": "프롬프트 + 모델 + 파서를 파이프로 잇는 기본 체인",
+      "title": "프롬프트 양식에 값 끼워 넣어 확인하기",
       "lang": "python",
-      "code": "# 필요한 부품들을 가져오기\nfrom dotenv import load_dotenv\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\n\n# API 키 로드\nload_dotenv()\n\n# 모델 준비\nllm = ChatOpenAI(model=\"gpt-4o-mini\")\n# {topic} 빈칸이 있는 프롬프트 양식\nprompt = ChatPromptTemplate.from_template(\"{topic}에 대해 초등학생도 알게 한 문장으로 설명해줘\")\n# 프롬프트 → 모델 → 문자열 파서로 체인 조립\nchain = prompt | llm | StrOutputParser()\n\n# topic 빈칸에 '인공지능'을 넣어 실행\nprint(chain.invoke({\"topic\": \"인공지능\"}))  # 예상: 인공지능을 쉽게 설명한 한 문장",
-      "note": "StrOutputParser를 붙이면 메시지 객체가 아니라 바로 쓸 수 있는 문자열이 나온다."
+      "code": "# 프롬프트 양식을 만드는 도구를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\n# {언어} 자리를 가진 번역 지시 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\"'{word}'를 {언어}로 번역해줘\")\n# 빈칸에 실제 값을 채워 완성된 프롬프트가 어떻게 보이는지 만들어 본다\nfilled = prompt.invoke({\"word\": \"사과\", \"언어\": \"영어\"})\n# 완성된 메시지 내용을 출력해 양식이 잘 채워졌는지 눈으로 확인한다\nprint(filled.messages[0].content)  # 결과: \"'사과'를 영어로 번역해줘\"",
+      "note": "모델에 보내기 전, 프롬프트가 어떻게 채워지는지 직접 눈으로 보는 점이 핵심이다."
+    },
+    {
+      "title": "JSON으로 구조화 출력 받기",
+      "lang": "python",
+      "code": "# JSON 형태로 결과를 파싱해 주는 출력 파서를 가져온다\nfrom langchain_core.output_parsers import JsonOutputParser\n# 프롬프트 양식 도구를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\n# 모델 연동 클래스를 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 이름과 나이를 JSON으로 뽑아 달라고 지시하는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\n    \"문장에서 이름과 나이를 JSON으로 뽑아줘: {sentence}\")  # 빈칸 sentence에 문장이 들어간다\n# 프롬프트 | 모델 | JSON파서 순으로 체인을 조립한다\nchain = prompt | ChatAnthropic(model=\"claude-sonnet-4-5\") | JsonOutputParser()\n# 체인을 실행하면 문자열이 아니라 파이썬 딕셔너리로 결과가 나온다\nout = chain.invoke({\"sentence\": \"홍길동은 30살이다\"})\n# 딕셔너리이므로 키로 값을 바로 꺼낼 수 있다\nprint(out)  # 결과 예: {'이름': '홍길동', '나이': 30}",
+      "note": "StrOutputParser 대신 JsonOutputParser를 쓰면 결과를 바로 코드에서 다룰 수 있다."
     }
   ],
   "langchain-2": [
     {
-      "title": "대화 기억하기: 메시지 리스트로 멀티턴 만들기",
+      "title": "대화 메모리로 앞말 기억하기",
       "lang": "python",
-      "code": "from dotenv import load_dotenv\nfrom langchain_openai import ChatOpenAI\n# 역할별 메시지(시스템/사람/AI) 클래스\nfrom langchain_core.messages import SystemMessage, HumanMessage, AIMessage\n\nload_dotenv()  # API 키 로드\nllm = ChatOpenAI(model=\"gpt-4o-mini\")  # 모델 준비\n\n# 지금까지의 대화 기록을 담는 리스트(=메모리 역할)\nhistory = [SystemMessage(\"너는 친절한 비서야\")]\n# 첫 질문을 기록에 추가\nhistory.append(HumanMessage(\"내 이름은 민수야\"))\n# 전체 기록을 넘겨 답을 받음\nreply = llm.invoke(history)\n# AI 답도 기록에 추가해야 다음 턴에서 기억함\nhistory.append(AIMessage(reply.content))\n# 이름을 다시 물어 기억하는지 확인\nhistory.append(HumanMessage(\"내 이름이 뭐라고 했지?\"))\n# 예상: '민수'라고 대답함\nprint(llm.invoke(history).content)",
-      "note": "AI의 답까지 history에 다시 넣어야 다음 질문에서 앞 대화를 기억한다."
+      "code": "# 대화 기록을 자동으로 끼워 주는 래퍼를 가져온다\nfrom langchain_core.runnables.history import RunnableWithMessageHistory\n# 대화를 메모리에 보관하는 저장소를 가져온다\nfrom langchain_community.chat_message_histories import ChatMessageHistory\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 세션별 대화 기록을 담아 둘 딕셔너리를 만든다\nstore = {}\n# 세션 id로 그 사람의 대화 기록을 돌려주는 함수를 정의한다\ndef get_history(session_id):\n    if session_id not in store:           # 처음 보는 세션이면\n        store[session_id] = ChatMessageHistory()  # 새 기록 객체를 만들어 둔다\n    return store[session_id]              # 해당 세션의 기록을 돌려준다\n# 모델에 '기록을 자동으로 함께 보내기' 기능을 입힌다\nchat = RunnableWithMessageHistory(ChatAnthropic(model=\"claude-sonnet-4-5\"), get_history)\n# 같은 session_id로 첫 마디를 보낸다(이름을 알려 준다)\ncfg = {\"configurable\": {\"session_id\": \"u1\"}}  # 누구의 대화인지 식별\nchat.invoke(\"내 이름은 길동이야\", config=cfg)   # 모델이 기록에 저장\n# 같은 세션으로 다시 물으면 앞말을 기억해 답한다\nprint(chat.invoke(\"내 이름이 뭐였지?\", config=cfg).content)  # 결과: '길동입니다.'",
+      "note": "session_id를 같게 유지하면 모델이 직전 대화를 이어받아 맥락을 기억한다."
     },
     {
-      "title": "도구(Tool) 정의하고 LLM이 호출하게 하기",
+      "title": "나만의 도구(Tool) 만들어 모델에 연결",
       "lang": "python",
-      "code": "from dotenv import load_dotenv\nfrom langchain_openai import ChatOpenAI\n# 함수를 도구로 등록해 주는 데코레이터\nfrom langchain_core.tools import tool\n\nload_dotenv()  # API 키 로드\n\n# @tool 데코레이터로 일반 함수를 LLM이 부를 수 있는 도구로 만든다\n@tool\ndef multiply(a: int, b: int) -> int:\n    \"\"\"두 정수 a와 b를 곱한다.\"\"\"  # 설명: LLM이 언제 쓸지 판단하는 근거\n    return a * b  # 실제 계산 수행\n\n# 모델에 사용할 수 있는 도구 목록을 묶어 준다\nllm = ChatOpenAI(model=\"gpt-4o-mini\").bind_tools([multiply])\n# 곱셈이 필요한 질문을 던진다\nres = llm.invoke(\"345 곱하기 678은?\")\n# 예상: 모델이 multiply 도구를 호출하겠다는 요청을 담아 응답\nprint(res.tool_calls)",
-      "note": "bind_tools로 도구를 알려 주면 LLM이 직접 계산하지 않고 multiply 호출을 제안한다."
+      "code": "# 함수를 도구로 등록해 주는 데코레이터를 가져온다\nfrom langchain_core.tools import tool\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# @tool을 붙여 일반 함수를 모델이 쓸 수 있는 도구로 만든다\n@tool\ndef add(a: int, b: int) -> int:\n    \"\"\"두 정수를 더한다\"\"\"  # 설명: 모델이 이 글을 보고 언제 쓸지 판단한다\n    return a + b           # 실제 덧셈 결과를 돌려준다\n# 모델에 도구 목록을 묶어(bind) 도구를 쓸 수 있게 한다\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\").bind_tools([add])\n# 계산이 필요한 질문을 던진다\nres = model.invoke(\"12345 더하기 6789는?\")\n# 모델이 직접 계산하지 않고 add 도구를 쓰겠다고 요청한 내역을 출력한다\nprint(res.tool_calls)  # 결과 예: [{'name':'add','args':{'a':12345,'b':6789}}]",
+      "note": "모델은 답을 지어내는 대신 add 도구를 호출하겠다고 알려 주어 정확한 계산이 가능해진다."
     }
   ],
   "langchain-3": [
     {
-      "title": "스트리밍: 답을 글자 단위로 받아 출력하기",
+      "title": "체인 결과를 스트리밍으로 받아 출력",
       "lang": "python",
-      "code": "from dotenv import load_dotenv\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\n\nload_dotenv()  # API 키 로드\nllm = ChatOpenAI(model=\"gpt-4o-mini\")  # 모델 준비\nprompt = ChatPromptTemplate.from_template(\"{topic}에 대한 짧은 시를 써줘\")  # 프롬프트\nchain = prompt | llm | StrOutputParser()  # 체인 조립\n\n# invoke 대신 stream을 쓰면 조각(chunk)들이 순서대로 들어온다\nfor chunk in chain.stream({\"topic\": \"바다\"}):\n    # end=\"\" 로 줄바꿈 없이 이어 붙여 타이핑되는 효과\n    print(chunk, end=\"\", flush=True)  # 예상: 시가 한 글자씩 흘러나옴",
-      "note": "stream은 chunk를 하나씩 돌려준다.\nflush=True로 즉시 화면에 반영한다."
+      "code": "# 프롬프트·모델·파서를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom langchain_anthropic import ChatAnthropic\n# 짧은 글짓기를 시키는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\"{topic}에 대한 짧은 시를 써줘\")\n# 프롬프트→모델→파서로 체인을 조립한다\nchain = prompt | ChatAnthropic(model=\"claude-sonnet-4-5\") | StrOutputParser()\n# invoke 대신 stream을 쓰면 답이 조각으로 나뉘어 들어온다\nfor chunk in chain.stream({\"topic\": \"봄비\"}):  # 조각을 순서대로 하나씩 받는다\n    print(chunk, end=\"\", flush=True)            # 줄바꿈 없이 즉시 화면에 이어 출력\n# 결과: 시가 한 글자씩 또르르 흘러나오며 출력된다",
+      "note": "invoke를 stream으로 바꾸기만 하면 같은 체인이 글자를 흘려보내는 스트리밍이 된다."
     },
     {
-      "title": "폴백(fallback): 주 모델 실패 시 보조 모델로 자동 전환",
+      "title": "캐싱으로 같은 질문 빠르게 답하기",
       "lang": "python",
-      "code": "from dotenv import load_dotenv\nfrom langchain_openai import ChatOpenAI\n\nload_dotenv()  # API 키 로드\n\n# 보조(백업) 모델: 주 모델이 실패하면 대신 답한다\nbackup = ChatOpenAI(model=\"gpt-4o-mini\")\n# 주 모델에 with_fallbacks로 백업을 연결\nprimary = ChatOpenAI(model=\"gpt-4o\").with_fallbacks([backup])\n\n# 주 모델이 정상이면 주 모델이, 실패하면 backup이 응답\nres = primary.invoke(\"한 문장 명언 하나 알려줘\")\n# 예상: 어느 한 모델이 만든 명언 출력\nprint(res.content)",
-      "note": "with_fallbacks로 백업 모델을 걸어 두면 한쪽이 죽어도 서비스가 멈추지 않는다."
+      "code": "# 시간 측정을 위해 time 모듈을 가져온다\nimport time\n# 캐시 설정 함수와 메모리 캐시를 가져온다\nfrom langchain_core.globals import set_llm_cache\nfrom langchain_community.cache import InMemoryCache\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 메모리 캐시를 켠다(같은 입력은 저장된 답을 재사용)\nset_llm_cache(InMemoryCache())\n# 모델 객체를 만든다\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\")\n# 첫 호출 시각을 기록하고 모델을 부른다(실제로 모델이 일한다)\nt1 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 첫 호출에 걸린 시간을 출력한다(예: 1.8초)\nprint(\"1차:\", round(time.time() - t1, 2), \"초\")\n# 같은 질문을 다시 부른다(이번엔 캐시에서 즉시 가져온다)\nt2 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 두 번째는 거의 0초임을 출력해 캐시 효과를 확인한다\nprint(\"2차:\", round(time.time() - t2, 2), \"초\")  # 결과 예: 2차: 0.0 초",
+      "note": "두 번째 호출이 사실상 0초인 것은 모델을 다시 부르지 않고 캐시에서 답을 꺼냈기 때문이다."
     }
   ],
   "serving-1": [

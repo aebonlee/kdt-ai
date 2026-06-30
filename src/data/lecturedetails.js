@@ -386,222 +386,219 @@ export const details = {
   "vue-1": {
     "topics": [
       {
-        "h": "개발 환경 준비물",
+        "h": "Vue 프로젝트 시작",
         "items": [
-          "Node.js LTS 설치",
-          "VS Code 편집기 + Volar 확장",
-          "Vite로 프로젝트 생성",
-          "npm run dev 로 개발 서버 실행"
+          "npm create vite 로 프로젝트 생성",
+          "npm run dev 로 개발 서버 실행",
+          "src/App.vue 진입점 이해",
+          "main.js 가 앱을 화면에 붙이는 과정"
         ]
       },
       {
-        "h": "반응형의 두 도구",
+        "h": "반응형 상태",
         "items": [
-          "ref: 숫자·문자 등 값 하나",
-          "reactive: 객체·여러 값 묶음",
-          ".value 접근 규칙",
-          "템플릿에서는 .value 생략"
+          "ref 로 단일 값 감싸기",
+          "reactive 로 객체 감싸기",
+          "자바스크립트에선 .value, 템플릿에선 그대로",
+          "상태가 바뀌면 화면 자동 갱신"
         ]
       },
       {
-        "h": "기본 디렉티브",
+        "h": "템플릿 문법",
         "items": [
-          "v-bind(:속성) 값 묶기",
-          "v-on(@이벤트) 동작 연결",
-          "v-model 양방향 바인딩",
-          "v-if / v-for 조건·반복"
+          "{{ }} 보간으로 값 출력",
+          "v-bind(:)로 속성 연결",
+          "v-on(@)으로 이벤트 연결",
+          "v-model 로 폼 양방향 바인딩"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. 첫 프로젝트 띄우기",
+        "title": "Lab 1. 첫 Vue 프로젝트 띄우기",
         "steps": [
-          "`npm create vite@latest hello-vue -- --template vue` 입력",
-          "`cd hello-vue` 후 `npm install` 실행",
-          "`npm run dev` 실행 후 브라우저에서 기본 화면 확인",
-          "src/App.vue 의 <h1> 글자를 '내 첫 Vue!'로 바꿔 저장하고 화면이 바뀌는지 확인"
+          "터미널을 열고 'npm create vite@latest hello -- --template vue' 를 입력한다",
+          "'cd hello && npm install && npm run dev' 를 차례로 실행한다",
+          "브라우저에서 http://localhost:5173 에 접속해 기본 화면을 확인한다",
+          "src/App.vue 의 <template> 안 글자를 바꿔 저장하고 화면이 즉시 바뀌는지 본다"
         ]
       },
       {
-        "title": "Lab 2. v-for로 목록 출력",
+        "title": "Lab 2. 반응형 이름 인사 만들기",
         "steps": [
-          "<script setup>에 `const fruits = ref(['사과','바나나','포도'])` 작성",
-          "<template>에 `<ul>` 안에서 `<li v-for=\"f in fruits\" :key=\"f\">{{ f }}</li>` 작성",
-          "화면에 과일 3개가 목록으로 나오는지 확인",
-          "fruits 배열에 '딸기'를 추가하면 목록이 자동으로 늘어나는지 확인"
+          "App.vue 의 <script setup> 에 'import { ref } from \"vue\"' 를 적는다",
+          "const name = ref('') 로 이름 상태를 만든다",
+          "<template> 에 <input v-model=\"name\"> 를 두고 그 아래 <p>안녕하세요, {{ name }}님</p> 을 적는다",
+          "입력창에 글자를 칠 때마다 인사 문구가 실시간으로 바뀌는지 확인한다"
         ]
       }
     ],
     "homework": [
-      "오늘 만든 카운터에 '-1' 버튼과 '0으로 초기화' 버튼을 추가하고, count가 음수가 되지 않도록 막아 본다.",
-      "좋아하는 음식 5개를 ref 배열로 만들어 v-for로 화면에 번호와 함께 출력해 본다."
+      "오늘 만든 할 일 목록에 '완료된 항목 모두 삭제' 버튼을 추가하고, 클릭 시 done 이 true 인 항목만 배열에서 제거되도록 구현해 캡처를 제출한다",
+      "computed 를 하나 더 만들어 '전체 개수 / 완료 개수' 를 화면에 함께 표시한다"
     ]
   },
   "vue-2": {
     "topics": [
       {
-        "h": "컴포넌트 통신 3종",
+        "h": "부모-자식 통신",
         "items": [
-          "props로 아래로 전달",
-          "emit으로 위로 신호",
-          "slot으로 내용 끼우기",
-          "단방향 데이터 흐름 원칙"
+          "defineProps 로 값 받기",
+          "defineEmits 로 이벤트 올리기",
+          "데이터는 아래로, 사건은 위로",
+          "단방향 데이터 흐름의 장점"
         ]
       },
       {
-        "h": "라이프사이클",
+        "h": "slot 과 확장",
         "items": [
-          "onBeforeMount",
-          "onMounted(화면 등장)",
-          "onUpdated",
-          "onUnmounted(화면 제거)"
+          "기본 slot 으로 내용 끼우기",
+          "이름 있는 slot(named slot)",
+          "컴포넌트 재사용성 높이기"
         ]
       },
       {
-        "h": "로직 재사용",
+        "h": "Composition API",
         "items": [
-          "setup 함수 구조",
-          "컴포저블 use~ 함수",
-          "ref/computed 반환",
-          "여러 컴포넌트 공유"
+          "script setup 문법",
+          "라이프사이클 훅(onMounted 등)",
+          "컴포저블 useXxx 로 로직 분리",
+          "여러 컴포넌트에서 재사용"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. props로 인사 카드 만들기",
+        "title": "Lab 1. props 로 인사 카드 만들기",
         "steps": [
-          "components/HelloCard.vue 생성 후 `defineProps(['name'])` 작성",
-          "템플릿에 `<p>{{ name }}님 환영합니다</p>` 작성",
-          "App.vue에서 `<HelloCard name=\"철수\" />` 처럼 이름을 내려준다",
-          "이름을 '영희'로 바꿔 화면이 바뀌는지 확인"
+          "components/Greeting.vue 를 만들고 defineProps({ name: String }) 를 선언한다",
+          "<template> 에 <p>안녕하세요, {{ name }}님!</p> 를 적는다",
+          "App.vue 에서 Greeting 을 import 하고 <Greeting name=\"홍길동\" /> 로 사용한다",
+          "이름을 바꿔 여러 개의 Greeting 을 띄워본다"
         ]
       },
       {
-        "title": "Lab 2. 컴포저블로 카운터 로직 빼기",
+        "title": "Lab 2. emit 으로 카운터 올려보내기",
         "steps": [
-          "src/composables/useCounter.js 생성",
-          "그 안에 `import { ref } from 'vue'` 후 count와 increase를 반환하는 useCounter 함수 작성",
-          "App.vue에서 `const { count, increase } = useCounter()` 로 가져와 사용",
-          "버튼을 눌러 count가 올라가는지 확인하고, 다른 컴포넌트에서도 재사용해 본다"
+          "자식 컴포넌트에 버튼을 두고 defineEmits(['inc']) 를 선언한다",
+          "버튼 클릭 시 emit('inc') 를 호출한다",
+          "부모에서 @inc=\"count++\" 로 받아 숫자를 올린다",
+          "버튼을 누를 때마다 부모의 숫자가 증가하는지 확인한다"
         ]
       }
     ],
     "homework": [
-      "TodoItem에 '수정' 버튼을 추가해, 클릭하면 입력칸으로 바뀌어 글자를 고칠 수 있게 만들어 본다.",
-      "useCounter 컴포저블에 reset 기능을 추가하고, 두 개의 독립된 카운터를 한 화면에 띄워 본다."
+      "오늘의 회원 목록에 '회원 추가' 폼을 만들어 새 회원을 users 배열에 추가하고, 추가/삭제가 모두 동작하는 화면을 캡처해 제출한다",
+      "useCounter 라는 컴포저블 함수를 만들어 count 와 inc 를 반환하고, 두 개 이상의 컴포넌트에서 재사용해 본다"
     ]
   },
   "vue-3": {
     "topics": [
       {
-        "h": "Vue Router 핵심",
+        "h": "Vue Router",
         "items": [
-          "createRouter/createWebHistory",
-          "routes 경로 표",
-          "router-link 이동",
-          "router-view 렌더 자리",
-          "동적 :id 파라미터"
+          "createRouter 로 라우트 정의",
+          "router-link·router-view",
+          "동적 파라미터 :id",
+          "중첩 라우트와 네비게이션 가드"
         ]
       },
       {
-        "h": "라우트 제어",
+        "h": "Pinia 스토어",
         "items": [
-          "중첩 라우트(children)",
-          "이름 있는 라우트(name)",
-          "네비게이션 가드(beforeEach)",
-          "프로그래밍 방식 이동 router.push"
+          "defineStore 로 스토어 생성",
+          "state·getters·actions 3요소",
+          "여러 컴포넌트에서 공유",
+          "전역 데이터 추적의 용이함"
         ]
       },
       {
-        "h": "Pinia 구성",
+        "h": "SPA 흐름",
         "items": [
-          "state(값)",
-          "getters(파생값)",
-          "actions(변경 함수)",
-          "여러 컴포넌트 공유"
+          "첫 로드 후 화면만 교체",
+          "주소와 화면의 매핑",
+          "props vs 전역 상태 선택 기준"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. 페이지 2개 연결",
+        "title": "Lab 1. 두 페이지 라우팅 만들기",
         "steps": [
-          "`npm install vue-router` 설치",
-          "router/index.js에 '/'와 '/about' 경로 등록",
-          "main.js에 `app.use(router)` 추가",
-          "App.vue에 router-link 2개와 router-view 1개를 넣고 이동되는지 확인"
+          "'npm install vue-router@4' 로 라우터를 설치한다",
+          "router/index.js 에 '/'(Home)와 '/about'(About) 라우트를 정의한다",
+          "main.js 에서 app.use(router) 를 등록한다",
+          "App.vue 상단에 router-link 두 개와 router-view 를 두고 이동을 확인한다"
         ]
       },
       {
-        "title": "Lab 2. 카운터 전역 스토어",
+        "title": "Lab 2. Pinia 카운터 스토어",
         "steps": [
-          "`npm install pinia` 설치 후 main.js에 `app.use(createPinia())` 추가",
-          "stores/counter.js에 state count와 action increase 정의",
-          "두 개의 서로 다른 컴포넌트에서 같은 스토어를 import",
-          "한 컴포넌트에서 increase하면 다른 컴포넌트의 숫자도 같이 오르는지 확인"
+          "'npm install pinia' 후 main.js 에서 app.use(createPinia()) 를 등록한다",
+          "stores/counter.js 에 defineStore 로 count 상태와 inc 액션을 만든다",
+          "두 개의 서로 다른 컴포넌트에서 같은 스토어를 import 한다",
+          "한쪽에서 inc 를 호출했을 때 다른 쪽 숫자도 함께 늘어나는지 확인한다"
         ]
       }
     ],
     "homework": [
-      "상품 목록에 검색창을 추가하고, 입력한 글자가 포함된 상품만 필터링해 보여 준다.",
-      "장바구니 스토어에 removeItem(삭제)과 totalPrice(합계) getter를 추가하고 장바구니 페이지를 만들어 본다."
+      "상품 목록·상세·장바구니에 '담은 상품 비우기' 액션을 추가하고, 헤더 개수가 0으로 돌아가는 동작을 캡처해 제출한다",
+      "네비게이션 가드(beforeEach)를 추가해 '/admin' 으로 갈 때 로그인 안 했으면 '/' 로 돌려보내도록 구현한다"
     ]
   },
   "vue-4": {
     "topics": [
       {
-        "h": "비동기 데이터 처리",
+        "h": "API 통신",
         "items": [
-          "async/await 기본",
-          "axios get/post",
-          "try/catch 에러 처리",
-          "로딩·빈 상태 UI"
+          "fetch vs axios",
+          "async/await 문법",
+          "GET·POST 요청",
+          "응답 데이터 화면에 반영"
         ]
       },
       {
-        "h": "폼과 검증",
+        "h": "상태·검증",
         "items": [
-          "v-model 입력 바인딩",
-          "필수값 검사",
-          "이메일 형식 검사",
-          "제출 후 입력칸 초기화"
+          "loading·error·success 3상태",
+          "try/catch/finally",
+          "폼 유효성 검사",
+          "사용자 피드백 표시"
         ]
       },
       {
         "h": "빌드·배포",
         "items": [
-          "환경변수 .env 관리",
-          "npm run build",
-          "dist 정적 결과물",
-          "Netlify/GitHub Pages 배포"
+          ".env 환경변수와 VITE_ 접두사",
+          "npm run build 로 dist 생성",
+          "npm run preview 확인",
+          "정적 호스팅 배포"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. 무료 API에서 목록 불러오기",
+        "title": "Lab 1. 공개 API 목록 불러오기",
         "steps": [
-          "`npm install axios` 설치",
-          "컴포넌트에 `const posts = ref([])` 선언",
-          "onMounted에서 axios.get으로 jsonplaceholder /posts 호출 후 posts에 저장",
-          "v-for로 글 제목 10개만 화면에 출력되는지 확인"
+          "'npm install axios' 로 axios 를 설치한다",
+          "onMounted 안에서 axios.get('https://jsonplaceholder.typicode.com/posts') 를 호출한다",
+          "응답 res.data 를 ref 배열에 담는다",
+          "v-for 로 제목 목록을 화면에 출력한다"
         ]
       },
       {
         "title": "Lab 2. 빌드하고 미리보기",
         "steps": [
-          "터미널에서 `npm run build` 실행",
-          "생성된 dist 폴더 안에 index.html과 assets가 있는지 확인",
-          "`npm run preview` 실행 후 안내된 주소 접속",
-          "개발 서버 없이도 화면이 정상 동작하는지 확인"
+          "터미널에서 'npm run build' 를 실행한다",
+          "생성된 dist 폴더 안 파일들을 확인한다",
+          "'npm run preview' 로 빌드 결과를 로컬에서 열어본다",
+          "개발 모드와 빌드 결과가 동일하게 보이는지 확인한다"
         ]
       }
     ],
     "homework": [
-      "사용자 목록에 '삭제' 버튼을 추가해 axios.delete로 서버에 삭제 요청을 보내고 화면에서도 제거해 본다.",
-      "오늘 만든 미니 SPA를 GitHub Pages 또는 Netlify에 실제로 배포하고, 공개 주소를 동료와 공유해 본다."
+      "미니 SPA에 '글 상세' 라우트를 추가해 목록의 제목을 클릭하면 해당 글 본문을 API로 불러와 보여주도록 완성하고 배포 주소를 제출한다",
+      "로딩 중에는 스피너(회전 아이콘)나 '잠시만 기다려 주세요' 화면을 추가해 사용자 경험을 개선한다"
     ]
   },
   "webproject-1": {
@@ -1600,180 +1597,178 @@ export const details = {
   "langchain-1": {
     "topics": [
       {
-        "h": "LangChain 생태계 한눈에",
+        "h": "LangChain 생태계 한눈에 보기",
         "items": [
-          "langchain-core: 모델·프롬프트·파서 같은 핵심 인터페이스",
-          "langchain-openai 등 파트너 패키지: 실제 모델 제공사 연결",
-          "LCEL: 부품을 파이프로 잇는 표현 언어",
-          "LangSmith: 실행 과정을 들여다보는 관측 도구(이후 일차에서 학습)"
+          "langchain-core(부품 인터페이스)와 langchain(체인 모음)의 역할 구분",
+          "langchain-anthropic·langchain-openai 같은 모델별 연동 패키지",
+          "프롬프트·모델·파서·리트리버·메모리 등 핵심 부품 카테고리",
+          "LangSmith(관측), LangServe(배포) 등 주변 도구의 존재 알기"
         ]
       },
       {
-        "h": "Runnable 3대 실행 방식",
+        "h": "LCEL이 주는 이점",
         "items": [
-          "invoke: 입력 하나를 넣어 결과 하나를 받기",
-          "stream: 글자가 흐르듯 실시간으로 받기",
-          "batch: 여러 입력을 한꺼번에 처리하기",
-          "ainvoke/astream: 비동기(async) 버전"
+          "파이프(|)로 가독성 좋게 흐름을 표현",
+          "invoke/batch/stream을 같은 체인으로 그대로 지원",
+          "부품 교체(모델·파서 바꾸기)가 쉬움",
+          "비동기·병렬 실행을 자동으로 지원"
         ]
       },
       {
-        "h": "출력 파서 종류",
+        "h": "출력 파서의 종류",
         "items": [
-          "StrOutputParser: 순수 문자열로",
-          "CommaSeparatedListOutputParser: 쉼표 목록을 리스트로",
-          "JsonOutputParser: JSON 구조로",
-          "PydanticOutputParser: 정해진 데이터 클래스로 검증까지"
+          "StrOutputParser: 글자만 깔끔히 추출",
+          "JsonOutputParser: JSON을 딕셔너리로 변환",
+          "PydanticOutputParser: 정해진 데이터 모양으로 강제",
+          "파서가 형식 지시문을 프롬프트에 자동으로 끼워 주는 원리"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1 — 가상환경부터 첫 호출까지",
+        "title": "Lab 1. 개발환경부터 첫 호출까지",
         "steps": [
-          "터미널을 열고 'python -m venv venv' 입력 후 가상환경 활성화한다.",
-          "'pip install langchain langchain-openai python-dotenv' 로 패키지를 설치한다.",
-          "'.env' 파일에 OPENAI_API_KEY 를 적어 저장한다.",
-          "예제1 코드를 그대로 입력해 'python app.py' 로 실행한다.",
-          "화면에 모델 답이 한 문장 출력되면 성공이다."
+          "VS Code나 터미널을 연다.",
+          "'python -m venv venv'로 가상환경을 만들고 활성화한다.",
+          "'pip install langchain langchain-anthropic'를 실행한다.",
+          "API 키를 환경변수 ANTHROPIC_API_KEY에 등록한다.",
+          "hello.py를 만들어 model.invoke('안녕')의 결과를 출력한다.",
+          "'python hello.py'로 실행해 답이 나오면 환경 준비 완료다."
         ]
       },
       {
-        "title": "Lab 2 — 프롬프트 빈칸 바꿔 보기",
+        "title": "Lab 2. 파이프(|)로 첫 체인 조립",
         "steps": [
-          "예제2 체인 코드를 복사해 새 파일에 붙여 넣는다.",
-          "프롬프트 문구의 '초등학생' 을 '대학생' 으로 바꿔 본다.",
-          "invoke의 topic 값을 '블록체인' 으로 바꿔 실행한다.",
-          "설명의 난이도와 내용이 어떻게 달라지는지 비교해 기록한다.",
-          "temperature=0 과 temperature=1 일 때 답이 얼마나 달라지는지 확인한다."
+          "ChatPromptTemplate.from_template로 '{text}를 한 줄 요약' 프롬프트를 만든다.",
+          "ChatAnthropic 모델과 StrOutputParser를 각각 변수로 만든다.",
+          "'prompt | model | parser'로 chain을 만든다.",
+          "chain.invoke({'text': '아무 문장'})을 실행한다.",
+          "결과가 한 줄 요약으로 나오는지 확인한다.",
+          "parser만 JsonOutputParser로 바꿔 결과 형태가 어떻게 달라지는지 비교한다."
         ]
       }
     ],
     "homework": [
-      "오늘 만든 '요약+키워드' 체인에 '감정(긍정/부정/중립) 판별' 체인을 하나 더 추가해, 한 입력에 대해 요약·키워드·감정 세 가지를 함께 출력하도록 확장하기",
-      "StrOutputParser 대신 CommaSeparatedListOutputParser를 적용해 키워드가 파이썬 리스트로 출력되게 바꾸고, 결과 타입을 print(type(...))로 확인하기"
+      "오늘 만든 요약 체인을 복사해, 프롬프트만 바꿔 '이메일 정중하게 다듬기' 체인으로 변형하고 입력 3개로 결과를 캡처해 제출한다.",
+      "StrOutputParser와 JsonOutputParser를 각각 쓴 체인 두 개를 만들어, 같은 입력에서 결과 타입(문자열 vs 딕셔너리)이 어떻게 다른지 한 단락으로 정리해 제출한다."
     ]
   },
   "langchain-2": {
     "topics": [
       {
-        "h": "RAG 파이프라인 단계",
+        "h": "메모리의 종류와 선택",
         "items": [
-          "Load: 문서 불러오기(TextLoader, PyPDFLoader 등)",
-          "Split: 적당한 크기로 청킹",
-          "Embed & Store: 임베딩 후 벡터DB 저장",
-          "Retrieve & Generate: 검색 결과를 프롬프트에 넣어 답 생성"
+          "전체 대화를 그대로 쌓는 버퍼 메모리",
+          "오래된 대화는 요약해 압축하는 요약 메모리",
+          "토큰 한도를 넘지 않게 최근 N개만 유지하는 윈도우 방식",
+          "세션 id로 사용자별 대화를 분리해 보관하는 패턴"
         ]
       },
       {
-        "h": "메모리 다루는 방법",
+        "h": "도구(Tool) 활용 패턴",
         "items": [
-          "메시지 리스트 직접 관리(가장 기본)",
-          "RunnableWithMessageHistory로 세션별 자동 관리",
-          "대화가 길면 요약 메모리로 압축",
-          "세션 ID로 사용자별 기록 분리"
+          "@tool 데코레이터로 함수→도구 만들기",
+          "독스트링(설명)이 모델의 도구 선택 근거가 됨",
+          "bind_tools로 모델에 도구 묶기",
+          "계산·검색·DB조회·API호출 등 도구의 대표 용도"
         ]
       },
       {
-        "h": "검색 품질을 높이는 팁",
+        "h": "RAG 문서 QA 파이프라인",
         "items": [
-          "chunk_size·overlap 조절로 문맥 보존",
-          "k값(가져올 조각 수) 튜닝",
-          "메타데이터 필터로 범위 좁히기",
-          "키워드+벡터 하이브리드 검색"
+          "로더로 문서 읽기 → 스플리터로 청킹",
+          "임베딩 모델로 벡터화 → 벡터스토어에 색인",
+          "리트리버로 top-k 검색 → 프롬프트에 근거 주입",
+          "'근거에 없으면 모른다'로 환각 줄이기"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1 — 내 문서로 작은 벡터DB 만들기",
+        "title": "Lab 1. 기억하는 챗봇 만들기",
         "steps": [
-          "docs.txt에 회사·동아리 소개 글 10문장 정도를 적어 저장한다.",
-          "TextLoader로 불러오고 RecursiveCharacterTextSplitter로 자른다.",
-          "OpenAIEmbeddings + Chroma로 벡터DB를 만든다.",
-          "retriever.invoke('가장 궁금한 한 가지') 로 검색되는 조각을 출력해 본다.",
-          "검색된 조각이 질문과 관련 있는지 눈으로 확인한다."
+          "RunnableWithMessageHistory와 ChatMessageHistory를 임포트한다.",
+          "session_id로 기록을 돌려주는 get_history 함수를 만든다.",
+          "모델에 이 기능을 입혀 chat 객체를 만든다.",
+          "같은 session_id로 '내 취미는 등산이야'를 보낸다.",
+          "이어서 '내 취미가 뭐였지?'를 물어 기억하는지 확인한다.",
+          "session_id를 다른 값으로 바꾸면 기억이 사라지는지 비교한다."
         ]
       },
       {
-        "title": "Lab 2 — RAG 체인으로 질문하기",
+        "title": "Lab 2. 내 문서로 QA 체인 만들기",
         "steps": [
-          "실전 코드의 rag_chain을 그대로 작성한다.",
-          "문서 안에 있는 사실을 묻고 답이 맞는지 확인한다.",
-          "문서에 전혀 없는 내용을 물어 '모른다'고 답하는지 본다.",
-          "프롬프트에서 '모르면 모른다고 해' 문장을 지웠을 때 답이 어떻게 달라지는지 비교한다.",
-          "k값을 1과 5로 바꿔 답 품질 차이를 기록한다."
+          "docs.txt에 회사 규정 같은 글 10줄 이상을 적는다.",
+          "TextLoader로 읽고 RecursiveCharacterTextSplitter로 자른다.",
+          "임베딩 모델로 Chroma 벡터스토어에 색인한다.",
+          "as_retriever로 리트리버를 만든다.",
+          "근거만 보고 답하라는 프롬프트로 체인을 조립한다.",
+          "문서 안 질문과 문서 밖 질문을 각각 던져 답을 비교한다."
         ]
       }
     ],
     "homework": [
-      "TextLoader 대신 PyPDFLoader로 실제 PDF 한 개를 불러와 같은 RAG 챗봇을 동작시키고, 답과 함께 근거가 된 문서 조각도 출력하도록 만들기",
-      "오늘 만든 RAG 체인에 1교시에서 배운 대화 메모리를 결합해, '아까 답을 더 짧게 줄여줘' 같은 후속 질문도 처리되는지 실험하기"
+      "Lab 2의 QA 챗봇에 메모리(Lab 1)를 결합해, '아까 물어본 거 다시 설명해줘' 같은 후속 질문에도 답하는 버전을 만들고 대화 로그를 제출한다.",
+      "@tool로 '오늘 날짜를 돌려주는 도구'를 직접 만들어 모델에 연결하고, 모델이 그 도구를 호출하는 tool_calls 출력을 캡처해 제출한다."
     ]
   },
   "langchain-3": {
     "topics": [
       {
-        "h": "서비스화 체크리스트",
+        "h": "스트리밍과 콜백",
         "items": [
-          "스트리밍으로 체감 속도 개선",
-          "캐싱으로 중복 호출 비용 절감",
-          "재시도·폴백으로 장애 대응",
-          "API 키·시크릿은 환경변수로 분리"
+          "invoke vs stream의 차이(완성형 vs 조각형)",
+          "콜백으로 토큰 단위·단계별 이벤트 받기",
+          "웹에서 StreamingResponse로 사용자에게 흘려보내기",
+          "스트리밍이 어울리는 화면(채팅 UI) 설계"
         ]
       },
       {
-        "h": "관측과 디버깅(LangSmith)",
+        "h": "관측·디버깅(LangSmith)",
         "items": [
-          "LANGCHAIN_TRACING_V2 환경변수로 추적 켜기",
-          "단계별 입출력·지연·토큰 확인",
-          "프롬프트 버전 비교(A/B)",
-          "오류 발생 지점 빠르게 찾기"
+          "환경변수로 LangSmith 추적 켜기",
+          "체인 실행 트레이스(입력·출력·시간) 보기",
+          "어느 단계가 느리고 비싼지 병목 찾기",
+          "프롬프트 버전 비교·평가"
         ]
       },
       {
-        "h": "배포 옵션",
+        "h": "실서비스 안정화",
         "items": [
-          "FastAPI + uvicorn 로컬 서버",
-          "Docker 컨테이너로 패키징",
-          "LangServe로 체인을 바로 API화",
-          "클라우드(Cloud Run 등) 배포"
+          "캐싱으로 비용·지연 절감",
+          "with_retry로 일시 오류 자동 재시도",
+          "try/except와 폴백 메시지로 장애 격리",
+          "FastAPI로 API화하고 환경변수로 키 관리"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1 — 스트리밍 체험",
+        "title": "Lab 1. 스트리밍 체험하기",
         "steps": [
-          "예제1 스트리밍 코드를 작성해 실행한다.",
-          "topic을 '우주'로 바꿔 글자가 흘러나오는지 본다.",
-          "stream을 invoke로 바꿔 실행해 출력 방식이 어떻게 달라지는지 비교한다.",
-          "체감 대기 시간 차이를 한 줄로 기록한다."
+          "프롬프트|모델|파서로 시 쓰기 체인을 만든다.",
+          "먼저 chain.invoke로 한 번에 결과를 받아 본다.",
+          "이번엔 chain.stream으로 바꿔 for문으로 조각을 받는다.",
+          "print(chunk, end='')로 이어서 출력한다.",
+          "글자가 흘러나오는 느낌의 차이를 invoke와 비교한다.",
+          "topic을 바꿔 다시 스트리밍해 본다."
         ]
       },
       {
-        "title": "Lab 2 — FastAPI로 API 만들기",
+        "title": "Lab 2. FastAPI로 챗봇 배포하기",
         "steps": [
-          "'pip install fastapi uvicorn' 로 설치한다.",
-          "실전 코드의 main.py를 작성한다.",
-          "'uvicorn main:app --reload' 로 서버를 띄운다.",
-          "브라우저에서 http://127.0.0.1:8000/docs 를 연다.",
-          "/summarize에 글을 넣어 요약 결과가 JSON으로 오는지 확인한다."
-        ]
-      },
-      {
-        "title": "Lab 3 — 캐싱 효과 측정",
-        "steps": [
-          "set_llm_cache(InMemoryCache())를 코드에 추가한다.",
-          "같은 text로 /summarize를 두 번 호출한다.",
-          "time 모듈로 각 호출 시간을 측정한다.",
-          "두 번째 호출이 더 빠른지(캐시 적중) 확인해 기록한다."
+          "app.py에 FastAPI 앱과 체인을 만든다.",
+          "@app.post('/chat')로 질문을 받아 답을 돌려주는 함수를 만든다.",
+          "try/except로 오류를 감싸 친절한 메시지를 준비한다.",
+          "set_llm_cache(InMemoryCache())로 캐시를 켠다.",
+          "'uvicorn app:app --reload'로 서버를 띄운다.",
+          "/docs에서 질문을 넣어 답을 받고, 같은 질문 두 번으로 캐시 효과를 확인한다."
         ]
       }
     ],
     "homework": [
-      "오늘 만든 FastAPI 서비스에 Day2의 RAG 체인을 연결해 '/ask' 엔드포인트를 추가하고, 문서 기반 질문에 답하는 미니 생성형 AI 서비스로 완성하기",
-      "LangSmith 계정을 만들어 추적을 켠 뒤, 체인 한 번을 실행하고 대시보드에서 단계별 입출력·토큰 수를 캡처해 정리하기"
+      "3일간 배운 메모리·문서QA·스트리밍·캐싱·예외처리를 합쳐, /chat과 /stream을 모두 가진 '내 문서 기반 챗봇 API' 한 개를 완성해 코드와 /docs 실행 화면을 제출한다.",
+      "LangSmith 추적을 켠 뒤 체인을 3회 실행하고, 각 실행의 소요 시간·토큰 사용량을 표로 정리해 어디가 가장 비싼 단계였는지 한 단락으로 분석해 제출한다."
     ]
   },
   "serving-1": {

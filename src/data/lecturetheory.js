@@ -155,92 +155,92 @@ export const theory = {
   "vue-1": {
     "theory": [
       {
-        "h": "왜 프레임워크를 쓸까? (요리 도구 비유)",
-        "body": "순수 HTML/JS만으로 화면을 만드는 것은 모든 재료를 맨손으로 손질하는 것과 같다.\n버튼을 누를 때마다 '어떤 글자를 어디에 다시 써라'를 사람이 일일이 코드로 지시해야 한다.\n화면이 복잡해질수록 이 지시문은 폭발적으로 늘어나 실수가 잦아진다.\n\nVue 같은 프레임워크는 잘 갖춰진 주방 도구 세트와 같다.\n우리는 '데이터'만 바꾸면 되고, 화면을 다시 그리는 귀찮은 일은 Vue가 알아서 해 준다.\n이렇게 데이터와 화면이 자동으로 연결되는 것을 '반응형(reactivity)'이라고 부른다."
+        "h": "왜 Vue 같은 프레임워크를 쓰나요?",
+        "body": "옛날 방식에서는 화면의 글자 하나를 바꾸려면 document.getElementById 로 요소를 찾아 직접 글자를 갈아끼워야 했습니다.\n데이터가 많아지면 '어디를 바꿔야 하는지' 챙기는 일이 금세 복잡해집니다.\n\nVue는 이 일을 대신 해 줍니다.\n우리는 그냥 '데이터'만 바꾸면, Vue가 그 데이터를 쓰는 화면 부분을 알아서 다시 그려 줍니다.\n마치 엑셀에서 셀 값을 바꾸면 그 셀을 참조하는 합계가 자동으로 바뀌는 것과 같습니다.\n그래서 개발자는 '화면 조작'이 아니라 '데이터와 규칙'에만 집중할 수 있습니다."
       },
       {
-        "h": "SFC: 화면 한 조각을 한 파일에 담는다",
-        "body": "Vue는 화면을 '컴포넌트'라는 레고 블록 단위로 나눠서 만든다.\n블록 하나는 .vue 확장자를 가진 파일 하나에 담기는데, 이를 SFC(Single File Component)라 한다.\n한 파일 안에 화면 모양을 적는 <template>, 동작을 적는 <script>, 꾸밈을 적는 <style> 세 칸이 함께 들어간다.\n\n관련된 코드가 한 곳에 모여 있어 찾고 고치기가 쉽다.\n마치 '버튼'이라는 부품의 설명서·작동법·디자인을 한 봉투에 넣어두는 것과 같다.\n나중에는 이 블록들을 조립해 큰 화면을 완성한다."
+        "h": "반응형 상태: ref 와 reactive",
+        "body": "Vue에서 화면과 연결되는 데이터를 '상태(state)'라고 부릅니다.\n상태를 반응형으로 만들려면 값을 ref 나 reactive 로 감싸야 합니다.\n\nref 는 숫자·문자열·불리언 같은 '하나짜리 값'을 감쌀 때 씁니다.\n감싸고 나면 자바스크립트 코드에서는 .value 로 접근하지만, 템플릿(화면) 안에서는 .value 없이 바로 씁니다.\nreactive 는 여러 값을 담은 '객체'를 통째로 감쌀 때 쓰며 .value 가 필요 없습니다.\n초보자는 우선 'ref 만 쓴다'고 외워도 충분합니다."
       }
     ],
     "realCode": [
       {
-        "title": "App.vue — 반응형 카운터 + 실시간 인사말 (엔드투엔드)",
+        "title": "App.vue — 반응형 할 일 목록 전체",
         "lang": "vue",
-        "code": "<script setup>\n// Vue가 제공하는 반응형 도구들을 가져온다(없으면 ref/computed를 쓸 수 없다)\nimport { ref, computed } from 'vue'\n\n// 버튼 클릭 횟수를 담는 반응형 변수: 초깃값 0, 값이 바뀌면 화면이 자동 갱신된다\nconst count = ref(0)\n// 입력칸에 적은 이름을 담는 반응형 변수: 초깃값은 빈 문자열\nconst name = ref('')\n\n// count가 바뀔 때만 자동으로 다시 계산되는 '2배 값'(파생 상태)\nconst doubled = computed(() => count.value * 2) // count가 3이면 doubled는 6\n\n// 버튼을 누르면 실행되는 함수: count 값을 1 증가시킨다\nfunction increase() {\n  count.value++ // .value 로 실제 숫자에 접근(ref는 상자라서 .value로 꺼낸다)\n}\n</script>\n\n<template>\n  <!-- 화면 전체를 감싸는 컨테이너 박스 -->\n  <div class=\"card\">\n    <!-- 현재 클릭 횟수를 보여줌: {{ }} 안의 값은 count가 바뀌면 자동 갱신 -->\n    <h2>눌린 횟수: {{ count }}</h2>\n    <!-- computed로 계산된 2배 값을 함께 표시 -->\n    <p>2배 값: {{ doubled }}</p>\n    <!-- @click 은 v-on:click 의 줄임말: 누르면 increase 함수 실행 -->\n    <button @click=\"increase\">+1 누르기</button>\n\n    <!-- v-model: 입력칸과 name 변수를 양방향으로 연결(타이핑하면 name이 즉시 바뀜) -->\n    <input v-model=\"name\" placeholder=\"이름을 입력하세요\" />\n    <!-- 입력한 이름으로 인사말을 실시간 출력 -->\n    <p>안녕하세요, {{ name }}님!</p>\n  </div>\n</template>\n\n<style scoped>\n/* scoped: 이 스타일을 이 컴포넌트 안에서만 적용(다른 화면에 영향 없음) */\n.card { padding: 20px; border: 1px solid #ddd; border-radius: 12px; }\nbutton { margin: 8px 0; padding: 8px 16px; }\n</style>",
-        "note": "ref로 만든 값은 script에서는 .value로 접근하지만, 템플릿 {{ }} 안에서는 .value 없이 바로 쓴다."
+        "code": "<script setup>\n// vue 라이브러리에서 반응형 함수 ref 와 계산 속성 computed 를 가져온다(화면과 데이터를 연결하기 위함)\nimport { ref, computed } from 'vue'\n\n// 할 일 객체들을 담을 배열을 반응형으로 만든다(배열이 바뀌면 화면도 자동 갱신)\nconst todos = ref([])\n// 입력창에 적은 글자를 담을 반응형 문자열(처음엔 빈 문자열)\nconst text = ref('')\n// 새 할 일의 고유 번호를 만들기 위한 카운터(1부터 시작)\nlet nextId = 1\n\n// 버튼을 눌렀을 때 실행될 함수: 새 할 일을 목록에 추가한다\nfunction addTodo() {\n  // 입력값 앞뒤 공백을 제거했을 때 비어 있으면 아무것도 하지 않고 함수를 끝낸다\n  if (text.value.trim() === '') return\n  // todos 배열 끝에 새 할 일 객체를 추가한다(id·제목·완료여부)\n  todos.value.push({ id: nextId++, title: text.value, done: false })\n  // 다음 입력을 위해 입력창 값을 다시 비운다\n  text.value = ''\n}\n\n// 아직 완료되지 않은 할 일의 개수를 자동 계산한다(todos 가 바뀔 때만 다시 계산)\nconst remaining = computed(() => todos.value.filter(t => !t.done).length)\n</script>\n\n<template>\n  <!-- 화면 제목과 남은 할 일 개수를 보여준다(remaining 값이 바뀌면 숫자도 자동 변경) -->\n  <h2>할 일 목록 (남은 일: {{ remaining }}개)</h2>\n  <!-- 입력창: v-model 로 text 상태와 양방향 연결, 엔터를 누르면 addTodo 실행 -->\n  <input v-model=\"text\" @keyup.enter=\"addTodo\" placeholder=\"할 일을 입력하세요\" />\n  <!-- 추가 버튼: 클릭하면 addTodo 함수를 호출한다 -->\n  <button @click=\"addTodo\">추가</button>\n  <!-- 할 일들을 세로 목록으로 표시한다 -->\n  <ul>\n    <!-- v-for 로 todos 배열을 하나씩 꺼내 li 를 만든다, key 에는 고유 id 를 준다 -->\n    <li v-for=\"todo in todos\" :key=\"todo.id\">\n      <!-- 체크박스: v-model 로 해당 할 일의 done(완료여부)과 양방향 연결 -->\n      <input type=\"checkbox\" v-model=\"todo.done\" />\n      <!-- 완료되면 done 클래스가 붙어 취소선이 그려진다, 제목을 출력 -->\n      <span :class=\"{ done: todo.done }\">{{ todo.title }}</span>\n    </li>\n  </ul>\n</template>\n\n<style>\n/* done 클래스가 붙은 글자에 취소선과 회색을 적용한다(완료 표시) */\n.done { text-decoration: line-through; color: gray; }\n</style>",
+        "note": "ref 로 만든 상태를 v-model·v-for·computed 로 연결한 완결형 예제다.\n입력→추가→체크가 모두 데이터만 바꾸면 화면이 자동으로 따라 바뀐다."
       }
     ]
   },
   "vue-2": {
     "theory": [
       {
-        "h": "props와 emit: 물은 위에서 아래로, 신호는 아래에서 위로",
-        "body": "Vue의 컴포넌트는 부모-자식 관계를 이룬다.\n데이터는 부모에서 자식으로 'props'를 타고 내려간다(마치 물이 위에서 아래로 흐르듯이).\n자식은 받은 props를 마음대로 바꾸지 않고 화면에 보여주는 데만 쓴다.\n\n그렇다면 자식이 무언가 바꾸고 싶을 때는 어떻게 할까?\n자식은 직접 바꾸지 않고 'emit'으로 부모에게 신호만 올려보낸다.\n실제 값을 바꾸는 일은 데이터 주인인 부모가 처리한다.\n이렇게 '데이터는 아래로, 변경 요청은 위로'라는 한 방향 규칙 덕분에 흐름이 헷갈리지 않는다."
+        "h": "컴포넌트 통신: props 는 내려주고 emit 은 올려보낸다",
+        "body": "큰 화면을 작은 컴포넌트로 쪼개면, 이 조각들끼리 데이터를 주고받아야 합니다.\nVue의 규칙은 단순합니다.\n\n부모는 자식에게 props 로 값을 '내려'줍니다(예: 회원 정보).\n자식은 그 값을 마음대로 바꾸지 않고 화면에 보여주기만 합니다.\n반대로 자식에게 무슨 일이 생기면(예: 삭제 버튼 클릭) emit 으로 부모에게 신호를 '올려'보냅니다.\n그러면 실제 데이터 변경은 데이터의 주인인 부모가 합니다.\n이렇게 '데이터는 위에서 아래로, 사건은 아래에서 위로' 흐르게 하면 누가 데이터를 바꾸는지 명확해져 버그가 줄어듭니다."
       },
       {
-        "h": "Composition API: 흩어진 로직을 한곳에 모으기",
-        "body": "예전 방식(Options API)은 data·methods·computed처럼 종류별 칸에 코드를 나눠 담았다.\n기능 하나를 이해하려면 여러 칸을 왔다 갔다 해야 해서 큰 컴포넌트에서는 불편했다.\n\nComposition API는 '기능 단위'로 코드를 모은다.\n예를 들어 '검색' 관련 상태·함수·감시를 setup 안 한 곳에 나란히 둔다.\n이 묶음을 use검색() 같은 컴포저블 함수로 빼내면 다른 화면에서도 그대로 재사용할 수 있다.\n레시피(로직)를 한 장의 카드로 만들어 어디서든 꺼내 쓰는 것과 같다."
+        "h": "Composition API가 왜 편한가요?",
+        "body": "예전 방식(Options API)에서는 data·methods·computed 칸이 따로 나뉘어 있었습니다.\n기능 하나를 이해하려면 여러 칸을 왔다 갔다 봐야 했습니다.\n\nComposition API는 '하나의 기능에 관한 상태와 함수'를 한곳(setup)에 모아 적습니다.\n예를 들어 '검색' 기능에 필요한 상태·함수를 한 덩어리로 둘 수 있습니다.\n더 나아가 이 덩어리를 useSearch 같은 함수로 빼내면 여러 컴포넌트에서 똑같이 가져다 쓸 수 있습니다.\n마치 요리 레시피를 한 장에 정리해 두고 필요할 때마다 꺼내 쓰는 것과 같습니다."
       }
     ],
     "realCode": [
       {
-        "title": "TodoItem.vue(자식) + App.vue(부모) 통신 전체 코드",
+        "title": "UserItem.vue — props·emit·slot 을 쓰는 자식 컴포넌트",
         "lang": "vue",
-        "code": "<!-- ===== 자식: src/components/TodoItem.vue ===== -->\n<script setup>\n// 부모가 내려줄 데이터(props) 통로를 정의: text(할 일 글자), done(완료 여부)\nconst props = defineProps(['text', 'done'])\n// 부모에게 보낼 신호(emit) 종류를 정의: toggle(체크 전환), remove(삭제)\nconst emit = defineEmits(['toggle', 'remove'])\n</script>\n\n<template>\n  <!-- 한 줄짜리 할 일 항목 -->\n  <li>\n    <!-- 체크박스: 현재 done 값을 표시하고, 바뀌면 부모에게 toggle 신호 전송 -->\n    <input type=\"checkbox\" :checked=\"done\" @change=\"emit('toggle')\" />\n    <!-- done이 true면 취소선 스타일 적용(완료 표시), props로 받은 text 출력 -->\n    <span :style=\"{ textDecoration: done ? 'line-through' : 'none' }\">{{ text }}</span>\n    <!-- 삭제 버튼: 누르면 부모에게 remove 신호 전송 -->\n    <button @click=\"emit('remove')\">삭제</button>\n  </li>\n</template>",
-        "note": "자식은 데이터를 직접 바꾸지 않고 emit으로 알리기만 한다 — 실제 변경은 부모가 한다."
+        "code": "<script setup>\n// 부모에게서 받을 데이터(props)의 이름과 타입을 선언한다\nconst props = defineProps({\n  user: { type: Object, required: true } // user 객체는 반드시 받아야 한다\n})\n// 부모에게 올려보낼 수 있는 이벤트 이름들을 선언한다\nconst emit = defineEmits(['remove'])\n\n// 삭제 버튼을 눌렀을 때 실행, 부모에게 remove 이벤트와 함께 회원 id 를 전달한다\nfunction onRemove() {\n  emit('remove', props.user.id) // 'remove' 신호 + 삭제할 회원의 id 를 올려보냄\n}\n</script>\n\n<template>\n  <!-- 회원 카드 한 장을 감싸는 영역 -->\n  <div class=\"card\">\n    <!-- 부모가 내려준 이름을 출력 -->\n    <strong>{{ user.name }}</strong>\n    <!-- 부모가 내려준 이메일을 출력 -->\n    <span>{{ user.email }}</span>\n    <!-- 클릭하면 onRemove 실행 → 부모에게 삭제 신호 전달 -->\n    <button @click=\"onRemove\">삭제</button>\n    <!-- 부모가 카드 안에 끼워넣고 싶은 추가 내용이 들어올 자리 -->\n    <slot></slot>\n  </div>\n</template>\n\n<style>\n/* 카드에 테두리·여백을 줘 한 장처럼 보이게 한다 */\n.card { border: 1px solid #ddd; padding: 8px; margin: 4px; }\n</style>",
+        "note": "defineProps 로 값을 받고 defineEmits 로 사건을 올려보내며 slot 으로 확장 지점을 연 자식 컴포넌트다."
       },
       {
-        "title": "App.vue(부모) — 목록 관리와 추가/체크/삭제 처리",
+        "title": "App.vue — 부모가 목록을 관리하고 삭제를 처리",
         "lang": "vue",
-        "code": "<script setup>\n// 반응형 도구 ref와 자식 컴포넌트를 가져온다\nimport { ref } from 'vue'\nimport TodoItem from './components/TodoItem.vue'\n\n// 할 일 목록(반응형 배열): 각 항목은 글자와 완료여부를 가진다\nconst todos = ref([{ text: '우유 사기', done: false }])\n// 입력칸과 연결할 새 할 일 글자\nconst newText = ref('')\n\n// '추가' 버튼이 누르면 실행: 빈 값이 아니면 목록에 새 항목을 넣는다\nfunction addTodo() {\n  if (newText.value.trim() === '') return // 공백만 입력하면 무시\n  todos.value.push({ text: newText.value, done: false }) // 목록 끝에 추가\n  newText.value = '' // 입력칸 비우기\n}\n\n// 자식의 toggle 신호 처리: 해당 항목의 완료여부를 반대로 뒤집는다\nfunction toggle(index) {\n  todos.value[index].done = !todos.value[index].done\n}\n\n// 자식의 remove 신호 처리: 해당 위치의 항목을 배열에서 1개 제거\nfunction remove(index) {\n  todos.value.splice(index, 1)\n}\n</script>\n\n<template>\n  <div>\n    <h2>할 일 목록</h2>\n    <!-- 입력칸: newText와 양방향 연결, 엔터 치면 addTodo 실행 -->\n    <input v-model=\"newText\" @keyup.enter=\"addTodo\" placeholder=\"할 일 입력\" />\n    <button @click=\"addTodo\">추가</button>\n\n    <ul>\n      <!-- 목록을 반복 출력: index도 함께 받아 어떤 항목인지 식별 -->\n      <TodoItem\n        v-for=\"(t, index) in todos\"\n        :key=\"index\"\n        :text=\"t.text\"\n        :done=\"t.done\"\n        @toggle=\"toggle(index)\"\n        @remove=\"remove(index)\"\n      />\n    </ul>\n  </div>\n</template>",
-        "note": ":text/:done은 데이터를 내려주는 props, @toggle/@remove는 자식이 올린 신호를 받는 부분이다."
+        "code": "<script setup>\n// 반응형 배열을 위해 ref 를 가져온다\nimport { ref } from 'vue'\n// 방금 만든 자식 컴포넌트를 가져온다\nimport UserItem from './components/UserItem.vue'\n\n// 회원 목록을 반응형 배열로 만든다(데이터의 주인은 이 부모다)\nconst users = ref([\n  { id: 1, name: '김철수', email: 'kim@test.com' },\n  { id: 2, name: '이영희', email: 'lee@test.com' }\n])\n\n// 자식이 올려보낸 remove 이벤트를 처리: 해당 id 만 빼고 새 배열로 교체\nfunction removeUser(id) {\n  users.value = users.value.filter(u => u.id !== id) // id 가 다른 회원만 남긴다\n}\n</script>\n\n<template>\n  <h2>회원 목록</h2>\n  <!-- v-for 로 회원마다 UserItem 을 만든다, key 는 고유 id -->\n  <UserItem\n    v-for=\"u in users\"\n    :key=\"u.id\"\n    :user=\"u\"\n    @remove=\"removeUser\"\n  >\n    <!-- slot 자리에 끼워넣는 내용: 회원 등급 안내 -->\n    <em>일반 회원</em>\n  </UserItem>\n</template>",
+        "note": "부모는 users 배열을 props 로 내려주고, 자식의 remove 이벤트를 받아 실제 삭제를 수행한다."
       }
     ]
   },
   "vue-3": {
     "theory": [
       {
-        "h": "SPA와 라우팅: 책장을 통째로 갈지 않고 페이지만 넘긴다",
-        "body": "옛날 웹사이트는 메뉴를 누를 때마다 서버에서 새 HTML을 통째로 받아 화면이 깜빡였다.\nSPA는 처음 한 번만 앱을 받아두고, 이후에는 필요한 부분만 자바스크립트로 갈아 끼운다.\n그래서 화면 전환이 깜빡임 없이 매우 빠르다.\n\n이때 '어떤 주소면 어떤 화면을 보여줄지' 정하는 것이 라우팅이다.\n책 한 권(앱)을 통째로 들고 다니면서 페이지(화면)만 휙휙 넘기는 것과 같다.\nVue Router가 이 페이지 넘김을 담당하며, router-link로 이동하고 router-view에 해당 페이지를 그린다."
+        "h": "SPA와 라우팅: 새로고침 없이 페이지를 바꾼다",
+        "body": "보통 웹사이트는 링크를 누르면 서버에서 새 HTML을 통째로 받아와 화면이 깜빡입니다.\nSPA는 첫 화면만 한 번 받아오고, 그 뒤로는 자바스크립트가 필요한 부분만 바꿉니다.\n그래서 페이지 전환이 매끄럽고 빠릅니다.\n\nVue Router는 '주소가 바뀌면 어떤 컴포넌트를 보여줄지' 정해 주는 안내원입니다.\n'/' 주소에는 목록 화면을, '/product/3' 에는 3번 상품 상세 화면을 연결하는 식입니다.\n사용자는 주소가 바뀌는 것처럼 보이지만 실제로는 서버를 다시 부르지 않고 화면만 갈아끼웁니다."
       },
       {
-        "h": "Pinia: 여러 방이 함께 보는 공용 칠판",
-        "body": "장바구니 개수처럼 여러 화면이 함께 봐야 하는 데이터가 있다.\nprops/emit으로 이걸 매번 위아래로 전달하면, 화면이 많아질수록 너무 번거롭다.\n\nPinia는 모든 화면이 함께 보는 '공용 칠판' 하나를 만들어 준다.\n어느 화면에서든 칠판의 숫자를 읽을 수 있고, actions로 안전하게 고칠 수 있다.\n칠판 값이 바뀌면 그 값을 쓰는 모든 화면이 자동으로 함께 갱신된다.\n덕분에 데이터가 흩어지지 않고 한 곳에서 관리되어 흐름을 추적하기 쉽다."
+        "h": "전역 상태 관리: 왜 Pinia가 필요한가",
+        "body": "장바구니 개수처럼 여러 화면이 '같은 데이터'를 봐야 할 때가 있습니다.\n이걸 props·emit 으로 컴포넌트마다 일일이 전달하면 금세 복잡해집니다.\n특히 멀리 떨어진 컴포넌트끼리는 전달이 무척 번거롭습니다.\n\nPinia는 이런 공용 데이터를 '한 창고'에 모아 둡니다.\n어느 컴포넌트든 그 창고에 직접 접근해 값을 읽거나 바꿀 수 있습니다.\n마치 집안 어디서나 꺼내 쓰는 공용 냉장고와 같습니다.\n그래서 데이터가 흩어지지 않고 한곳에서 관리되어 추적이 쉬워집니다."
       }
     ],
     "realCode": [
       {
-        "title": "router/index.js + stores/cart.js — 라우터와 전역 스토어 설정",
+        "title": "router/index.js + stores/cart.js — 라우터와 전역 스토어",
         "lang": "javascript",
-        "code": "// ===== src/router/index.js (페이지 경로 설정) =====\n// 라우터를 만드는 함수와 브라우저 주소 모드를 가져온다\nimport { createRouter, createWebHistory } from 'vue-router'\n// 연결할 페이지 컴포넌트들을 가져온다\nimport ProductList from '../views/ProductList.vue'\nimport ProductDetail from '../views/ProductDetail.vue'\n\n// 주소(path)와 보여줄 컴포넌트를 짝지은 표\nconst routes = [\n  { path: '/', component: ProductList }, // 기본 주소 → 상품 목록\n  { path: '/product/:id', component: ProductDetail } // :id는 상품 번호(변수)\n]\n\n// 라우터 객체 생성: history 모드는 주소에 # 없이 깔끔하게 표시\nconst router = createRouter({ history: createWebHistory(), routes })\n\n// 다른 파일에서 쓸 수 있게 내보낸다\nexport default router\n\n// ===== src/stores/cart.js (전역 장바구니 스토어) =====\nimport { defineStore } from 'pinia'\n\n// 'cart'라는 이름의 전역 스토어를 정의한다\nexport const useCartStore = defineStore('cart', {\n  // state: 보관할 데이터(담은 상품 목록)\n  state: () => ({ items: [] }),\n  // getters: 데이터로부터 계산되는 값(담긴 개수)\n  getters: {\n    count: (state) => state.items.length // 결과 예: 2\n  },\n  // actions: 데이터를 바꾸는 함수들\n  actions: {\n    addItem(product) {\n      this.items.push(product) // 장바구니에 상품 추가\n    }\n  }\n})",
-        "note": "라우터는 '주소→화면' 표이고, Pinia 스토어는 state·getters·actions 세 칸으로 전역 데이터를 관리한다."
+        "code": "// ----- router/index.js : 주소와 화면을 연결하는 라우터 -----\n// 라우터를 만드는 함수와 history 모드 함수를 가져온다\nimport { createRouter, createWebHistory } from 'vue-router'\n// 라우트에 연결할 두 페이지 컴포넌트를 가져온다\nimport ProductList from '../views/ProductList.vue'\nimport ProductDetail from '../views/ProductDetail.vue'\n\n// 주소(path)와 보여줄 컴포넌트를 짝지은 라우트 표를 만든다\nconst routes = [\n  { path: '/', component: ProductList },              // 기본 주소는 상품 목록\n  { path: '/product/:id', component: ProductDetail }  // :id 는 상품 번호 자리(동적 파라미터)\n]\n\n// 라우터 객체를 생성한다(history 모드 + 위에서 만든 라우트 표 사용)\nconst router = createRouter({\n  history: createWebHistory(), // 주소창을 깔끔하게(# 없이) 쓰는 모드\n  routes                       // 위에서 정의한 라우트 표 연결\n})\n\n// 만든 라우터를 다른 파일(main.js)에서 쓰도록 내보낸다\nexport default router\n\n// ----- stores/cart.js : 장바구니 전역 스토어 -----\n// 스토어를 정의하는 함수를 가져온다\nimport { defineStore } from 'pinia'\n\n// 'cart' 라는 이름의 스토어를 정의한다(전역 어디서나 useCartStore 로 사용)\nexport const useCartStore = defineStore('cart', {\n  // 보관할 상태: 담긴 상품 배열\n  state: () => ({ items: [] }),\n  // 자동 계산값: 담긴 상품 개수\n  getters: {\n    count: (state) => state.items.length // items 길이가 곧 담긴 개수\n  },\n  // 상태를 바꾸는 함수들\n  actions: {\n    add(product) {            // 상품을 장바구니에 담는다\n      this.items.push(product) // items 배열 끝에 상품 추가\n    }\n  }\n})",
+        "note": "라우터는 주소→화면 연결을, Pinia 스토어는 어디서나 쓰는 장바구니 데이터를 담당한다."
       },
       {
-        "title": "ProductDetail.vue — 주소의 id 읽어 상세 표시 + 장바구니 담기",
+        "title": "ProductDetail.vue — 파라미터 읽기와 스토어 사용",
         "lang": "vue",
-        "code": "<script setup>\n// 현재 주소 정보를 읽는 도구와 전역 장바구니 스토어를 가져온다\nimport { useRoute } from 'vue-router'\nimport { useCartStore } from '../stores/cart'\n\n// 현재 페이지의 주소 정보(파라미터 포함)\nconst route = useRoute()\n// 전역 장바구니 스토어 인스턴스\nconst cart = useCartStore()\n\n// 예시용 상품 데이터(실무에서는 보통 서버에서 받아온다)\nconst products = [\n  { id: '1', name: '키보드', price: 30000 },\n  { id: '2', name: '마우스', price: 15000 }\n]\n// 주소의 id(route.params.id)와 일치하는 상품을 찾는다\nconst product = products.find(p => p.id === route.params.id)\n</script>\n\n<template>\n  <div>\n    <!-- 찾은 상품의 이름과 가격을 표시 -->\n    <h2>{{ product.name }}</h2>\n    <p>가격: {{ product.price }}원</p>\n    <!-- 담기 버튼: 누르면 전역 스토어의 addItem 실행 -->\n    <button @click=\"cart.addItem(product)\">장바구니 담기</button>\n    <!-- 현재 담긴 개수를 전역 스토어에서 바로 읽어 표시 -->\n    <p>현재 담긴 개수: {{ cart.count }}</p>\n    <!-- 목록으로 돌아가는 링크 -->\n    <router-link to=\"/\">← 목록으로</router-link>\n  </div>\n</template>",
-        "note": "route.params.id로 주소의 변수 부분을 읽고, cart.count는 어느 화면에서든 같은 값을 가리킨다."
+        "code": "<script setup>\n// 현재 라우트 정보를 읽는 함수를 가져온다(주소의 :id 를 알기 위함)\nimport { useRoute } from 'vue-router'\n// 방금 만든 장바구니 스토어를 가져온다\nimport { useCartStore } from '../stores/cart'\n\n// 현재 라우트 객체를 얻는다\nconst route = useRoute()\n// 장바구니 스토어 인스턴스를 얻는다\nconst cart = useCartStore()\n\n// 주소의 :id 값을 읽어 상품 번호로 사용한다\nconst id = route.params.id\n// 예시 상품 객체를 만든다(실무에선 서버에서 불러옴)\nconst product = { id, name: id + '번 상품', price: 1000 }\n\n// 담기 버튼을 눌렀을 때 스토어의 add 액션을 호출한다\nfunction addToCart() {\n  cart.add(product) // 전역 장바구니에 이 상품을 담는다\n}\n</script>\n\n<template>\n  <!-- 어떤 상품인지 제목으로 보여준다 -->\n  <h2>{{ product.name }}</h2>\n  <!-- 가격을 표시한다 -->\n  <p>가격: {{ product.price }}원</p>\n  <!-- 클릭하면 addToCart 실행 → 전역 장바구니에 담김 -->\n  <button @click=\"addToCart\">장바구니 담기</button>\n  <!-- 스토어의 count 게터로 현재 담긴 개수를 실시간 표시 -->\n  <p>현재 담긴 개수: {{ cart.count }}</p>\n  <!-- 목록으로 돌아가는 라우터 링크(새로고침 없이 이동) -->\n  <router-link to=\"/\">목록으로</router-link>\n</template>",
+        "note": "useRoute 로 주소의 id 를 읽고, 전역 cart 스토어에 담아 어느 화면에서나 개수를 공유한다."
       }
     ]
   },
   "vue-4": {
     "theory": [
       {
-        "h": "비동기와 API: 식당에서 주문하고 기다리기",
-        "body": "웹앱은 보통 자기 데이터를 서버에서 받아온다.\n서버에 데이터를 요청하는 창구가 API이고, 주고받는 데이터 형식이 JSON이다.\n\n서버 응답은 즉시 오지 않고 약간의 시간이 걸린다.\n이때 화면이 멈춰 버리면 안 되므로 '비동기'로 처리한다.\n식당에서 주문(요청)을 넣고 음식이 나올 때까지 다른 일을 하다가, 나오면(응답) 받아 먹는 것과 같다.\nasync/await를 쓰면 이 '기다렸다가 이어서'를 읽기 쉬운 코드로 표현할 수 있다.\n응답을 기다리는 동안에는 '불러오는 중', 실패하면 '오류'를 보여주는 배려가 필요하다."
+        "h": "비동기 통신: 기다리되 멈추지 않는다",
+        "body": "API로 데이터를 받아오는 데는 약간의 시간이 걸립니다.\n이때 화면이 멈춰 있으면 사용자는 답답함을 느낍니다.\n그래서 자바스크립트는 '비동기'로 처리합니다.\n요청을 보내 두고 화면은 계속 움직이다가, 데이터가 도착하면 그때 화면을 채웁니다.\n\n코드에서는 async/await 문법으로 이를 표현합니다.\nawait 를 붙이면 '결과가 올 때까지 이 줄에서 기다렸다가 다음으로 넘어가라'는 뜻입니다.\n마치 식당에서 주문 번호표를 받고 자리에 앉아 다른 일을 하다가, 번호가 불리면 음식을 받으러 가는 것과 같습니다."
       },
       {
-        "h": "빌드와 배포: 원고를 인쇄해서 서점에 내놓기",
-        "body": "개발 중에 쓰는 코드는 사람이 읽기 좋게 여러 파일로 흩어져 있다.\n이대로는 인터넷에 올려도 느리고 비효율적이다.\n그래서 npm run build로 코드를 잘게 압축·정리해 dist라는 폴더에 묶는다.\n이것은 손으로 쓴 원고를 책으로 인쇄하는 것과 같다.\n\n이렇게 만든 dist 폴더의 파일들은 그냥 '정적 파일'이라 어떤 웹 호스팅에도 쉽게 올릴 수 있다.\nNetlify, Vercel, GitHub Pages 같은 곳에 올리면 전 세계 누구나 주소로 접속할 수 있다.\n인쇄한 책을 서점 책장에 꽂아 손님이 사 볼 수 있게 하는 것과 같다."
+        "h": "로딩·에러 처리와 배포까지",
+        "body": "실무 화면은 세 가지 상태를 모두 챙겨야 합니다.\n불러오는 중(로딩), 실패(에러), 성공(데이터 표시)입니다.\n로딩 중에는 '잠시만요'를, 실패하면 '문제가 생겼어요'를 보여줘야 사용자가 당황하지 않습니다.\n이를 try/catch 와 v-if 로 구분해 처리합니다.\n\n완성된 앱은 마지막에 'npm run build' 로 압축해 dist 폴더를 만듭니다.\n이 폴더를 GitHub Pages 같은 정적 호스팅에 올리면 누구나 접속할 수 있는 진짜 웹사이트가 됩니다.\n이렇게 기획-구현-배포의 한 사이클을 완주하는 것이 이 과정의 목표입니다."
       }
     ],
     "realCode": [
       {
-        "title": "UserList.vue — API 호출 + 로딩/에러 처리 + 폼 추가(엔드투엔드)",
+        "title": "api.js + PostList.vue — API 연동 미니 SPA",
         "lang": "vue",
-        "code": "<script setup>\n// 반응형 도구와 화면 등장 시점 훅, HTTP 도구를 가져온다\nimport { ref, onMounted } from 'vue'\nimport axios from 'axios'\n\n// .env에 적어둔 API 기본 주소를 읽는다(코드에 주소를 직접 박지 않기 위함)\nconst API = import.meta.env.VITE_API_URL\n\n// 화면 상태 변수들\nconst users = ref([])      // 받아온 사용자 목록\nconst loading = ref(true)  // 불러오는 중인지 여부\nconst error = ref('')      // 에러 메시지\nconst name = ref('')       // 폼: 이름 입력값\nconst email = ref('')      // 폼: 이메일 입력값\n\n// 서버에서 사용자 목록을 비동기로 불러오는 함수\nasync function loadUsers() {\n  try {\n    loading.value = true                       // 시작: 로딩 표시 켜기\n    const res = await axios.get(API + '/users') // 서버에 GET 요청(응답을 기다림)\n    users.value = res.data                      // 받은 데이터를 목록에 저장\n  } catch (e) {\n    error.value = '데이터를 불러오지 못했어요.'  // 실패 시 에러 메시지 설정\n  } finally {\n    loading.value = false                       // 성공/실패 상관없이 로딩 끄기\n  }\n}\n\n// 화면이 처음 나타날 때 자동으로 목록을 불러온다\nonMounted(loadUsers)\n\n// 폼 제출: 새 사용자를 검증 후 서버에 보내고 목록에 추가\nasync function addUser() {\n  if (name.value.trim() === '' || !email.value.includes('@')) { // 유효성 검사\n    alert('이름과 올바른 이메일을 입력하세요.')                  // 잘못되면 경고\n    return                                                       // 중단\n  }\n  const res = await axios.post(API + '/users', { name: name.value, email: email.value }) // 서버에 POST\n  users.value.unshift(res.data)  // 목록 맨 앞에 새 사용자 추가\n  name.value = ''                // 입력칸 비우기\n  email.value = ''               // 입력칸 비우기\n}\n</script>\n\n<template>\n  <div>\n    <h2>사용자 목록</h2>\n    <!-- 불러오는 중이면 안내 문구 표시 -->\n    <p v-if=\"loading\">불러오는 중...</p>\n    <!-- 에러가 있으면 빨간 에러 메시지 표시 -->\n    <p v-else-if=\"error\" style=\"color:red\">{{ error }}</p>\n    <!-- 정상일 때 목록 출력 -->\n    <ul v-else>\n      <!-- 각 사용자 카드: 고유 id를 key로 지정 -->\n      <li v-for=\"u in users\" :key=\"u.id\">{{ u.name }} — {{ u.email }}</li>\n    </ul>\n\n    <!-- 새 사용자 입력 폼 -->\n    <input v-model=\"name\" placeholder=\"이름\" />\n    <input v-model=\"email\" placeholder=\"이메일\" />\n    <button @click=\"addUser\">추가</button>\n  </div>\n</template>",
-        "note": "try/catch/finally로 로딩·에러를 안전하게 다루고, .env의 주소를 import.meta.env로 읽어 환경마다 바꿔 쓴다."
+        "code": "<!-- ===== src/api.js (별도 파일) =====\nimport axios from 'axios'                              // HTTP 통신 라이브러리 가져오기\nexport const api = axios.create({                      // 공통 설정을 가진 요청 인스턴스 생성\n  baseURL: import.meta.env.VITE_API_BASE,              // .env 의 API 기본 주소를 읽어 적용\n  timeout: 5000                                        // 5초 안에 응답 없으면 실패 처리\n})\n===== 아래는 PostList.vue ===== -->\n<script setup>\n// 화면에 나타날 때 실행되는 훅과 반응형 함수들을 가져온다\nimport { onMounted, ref } from 'vue'\n// 위에서 만든 api 인스턴스를 가져온다\nimport { api } from '../api'\n\n// 게시글 목록을 담을 반응형 배열\nconst posts = ref([])\n// 불러오는 중인지 표시(처음엔 true)\nconst loading = ref(true)\n// 에러 메시지를 담을 상태(없으면 빈 문자열)\nconst error = ref('')\n\n// 게시글을 서버에서 비동기로 불러오는 함수\nasync function load() {\n  try {\n    loading.value = true                 // 불러오기 시작 → 로딩 켜기\n    const res = await api.get('/posts')  // /posts 에 GET 요청, 응답이 올 때까지 기다림\n    posts.value = res.data.slice(0, 5)   // 받은 데이터 중 앞 5개만 저장\n  } catch (e) {\n    error.value = '데이터를 불러오지 못했습니다.' // 실패하면 에러 메시지 설정\n  } finally {\n    loading.value = false                // 성공이든 실패든 로딩 끄기\n  }\n}\n\n// 컴포넌트가 화면에 붙은 직후 한 번 데이터를 불러온다\nonMounted(load)\n</script>\n\n<template>\n  <!-- 로딩 중이면 안내 문구를 보여준다 -->\n  <p v-if=\"loading\">불러오는 중...</p>\n  <!-- 에러가 있으면 에러 문구를 빨갛게 보여준다 -->\n  <p v-else-if=\"error\" style=\"color:red\">{{ error }}</p>\n  <!-- 정상일 때 게시글 목록을 출력한다 -->\n  <ul v-else>\n    <!-- v-for 로 게시글을 하나씩 꺼내 제목을 표시, key 는 고유 id -->\n    <li v-for=\"p in posts\" :key=\"p.id\">{{ p.title }}</li>\n  </ul>\n</template>",
+        "note": "axios 로 API를 부르고 loading·error·정상 세 상태를 v-if 로 나눠 처리하는 실전 패턴이다.\ntry/catch/finally 로 실패해도 화면이 멈추지 않는다."
       }
     ]
   },
@@ -623,72 +623,72 @@ export const theory = {
   "langchain-1": {
     "theory": [
       {
-        "h": "왜 LangChain이 필요할까? — 부엌과 레시피 비유",
-        "body": "LLM에게 직접 요청을 보내는 일은 마치 재료를 손에 들고 즉석에서 요리하는 것과 같다.\n한두 번은 괜찮지만, 프롬프트를 만들고 답을 다듬고 외부 자료를 붙이는 일이 반복되면 코드가 금세 지저분해진다.\nLangChain은 자주 쓰는 작업들을 '레시피 카드'처럼 미리 만들어 둔 부엌 같은 라이브러리다.\n프롬프트 만들기, 모델 부르기, 답 정리하기 같은 단계가 표준 부품으로 준비되어 있어 우리는 조립만 하면 된다.\n덕분에 같은 코드를 매번 새로 짜지 않고, 부품을 갈아 끼우며 빠르게 실험할 수 있다."
+        "h": "LangChain은 왜 생겼나 - LLM만으로는 부족한 이유",
+        "body": "LLM에게 질문을 한 번 던지는 일은 사실 어렵지 않다.\n진짜 어려운 건 그 다음이다.\n프롬프트를 매번 손으로 새로 쓰고, 모델이 준 답을 코드가 쓰기 좋게 다듬고, 여기에 검색이나 메모리 같은 기능을 덧붙이려 하면 코드가 금세 엉킨다.\n\nLangChain은 이런 반복 작업을 '부품'으로 미리 만들어 둔 도구 상자다.\n주방에 비유하면, 매번 칼을 새로 만들지 않고 정해진 칼·도마·믹서를 꺼내 쓰는 것과 같다.\n우리는 요리(서비스)에만 집중하고, 도구는 LangChain이 표준화해 제공한다.\n그래서 LLM 앱을 빠르고 깔끔하게 만들 수 있다."
       },
       {
-        "h": "LCEL: 파이프(|)로 잇는 컨베이어 벨트",
-        "body": "LCEL의 핵심은 파이프 기호(|) 하나다.\n'프롬프트 | 모델 | 파서' 라고 쓰면, 왼쪽의 결과가 오른쪽으로 자동으로 넘어가는 컨베이어 벨트가 만들어진다.\n공장에서 부품이 벨트를 타고 다음 공정으로 넘어가듯, 입력이 각 단계를 거치며 점점 완성된 답으로 바뀐다.\n이렇게 만든 체인은 invoke로 한 번 실행하거나, stream으로 글자가 흐르듯 받거나, batch로 여러 개를 한꺼번에 처리할 수 있다.\n즉 한 번 조립해 두면 다양한 방식으로 재사용할 수 있어 매우 경제적이다."
+        "h": "부품 세 가지 - 프롬프트, 모델, 출력 파서",
+        "body": "LangChain으로 만드는 거의 모든 체인은 세 부품에서 출발한다.\n첫째는 프롬프트로, 모델에게 무엇을 시킬지 적은 양식지다.\n둘째는 모델로, 실제로 글을 생성하는 두뇌다.\n셋째는 출력 파서로, 모델이 준 답을 우리가 쓰기 좋게 정리하는 정리함이다.\n\n이 세 부품은 컨베이어 벨트처럼 한 줄로 이어진다.\n입력이 프롬프트에서 양식을 채우고, 모델을 거쳐 글이 되고, 파서에서 깔끔하게 다듬어져 나온다.\n이 흐름만 이해하면 LangChain의 절반은 끝난 셈이다."
       },
       {
-        "h": "모델·프롬프트·파서 — 3대 핵심 부품",
-        "body": "LangChain 앱은 크게 세 가지 부품으로 시작한다.\n첫째 모델은 실제로 답을 만드는 두뇌이고, 둘째 프롬프트는 두뇌에게 건네는 지시서이며, 셋째 파서는 두뇌의 답을 깔끔히 정리하는 비서다.\n이 셋만 이해하면 LangChain 코드의 절반은 읽을 수 있다.\n오늘은 이 세 부품을 따로따로 만져 본 뒤, 파이프로 이어 하나의 체인으로 완성하는 것이 목표다."
+        "h": "LCEL - 파이프(|)로 부품을 잇는다",
+        "body": "LCEL은 'LangChain Expression Language'의 줄임말로, 부품을 잇는 조립 문법이다.\n핵심 기호는 딱 하나, 파이프(|)다.\n'프롬프트 | 모델 | 파서'처럼 쓰면 '왼쪽 결과를 오른쪽에 넘겨라'라는 뜻이 된다.\n\n수도관을 떠올리면 쉽다.\n물(데이터)이 관을 따라 흐르며 각 칸을 거쳐 가는 모습이 바로 파이프 연결이다.\n이렇게 만든 체인은 invoke로 한 번에 실행할 수 있고, 나중에 부품을 갈아 끼우기도 쉽다."
       }
     ],
     "realCode": [
       {
-        "title": "엔드투엔드: 글을 받아 '한 줄 요약 + 키워드 3개'를 함께 내는 LCEL 파이프라인",
+        "title": "프롬프트·모델·파서를 LCEL로 이어 만든 요약 체인 (엔드투엔드)",
         "lang": "python",
-        "code": "# .env 파일에 저장한 API 키를 코드로 불러오기 위한 라이브러리\nfrom dotenv import load_dotenv\n# OpenAI 채팅 모델을 LangChain에서 쓰기 위한 클래스\nfrom langchain_openai import ChatOpenAI\n# 빈칸이 있는 프롬프트 양식을 만드는 클래스\nfrom langchain_core.prompts import ChatPromptTemplate\n# 모델의 답(메시지)을 순수 문자열로 바꿔 주는 파서\nfrom langchain_core.output_parsers import StrOutputParser\n# 입력을 그대로 다음 단계로 흘려보내거나 여러 갈래로 나눌 때 쓰는 도구\nfrom langchain_core.runnables import RunnableParallel\n\n# .env 파일을 읽어 OPENAI_API_KEY를 환경변수로 등록한다(키 노출 방지)\nload_dotenv()\n\n# 사용할 LLM을 생성한다. temperature=0 은 매번 비슷한(안정적인) 답을 받기 위함\nllm = ChatOpenAI(model=\"gpt-4o-mini\", temperature=0)\n\n# 요약용 프롬프트: {text} 자리에 실제 글이 들어간다\nsummary_prompt = ChatPromptTemplate.from_template(\"다음 글을 한 문장으로 요약해줘:\\n{text}\")\n# 키워드용 프롬프트: 쉼표로 구분된 키워드 3개를 요청한다\nkeyword_prompt = ChatPromptTemplate.from_template(\"다음 글의 핵심 키워드 3개를 쉼표로 구분해 알려줘:\\n{text}\")\n\n# 요약 체인: 프롬프트 → 모델 → 문자열 파서 순으로 파이프 연결\nsummary_chain = summary_prompt | llm | StrOutputParser()\n# 키워드 체인: 같은 구조로 별도 체인 구성\nkeyword_chain = keyword_prompt | llm | StrOutputParser()\n\n# 두 체인을 동시에 실행해 결과를 하나의 딕셔너리로 묶는다\nfull_chain = RunnableParallel(summary=summary_chain, keywords=keyword_chain)\n\n# 분석할 예시 글(실제로는 뉴스 기사 등 어떤 글이든 가능)\nsample = \"LangChain은 LLM 앱 개발을 표준 부품 조립으로 단순화해 개발 속도를 크게 높인다.\"\n\n# 체인을 실제로 실행한다. {text:...} 가 두 프롬프트 모두에 전달된다\nresult = full_chain.invoke({\"text\": sample})\n\n# 결과 확인: 요약 문장 출력 (예상: 한 문장 요약)\nprint(\"요약:\", result[\"summary\"])\n# 결과 확인: 키워드 출력 (예상: LangChain, LLM, 조립 같은 단어 3개)\nprint(\"키워드:\", result[\"keywords\"])",
-        "note": "두 개의 체인을 RunnableParallel로 묶으면 한 번의 invoke로 요약과 키워드를 동시에 받을 수 있다.\n각 체인이 같은 입력 {text} 를 공유하므로 입력 글만 바꾸면 전체 결과가 함께 갱신된다."
+        "code": "# 프롬프트 양식을 만들어 주는 도구를 가져온다(빈칸 있는 지시문을 만든다)\nfrom langchain_core.prompts import ChatPromptTemplate\n# 모델이 준 답에서 글자만 깔끔히 뽑아 주는 출력 파서를 가져온다\nfrom langchain_core.output_parsers import StrOutputParser\n# 실제로 글을 생성하는 Anthropic 채팅 모델 연동 클래스를 가져온다\nfrom langchain_anthropic import ChatAnthropic\n\n# {text} 자리에 입력을 끼워 넣는 프롬프트(양식지)를 만든다\nprompt = ChatPromptTemplate.from_template(\n    \"다음 글을 초등학생도 이해하게 한 문장으로 요약해줘:\\n\\n{text}\"  # 빈칸 text에 본문이 들어간다\n)\n# 글을 생성할 두뇌(모델)를 준비한다. temperature=0은 매번 비슷한 답을 내라는 뜻이다\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\", temperature=0)\n# 모델 답에서 군더더기 없이 문자열만 뽑아 줄 파서를 준비한다\nparser = StrOutputParser()\n\n# 세 부품을 파이프(|)로 이어 하나의 체인으로 조립한다(프롬프트→모델→파서 순서)\nchain = prompt | model | parser\n\n# 요약하고 싶은 긴 글을 변수에 담는다(실제로는 기사·메일 등이 들어간다)\nlong_text = \"이번 분기 매출은 작년보다 20% 늘었고, 신규 고객도 크게 증가했다. 다만 물류 비용 상승이 이익률을 일부 깎았다.\"\n\n# 체인에 입력을 넣어 실행하고, 결과(요약 문장)를 받는다. {} 안의 키는 프롬프트의 빈칸 이름과 같아야 한다\nresult = chain.invoke({\"text\": long_text})\n# 받은 요약 문장을 화면에 출력한다. 결과 예: '매출과 고객은 늘었지만 물류비로 이익은 조금 줄었다.'\nprint(result)",
+        "note": "프롬프트·모델·파서를 파이프로 잇기만 하면 동작하는 완결형 요약 체인이다.\n입력 글만 바꾸면 코드 수정 없이 어떤 글이든 요약된다."
       }
     ]
   },
   "langchain-2": {
     "theory": [
       {
-        "h": "메모리: 금붕어에게 일기장을 쥐여 주기",
-        "body": "기본 LLM은 한 번의 질문만 보고 답한다.\n앞에서 무슨 말을 했는지 스스로 기억하지 못하는, 말하자면 금붕어 같은 상태다.\n그래서 멀티턴 대화를 만들려면 지금까지의 대화 내용을 우리가 직접 모아서 매번 같이 넘겨줘야 한다.\nLangChain의 메모리는 이 대화 기록을 일기장처럼 차곡차곡 쌓아 두었다가, 다음 질문을 보낼 때 함께 끼워 넣어 준다.\n덕분에 사용자가 '방금 그거 다시 설명해줘' 라고 해도 챗봇이 맥락을 이어 갈 수 있다."
+        "h": "메모리 - 챗봇에게 단기 기억을 달아 주기",
+        "body": "기본 LLM 호출은 매번 처음 만난 사람처럼 군다.\n방금 내가 한 말을 전혀 기억하지 못한다.\n그래서 '내 이름은 길동이야'라고 말한 뒤 '내 이름이 뭐였지?'라고 물으면 모른다고 답한다.\n\n메모리는 지난 대화를 차곡차곡 적어 두는 수첩이다.\n새 질문을 보낼 때 이 수첩을 함께 들려보내면, 모델이 맥락을 이어 자연스럽게 대화한다.\n즉 모델 자체가 기억하는 게 아니라, 우리가 과거 대화를 매번 같이 넣어 주는 것이다."
       },
       {
-        "h": "도구(Tool): 모르면 전화 찬스를 쓰는 LLM",
-        "body": "LLM은 글을 잘 짓지만 정확한 계산이나 실시간 정보 조회에는 약하다.\n도구는 이럴 때 LLM이 외부 함수에 '전화 찬스'를 쓰게 해 주는 장치다.\n예를 들어 '345 곱하기 678' 이 나오면 직접 어림하지 않고 계산기 도구를 호출해 정확한 값을 받아 온다.\nLLM은 어떤 도구를 언제 부를지 판단만 하고, 실제 계산이나 검색은 우리가 만든 함수가 처리한다.\n이렇게 손발을 달아 주면 단순 챗봇이 실제 일을 해내는 에이전트로 발전한다."
+        "h": "도구(Tool) - LLM에게 손발을 달아 주기",
+        "body": "LLM은 글은 잘 쓰지만 정확한 계산이나 최신 정보 검색은 약하다.\n예를 들어 '1234 곱하기 5678'을 머릿속으로 풀라고 하면 틀리기 쉽다.\n\n도구는 모델이 직접 쓸 수 있는 작은 기능 버튼이다.\n계산기 도구를 쥐여 주면, 모델은 '이건 내가 계산기를 써야겠다'고 판단해 그 버튼을 누른다.\n사람이 암산 대신 계산기를 꺼내 쓰는 것과 똑같다.\n이렇게 하면 모델의 약점을 도구가 채워 준다."
       },
       {
-        "h": "RAG: 오픈북 시험으로 바꾸기",
-        "body": "LLM은 학습 시점 이후의 일이나 우리 회사 내부 문서는 알지 못한다.\n모르는 것을 물으면 그럴듯하게 지어내는 환각이 생기기도 한다.\nRAG는 이 문제를 '오픈북 시험'으로 바꾼다.\n질문이 들어오면 먼저 관련 문서 조각을 검색해 와서, 그 내용을 프롬프트에 함께 붙여 '이 자료만 보고 답하라'고 지시한다.\n그러면 AI가 자기 기억이 아니라 우리가 준 자료에 근거해 답하므로, 최신 정보와 사내 지식도 정확히 다룰 수 있다."
+        "h": "문서 QA(RAG) - 내 자료를 근거로 답하게 하기",
+        "body": "LLM은 학습한 적 없는 우리 회사 내부 문서는 알지 못한다.\n그냥 물어보면 그럴듯하게 지어내는 환각이 생긴다.\n\nRAG는 이 문제를 도서관 사서처럼 푼다.\n먼저 질문과 관련된 문서 조각을 서가에서 찾아오고(검색), 그 조각만 책상에 펼쳐 놓은 뒤 그것을 근거로 답을 쓴다(생성).\n그래서 모델은 자기 기억이 아니라 '찾아온 근거'로 답하게 되고, 출처가 분명해지며 환각이 크게 줄어든다."
       }
     ],
     "realCode": [
       {
-        "title": "엔드투엔드: 텍스트 문서를 임베딩해 근거와 함께 답하는 RAG 체인",
+        "title": "문서 적재 → 청킹 → 임베딩 → 검색 → 답변까지 RAG 문서 QA 체인",
         "lang": "python",
-        "code": "# API 키 로드용\nfrom dotenv import load_dotenv\n# 텍스트 파일을 읽어 오는 로더\nfrom langchain_community.document_loaders import TextLoader\n# 긴 문서를 일정 크기로 잘라 주는 분할기\nfrom langchain_text_splitters import RecursiveCharacterTextSplitter\n# 글을 벡터로 바꾸는 임베딩 모델\nfrom langchain_openai import OpenAIEmbeddings, ChatOpenAI\n# 벡터를 저장·검색하는 가벼운 벡터DB\nfrom langchain_chroma import Chroma\n# 프롬프트·파서·입력전달 부품\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom langchain_core.runnables import RunnablePassthrough\n\n# 환경변수(API 키) 로드\nload_dotenv()\n\n# 1) 문서 불러오기: docs.txt 내용을 통째로 읽는다\ndocs = TextLoader(\"docs.txt\", encoding=\"utf-8\").load()\n# 2) 문서 자르기: 500자씩, 50자는 겹치게 잘라 문맥 끊김을 줄인다\nsplitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)\nchunks = splitter.split_documents(docs)\n\n# 3) 조각들을 임베딩해 Chroma 벡터DB에 저장한다\nvectorstore = Chroma.from_documents(chunks, OpenAIEmbeddings())\n# 4) 질문과 비슷한 조각 3개를 찾아오는 retriever 생성\nretriever = vectorstore.as_retriever(search_kwargs={\"k\": 3})\n\n# 5) '문맥만 근거로 답하라'는 RAG 프롬프트 정의\nprompt = ChatPromptTemplate.from_template(\n    \"아래 문맥만 근거로 한국어로 답해. 모르면 모른다고 해.\\n\\n문맥:\\n{context}\\n\\n질문: {question}\")\n# 답을 만들 모델(안정적 답을 위해 temperature=0)\nllm = ChatOpenAI(model=\"gpt-4o-mini\", temperature=0)\n\n# 검색된 여러 조각을 하나의 문자열로 합치는 헬퍼 함수\ndef join_docs(found):\n    # 각 조각의 본문을 줄바꿈으로 이어 붙인다\n    return \"\\n\\n\".join(d.page_content for d in found)\n\n# 6) RAG 체인 조립: 질문은 retriever로 문맥을, 그대로 question으로도 전달\nrag_chain = (\n    {\"context\": retriever | join_docs, \"question\": RunnablePassthrough()}\n    | prompt | llm | StrOutputParser())\n\n# 7) 실제 질문 실행 (예상: 문서 내용에 근거한 답 출력)\nprint(rag_chain.invoke(\"회사의 설립 연도는?\"))",
-        "note": "retriever가 찾은 조각을 join_docs로 합쳐 {context}에 넣고, 같은 질문을 {question}에도 그대로 전달한다.\n'모르면 모른다고 해' 라는 지시가 환각(없는 사실 지어내기)을 줄이는 핵심이다."
+        "code": "# 텍스트 파일을 읽어 들이는 로더를 가져온다\nfrom langchain_community.document_loaders import TextLoader\n# 긴 문서를 작은 조각으로 자르는 분할기를 가져온다\nfrom langchain_text_splitters import RecursiveCharacterTextSplitter\n# 문서 조각을 저장·검색하는 벡터스토어(Chroma)를 가져온다\nfrom langchain_chroma import Chroma\n# 글을 숫자 벡터로 바꾸는 임베딩 모델을 가져온다\nfrom langchain_huggingface import HuggingFaceEmbeddings\n# 답을 생성할 채팅 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 프롬프트 양식 도구를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\n# 모델 답에서 글자만 뽑는 파서를 가져온다\nfrom langchain_core.output_parsers import StrOutputParser\n# 검색 결과를 프롬프트의 빈칸으로 그대로 흘려보내는 도우미를 가져온다\nfrom langchain_core.runnables import RunnablePassthrough\n\n# docs.txt 파일을 읽어 문서 객체 리스트로 불러온다\ndocs = TextLoader(\"docs.txt\", encoding=\"utf-8\").load()\n# 문서를 500자 단위로, 50자씩 겹치게 잘라 검색하기 좋은 조각으로 만든다\nsplitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)\n# 실제로 자르기를 실행해 조각 리스트를 얻는다\nchunks = splitter.split_documents(docs)\n# 한국어도 잘 처리하는 무료 임베딩 모델을 준비한다\nembedding = HuggingFaceEmbeddings(model_name=\"jhgan/ko-sbert-nli\")\n# 조각들을 임베딩해 Chroma 벡터스토어에 저장(색인)한다\nvectorstore = Chroma.from_documents(chunks, embedding)\n# 질문과 비슷한 조각 3개를 찾아 주는 리트리버로 변환한다\nretriever = vectorstore.as_retriever(search_kwargs={\"k\": 3})\n\n# 찾아온 근거(context)만 보고 답하라고 지시하는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\n    \"아래 근거만 사용해 질문에 답해. 근거에 없으면 '모릅니다'라고 해.\\n\\n근거:\\n{context}\\n\\n질문: {question}\")\n# 답을 생성할 모델을 준비한다(temperature=0으로 일관된 답)\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\", temperature=0)\n\n# 리트리버가 찾은 문서 조각들을 하나의 긴 문자열로 합치는 함수를 정의한다\ndef join_docs(found):  # found: 검색된 문서 객체 리스트\n    return \"\\n\\n\".join(d.page_content for d in found)  # 각 조각의 본문을 줄바꿈으로 이어 붙인다\n\n# context는 리트리버→합치기로, question은 입력을 그대로 흘려 체인을 조립한다\nchain = (\n    {\"context\": retriever | join_docs, \"question\": RunnablePassthrough()}  # 두 빈칸을 동시에 채운다\n    | prompt  # 채워진 값으로 프롬프트 완성\n    | model   # 모델이 답 생성\n    | StrOutputParser()  # 답에서 글자만 추출\n)\n\n# 실제 질문을 넣어 체인을 실행한다(질문이 question 빈칸으로 들어간다)\nanswer = chain.invoke(\"환불은 며칠 안에 가능한가요?\")\n# 문서 근거에 기반한 답을 출력한다. 결과 예: '구매 후 7일 이내에 환불 가능합니다.'\nprint(answer)",
+        "note": "문서를 읽고-자르고-임베딩-검색-생성까지 한 파일로 도는 완결형 RAG 챗봇이다.\ndocs.txt만 바꾸면 어떤 문서로든 질의응답이 된다."
       }
     ]
   },
   "langchain-3": {
     "theory": [
       {
-        "h": "스트리밍: 식당에서 음식이 나오는 방식",
-        "body": "답이 길 때 모두 완성될 때까지 빈 화면을 보는 일은 사용자에게 매우 답답하다.\n스트리밍은 코스 요리처럼 만들어진 부분부터 차례로 내보내는 방식이다.\n첫 글자가 빨리 보이기 시작하므로 체감 대기 시간이 크게 줄어든다.\nChatGPT가 글자를 한 자씩 타이핑하듯 보여 주는 것이 바로 이 스트리밍이다.\nLangChain에서는 invoke 대신 stream을 쓰면 같은 체인을 손쉽게 스트리밍으로 바꿀 수 있다."
+        "h": "스트리밍 - 기다림의 체감을 줄이는 마법",
+        "body": "긴 답을 만드는 데는 몇 초가 걸린다.\n그 시간 동안 화면이 멈춰 있으면 사용자는 답답해한다.\n\n스트리밍은 답이 완성되기를 기다리지 않고, 모델이 만드는 즉시 글자를 조금씩 화면에 흘려보낸다.\n식당에서 코스 요리를 한 접시씩 내오는 것과 같다.\n전체가 끝나길 기다리지 않고 먼저 나온 것부터 즐길 수 있어, 같은 시간이라도 훨씬 빠르게 느껴진다.\nChatGPT에서 글자가 또르르 나오는 그 효과가 바로 스트리밍이다."
       },
       {
-        "h": "캐싱·재시도·폴백: 서비스를 튼튼하게",
-        "body": "실제 서비스가 되려면 빠르고, 비용이 적고, 잘 죽지 않아야 한다.\n캐싱은 같은 질문에 매번 모델을 부르지 않고 저장된 답을 재사용해 속도와 비용을 동시에 아낀다.\n재시도는 네트워크가 잠깐 끊기는 일시적 오류에 자동으로 다시 시도해 사용자가 실패를 느끼지 못하게 한다.\n폴백은 주력 모델이 멈췄을 때 보조 모델로 갈아타 서비스를 계속 굴린다.\n이 세 가지는 데모를 진짜 서비스로 끌어올리는 안전벨트와 같다."
+        "h": "관측과 디버깅 - 체인 속을 들여다보기",
+        "body": "체인이 길어지면 어디서 문제가 생겼는지 알기 어렵다.\n프롬프트가 이상했는지, 검색이 엉뚱한 걸 찾았는지, 모델이 헛소리를 했는지 눈에 보이지 않는다.\n\n콜백과 LangSmith는 체인에 CCTV를 다는 일이다.\n각 부품이 무엇을 받고 무엇을 내보냈는지, 시간과 비용은 얼마였는지 단계별로 기록한다.\n문제가 나면 녹화된 화면을 되돌려 보듯 원인 지점을 정확히 짚을 수 있다."
       },
       {
-        "h": "관측(LangSmith): 블랙박스에 창문 달기",
-        "body": "체인이 길어지면 어디서 이상한 답이 나왔는지 눈으로 보기 어렵다.\n내부가 보이지 않는 블랙박스 상태에서는 디버깅이 막막하다.\nLangSmith는 각 단계의 입력과 출력, 걸린 시간, 쓴 토큰 수를 한눈에 보여 주는 창문을 달아 준다.\n환경변수 하나만 켜면 별도 코드 없이도 모든 실행이 자동 기록된다.\n덕분에 '왜 이런 답이 나왔지?' 를 추적하고 비용을 관리하기가 훨씬 쉬워진다."
+        "h": "실서비스의 현실 - 비용·캐싱·에러",
+        "body": "장난감 챗봇과 진짜 서비스의 차이는 바로 이 세 가지에서 갈린다.\n첫째 비용은, 호출할 때마다 토큰만큼 돈이 나가므로 같은 질문은 캐싱으로 아껴야 한다.\n둘째 안정성은, 네트워크는 언제든 끊기므로 재시도와 예외 처리로 서비스가 죽지 않게 막아야 한다.\n셋째 사용자 경험은, 오류가 나도 빨간 에러 대신 '잠시 후 다시 시도해 주세요' 같은 친절한 메시지로 받아 줘야 한다.\n\n이 세 가지를 챙기면 비로소 남에게 보여 줄 수 있는 서비스가 된다."
       }
     ],
     "realCode": [
       {
-        "title": "엔드투엔드: 캐싱·재시도를 적용한 요약 체인을 FastAPI로 서비스하기",
+        "title": "스트리밍·캐싱·예외처리를 갖춘 챗봇 FastAPI 웹 서비스",
         "lang": "python",
-        "code": "# 웹 API 프레임워크와 요청 본문 검증용\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\n# 스트리밍 응답을 보내기 위한 클래스\nfrom fastapi.responses import StreamingResponse\n# API 키 로드\nfrom dotenv import load_dotenv\n# LangChain 부품들\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\n# 인메모리 캐시를 켜는 함수와 캐시 구현체\nfrom langchain_core.globals import set_llm_cache\nfrom langchain_community.cache import InMemoryCache\n\nload_dotenv()  # 환경변수 로드\nset_llm_cache(InMemoryCache())  # 같은 입력은 캐시에서 즉시 응답\n\n# 모델 준비\nllm = ChatOpenAI(model=\"gpt-4o-mini\", temperature=0)\n# 요약 프롬프트\nprompt = ChatPromptTemplate.from_template(\"다음 글을 세 문장으로 요약해줘:\\n{text}\")\n# 체인 조립 + 일시 오류 시 자동 재시도(.with_retry)\nchain = (prompt | llm | StrOutputParser()).with_retry()\n\napp = FastAPI()  # 웹 앱 생성\n\n# 요청 본문 형식 정의: text 문자열을 받는다\nclass Req(BaseModel):\n    text: str\n\n# 일반 요약: JSON으로 결과 반환\n@app.post(\"/summarize\")\ndef summarize(req: Req):\n    # 체인 실행 후 결과를 딕셔너리로 응답\n    return {\"summary\": chain.invoke({\"text\": req.text})}\n\n# 스트리밍 요약: 글자 단위로 흘려보냄\n@app.post(\"/stream\")\ndef stream(req: Req):\n    # 체인의 stream 결과를 그대로 HTTP 스트림으로 전달\n    return StreamingResponse(chain.stream({\"text\": req.text}), media_type=\"text/plain\")\n\n# 실행: uvicorn main:app --reload 후 http://127.0.0.1:8000/docs 접속",
-        "note": "set_llm_cache로 캐시를, with_retry로 재시도를 한 줄씩 추가하면 서비스 안정성이 크게 오른다.\nFastAPI는 /docs 자동 문서를 제공하므로 별도 도구 없이 브라우저에서 바로 API를 호출해 볼 수 있다."
+        "code": "# 웹 API 서버를 만드는 FastAPI를 가져온다\nfrom fastapi import FastAPI\n# 답을 글자 단위로 흘려보낼 스트리밍 응답 클래스를 가져온다\nfrom fastapi.responses import StreamingResponse\n# 요청 본문의 형태를 정의할 데이터 모델 도구를 가져온다\nfrom pydantic import BaseModel\n# 캐시를 켜는 설정 함수와 메모리 캐시 구현을 가져온다\nfrom langchain_core.globals import set_llm_cache\nfrom langchain_community.cache import InMemoryCache\n# 프롬프트·모델·파서 부품을 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom langchain_anthropic import ChatAnthropic\n\n# 같은 질문은 모델을 다시 부르지 않도록 메모리 캐시를 켠다\nset_llm_cache(InMemoryCache())\n# 웹 서버 애플리케이션 객체를 만든다\napp = FastAPI()\n# 질문을 친절하게 답하라는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\"친절한 도우미로서 답해줘: {message}\")\n# 답을 생성할 모델을 준비한다\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\", temperature=0)\n# 프롬프트→모델→문자열파서로 체인을 조립한다\nchain = prompt | model | StrOutputParser()\n\n# 요청 본문이 message 한 칸을 갖는다고 정의한다(자동 검증된다)\nclass Ask(BaseModel):\n    message: str  # 사용자가 보낸 질문 문자열\n\n# POST /chat 경로: 한 번에 완성된 답을 JSON으로 돌려준다\n@app.post(\"/chat\")\ndef chat(req: Ask):\n    try:                                  # 모델 호출을 보호막으로 감싼다\n        answer = chain.invoke({\"message\": req.message})  # 체인을 실행해 답을 받는다\n        return {\"answer\": answer}         # 성공하면 답을 JSON으로 돌려준다\n    except Exception as e:                # 어떤 오류든 잡아서\n        return {\"answer\": \"잠시 후 다시 시도해 주세요.\", \"error\": str(e)}  # 친절한 메시지로 대체\n\n# POST /stream 경로: 답을 글자 단위로 흘려보낸다\n@app.post(\"/stream\")\ndef stream(req: Ask):\n    def gen():                            # 조각을 하나씩 내보내는 생성기 함수\n        for piece in chain.stream({\"message\": req.message}):  # 체인이 만드는 조각을 순서대로 받아\n            yield piece                   # 받은 즉시 클라이언트로 흘려보낸다\n    return StreamingResponse(gen(), media_type=\"text/plain\")  # 스트리밍 응답으로 감싸 반환",
+        "note": "캐싱(set_llm_cache)·예외처리(try/except)·스트리밍(chain.stream)을 모두 갖춘 배포용 챗봇 서버다.\n'uvicorn 파일명:app --reload'로 실행하면 /docs에서 바로 테스트할 수 있다."
       }
     ]
   },

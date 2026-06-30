@@ -340,15 +340,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 Vue란 무엇인가 · 프론트엔드 프레임워크의 필요성(이론+감잡기)"
+        "topic": "1교시 Vue 소개와 왜 프레임워크가 필요한가 (개념)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 [실습] Node.js·Vite 설치하고 첫 Vue 프로젝트 만들기"
+        "topic": "2교시 Vite로 첫 Vue 프로젝트 만들기 (실습)"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 SFC(.vue 파일) 구조 해부 · template/script/style 한 줄씩 보기"
+        "topic": "3교시 SFC 구조와 첫 컴포넌트 화면에 띄우기 (실습)"
       },
       {
         "time": "12:00–13:00",
@@ -357,55 +357,55 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 [실습] ref/reactive로 반응형 상태 만들고 화면에 출력하기"
+        "topic": "4교시 반응형 상태 ref와 reactive 이해 (실습)"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 템플릿 디렉티브 v-bind·v-on·v-model 개념과 동작 원리"
+        "topic": "5교시 템플릿 문법과 디렉티브 v-if·v-for·v-bind (실습)"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 [실습] v-if·v-for로 조건·반복 렌더링 직접 만들기"
+        "topic": "6교시 이벤트 v-on과 폼 바인딩 v-model (실습)"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 computed·watch로 파생 상태와 변화 감지 다루기"
+        "topic": "7교시 computed와 watch로 파생 상태 다루기 (실습)"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습·미니프로젝트] 실시간 반응형 카운터+할 일 입력 UI 완성"
+        "topic": "8교시 미니 실습: 반응형 카운터·할 일 목록 UI (실습)"
       }
     ],
     "practice": {
-      "title": "나의 첫 Vue 반응형 카운터 & 인사말 카드 만들기",
+      "title": "반응형 할 일(To-Do) 목록 UI 만들기",
       "steps": [
-        "터미널을 열고 `npm create vite@latest my-first-vue -- --template vue` 를 입력해 Vue 프로젝트 뼈대를 생성한다.",
-        "`cd my-first-vue` 로 폴더에 들어간 뒤 `npm install` 로 필요한 라이브러리를 모두 내려받는다.",
-        "`npm run dev` 를 실행하고 브라우저에서 http://localhost:5173 을 열어 기본 화면(Vite+Vue 로고)이 뜨는지 확인한다.",
-        "src/App.vue 파일을 열고 기존 내용을 모두 지운 뒤, <script setup> 안에 `const count = ref(0)` 으로 반응형 숫자 변수를 만든다.",
-        "<template> 안에 `<button @click=\"count++\">눌린 횟수: {{ count }}</button>` 를 작성해 버튼을 누르면 숫자가 올라가게 한다.",
-        "이름 입력칸을 추가한다: `const name = ref('')` 선언 후 `<input v-model=\"name\">` 와 `<p>안녕하세요, {{ name }}님!</p>` 를 넣는다.",
-        "저장(Ctrl+S)하면 새로고침 없이 화면이 바로 바뀌는 것(HMR, 핫 리로드)을 눈으로 확인한다.",
-        "버튼을 3번 누르면 화면에 '눌린 횟수: 3' 이 표시되고, 입력칸에 글자를 치면 인사말이 실시간으로 따라 바뀌는 결과를 확인한다.",
-        "computed 를 추가해 `const doubled = computed(() => count.value * 2)` 로 2배 값을 만들고 화면에 함께 표시한다.",
-        "마지막으로 화면을 캡처하고, App.vue 파일을 저장한 상태로 마무리한다."
+        "터미널에서 'npm create vite@latest my-vue -- --template vue' 명령으로 Vue 프로젝트 뼈대를 생성한다",
+        "'cd my-vue' 후 'npm install' 로 의존성을 내려받고 'npm run dev' 로 개발 서버를 켜서 브라우저 http://localhost:5173 화면을 확인한다",
+        "src/App.vue 파일을 열고 기존 내용을 지운 뒤 <script setup>·<template>·<style> 세 칸으로 된 빈 SFC 골격을 만든다",
+        "<script setup> 안에서 'import { ref } from \"vue\"' 를 적고, 할 일 배열 todos = ref([]) 와 입력값 text = ref('') 를 선언한다",
+        "addTodo 함수를 만들어 입력값이 비어있지 않으면 todos 배열에 {id, title, done:false} 객체를 push 하고 text 를 다시 빈 문자열로 비운다",
+        "<template> 에 <input v-model=\"text\"> 와 <button @click=\"addTodo\"> 를 배치하고, <ul> 안에서 v-for 로 todos 를 돌며 <li> 로 출력한다",
+        "각 <li> 의 체크박스에 v-model=\"todo.done\" 을 연결하고, 완료된 항목은 :class 로 취소선 스타일이 붙도록 한다",
+        "computed 로 '남은 할 일 개수' remaining 을 만들어 화면 상단에 {{ remaining }} 로 표시한다",
+        "브라우저에서 할 일을 입력→추가→체크해 보며 화면이 즉시 바뀌는지(반응형) 눈으로 확인한다",
+        "완성 화면을 캡처하고 App.vue 전체 코드를 저장한다"
       ],
-      "deliverable": "버튼 클릭 시 숫자가 증가하고 입력값이 실시간 반영되는 App.vue 파일 1개와 동작 화면 캡처"
+      "deliverable": "할 일을 추가·완료 체크·남은 개수 표시가 동작하는 App.vue 파일과 실행 화면 캡처"
     }
   },
   "vue-2": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 컴포넌트로 화면 쪼개기 · 부모-자식 관계 이해(이론)"
+        "topic": "1교시 컴포넌트로 화면 쪼개기 (개념·실습)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 [실습] 자식 컴포넌트 만들고 props로 데이터 내려주기"
+        "topic": "2교시 props 로 부모→자식 데이터 내려주기 (실습)"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 emit으로 자식 → 부모에게 이벤트 올려보내기"
+        "topic": "3교시 emit 으로 자식→부모 이벤트 올려보내기 (실습)"
       },
       {
         "time": "12:00–13:00",
@@ -414,55 +414,54 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 [실습] 부모-자식 양방향 통신 To-Do 아이템 만들기"
+        "topic": "4교시 slot 으로 내용 끼워넣기 (실습)"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 슬롯(slot)으로 재사용 가능한 레이아웃 컴포넌트 설계"
+        "topic": "5교시 라이프사이클 훅과 onMounted (실습)"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 [실습] 라이프사이클 훅(onMounted 등) 직접 찍어보기"
+        "topic": "6교시 Composition API와 setup 패턴 (실습)"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 Composition API와 컴포저블(composable)로 로직 재사용"
+        "topic": "7교시 컴포저블(useXxx)로 로직 재사용 (실습)"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습·미니프로젝트] 재사용 목록+아이템 컴포넌트 구조 완성"
+        "topic": "8교시 미니 실습: 목록·아이템 컴포넌트 분리 (실습)"
       }
     ],
     "practice": {
-      "title": "부모-자식이 대화하는 할 일 목록(To-Do) 컴포넌트 만들기",
+      "title": "목록(List)·아이템(Item) 컴포넌트로 분리한 회원 카드",
       "steps": [
-        "src/components 폴더를 만들고 그 안에 TodoItem.vue 파일을 새로 생성한다.",
-        "TodoItem.vue 의 <script setup>에 `const props = defineProps(['text','done'])` 를 적어 부모가 내려줄 데이터 통로를 연다.",
-        "같은 곳에 `const emit = defineEmits(['toggle','remove'])` 를 적어 부모에게 보낼 신호 통로를 연다.",
-        "TodoItem 템플릿에 체크박스와 삭제 버튼을 만들고, 각각 `@change=\"emit('toggle')\"`, `@click=\"emit('remove')\"` 로 신호를 보내게 한다.",
-        "App.vue 에서 `import TodoItem from './components/TodoItem.vue'` 로 자식을 불러온다.",
-        "App.vue 에 `const todos = ref([{text:'우유 사기',done:false}])` 목록을 만들고, v-for로 TodoItem을 반복 렌더링하며 :text·:done 으로 데이터를 내려준다.",
-        "TodoItem에서 올라온 toggle/remove 신호를 받아 App.vue에서 해당 항목의 done을 뒤집거나 배열에서 제거하는 함수를 연결한다.",
-        "입력칸과 '추가' 버튼을 만들어 새 할 일을 todos 배열에 추가한다.",
-        "체크하면 글자에 줄이 그어지고, 삭제 버튼을 누르면 목록에서 사라지는 결과를 화면에서 확인한다.",
-        "완성된 컴포넌트 2개(App.vue, TodoItem.vue)를 저장하고 동작 화면을 캡처한다."
+        "src/components 폴더를 만들고 그 안에 UserItem.vue 파일을 새로 생성한다",
+        "UserItem.vue 에서 defineProps 로 user 객체를 props 로 받도록 선언하고, <template> 에 이름·이메일을 표시한다",
+        "UserItem 에 '삭제' 버튼을 두고 defineEmits 로 'remove' 이벤트를 정의해 클릭 시 user.id 를 부모로 올려보낸다",
+        "App.vue 에서 users = ref([...]) 배열을 만들고 <UserItem> 을 import 한다",
+        "App.vue 의 <template> 에서 v-for 로 users 를 돌며 <UserItem :user=\"u\" @remove=\"removeUser\"> 를 렌더링한다",
+        "removeUser(id) 함수를 만들어 해당 id 를 가진 회원을 users 배열에서 filter 로 제거한다",
+        "브라우저에서 삭제 버튼을 눌렀을 때 해당 카드만 사라지는지 확인한다(자식→부모 통신 검증)",
+        "slot 을 활용해 UserItem 카드 하단에 부모가 원하는 내용을 끼워넣을 수 있게 <slot> 을 추가한다",
+        "완성된 두 파일의 코드와 동작 화면을 캡처해 저장한다"
       ],
-      "deliverable": "props/emit으로 통신하는 App.vue + TodoItem.vue 두 컴포넌트와 추가·체크·삭제가 동작하는 화면 캡처"
+      "deliverable": "props·emit·slot 을 모두 사용한 UserItem.vue 와 App.vue, 삭제 동작 화면 캡처"
     }
   },
   "vue-3": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 SPA(싱글페이지앱)와 라우팅 개념 · 새로고침 없는 화면 전환(이론)"
+        "topic": "1교시 SPA와 라우팅 개념 이해 (개념)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 [실습] Vue Router 설치하고 페이지 2개 연결하기"
+        "topic": "2교시 Vue Router 설치와 기본 라우트 (실습)"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 동적 라우트·중첩 라우트·router-link/router-view 이해"
+        "topic": "3교시 router-link·router-view로 페이지 이동 (실습)"
       },
       {
         "time": "12:00–13:00",
@@ -471,55 +470,54 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 [실습] 목록 → 상세 페이지 이동(파라미터 전달) 만들기"
+        "topic": "4교시 동적 파라미터와 중첩 라우트 (실습)"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 네비게이션 가드로 로그인 안 한 사용자 막기"
+        "topic": "5교시 네비게이션 가드로 접근 제어 (실습)"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 전역 상태관리가 필요한 이유 · Pinia 개념(이론)"
+        "topic": "6교시 Pinia 설치와 스토어 만들기 (실습)"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 [실습] Pinia 스토어로 장바구니 상태 만들기"
+        "topic": "7교시 state·getters·actions 다루기 (실습)"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습·미니프로젝트] 목록·상세 라우팅 + 전역 장바구니 완성"
+        "topic": "8교시 미니 실습: 목록·상세 라우팅 + 전역 장바구니 (실습)"
       }
     ],
     "practice": {
-      "title": "상품 목록 → 상세 페이지 이동 + 전역 장바구니(Pinia) 만들기",
+      "title": "상품 목록·상세 라우팅 + Pinia 전역 장바구니",
       "steps": [
-        "`npm install vue-router pinia` 를 입력해 라우터와 상태관리 라이브러리를 설치한다.",
-        "src/router/index.js 를 만들고 createRouter·createWebHistory로 '/'(목록)와 '/product/:id'(상세) 두 경로를 등록한다.",
-        "src/main.js 에서 `app.use(router)` 와 `app.use(createPinia())` 를 추가해 앱 전체에 연결한다.",
-        "App.vue에 `<router-view />` 를 넣어 현재 경로에 맞는 페이지가 표시될 자리를 만든다.",
-        "ProductList.vue에서 상품들을 v-for로 그리고, 각 상품을 `<router-link :to=\"'/product/' + p.id\">` 로 감싸 상세로 이동하게 한다.",
-        "ProductDetail.vue에서 `useRoute()` 로 주소의 id를 읽어 해당 상품 정보를 화면에 표시한다.",
-        "src/stores/cart.js 에 defineStore로 items 상태와 addItem 액션을 만들어 전역 장바구니를 정의한다.",
-        "상세 페이지의 '담기' 버튼에 cart.addItem(상품)을 연결하고, 헤더에 장바구니 개수를 표시한다.",
-        "상품을 클릭해 상세로 이동하고 '담기'를 누르면, 페이지를 옮겨도 헤더의 장바구니 숫자가 유지되는 결과를 확인한다.",
-        "전체 파일(router, stores, 페이지 컴포넌트)을 저장하고 이동·담기 동작을 캡처한다."
+        "'npm install vue-router@4 pinia' 로 라우터와 상태관리 라이브러리를 설치한다",
+        "src/router/index.js 를 만들어 '/'(목록)와 '/product/:id'(상세) 두 라우트를 정의한다",
+        "main.js 에서 app.use(router) 와 app.use(createPinia()) 를 등록한다",
+        "App.vue 에 <router-view /> 를 두어 현재 라우트에 맞는 페이지가 표시되도록 한다",
+        "ProductList.vue 에서 상품들을 v-for 로 출력하고 <router-link :to=\"'/product/'+p.id\"> 로 상세로 이동하게 한다",
+        "ProductDetail.vue 에서 useRoute().params.id 로 어떤 상품인지 읽어 화면에 표시한다",
+        "stores/cart.js 에 defineStore 로 장바구니 스토어를 만들고 items 상태와 add 액션을 정의한다",
+        "상세 페이지의 '담기' 버튼이 cart 스토어의 add 를 호출하게 하고, 헤더에 담긴 개수를 표시한다",
+        "목록→상세 이동, 담기, 헤더 개수 증가가 새로고침 없이 동작하는지 브라우저에서 확인한다"
       ],
-      "deliverable": "라우팅으로 목록↔상세가 전환되고 Pinia로 장바구니 개수가 전역 유지되는 앱과 동작 캡처"
+      "deliverable": "라우터 설정·두 페이지·Pinia 장바구니 스토어가 연동되어 동작하는 미니 앱과 화면 캡처"
     }
   },
   "vue-4": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 서버와 대화하기 · 비동기·API·JSON 개념(이론)"
+        "topic": "1교시 비동기와 API 통신 개념 (개념)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 [실습] fetch/axios로 외부 API 데이터 불러오기"
+        "topic": "2교시 fetch·axios로 데이터 불러오기 (실습)"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 로딩·에러·빈 상태 처리로 안정적인 화면 만들기"
+        "topic": "3교시 로딩·에러 상태 처리 패턴 (실습)"
       },
       {
         "time": "12:00–13:00",
@@ -528,40 +526,40 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 [실습] 폼 입력 + 유효성 검사로 데이터 보내기(POST)"
+        "topic": "4교시 폼 입력과 유효성 검사 (실습)"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 환경변수(.env)와 API 베이스 주소 분리 관리"
+        "topic": "5교시 환경변수와 API 베이스 설정 (실습)"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 Vite 빌드 원리와 정적 배포 개념(이론)"
+        "topic": "6교시 미니 SPA 통합: 목록·상세·폼 (실습)"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 [실습] npm run build 후 결과물 확인 · 미리보기"
+        "topic": "7교시 Vite 빌드와 정적 배포 (실습)"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습·미니프로젝트] 목록·상세·폼 미니 SPA 완성하고 배포"
+        "topic": "8교시 최종 실습: SPA 완성·배포·점검 (실습)"
       }
     ],
     "practice": {
-      "title": "외부 API로 사용자 목록을 불러와 보여주고 폼으로 추가한 뒤 배포하기",
+      "title": "공개 API로 게시글을 불러오는 미니 SPA 완성·배포",
       "steps": [
-        "`npm install axios` 로 HTTP 요청 라이브러리를 설치한다.",
-        "프로젝트 최상위에 .env 파일을 만들고 `VITE_API_URL=https://jsonplaceholder.typicode.com` 을 적어 API 주소를 분리한다.",
-        "UserList.vue의 <script setup>에서 onMounted 시점에 axios.get으로 /users 데이터를 불러오고 users 배열에 담는다.",
-        "불러오는 동안 loading=true로 '불러오는 중...'을, 실패하면 error 메시지를 보여주도록 분기 처리한다.",
-        "v-for로 받아온 사용자 이름과 이메일을 카드 형태로 화면에 출력한다.",
-        "입력 폼(이름·이메일)을 만들고, 빈 칸이거나 이메일에 @가 없으면 경고를 띄우는 유효성 검사를 넣는다.",
-        "'추가' 버튼을 누르면 axios.post로 서버에 보내고, 성공하면 화면 목록 맨 위에 새 사용자를 추가한다.",
-        "터미널에서 `npm run build` 를 실행해 dist 폴더(배포용 결과물)가 생기는지 확인한다.",
-        "`npm run preview` 로 빌드 결과를 미리 띄워 실제 배포 화면처럼 동작하는지 확인한다.",
-        "dist 폴더를 정적 호스팅(예: Netlify drop 또는 GitHub Pages)에 올리고, 공개 주소에서 목록과 폼이 동작하는 결과를 확인한다."
+        "'npm install axios' 로 HTTP 통신 라이브러리를 설치한다",
+        "프로젝트 루트에 .env 파일을 만들어 VITE_API_BASE=https://jsonplaceholder.typicode.com 를 적는다",
+        "src/api.js 에서 axios.create 로 baseURL 을 import.meta.env.VITE_API_BASE 로 설정한 인스턴스를 만든다",
+        "PostList.vue 의 onMounted 에서 api.get('/posts') 를 호출해 게시글 목록을 불러오고, 불러오는 동안 loading 을 true 로 둔다",
+        "통신 성공 시 데이터를 posts 에 담고, 실패 시 error 메시지를 화면에 표시한다(try/catch)",
+        "v-if 로 loading·error·정상 상태에 따라 다른 화면을 보여준다",
+        "글 작성 폼을 만들어 제목이 비어 있으면 '제목을 입력하세요' 경고를 띄우는 유효성 검사를 넣는다",
+        "'npm run build' 로 dist 폴더를 생성하고 'npm run preview' 로 빌드 결과를 확인한다",
+        "dist 폴더를 정적 호스팅(GitHub Pages 등)에 올려 실제 주소에서 동작을 확인한다",
+        "최종 동작 화면(목록·로딩·에러·폼)과 배포 주소를 캡처해 제출한다"
       ],
-      "deliverable": "API로 목록을 불러오고 폼으로 추가되며 빌드·배포까지 끝난 미니 SPA의 공개 URL과 화면 캡처"
+      "deliverable": "API 연동·로딩/에러 처리·폼 검증이 동작하는 미니 SPA와 배포된 URL, 화면 캡처"
     }
   },
   "webproject-1": {
@@ -1525,15 +1523,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 — LangChain이 왜 필요한가: LLM 앱의 고민과 LangChain 생태계 지도"
+        "topic": "오리엔테이션: LangChain이 왜 필요한가 (LLM 앱의 고민거리)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 — 개발환경 셋업: 파이썬 가상환경 · API 키 · 첫 LLM 호출 (실습)"
+        "topic": "[실습] 개발환경 셋업 - 파이썬 가상환경·LangChain·API 키 연결"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 — 3대 부품 익히기: 모델(Model) · 프롬프트(Prompt) · 출력 파서(Output Parser) (실습)"
+        "topic": "[실습] 첫 LLM 호출 - 모델·프롬프트·출력 파서 따로 써보기"
       },
       {
         "time": "12:00–13:00",
@@ -1542,55 +1540,55 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 — LCEL 입문: 파이프(|)로 부품을 잇는 '체인'의 원리"
+        "topic": "LCEL 개념: 파이프(|)로 부품을 조립한다는 발상"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 — LCEL 실전: 프롬프트→모델→파서 체인 만들고 실행하기 (실습)"
+        "topic": "[실습] LCEL로 첫 체인 만들기 (프롬프트 | 모델 | 파서)"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 — 출력 파서 심화: 문자열·리스트·JSON(구조화) 출력 받기 (실습)"
+        "topic": "출력 파서 깊이보기: 문자열·JSON·구조화 출력"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 — 변수 주입과 RunnablePassthrough로 입력 가공하기 (실습)"
+        "topic": "[실습] 번역기·요약기 체인 만들고 입력 바꿔보기"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 — 미니 도전: '요약 + 키워드 추출' 멀티 체인 만들기 + 회고 (실습)"
+        "topic": "마무리: 오늘 배운 부품으로 미니 체인 정리 + Q&A"
       }
     ],
     "practice": {
-      "title": "나만의 첫 LangChain 체인: 입력 글을 받아 한 줄 요약과 키워드를 뽑는 LCEL 파이프라인",
+      "title": "나만의 '한 줄 요약 봇' 체인 만들기 (프롬프트 | 모델 | 파서)",
       "steps": [
-        "터미널에서 'python -m venv venv' 를 입력해 가상환경을 만들고, macOS는 'source venv/bin/activate' 로 활성화한다 (프롬프트 앞에 (venv) 가 보이면 성공).",
-        "'pip install langchain langchain-openai python-dotenv' 명령으로 필요한 패키지를 설치한다.",
-        "프로젝트 폴더에 '.env' 파일을 만들고 첫 줄에 'OPENAI_API_KEY=sk-...' 형태로 본인 키를 적어 저장한다.",
-        "'app.py' 파일을 만들고, dotenv로 키를 불러온 뒤 ChatOpenAI 모델 객체를 생성하는 코드를 작성한다.",
-        "ChatPromptTemplate.from_template 로 '다음 글을 한 문장으로 요약해줘: {text}' 라는 프롬프트 틀을 만든다.",
-        "프롬프트 | 모델 | StrOutputParser() 를 파이프(|)로 이어 chain 변수에 담는다.",
-        "chain.invoke({'text': '아무 뉴스 기사 한 단락'}) 을 호출하고 print 로 결과를 출력한다 (기대 결과: 한 문장 요약이 화면에 출력됨).",
-        "키워드 추출용 두 번째 프롬프트와 체인을 추가로 만들어 같은 입력에 대해 키워드 3개를 뽑게 한다.",
-        "두 결과(요약·키워드)를 딕셔너리로 묶어 함께 출력하도록 코드를 수정한다 (기대 결과: {'summary': ..., 'keywords': ...} 형태 출력).",
-        "'python app.py' 로 전체 실행해 요약과 키워드가 정상 출력되는지 확인하고, 입력 글을 바꿔 가며 결과를 비교한다."
+        "터미널을 열고 'python -m venv venv' 명령으로 가상환경을 만든 뒤 'source venv/bin/activate'(윈도우는 venv\\Scripts\\activate)로 활성화한다.",
+        "'pip install langchain langchain-anthropic' 명령으로 LangChain 본체와 모델 연동 패키지를 설치한다.",
+        "발급받은 API 키를 터미널에서 'export ANTHROPIC_API_KEY=sk-...' 로 환경변수에 등록한다(윈도우는 set 사용).",
+        "summarizer.py 파일을 만들고 ChatPromptTemplate.from_template 로 '{text}를 한 문장으로 요약해줘' 형태의 프롬프트를 작성한다.",
+        "ChatAnthropic(model=...) 로 모델 객체를 만들고, StrOutputParser() 로 출력 파서를 만든다.",
+        "프롬프트 | 모델 | 파서 를 파이프(|)로 이어 chain 변수에 담는다.",
+        "chain.invoke({'text': '오늘 회의에서 우리는 신제품 출시 일정을 9월로 확정했다'}) 를 호출한다.",
+        "터미널에 'python summarizer.py'를 실행해 한 문장 요약이 출력되는지 확인한다(기대 결과: '신제품 출시를 9월로 확정했다' 같은 한 줄).",
+        "입력 text를 다른 문장으로 바꿔 다시 실행하며, 코드를 고치지 않아도 결과가 달라지는지 확인한다.",
+        "마지막으로 프롬프트 문구를 '세 줄로 요약'으로 바꿔 같은 체인이 다르게 동작함을 관찰한다."
       ],
-      "deliverable": "입력 글을 받아 한 줄 요약과 키워드 3개를 함께 출력하는 app.py 파일과 실행 결과 캡처"
+      "deliverable": "입력 문장을 받아 한 문장으로 요약해 출력하는 summarizer.py 파일과 실행 결과 스크린샷"
     }
   },
   "langchain-2": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 — 챗봇은 왜 앞 대화를 기억할까: 대화 메모리(Memory)의 필요성"
+        "topic": "복습: 어제의 체인에 '기억'과 '도구'를 더하면? (오늘의 그림)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 — 메시지 히스토리로 멀티턴 대화 만들기 (실습)"
+        "topic": "[실습] 대화 메모리 - 앞말을 기억하는 챗봇 만들기"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 — 도구(Tool)란 무엇인가: LLM에 계산기·검색 같은 손발 달기 (실습)"
+        "topic": "도구(Tool) 개념: LLM이 계산기·검색을 직접 쓰게 하기"
       },
       {
         "time": "12:00–13:00",
@@ -1599,55 +1597,55 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 — RAG 맛보기: 내 문서를 잘라(청킹) 임베딩하고 벡터로 저장하기 (실습)"
+        "topic": "[실습] 나만의 Tool 정의하고 모델에 연결하기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 — Retriever로 질문과 비슷한 문서 조각 찾아오기 (실습)"
+        "topic": "문서 QA 큰그림: 임베딩·벡터스토어·리트리버"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 — 검색 결과를 프롬프트에 끼워 답하게 하는 문서 QA 체인 (실습)"
+        "topic": "[실습] PDF/텍스트 읽어 벡터스토어에 넣기"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 — 조건에 따라 길을 나누는 라우팅(Routing) 체인 (실습)"
+        "topic": "[실습] 리트리버 결합 문서 QA 체인 완성"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 — 종합 실습: 문서 QA 챗봇 완성 + 회고 (실습)"
+        "topic": "마무리: 메모리+도구+문서QA를 합친 챗봇 정리 + Q&A"
       }
     ],
     "practice": {
-      "title": "내 PDF/텍스트 문서에 질문하면 근거와 함께 답하는 '문서 QA 챗봇' 만들기",
+      "title": "내 문서로 답하는 'QA 챗봇' 만들기 (적재 → 검색 → 답변)",
       "steps": [
-        "'pip install langchain-community langchain-chroma' 로 문서 처리·벡터 저장에 필요한 패키지를 추가 설치한다.",
-        "질문 대상이 될 텍스트 파일(예: 회사 소개 docs.txt)을 프로젝트 폴더에 준비한다.",
-        "TextLoader로 문서를 불러오고, RecursiveCharacterTextSplitter로 500자 단위 조각으로 자른다.",
-        "OpenAIEmbeddings로 각 조각을 벡터(숫자 묶음)로 바꾸고 Chroma 벡터DB에 저장한다.",
-        "vectorstore.as_retriever() 로 '질문과 비슷한 조각을 찾아오는' retriever를 만든다.",
-        "'아래 문맥만 근거로 답하라' 는 프롬프트에 {context}와 {question} 빈칸을 둔다.",
-        "retriever→프롬프트→모델→파서를 LCEL로 이어 RAG 체인을 완성한다.",
-        "chain.invoke('회사 설립 연도는?') 처럼 질문을 넣고 답을 출력한다 (기대 결과: 문서 근거에 기반한 답 출력).",
-        "문서에 없는 내용을 물어 '모른다'고 답하는지 확인해 환각(없는 사실 지어내기)을 점검한다.",
-        "검색된 문서 조각도 함께 출력하도록 코드를 고쳐 답의 근거를 눈으로 확인한다."
+        "'pip install langchain-community langchain-chroma langchain-anthropic chromadb' 로 필요한 패키지를 설치한다.",
+        "회사 소개나 매뉴얼 같은 텍스트를 docs.txt 파일로 준비해 같은 폴더에 둔다.",
+        "TextLoader('docs.txt').load() 로 문서를 읽어 메모리로 불러온다.",
+        "RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50) 로 문서를 작은 조각으로 자른다.",
+        "Chroma.from_documents(조각들, 임베딩) 로 조각들을 벡터스토어에 저장(색인)한다.",
+        "vectorstore.as_retriever() 로 질문과 비슷한 조각을 찾아 주는 리트리버를 만든다.",
+        "프롬프트에 '{context}만 근거로 {question}에 답해' 식으로 검색 결과 자리를 넣고 체인을 조립한다.",
+        "chain.invoke('환불 규정이 어떻게 되나요?') 를 실행한다.",
+        "터미널에서 문서 안 내용에 근거한 답이 나오는지, 문서에 없는 질문엔 '모른다'고 하는지 확인한다(기대 결과: 문서 기반 답변).",
+        "질문을 2~3개 더 바꿔 던지며, 답이 문서 내용과 일치하는지 검증한다."
       ],
-      "deliverable": "텍스트 문서 기반으로 질문에 근거와 함께 답하는 RAG 챗봇 스크립트와 3개 질문 실행 결과"
+      "deliverable": "docs.txt를 근거로 질문에 답하는 qa_bot.py와, 서로 다른 질문 3개에 대한 실행 결과 캡처"
     }
   },
   "langchain-3": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 — 왜 답이 한꺼번에 다 나오면 답답할까: 스트리밍(Streaming)의 가치"
+        "topic": "복습: 동작하는 챗봇을 '서비스'로 만들려면 무엇이 더 필요한가"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 — 체인 응답을 글자 단위로 흘려보내기 (실습)"
+        "topic": "[실습] 스트리밍 응답 - 글자가 흐르듯 나오게 하기"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 — 콜백(Callback)으로 토큰·비용·이벤트 들여다보기 (실습)"
+        "topic": "콜백(Callback)으로 내부 동작 들여다보기"
       },
       {
         "time": "12:00–13:00",
@@ -1656,40 +1654,40 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 — LangSmith로 체인 실행을 추적·디버깅하기 (실습)"
+        "topic": "[실습] LangSmith로 체인 추적·디버깅하기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 — 캐싱(Caching)으로 중복 호출 비용 줄이기 (실습)"
+        "topic": "비용·캐싱·에러 처리: 실서비스에서 꼭 챙길 것들"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 — 에러 처리: 재시도·폴백(fallback)으로 안 죽는 체인 만들기 (실습)"
+        "topic": "[실습] 캐싱·재시도·예외 처리 붙이기"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 — FastAPI로 LLM 체인을 웹 API로 감싸 배포 준비하기 (실습)"
+        "topic": "[실습] FastAPI로 챗봇을 웹 API로 배포하기"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 — 미니 생성형 AI 서비스 완성 + 회고·발표 (실습)"
+        "topic": "마무리: 3일간 부품을 합친 미니 생성형 AI 서비스 + 발표"
       }
     ],
     "practice": {
-      "title": "스트리밍·캐싱·에러처리를 갖춘 LLM 체인을 FastAPI 웹 서비스로 배포하기",
+      "title": "스트리밍 + 캐싱 + 예외처리를 갖춘 챗봇을 FastAPI 웹 서비스로 배포",
       "steps": [
-        "'pip install fastapi uvicorn' 로 웹 서버 패키지를 설치한다.",
-        "Day1의 요약 체인을 가져와 별도 chain.py로 분리하고 import 할 수 있게 한다.",
-        "set_llm_cache로 인메모리 캐시를 켜서 같은 입력의 반복 호출을 빠르게 만든다.",
-        "체인에 .with_retry()를 붙여 일시적 오류 시 자동 재시도되게 한다.",
-        "main.py에 FastAPI 앱을 만들고 POST /summarize 엔드포인트를 정의한다.",
-        "요청 본문(JSON)의 text를 받아 chain.invoke로 처리해 결과를 반환한다.",
-        "StreamingResponse로 답을 글자 단위로 흘려보내는 /stream 엔드포인트도 추가한다.",
-        "'uvicorn main:app --reload' 로 서버를 띄운다 (기대 결과: http://127.0.0.1:8000 에서 동작).",
-        "브라우저에서 /docs 자동 문서를 열어 /summarize를 직접 호출해 본다.",
-        "같은 입력을 두 번 호출해 캐시 덕분에 두 번째가 더 빠른지 시간을 비교한다."
+        "'pip install fastapi uvicorn langchain-anthropic' 로 웹 서버와 모델 패키지를 설치한다.",
+        "app.py를 만들고 FastAPI() 인스턴스와 ChatAnthropic 모델, 프롬프트|모델 체인을 준비한다.",
+        "set_llm_cache(InMemoryCache())로 같은 질문은 다시 모델을 부르지 않게 캐싱을 켠다.",
+        "@app.post('/chat') 경로를 만들고, 요청 본문에서 질문(message)을 꺼낸다.",
+        "try/except로 모델 호출을 감싸 오류가 나면 친절한 에러 메시지를 돌려주게 한다.",
+        "StreamingResponse와 chain.stream을 이용해 답을 글자 단위로 흘려보내는 /stream 경로를 추가한다.",
+        "'uvicorn app:app --reload' 명령으로 서버를 실행한다.",
+        "브라우저에서 http://localhost:8000/docs 를 열어 /chat에 질문을 넣고 Execute로 답을 받는다(기대 결과: JSON 답변).",
+        "같은 질문을 두 번 보내, 두 번째가 캐시 덕분에 즉시 응답하는지 응답 시간을 비교한다.",
+        "/stream 경로를 호출해 답이 한꺼번에가 아니라 조금씩 흘러나오는지 확인한다."
       ],
-      "deliverable": "스트리밍·캐싱·재시도가 적용된 chain.py와 FastAPI main.py, /docs에서 호출한 결과 캡처"
+      "deliverable": "스트리밍·캐싱·예외처리가 들어간 app.py와, /docs에서 호출한 결과 및 두 번째 호출이 빨라진 응답 시간 캡처"
     }
   },
   "serving-1": {
