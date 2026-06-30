@@ -5,6 +5,74 @@
 const lunch = { time: '12:00–13:00', topic: '점심 휴식', lunch: true }
 
 export const plans = {
+  // ── 팀빌딩 · Git 이해/활용 (5H · 09:00~15:00) ──
+  'git-1': {
+    schedule: [
+      { time: '09:00–09:40', topic: 'OT · 팀빌딩', detail: '과정 목표·운영 방식 소개, 아이스브레이킹, 팀 구성과 그라운드룰' },
+      { time: '09:40–10:30', topic: '버전관리와 Git', detail: '버전관리의 필요성, Git 설치·config 초기 설정, 저장소 init/clone' },
+      { time: '10:30–12:00', topic: 'Git 기본 흐름 · 실습', detail: 'working tree→staging(add)→commit, status·log·diff, .gitignore·커밋 메시지' },
+      lunch,
+      { time: '13:00–14:00', topic: '브랜치·머지·충돌', detail: 'branch·merge, 충돌(conflict) 발생과 해결 실습' },
+      { time: '14:00–15:00', topic: 'GitHub 원격 협업', detail: 'remote·push·pull, Pull Request·코드리뷰 — 팀 협업 실습' },
+    ],
+    practice: {
+      title: '팀 저장소에서 브랜치로 협업하기',
+      steps: [
+        '팀 GitHub 저장소를 clone',
+        '본인 feature 브랜치 생성·작업·commit',
+        'push 후 Pull Request 생성',
+        '서로 코드리뷰 → 충돌 해결 → merge',
+      ],
+      deliverable: '브랜치·PR·머지 이력이 남은 팀 저장소',
+    },
+  },
+
+  // ── LLM과 Transformer 아키텍처 ──
+  'transformer-1': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'OT · 언어모델 개요', detail: '강의 목표, 언어모델=다음 토큰 예측, LLM의 큰 그림' },
+      { time: '09:30–11:00', topic: '입력 표현', detail: '토큰화(BPE), 임베딩과 벡터 공간, 문맥(Context)과 시퀀스' },
+      { time: '11:00–12:00', topic: '기존 모델의 한계', detail: 'RNN/LSTM 순차 처리, 장기 의존성 소실, 병렬화 불가' },
+      lunch,
+      { time: '13:00–14:30', topic: '실습: 임베딩 다루기', detail: '토크나이저로 분해, 임베딩 추출, 코사인 유사도 비교' },
+      { time: '14:30–16:00', topic: 'Self-Attention', detail: 'Attention 직관, Query·Key·Value, Scaled Dot-Product Attention' },
+      { time: '16:00–17:30', topic: '실습: Attention 계산', detail: 'QKᵀ/√d·softmax 가중합 계산, 가중치 히트맵 시각화' },
+      { time: '17:30–18:00', topic: '정리 · Q&A', detail: '핵심 정리, Day2(Transformer 구조) 예고' },
+    ],
+    practice: {
+      title: 'Self-Attention 직접 계산하기',
+      steps: [
+        '짧은 문장을 토큰화·임베딩',
+        '작은 차원으로 Q·K·V 행렬 구성',
+        'QKᵀ/√d → softmax 로 가중치 산출',
+        '가중치 × V 로 출력 계산·해석',
+      ],
+      deliverable: 'Attention 가중치 계산·시각화 노트북',
+    },
+  },
+  'transformer-2': {
+    schedule: [
+      { time: '09:00–09:30', topic: 'Day1 리뷰', detail: 'Self-Attention 복습, 오늘 목표(Transformer 전체 구조)' },
+      { time: '09:30–11:00', topic: 'Transformer 블록', detail: 'Multi-Head Attention, Positional Encoding, FFN' },
+      { time: '11:00–12:00', topic: '안정화 장치', detail: '잔차연결(Residual)·LayerNorm, 깊은 망 학습' },
+      lunch,
+      { time: '13:00–14:30', topic: '실습: 블록 조립', detail: 'Multi-Head Attention+PE+잔차연결로 인코더 블록 구성' },
+      { time: '14:30–16:00', topic: '구조와 대표 모델', detail: 'Encoder-Decoder, BERT(인코더) vs GPT(디코더), T5' },
+      { time: '16:00–17:30', topic: '사전학습·실습', detail: '사전학습/파인튜닝, 사전학습 모델로 추론·임베딩 확인' },
+      { time: '17:30–18:00', topic: '정리 · 발표', detail: '스케일링 법칙과 LLM 흐름 정리, 회고' },
+    ],
+    practice: {
+      title: '사전학습 모델로 추론해 보기',
+      steps: [
+        'HuggingFace 사전학습 모델 로드',
+        'BERT로 마스크 채우기·문장 임베딩',
+        'GPT류로 다음 토큰 생성',
+        'BERT vs GPT 동작 차이 비교·정리',
+      ],
+      deliverable: '사전학습 모델 추론 노트북과 비교 메모',
+    },
+  },
+
   // ── 데이터 분석을 위한 Python 이해 ──
   'python-1': {
     schedule: [

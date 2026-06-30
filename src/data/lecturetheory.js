@@ -4,6 +4,130 @@
 // (1차: LLM·Agent 핵심 / 이후 ML·DL·Vue·서빙·프로젝트로 확장)
 
 export const theory = {
+  // ── 팀빌딩 · Git 이해/활용 ──
+  'git-1': {
+    theory: [
+      {
+        h: '왜 버전관리가 협업의 출발점인가',
+        body: '여러 사람이 같은 코드를 동시에 고치면 "누가 무엇을 언제 바꿨는지", "어디서 깨졌는지", "어떻게 되돌릴지"가 곧바로 문제가 된다. Git은 변경을 커밋 단위 스냅샷으로 기록하고 각 커밋에 해시·작성자·메시지를 남겨, 모든 이력을 추적하고 임의의 시점으로 되돌릴 수 있게 한다. 파일을 통째로 복사해 덮어쓰는 방식과 달리, 변경의 맥락(왜 바꿨는가)이 메시지로 남기 때문에 코드가 곧 협업의 기록이 된다. 팀빌딩으로 합의한 그라운드룰(브랜치 규칙·커밋 컨벤션)이 이 기록의 품질을 좌우한다.',
+      },
+      {
+        h: 'working tree · staging · commit 3단계',
+        body: 'Git의 핵심은 세 영역의 흐름이다. 작업 폴더(working tree)에서 파일을 고치고, git add로 이번 커밋에 담을 변경만 staging area에 골라 올린 뒤, git commit으로 스냅샷을 저장소에 확정한다. 이 "고르기" 단계 덕분에 한 번에 여러 변경을 했어도 의미 단위로 쪼개 커밋할 수 있다. 좋은 커밋은 하나의 논리적 변경만 담고, 메시지는 "feat: 로그인 추가"처럼 타입과 의도를 드러낸다. 브랜치는 이 커밋들이 이어진 작업 흐름의 포인터이고, merge는 두 흐름을 합치는 일이다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 충돌(conflict) 만들고 해결하기',
+        lang: 'bash',
+        code: `# main에서 한 줄 수정·커밋
+echo "title = Hello" > config.txt
+git add config.txt && git commit -m "feat: title 설정"
+
+# 브랜치에서 같은 줄을 다르게 수정
+git switch -c feature/title
+echo "title = Welcome" > config.txt
+git commit -am "feat: title 문구 변경"
+
+# main도 같은 줄을 수정했다고 가정하고 merge
+git switch main
+echo "title = Hi" > config.txt
+git commit -am "feat: title 문구 수정"
+git merge feature/title       # CONFLICT 발생
+
+# config.txt 안에 충돌 표식이 생김:
+# <<<<<<< HEAD
+# title = Hi
+# =======
+# title = Welcome
+# >>>>>>> feature/title
+# → 원하는 내용만 남기고 표식 삭제 후
+git add config.txt
+git commit -m "merge: title 충돌 해결"`,
+        note: '충돌은 "같은 줄을 서로 다르게 고쳤다"는 신호일 뿐 오류가 아니다. <<<< ==== >>>> 표식 사이에서 남길 내용을 사람이 결정한 뒤 add·commit으로 마무리한다.',
+      },
+    ],
+  },
+
+  // ── LLM과 Transformer 아키텍처 ──
+  'transformer-1': {
+    theory: [
+      {
+        h: 'RNN의 한계와 Attention의 등장',
+        body: 'RNN/LSTM은 토큰을 앞에서부터 하나씩 순서대로 처리하며 상태(state)에 정보를 누적한다. 그래서 문장이 길어지면 앞쪽 정보가 뒤로 갈수록 희미해지는 장기 의존성 문제가 생기고, 본질적으로 순차적이라 GPU로 병렬화하기 어렵다. Attention은 "출력의 각 위치가 입력의 모든 위치를 직접 바라보고 중요도(가중치)를 매긴다"는 발상으로 이 둘을 동시에 푼다. 거리에 상관없이 관련 토큰을 직접 참조하므로 장기 의존성에 강하고, 모든 위치를 행렬 연산으로 한꺼번에 계산하므로 병렬화가 자연스럽다. Transformer는 순환(recurrence)을 완전히 버리고 Attention만으로 시퀀스를 처리한다.',
+      },
+      {
+        h: 'Query·Key·Value로 보는 Self-Attention',
+        body: '각 토큰 임베딩을 세 가지로 투영한다. Query는 "내가 무엇을 찾는가", Key는 "나는 무엇을 제공하는가", Value는 "실제로 전달할 내용"이다. 한 토큰의 Query를 모든 토큰의 Key와 내적해 유사도(점수)를 구하고, 차원이 커지면 점수가 과도하게 커지므로 √d_k로 나눠 안정화한다(Scaled). 이 점수를 softmax로 정규화해 합이 1인 가중치를 만들고, 각 토큰의 Value를 그 가중치로 합산하면 문맥이 반영된 새 표현이 된다. "그 은행에 갔다"에서 "은행"이 "강"이 아니라 "돈"과 연결되는 식의 문맥 해소가 바로 이 가중치로 일어난다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: NumPy로 Self-Attention 한 스텝',
+        lang: 'python',
+        code: `import numpy as np
+
+def softmax(x, axis=-1):
+    e = np.exp(x - x.max(axis=axis, keepdims=True))
+    return e / e.sum(axis=axis, keepdims=True)
+
+# 토큰 4개, 임베딩 차원 8
+np.random.seed(42)
+X = np.random.randn(4, 8)
+
+# 학습되는 투영 행렬(여기선 랜덤)
+Wq, Wk, Wv = (np.random.randn(8, 8) for _ in range(3))
+Q, K, V = X @ Wq, X @ Wk, X @ Wv
+
+d_k = Q.shape[-1]
+scores = Q @ K.T / np.sqrt(d_k)   # (4,4) 토큰 간 점수
+weights = softmax(scores)          # 행마다 합=1
+out = weights @ V                  # 문맥 반영 표현 (4,8)
+
+print("가중치 행렬(합=1):\\n", weights.round(2))
+print("출력 shape:", out.shape)`,
+        note: '실제 모델에선 Wq·Wk·Wv가 학습으로 정해진다. 가중치 행렬의 각 행은 "이 토큰이 다른 토큰들을 얼마나 참조하는지"를 보여준다.',
+      },
+    ],
+  },
+  'transformer-2': {
+    theory: [
+      {
+        h: 'Transformer 블록을 이루는 부품들',
+        body: 'Transformer 한 층은 Multi-Head Attention과 Feed-Forward Network 두 서브층으로 이루어지고, 각 서브층 뒤에 잔차연결(x + f(x))과 LayerNorm이 붙는다. Multi-Head는 Attention을 여러 개로 나눠 각 head가 문법·의미·공참조 등 서로 다른 관계를 동시에 학습하게 한다. Attention 자체는 순서 정보가 없으므로 Positional Encoding으로 위치 벡터를 더해 "몇 번째 토큰인가"를 알려준다. FFN은 각 위치에 독립적으로 적용되는 비선형 변환으로 표현력을 키우고, 잔차연결은 기울기가 깊은 망을 잘 통과하도록, LayerNorm은 분포를 안정화해 학습을 돕는다. 이 동일한 블록을 수십 층 쌓고 폭을 키운 것이 곧 대형 모델이다.',
+      },
+      {
+        h: '인코더·디코더와 사전학습 패러다임',
+        body: '인코더는 입력 전체를 양방향으로 보며 이해에 강해 분류·검색·임베딩에 쓰이고(BERT), 디코더는 앞 토큰만 보며(인과 마스킹) 다음 토큰을 생성해 텍스트 생성에 쓰인다(GPT). T5처럼 둘을 모두 쓰는 seq2seq 구조도 있다. 현대 LLM의 힘은 구조 자체보다 "대규모 텍스트로 다음 토큰/마스크를 맞히는 자기지도 사전학습"에서 나온다. 사전학습으로 언어의 일반 능력을 얻은 뒤 소량 데이터로 과업에 맞춰 파인튜닝하거나, 프롬프트의 예시만으로 적응하는 in-context learning이 가능하다. 모델·데이터·연산을 함께 키우면 성능이 예측 가능하게 좋아진다는 스케일링 법칙이 대형화를 이끌었다.',
+      },
+    ],
+    realCode: [
+      {
+        title: '실전: 사전학습 모델로 임베딩·생성 비교',
+        lang: 'python',
+        code: `import torch
+from transformers import AutoTokenizer, AutoModel
+
+# 인코더(BERT 계열): 문장 임베딩 추출
+name = "sentence-transformers/all-MiniLM-L6-v2"
+tok = AutoTokenizer.from_pretrained(name)
+enc = AutoModel.from_pretrained(name)
+
+def embed(text):
+    batch = tok(text, return_tensors="pt", truncation=True)
+    with torch.no_grad():
+        out = enc(**batch)
+    # 토큰 임베딩 평균 풀링 → 문장 벡터
+    return out.last_hidden_state.mean(dim=1)[0]
+
+a, b = embed("머신러닝 강의"), embed("딥러닝 수업")
+cos = torch.cosine_similarity(a, b, dim=0)
+print("문장 유사도:", round(cos.item(), 3))`,
+        note: 'Transformer 인코더의 마지막 은닉상태를 평균 풀링하면 문장 임베딩이 된다. 이 벡터가 RAG·검색·분류의 입력이 된다.',
+      },
+    ],
+  },
+
   // ── 데이터 분석을 위한 Python 이해 ──
   'python-1': {
     theory: [

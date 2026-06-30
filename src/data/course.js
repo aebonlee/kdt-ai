@@ -9,7 +9,7 @@ export const course = {
   // ── 교육 Overview ──
   overview: {
     period: '2026년 7월 ~ 10월',
-    range: '07.15 ~ 10.28',
+    range: '07.14 ~ 10.28',
     time: '평일 09:00 ~ 18:00',
     format: '100% 오프라인 출석',
   },

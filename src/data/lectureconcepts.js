@@ -2,6 +2,34 @@
 // 8시간 강의의 학술적 토대를 보강한다.
 
 export const concepts = {
+  // ── 팀빌딩 · Git 이해/활용 ──
+  'git-1': [
+    { term: '버전관리(VCS)', desc: '파일의 변경 이력을 시점별로 저장해, 누가·언제·무엇을 바꿨는지 추적하고 과거로 되돌릴 수 있게 하는 시스템.' },
+    { term: '커밋(commit)', desc: '스테이징한 변경을 하나의 의미 단위로 저장소에 기록한 스냅샷. 각 커밋은 고유 해시와 메시지를 가진다.' },
+    { term: '스테이징(staging)', desc: 'add로 커밋에 포함할 변경만 골라 담는 중간 영역. working tree → staging → commit 의 3단계 흐름.' },
+    { term: '브랜치(branch)', desc: '독립된 작업 흐름. main을 건드리지 않고 기능별로 나눠 작업한 뒤 합친다(merge).' },
+    { term: '충돌(conflict)', desc: '같은 부분을 다르게 고친 두 변경을 합칠 때 발생. 사람이 직접 어떤 내용을 남길지 결정해 해소한다.' },
+    { term: 'Pull Request', desc: 'GitHub에서 변경을 main에 합치기 전 코드리뷰·논의를 거치는 협업 단위.' },
+  ],
+
+  // ── LLM과 Transformer 아키텍처 ──
+  'transformer-1': [
+    { term: '언어모델', desc: '앞 토큰들이 주어졌을 때 다음 토큰의 확률 분포를 예측하는 모델. LLM은 이를 대규모로 학습한 것.' },
+    { term: '토큰화·BPE', desc: '텍스트를 모델이 다루는 단위(토큰)로 쪼개는 과정. BPE는 자주 등장하는 글자쌍을 병합해 어휘를 구성한다.' },
+    { term: '임베딩', desc: '토큰을 의미를 담은 고차원 벡터로 변환한 것. 비슷한 의미일수록 벡터 공간에서 가깝다.' },
+    { term: 'Attention', desc: '출력의 각 위치가 입력의 어느 부분에 얼마나 집중할지 가중치로 정하는 메커니즘.' },
+    { term: 'Self-Attention', desc: '한 시퀀스 안에서 토큰들이 서로를 참조해 문맥을 반영하는 Attention. 거리에 무관하게 관계를 포착.' },
+    { term: 'Query·Key·Value', desc: '각 토큰을 세 벡터로 투영해, Query와 Key의 유사도로 가중치를 만들고 Value를 가중합한다.' },
+  ],
+  'transformer-2': [
+    { term: 'Multi-Head Attention', desc: 'Attention을 여러 개(head) 병렬 수행해 서로 다른 관계(문법·의미 등)를 동시에 포착한 뒤 합친다.' },
+    { term: 'Positional Encoding', desc: 'Transformer는 순서 정보가 없으므로 위치 정보를 벡터로 더해 토큰의 순서를 알려준다.' },
+    { term: '잔차연결·LayerNorm', desc: '입력을 출력에 더해(residual) 깊은 망의 학습을 돕고, LayerNorm으로 분포를 안정화한다.' },
+    { term: 'Encoder vs Decoder', desc: '인코더는 입력 전체를 양방향으로 이해(BERT), 디코더는 앞만 보고 다음을 생성(GPT)한다.' },
+    { term: '사전학습·파인튜닝', desc: '대규모 텍스트로 일반 능력을 먼저 학습(pre-training)한 뒤, 소량 데이터로 과업에 맞춰 조정(fine-tuning).' },
+    { term: '스케일링 법칙', desc: '모델·데이터·연산을 키울수록 성능이 예측 가능하게 향상된다는 경험적 관계. LLM 대형화의 근거.' },
+  ],
+
   // ── 데이터 분석을 위한 Python 이해 ──
   'python-1': [
     { term: '동적 타이핑', desc: '변수 선언 시 타입을 지정하지 않고 대입된 값으로 타입이 정해지는 파이썬 방식.' },

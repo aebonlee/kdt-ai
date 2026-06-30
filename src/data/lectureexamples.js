@@ -3,6 +3,138 @@
 // (lectureplans.js 의 schedule/practice 를 보완하는 기술 코드 예제)
 
 export const examples = {
+  // ── 팀빌딩 · Git 이해/활용 ──
+  'git-1': [
+    {
+      title: 'Git 기본 흐름 — init → add → commit',
+      lang: 'bash',
+      code: `# 사용자 정보(최초 1회)
+git config --global user.name "Aebon Lee"
+git config --global user.email "aebon@example.com"
+
+# 새 저장소 시작
+mkdir my-project && cd my-project
+git init
+
+# 파일 만들고 상태 확인
+echo "# My Project" > README.md
+git status            # Untracked files: README.md
+
+# 스테이징 → 커밋
+git add README.md
+git commit -m "docs: 프로젝트 README 추가"
+
+git log --oneline     # 커밋 이력 한 줄로 확인`,
+      note: 'add는 "커밋에 담을 변경 고르기", commit은 "스냅샷 저장"이다. 커밋 메시지는 "타입: 무엇을" 형식으로 일관되게.',
+    },
+    {
+      title: '브랜치 협업 — branch → push → Pull Request',
+      lang: 'bash',
+      code: `# 기능 브랜치 생성 후 이동
+git switch -c feature/login
+
+# 작업 후 커밋
+git add .
+git commit -m "feat: 로그인 화면 추가"
+
+# 원격에 브랜치 올리기
+git remote add origin https://github.com/team/repo.git
+git push -u origin feature/login
+
+# 이후 GitHub에서 Pull Request 생성 → 리뷰 → main에 merge
+# 머지 후 로컬 동기화
+git switch main
+git pull origin main`,
+      note: 'main에 직접 커밋하지 않고 브랜치 → PR → 리뷰 → merge 흐름이 협업의 기본. 충돌은 PR 단계에서 미리 드러난다.',
+    },
+  ],
+
+  // ── LLM과 Transformer 아키텍처 ──
+  'transformer-1': [
+    {
+      title: '토큰화와 임베딩 유사도',
+      lang: 'python',
+      code: `from sentence_transformers import SentenceTransformer
+import numpy as np
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+sents = ["고양이가 잔다", "강아지가 잔다", "주가가 폭락했다"]
+emb = model.encode(sents)  # (3, 384) 임베딩
+
+def cos(a, b):
+    return a @ b / (np.linalg.norm(a) * np.linalg.norm(b))
+
+print(round(cos(emb[0], emb[1]), 3))  # 고양이~강아지: 높음
+print(round(cos(emb[0], emb[2]), 3))  # 고양이~주가:  낮음`,
+      note: '의미가 비슷한 문장일수록 임베딩 벡터의 코사인 유사도가 높다. LLM은 이런 벡터 공간 위에서 의미를 다룬다.',
+    },
+    {
+      title: 'Scaled Dot-Product Attention',
+      lang: 'python',
+      code: `import numpy as np
+
+def softmax(x, axis=-1):
+    e = np.exp(x - x.max(axis=axis, keepdims=True))
+    return e / e.sum(axis=axis, keepdims=True)
+
+def attention(Q, K, V):
+    d_k = Q.shape[-1]
+    scores = Q @ K.T / np.sqrt(d_k)   # 유사도
+    weights = softmax(scores)          # 가중치(합=1)
+    return weights @ V, weights
+
+# 토큰 3개, 차원 4 가정
+np.random.seed(0)
+Q = K = V = np.random.randn(3, 4)
+out, w = attention(Q, K, V)
+print("attention weights:\\n", w.round(2))`,
+      note: 'QKᵀ로 토큰 간 유사도를 구하고 √d로 나눠 안정화한 뒤 softmax로 가중치를 만든다. 그 가중치로 V를 합친 것이 출력.',
+    },
+  ],
+  'transformer-2': [
+    {
+      title: 'PyTorch Transformer 인코더 블록',
+      lang: 'python',
+      code: `import torch, torch.nn as nn
+
+class EncoderBlock(nn.Module):
+    def __init__(self, d_model=64, n_heads=4, d_ff=256):
+        super().__init__()
+        self.attn = nn.MultiheadAttention(d_model, n_heads, batch_first=True)
+        self.ff = nn.Sequential(
+            nn.Linear(d_model, d_ff), nn.ReLU(),
+            nn.Linear(d_ff, d_model),
+        )
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+
+    def forward(self, x):
+        a, _ = self.attn(x, x, x)        # Self-Attention
+        x = self.norm1(x + a)            # 잔차연결 + LayerNorm
+        f = self.ff(x)
+        return self.norm2(x + f)         # 잔차연결 + LayerNorm
+
+x = torch.randn(1, 5, 64)  # (배치, 토큰5, d_model)
+print(EncoderBlock()(x).shape)  # torch.Size([1, 5, 64])`,
+      note: 'Multi-Head Attention → 잔차연결+LayerNorm → FFN → 잔차연결+LayerNorm. 이 블록을 여러 층 쌓은 것이 Transformer.',
+    },
+    {
+      title: '사전학습 모델 추론 — BERT 마스크 채우기',
+      lang: 'python',
+      code: `from transformers import pipeline
+
+# 인코더(BERT): 양방향 문맥으로 빈칸 채우기
+fill = pipeline("fill-mask", model="bert-base-multilingual-cased")
+for r in fill("서울은 대한민국의 [MASK]이다.")[:3]:
+    print(round(r["score"], 3), r["token_str"])
+
+# 디코더(GPT류): 다음 토큰 생성
+gen = pipeline("text-generation", model="gpt2")
+print(gen("Transformer is", max_new_tokens=20)[0]["generated_text"])`,
+      note: 'BERT는 빈칸(MASK)을 양방향 문맥으로 채우고, GPT는 앞 문맥만 보고 다음 토큰을 이어 생성한다 — 인코더 vs 디코더의 차이.',
+    },
+  ],
+
   // ── 데이터 분석을 위한 Python 이해 ──
   'python-1': [
     {

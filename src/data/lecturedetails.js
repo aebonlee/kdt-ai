@@ -5,6 +5,46 @@
 //   homework: [string]              과제
 
 export const details = {
+  // ── 팀빌딩 · Git 이해/활용 ──
+  'git-1': {
+    topics: [
+      { h: '팀빌딩 · 오리엔테이션', items: ['과정 목표·운영 방식 공유', '아이스브레이킹·팀 구성', '팀 그라운드룰·협업 규칙', '개발 환경 점검(Git/계정)'] },
+      { h: 'Git 기본', items: ['버전관리 개념과 필요성', 'init/clone·config 초기 설정', 'add·commit·status·log·diff', '.gitignore·커밋 메시지 컨벤션'] },
+      { h: '브랜치·원격 협업', items: ['branch·checkout·merge', '충돌(conflict) 발생과 해결', 'remote·push·pull·fetch', 'Pull Request·코드리뷰 흐름'] },
+    ],
+    labs: [
+      { title: 'Lab1. 첫 저장소 만들기', steps: ['로컬 폴더 git init', '파일 생성 → add → commit', 'log·diff로 이력 확인'] },
+      { title: 'Lab2. 브랜치 협업', steps: ['feature 브랜치 생성·작업', '의도적 충돌 만들고 해결', 'GitHub push → PR → merge'] },
+    ],
+    homework: ['개인 GitHub 저장소를 만들고 README 커밋·푸시', '브랜치에서 작업 후 Pull Request 한 개 생성해 보기'],
+  },
+
+  // ── LLM과 Transformer 아키텍처 ──
+  'transformer-1': {
+    topics: [
+      { h: '언어모델과 입력 표현', items: ['언어모델=다음 토큰 예측', '토큰화(BPE)와 어휘', '임베딩·벡터 공간', '문맥(Context)과 시퀀스'] },
+      { h: '기존 모델의 한계', items: ['RNN/LSTM 순차 처리', '장기 의존성 소실', '병렬화 불가·속도 문제', 'Attention 등장 배경'] },
+      { h: 'Self-Attention', items: ['Attention 직관(어디에 집중)', 'Query·Key·Value 투영', 'Scaled Dot-Product Attention', 'softmax 가중합·마스킹'] },
+    ],
+    labs: [
+      { title: 'Lab1. 토큰화·임베딩', steps: ['문장을 토크나이저로 분해', '토큰 임베딩 벡터 확인', '코사인 유사도로 의미 비교'] },
+      { title: 'Lab2. Attention 계산', steps: ['작은 행렬로 Q·K·V 구성', 'QKᵀ/√d·softmax 계산', '가중치 히트맵 시각화'] },
+    ],
+    homework: ['Self-Attention 계산 과정을 손으로 한 단계씩 정리', 'RNN 대비 Transformer의 장점 3가지 서술'],
+  },
+  'transformer-2': {
+    topics: [
+      { h: 'Transformer 블록', items: ['Multi-Head Attention', 'Positional Encoding', 'Feed-Forward Network', '잔차연결·LayerNorm'] },
+      { h: '구조와 대표 모델', items: ['Encoder-Decoder 구조', 'Decoder-only(GPT) vs Encoder(BERT)', 'T5·seq2seq 관점', '토큰 생성·디코딩(greedy/샘플링)'] },
+      { h: '사전학습과 LLM', items: ['사전학습 목표(MLM/CLM)', '파인튜닝·전이학습', '스케일링 법칙', 'In-context learning 직관'] },
+    ],
+    labs: [
+      { title: 'Lab1. Transformer 블록 조립', steps: ['Multi-Head Attention 모듈 구성', 'Positional Encoding 더하기', '잔차연결+LayerNorm 연결'] },
+      { title: 'Lab2. 사전학습 모델 추론', steps: ['HuggingFace 모델 로드', '문장 임베딩·마스크 채우기', 'GPT류로 다음 토큰 생성'] },
+    ],
+    homework: ['BERT와 GPT의 구조·용도 차이를 표로 정리', '관심 도메인에 LLM을 적용할 시나리오 1개 기획'],
+  },
+
   // ── 데이터 분석을 위한 Python 이해 ──
   'python-1': {
     topics: [

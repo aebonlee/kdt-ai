@@ -2,7 +2,7 @@
 // SKALA 4기 — 이애본 강사 담당 강의 커리큘럼
 //
 // 출처: [SK] SKALA AI 캠퍼스 과정 강사 강의분야/스케쥴 확정표 (최종 반영)
-//   교육기간 2026.07.15 ~ 10.28, 평일 09:00~18:00 (100% 오프라인)
+//   교육기간 2026.07.14 ~ 10.28, 평일 09:00~18:00 (100% 오프라인)
 //   지역: 울산 · 판교(4·5층) · 광주
 //
 // 데이터 모델
@@ -12,6 +12,77 @@
 // ─────────────────────────────────────────────────────────────
 
 export const subjects = [
+  {
+    id: 'git',
+    code: '1-1',
+    name: 'Git 이해/활용',
+    category: '프로그래밍 기초',
+    hours: 5,
+    summary: '팀빌딩으로 협업 기반을 다지고, Git·GitHub로 버전관리와 협업 워크플로를 익힌다',
+    days: [
+      {
+        title: '팀빌딩 · Git과 협업 워크플로',
+        objectives: [
+          '팀빌딩으로 과정 동안 함께할 협업 기반 다지기',
+          '버전관리의 필요성과 Git의 동작 원리 이해',
+          'Git·GitHub로 브랜치 기반 협업 워크플로 실습',
+        ],
+        contents: [
+          '오리엔테이션 · 팀빌딩 · 아이스브레이킹',
+          '버전관리 개념과 Git이 푸는 문제(이력·협업·되돌리기)',
+          'Git 설치·초기 설정, 저장소 init/clone',
+          '기본 흐름: working tree → staging(add) → commit, status·log·diff',
+          '.gitignore와 커밋 메시지 컨벤션',
+          '브랜치·머지와 충돌(conflict) 해결',
+          'GitHub 원격 협업: remote·push·pull, Pull Request·코드리뷰',
+          '실습: 팀 저장소에서 브랜치로 협업하기',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'transformer',
+    code: '8-2',
+    name: 'LLM과 Transformer 아키텍처',
+    category: 'LLM · Agent',
+    summary: 'LLM의 토대가 된 Transformer 아키텍처를 Attention부터 사전학습·파인튜닝까지 원리로 이해한다',
+    days: [
+      {
+        title: 'LLM 기초와 Attention 메커니즘',
+        objectives: [
+          'LLM의 입력 처리(토큰화·임베딩)와 언어모델의 동작 이해',
+          '기존 시퀀스 모델(RNN/LSTM)의 한계 파악',
+          'Attention 과 Self-Attention(Q·K·V)의 원리 이해',
+        ],
+        contents: [
+          '언어모델이란: 다음 토큰 예측과 확률 분포',
+          '토큰화(BPE)와 임베딩, 벡터 공간',
+          'RNN·LSTM 의 순차 처리와 장기 의존성·병렬화 한계',
+          'Attention 의 직관: 입력의 어디에 집중할 것인가',
+          'Self-Attention 과 Query·Key·Value',
+          'Scaled Dot-Product Attention 계산 과정',
+          '실습: Attention 가중치 계산·시각화',
+        ],
+      },
+      {
+        title: 'Transformer 아키텍처와 LLM',
+        objectives: [
+          'Transformer 블록의 전체 구성요소 이해',
+          'Encoder·Decoder 구조와 대표 모델(BERT·GPT)의 차이 파악',
+          '사전학습·파인튜닝과 스케일링 관점에서 LLM 이해',
+        ],
+        contents: [
+          'Multi-Head Attention 과 표현 부공간',
+          'Positional Encoding: 순서 정보 주입',
+          'Feed-Forward Network·잔차연결(Residual)·LayerNorm',
+          'Encoder-Decoder vs Decoder-only 구조',
+          '대표 모델: BERT(인코더)·GPT(디코더)·T5',
+          '사전학습(pre-training)과 파인튜닝, 스케일링 법칙',
+          '실습: 사전학습 모델로 추론·임베딩 확인',
+        ],
+      },
+    ],
+  },
   {
     id: 'python',
     code: '7-1',
@@ -680,9 +751,16 @@ export const subjects = [
 // 실제 강의가 잡힌 일자(최종 확정) — 날짜·요일·지역·층/반 + 과목 day
 // klass: 판교는 강의장 층('4층'·'5층'), 광주는 분반('1반'), 울산은 단일('')
 export const sessions = [
-  // ── 7월 (3일) ──
+  // ── 7월 (8일) ──
+  // 팀빌딩 · Git 이해/활용 (5H) — 과정 시작일
+  { date: '2026-07-14', weekday: '화', region: '판교', klass: '5층', subjectId: 'git', day: 1 },
   { date: '2026-07-15', weekday: '수', region: '울산', klass: '', subjectId: 'python', day: 1 },
   { date: '2026-07-16', weekday: '목', region: '울산', klass: '', subjectId: 'python', day: 2 },
+  // LLM과 Transformer 아키텍처 — 판교 두 분반(4층·5층)
+  { date: '2026-07-21', weekday: '화', region: '판교', klass: '4층', subjectId: 'transformer', day: 1 },
+  { date: '2026-07-22', weekday: '수', region: '판교', klass: '4층', subjectId: 'transformer', day: 2 },
+  { date: '2026-07-23', weekday: '목', region: '판교', klass: '5층', subjectId: 'transformer', day: 1 },
+  { date: '2026-07-24', weekday: '금', region: '판교', klass: '5층', subjectId: 'transformer', day: 2 },
   { date: '2026-07-31', weekday: '금', region: '판교', klass: '5층', subjectId: 'vue', day: 1 },
 
   // ── 8월 (9일) ──

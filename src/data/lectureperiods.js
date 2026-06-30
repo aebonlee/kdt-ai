@@ -15,6 +15,10 @@ export const PERIOD_TIMES = [
 ]
 
 export const periods = {
+  // ── LLM과 Transformer 아키텍처 ──
+  'transformer-1': ['OT · 언어모델/LLM 개요', '토큰화(BPE)·임베딩·벡터공간', 'RNN/LSTM 한계 · 병렬화 문제', '실습: 임베딩 유사도 확인', 'Attention 직관 · Self-Attention', 'Query·Key·Value · Scaled Dot-Product', '실습: Attention 가중치 계산', '정리 · Day2 예고'],
+  'transformer-2': ['Day1 리뷰 · Multi-Head Attention', 'Positional Encoding(순서 주입)', 'FFN · 잔차연결 · LayerNorm', '실습: Transformer 블록 조립', 'Encoder/Decoder · BERT vs GPT', '사전학습 · 파인튜닝 · 전이', '실습: 사전학습 모델 추론', '발표 · 스케일링 법칙 정리'],
+
   // ── 데이터 분석을 위한 Python 이해 ──
   'python-1': ['OT · 분석 환경(Colab/Jupyter)', '변수·자료형·연산자·문자열', '리스트/딕셔너리/튜플/집합', '실습: 자료구조 다루기', '조건문·반복문·컴프리헨션', '함수·모듈·예외 처리', 'NumPy 배열·벡터 연산', '정리 · Day2 예고'],
   'python-2': ['Day1 리뷰 · Pandas 개요', 'Series/DataFrame · 인덱싱(loc/iloc)', '결측치·이상치·자료형 정제', '실습: 데이터 적재·정제', '필터·정렬·groupby 집계', 'merge·pivot·재구조화', 'matplotlib·seaborn 시각화', '발표 · EDA 회고'],
