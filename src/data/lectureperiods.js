@@ -16,7 +16,8 @@ export const PERIOD_TIMES = [
 
 export const periods = {
   // ── 팀빌딩 · Git 이해/활용 ──
-  'git-1': ['OT · 팀빌딩 · 아이스브레이킹', '버전관리 개념 · Git 설치/설정', 'Git 기본: add·commit·status·log', '.gitignore · diff · 커밋 되돌리기', '브랜치 · 머지', '실습: 충돌(conflict) 해결', 'GitHub 원격: clone·push·pull', 'Pull Request·코드리뷰 · 팀 협업 실습'],
+  // 오전(1~3교시) 팀빌딩 · 오후(4~8교시) Git
+  'git-1': ['OT · 과정 소개 · 아이스브레이킹', '팀빌딩: 팀 구성 · 역할 정하기', '팀 그라운드룰 · 협업 목표 설정', '버전관리 개념 · Git 설치/설정', 'Git 기본: add·commit·status·log', '.gitignore · diff · 커밋 되돌리기', '브랜치 · 머지 · 충돌 해결', 'GitHub 원격: clone·push·pull · PR'],
 
   // ── LLM과 Transformer 아키텍처 ──
   'transformer-1': ['OT · 언어모델/LLM 개요', '토큰화(BPE)·임베딩·벡터공간', 'RNN/LSTM 한계 · 병렬화 문제', '실습: 임베딩 유사도 확인', 'Attention 직관 · Self-Attention', 'Query·Key·Value · Scaled Dot-Product', '실습: Attention 가중치 계산', '정리 · Day2 예고'],
