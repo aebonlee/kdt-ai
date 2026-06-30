@@ -15,6 +15,9 @@ export const PERIOD_TIMES = [
 ]
 
 export const periods = {
+  // ── 팀빌딩 · Git 이해/활용 ──
+  'git-1': ['OT · 팀빌딩 · 아이스브레이킹', '버전관리 개념 · Git 설치/설정', 'Git 기본: add·commit·status·log', '.gitignore · diff · 커밋 되돌리기', '브랜치 · 머지', '실습: 충돌(conflict) 해결', 'GitHub 원격: clone·push·pull', 'Pull Request·코드리뷰 · 팀 협업 실습'],
+
   // ── LLM과 Transformer 아키텍처 ──
   'transformer-1': ['OT · 언어모델/LLM 개요', '토큰화(BPE)·임베딩·벡터공간', 'RNN/LSTM 한계 · 병렬화 문제', '실습: 임베딩 유사도 확인', 'Attention 직관 · Self-Attention', 'Query·Key·Value · Scaled Dot-Product', '실습: Attention 가중치 계산', '정리 · Day2 예고'],
   'transformer-2': ['Day1 리뷰 · Multi-Head Attention', 'Positional Encoding(순서 주입)', 'FFN · 잔차연결 · LayerNorm', '실습: Transformer 블록 조립', 'Encoder/Decoder · BERT vs GPT', '사전학습 · 파인튜닝 · 전이', '실습: 사전학습 모델 추론', '발표 · 스케일링 법칙 정리'],

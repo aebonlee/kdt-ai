@@ -17,7 +17,6 @@ export const subjects = [
     code: '1-1',
     name: 'Git 이해/활용',
     category: '프로그래밍 기초',
-    hours: 5,
     summary: '팀빌딩으로 협업 기반을 다지고, Git·GitHub로 버전관리와 협업 워크플로를 익힌다',
     days: [
       {
@@ -752,7 +751,7 @@ export const subjects = [
 // klass: 판교는 강의장 층('4층'·'5층'), 광주는 분반('1반'), 울산은 단일('')
 export const sessions = [
   // ── 7월 (8일) ──
-  // 팀빌딩 · Git 이해/활용 (5H) — 과정 시작일
+  // 팀빌딩 · Git 이해/활용 (8H) — 과정 시작일
   { date: '2026-07-14', weekday: '화', region: '판교', klass: '5층', subjectId: 'git', day: 1 },
   { date: '2026-07-15', weekday: '수', region: '울산', klass: '', subjectId: 'python', day: 1 },
   { date: '2026-07-16', weekday: '목', region: '울산', klass: '', subjectId: 'python', day: 2 },

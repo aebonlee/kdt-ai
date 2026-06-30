@@ -5,15 +5,18 @@
 const lunch = { time: '12:00–13:00', topic: '점심 휴식', lunch: true }
 
 export const plans = {
-  // ── 팀빌딩 · Git 이해/활용 (5H · 09:00~15:00) ──
+  // ── 팀빌딩 · Git 이해/활용 (8H · 09:00~17:50) ──
   'git-1': {
     schedule: [
-      { time: '09:00–09:40', topic: 'OT · 팀빌딩', detail: '과정 목표·운영 방식 소개, 아이스브레이킹, 팀 구성과 그라운드룰' },
-      { time: '09:40–10:30', topic: '버전관리와 Git', detail: '버전관리의 필요성, Git 설치·config 초기 설정, 저장소 init/clone' },
-      { time: '10:30–12:00', topic: 'Git 기본 흐름 · 실습', detail: 'working tree→staging(add)→commit, status·log·diff, .gitignore·커밋 메시지' },
+      { time: '09:00–09:50', topic: 'OT · 팀빌딩', detail: '과정 목표·운영 방식 소개, 아이스브레이킹, 팀 구성과 그라운드룰' },
+      { time: '10:00–10:50', topic: '버전관리와 Git', detail: '버전관리의 필요성, Git 설치·config 초기 설정, 저장소 init/clone' },
+      { time: '11:00–11:50', topic: 'Git 기본 흐름', detail: 'working tree→staging(add)→commit, status·log·diff' },
       lunch,
-      { time: '13:00–14:00', topic: '브랜치·머지·충돌', detail: 'branch·merge, 충돌(conflict) 발생과 해결 실습' },
-      { time: '14:00–15:00', topic: 'GitHub 원격 협업', detail: 'remote·push·pull, Pull Request·코드리뷰 — 팀 협업 실습' },
+      { time: '13:00–13:50', topic: '.gitignore·되돌리기', detail: '.gitignore, 커밋 메시지 컨벤션, restore/revert로 되돌리기' },
+      { time: '14:00–14:50', topic: '브랜치·머지', detail: 'branch·switch·merge 작업 흐름' },
+      { time: '15:00–15:50', topic: '실습: 충돌 해결', detail: '의도적 충돌(conflict) 만들고 해소' },
+      { time: '16:00–16:50', topic: 'GitHub 원격 협업', detail: 'remote·clone·push·pull' },
+      { time: '17:00–17:50', topic: '실습: PR·코드리뷰', detail: 'Pull Request 생성·리뷰·merge, 팀 협업' },
     ],
     practice: {
       title: '팀 저장소에서 브랜치로 협업하기',

@@ -179,7 +179,7 @@ export default function Lectures() {
               {subj?.name} ·{' '}
               {isRef
                 ? '참고 강의안 (현재 강의 미배정)'
-                : `${current.date} (${current.weekday}) · ${subj?.hours === 5 ? '09:00~15:00' : '09:00~18:00'} (${subj?.hours ?? 8}H)`}
+                : `${current.date} (${current.weekday}) · 09:00~18:00 (8H)`}
             </p>
 
             {/* 학습 목표 */}
