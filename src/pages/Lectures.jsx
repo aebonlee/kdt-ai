@@ -204,7 +204,7 @@ export default function Lectures() {
                   {keyConcepts.map((c, i) => (
                     <dl key={i} className="concept">
                       <dt>{c.term}</dt>
-                      <dd>{c.desc}</dd>
+                      <dd style={{ whiteSpace: 'pre-line' }}>{c.desc}</dd>
                     </dl>
                   ))}
                 </div>
@@ -221,7 +221,7 @@ export default function Lectures() {
                   {deepTheory.theory.map((t, i) => (
                     <div key={i} className="card">
                       <h4 style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 6 }}>{t.h}</h4>
-                      <p style={{ fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.85 }}>{t.body}</p>
+                      <p style={{ fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.85, whiteSpace: 'pre-line' }}>{t.body}</p>
                     </div>
                   ))}
                 </div>
@@ -358,7 +358,7 @@ export default function Lectures() {
                       </div>
                       <CodeBlock code={ex.code} lang={ex.lang} />
                       {ex.note && (
-                        <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7 }}>
+                        <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
                           💡 {ex.note}
                         </p>
                       )}
@@ -383,7 +383,7 @@ export default function Lectures() {
                       </div>
                       <CodeBlock code={ex.code} lang={ex.lang} />
                       {ex.note && (
-                        <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7 }}>
+                        <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
                           💡 {ex.note}
                         </p>
                       )}
