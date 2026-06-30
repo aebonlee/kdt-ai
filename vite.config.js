@@ -6,4 +6,15 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/',
+  build: {
+    rollupOptions: {
+      output: {
+        // 자주 바뀌지 않는 외부 라이브러리를 별도 청크로 분리(캐시 효율↑, 초기 청크↓)
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          supabase: ['@supabase/supabase-js'],
+        },
+      },
+    },
+  },
 })
