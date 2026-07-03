@@ -407,7 +407,7 @@ export const examples = {
     {
       "title": "모델 한 번 호출해 보기 (가장 단순한 형태)",
       "lang": "python",
-      "code": "# Anthropic 채팅 모델 연동 클래스를 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 모델 객체를 만든다(어떤 모델을 쓸지 이름으로 지정)\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\")\n# invoke에 질문 문자열을 넣어 모델을 한 번 실행한다\nanswer = model.invoke(\"LangChain을 한 문장으로 설명해줘\")\n# 모델 답 객체의 content에 실제 답 글자가 들어 있으므로 그것을 출력한다\nprint(answer.content)  # 결과 예: 'LangChain은 LLM 앱을 부품처럼 조립하게 돕는 도구다.'",
+      "code": "# Anthropic 채팅 모델 연동 클래스를 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 모델 객체를 만든다(어떤 모델을 쓸지 이름으로 지정)\nmodel = ChatAnthropic(model=\"claude-opus-4-8\")\n# invoke에 질문 문자열을 넣어 모델을 한 번 실행한다\nanswer = model.invoke(\"LangChain을 한 문장으로 설명해줘\")\n# 모델 답 객체의 content에 실제 답 글자가 들어 있으므로 그것을 출력한다\nprint(answer.content)  # 결과 예: 'LangChain은 LLM 앱을 부품처럼 조립하게 돕는 도구다.'",
       "note": "체인을 만들기 전에 모델만 단독으로 불러 보는 가장 기초 예제다."
     },
     {
@@ -419,7 +419,7 @@ export const examples = {
     {
       "title": "JSON으로 구조화 출력 받기",
       "lang": "python",
-      "code": "# JSON 형태로 결과를 파싱해 주는 출력 파서를 가져온다\nfrom langchain_core.output_parsers import JsonOutputParser\n# 프롬프트 양식 도구를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\n# 모델 연동 클래스를 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 이름과 나이를 JSON으로 뽑아 달라고 지시하는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\n    \"문장에서 이름과 나이를 JSON으로 뽑아줘: {sentence}\")  # 빈칸 sentence에 문장이 들어간다\n# 프롬프트 | 모델 | JSON파서 순으로 체인을 조립한다\nchain = prompt | ChatAnthropic(model=\"claude-sonnet-4-5\") | JsonOutputParser()\n# 체인을 실행하면 문자열이 아니라 파이썬 딕셔너리로 결과가 나온다\nout = chain.invoke({\"sentence\": \"홍길동은 30살이다\"})\n# 딕셔너리이므로 키로 값을 바로 꺼낼 수 있다\nprint(out)  # 결과 예: {'이름': '홍길동', '나이': 30}",
+      "code": "# JSON 형태로 결과를 파싱해 주는 출력 파서를 가져온다\nfrom langchain_core.output_parsers import JsonOutputParser\n# 프롬프트 양식 도구를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\n# 모델 연동 클래스를 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 이름과 나이를 JSON으로 뽑아 달라고 지시하는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\n    \"문장에서 이름과 나이를 JSON으로 뽑아줘: {sentence}\")  # 빈칸 sentence에 문장이 들어간다\n# 프롬프트 | 모델 | JSON파서 순으로 체인을 조립한다\nchain = prompt | ChatAnthropic(model=\"claude-opus-4-8\") | JsonOutputParser()\n# 체인을 실행하면 문자열이 아니라 파이썬 딕셔너리로 결과가 나온다\nout = chain.invoke({\"sentence\": \"홍길동은 30살이다\"})\n# 딕셔너리이므로 키로 값을 바로 꺼낼 수 있다\nprint(out)  # 결과 예: {'이름': '홍길동', '나이': 30}",
       "note": "StrOutputParser 대신 JsonOutputParser를 쓰면 결과를 바로 코드에서 다룰 수 있다."
     }
   ],
@@ -427,13 +427,13 @@ export const examples = {
     {
       "title": "대화 메모리로 앞말 기억하기",
       "lang": "python",
-      "code": "# 대화 기록을 자동으로 끼워 주는 래퍼를 가져온다\nfrom langchain_core.runnables.history import RunnableWithMessageHistory\n# 대화를 메모리에 보관하는 저장소를 가져온다\nfrom langchain_community.chat_message_histories import ChatMessageHistory\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 세션별 대화 기록을 담아 둘 딕셔너리를 만든다\nstore = {}\n# 세션 id로 그 사람의 대화 기록을 돌려주는 함수를 정의한다\ndef get_history(session_id):\n    if session_id not in store:           # 처음 보는 세션이면\n        store[session_id] = ChatMessageHistory()  # 새 기록 객체를 만들어 둔다\n    return store[session_id]              # 해당 세션의 기록을 돌려준다\n# 모델에 '기록을 자동으로 함께 보내기' 기능을 입힌다\nchat = RunnableWithMessageHistory(ChatAnthropic(model=\"claude-sonnet-4-5\"), get_history)\n# 같은 session_id로 첫 마디를 보낸다(이름을 알려 준다)\ncfg = {\"configurable\": {\"session_id\": \"u1\"}}  # 누구의 대화인지 식별\nchat.invoke(\"내 이름은 길동이야\", config=cfg)   # 모델이 기록에 저장\n# 같은 세션으로 다시 물으면 앞말을 기억해 답한다\nprint(chat.invoke(\"내 이름이 뭐였지?\", config=cfg).content)  # 결과: '길동입니다.'",
+      "code": "# 대화 기록을 자동으로 끼워 주는 래퍼를 가져온다\nfrom langchain_core.runnables.history import RunnableWithMessageHistory\n# 대화를 메모리에 보관하는 저장소를 가져온다\nfrom langchain_community.chat_message_histories import ChatMessageHistory\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 세션별 대화 기록을 담아 둘 딕셔너리를 만든다\nstore = {}\n# 세션 id로 그 사람의 대화 기록을 돌려주는 함수를 정의한다\ndef get_history(session_id):\n    if session_id not in store:           # 처음 보는 세션이면\n        store[session_id] = ChatMessageHistory()  # 새 기록 객체를 만들어 둔다\n    return store[session_id]              # 해당 세션의 기록을 돌려준다\n# 모델에 '기록을 자동으로 함께 보내기' 기능을 입힌다\nchat = RunnableWithMessageHistory(ChatAnthropic(model=\"claude-opus-4-8\"), get_history)\n# 같은 session_id로 첫 마디를 보낸다(이름을 알려 준다)\ncfg = {\"configurable\": {\"session_id\": \"u1\"}}  # 누구의 대화인지 식별\nchat.invoke(\"내 이름은 길동이야\", config=cfg)   # 모델이 기록에 저장\n# 같은 세션으로 다시 물으면 앞말을 기억해 답한다\nprint(chat.invoke(\"내 이름이 뭐였지?\", config=cfg).content)  # 결과: '길동입니다.'",
       "note": "session_id를 같게 유지하면 모델이 직전 대화를 이어받아 맥락을 기억한다."
     },
     {
       "title": "나만의 도구(Tool) 만들어 모델에 연결",
       "lang": "python",
-      "code": "# 함수를 도구로 등록해 주는 데코레이터를 가져온다\nfrom langchain_core.tools import tool\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# @tool을 붙여 일반 함수를 모델이 쓸 수 있는 도구로 만든다\n@tool\ndef add(a: int, b: int) -> int:\n    \"\"\"두 정수를 더한다\"\"\"  # 설명: 모델이 이 글을 보고 언제 쓸지 판단한다\n    return a + b           # 실제 덧셈 결과를 돌려준다\n# 모델에 도구 목록을 묶어(bind) 도구를 쓸 수 있게 한다\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\").bind_tools([add])\n# 계산이 필요한 질문을 던진다\nres = model.invoke(\"12345 더하기 6789는?\")\n# 모델이 직접 계산하지 않고 add 도구를 쓰겠다고 요청한 내역을 출력한다\nprint(res.tool_calls)  # 결과 예: [{'name':'add','args':{'a':12345,'b':6789}}]",
+      "code": "# 함수를 도구로 등록해 주는 데코레이터를 가져온다\nfrom langchain_core.tools import tool\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# @tool을 붙여 일반 함수를 모델이 쓸 수 있는 도구로 만든다\n@tool\ndef add(a: int, b: int) -> int:\n    \"\"\"두 정수를 더한다\"\"\"  # 설명: 모델이 이 글을 보고 언제 쓸지 판단한다\n    return a + b           # 실제 덧셈 결과를 돌려준다\n# 모델에 도구 목록을 묶어(bind) 도구를 쓸 수 있게 한다\nmodel = ChatAnthropic(model=\"claude-opus-4-8\").bind_tools([add])\n# 계산이 필요한 질문을 던진다\nres = model.invoke(\"12345 더하기 6789는?\")\n# 모델이 직접 계산하지 않고 add 도구를 쓰겠다고 요청한 내역을 출력한다\nprint(res.tool_calls)  # 결과 예: [{'name':'add','args':{'a':12345,'b':6789}}]",
       "note": "모델은 답을 지어내는 대신 add 도구를 호출하겠다고 알려 주어 정확한 계산이 가능해진다."
     }
   ],
@@ -441,13 +441,13 @@ export const examples = {
     {
       "title": "체인 결과를 스트리밍으로 받아 출력",
       "lang": "python",
-      "code": "# 프롬프트·모델·파서를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom langchain_anthropic import ChatAnthropic\n# 짧은 글짓기를 시키는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\"{topic}에 대한 짧은 시를 써줘\")\n# 프롬프트→모델→파서로 체인을 조립한다\nchain = prompt | ChatAnthropic(model=\"claude-sonnet-4-5\") | StrOutputParser()\n# invoke 대신 stream을 쓰면 답이 조각으로 나뉘어 들어온다\nfor chunk in chain.stream({\"topic\": \"봄비\"}):  # 조각을 순서대로 하나씩 받는다\n    print(chunk, end=\"\", flush=True)            # 줄바꿈 없이 즉시 화면에 이어 출력\n# 결과: 시가 한 글자씩 또르르 흘러나오며 출력된다",
+      "code": "# 프롬프트·모델·파서를 가져온다\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom langchain_anthropic import ChatAnthropic\n# 짧은 글짓기를 시키는 프롬프트를 만든다\nprompt = ChatPromptTemplate.from_template(\"{topic}에 대한 짧은 시를 써줘\")\n# 프롬프트→모델→파서로 체인을 조립한다\nchain = prompt | ChatAnthropic(model=\"claude-opus-4-8\") | StrOutputParser()\n# invoke 대신 stream을 쓰면 답이 조각으로 나뉘어 들어온다\nfor chunk in chain.stream({\"topic\": \"봄비\"}):  # 조각을 순서대로 하나씩 받는다\n    print(chunk, end=\"\", flush=True)            # 줄바꿈 없이 즉시 화면에 이어 출력\n# 결과: 시가 한 글자씩 또르르 흘러나오며 출력된다",
       "note": "invoke를 stream으로 바꾸기만 하면 같은 체인이 글자를 흘려보내는 스트리밍이 된다."
     },
     {
       "title": "캐싱으로 같은 질문 빠르게 답하기",
       "lang": "python",
-      "code": "# 시간 측정을 위해 time 모듈을 가져온다\nimport time\n# 캐시 설정 함수와 메모리 캐시를 가져온다\nfrom langchain_core.globals import set_llm_cache\nfrom langchain_community.cache import InMemoryCache\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 메모리 캐시를 켠다(같은 입력은 저장된 답을 재사용)\nset_llm_cache(InMemoryCache())\n# 모델 객체를 만든다\nmodel = ChatAnthropic(model=\"claude-sonnet-4-5\")\n# 첫 호출 시각을 기록하고 모델을 부른다(실제로 모델이 일한다)\nt1 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 첫 호출에 걸린 시간을 출력한다(예: 1.8초)\nprint(\"1차:\", round(time.time() - t1, 2), \"초\")\n# 같은 질문을 다시 부른다(이번엔 캐시에서 즉시 가져온다)\nt2 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 두 번째는 거의 0초임을 출력해 캐시 효과를 확인한다\nprint(\"2차:\", round(time.time() - t2, 2), \"초\")  # 결과 예: 2차: 0.0 초",
+      "code": "# 시간 측정을 위해 time 모듈을 가져온다\nimport time\n# 캐시 설정 함수와 메모리 캐시를 가져온다\nfrom langchain_core.globals import set_llm_cache\nfrom langchain_community.cache import InMemoryCache\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 메모리 캐시를 켠다(같은 입력은 저장된 답을 재사용)\nset_llm_cache(InMemoryCache())\n# 모델 객체를 만든다\nmodel = ChatAnthropic(model=\"claude-opus-4-8\")\n# 첫 호출 시각을 기록하고 모델을 부른다(실제로 모델이 일한다)\nt1 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 첫 호출에 걸린 시간을 출력한다(예: 1.8초)\nprint(\"1차:\", round(time.time() - t1, 2), \"초\")\n# 같은 질문을 다시 부른다(이번엔 캐시에서 즉시 가져온다)\nt2 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 두 번째는 거의 0초임을 출력해 캐시 효과를 확인한다\nprint(\"2차:\", round(time.time() - t2, 2), \"초\")  # 결과 예: 2차: 0.0 초",
       "note": "두 번째 호출이 사실상 0초인 것은 모델을 다시 부르지 않고 캐시에서 답을 꺼냈기 때문이다."
     }
   ],
@@ -553,7 +553,7 @@ export const examples = {
     {
       "title": "토큰이 하나씩 흘러나오는 걸 눈으로 보기",
       "lang": "python",
-      "code": "from langchain_anthropic import ChatAnthropic  # Claude 연결\n\nllm = ChatAnthropic(model='claude-sonnet-4-5')\n\n# stream 은 답을 한꺼번에가 아니라 조각(청크)으로 나눠 준다\nfor chunk in llm.stream('가을에 대한 짧은 시를 써줘'):  # 조각을 하나씩 꺼내\n    print(chunk.content, end='', flush=True)  # end='' 로 줄바꿈 없이 이어붙여 출력\n# 결과: 글자가 타이핑되듯 조금씩 화면에 나타남\n",
+      "code": "from langchain_anthropic import ChatAnthropic  # Claude 연결\n\nllm = ChatAnthropic(model='claude-opus-4-8')\n\n# stream 은 답을 한꺼번에가 아니라 조각(청크)으로 나눠 준다\nfor chunk in llm.stream('가을에 대한 짧은 시를 써줘'):  # 조각을 하나씩 꺼내\n    print(chunk.content, end='', flush=True)  # end='' 로 줄바꿈 없이 이어붙여 출력\n# 결과: 글자가 타이핑되듯 조금씩 화면에 나타남\n",
       "note": "이 '조각을 흘려보내는' 동작이 스트리밍의 핵심이며, 서버는 이 조각을 SSE로 클라이언트에 전달합니다."
     },
     {
