@@ -165,8 +165,17 @@ export const details = {
         "items": [
           "사전학습(pre-training)의 목표",
           "파인튜닝과 전이학습",
-          "스케일링 법칙(데이터·모델·연산)",
           "추론·임베딩 추출 활용"
+        ]
+      },
+      {
+        "h": "Transformer 이후 혁신과 LLM 생태계",
+        "items": [
+          "Scaling Law: 크게 키우면 성능이 예측 가능하게↑",
+          "In-Context Learning: 예시만 보여주면 그 자리에서 학습",
+          "RLHF: 사람 선호를 학습해 도움·안전하게 정렬",
+          "MoE: 전문가 일부만 골라 써 효율↑",
+          "생태계: Open-Weight vs Closed, 벤치마크·Leaderboard"
         ]
       }
     ],
@@ -985,6 +994,15 @@ export const details = {
           "GPTQ·AWQ·GGUF: 대표 양자화 포맷 이름",
           "트레이드오프: 비트 낮을수록 가볍지만 품질 손실"
         ]
+      },
+      {
+        "h": "MLM vs CLM와 sLLM Use Case",
+        "items": [
+          "MLM(BERT식): 빈칸 맞히기, 이해·분류에 강함",
+          "CLM(GPT식): 다음 단어 예측, 생성에 강함(sLLM 주류)",
+          "Use Case: DBMS·영업비밀·개인정보 등 외부 반출 금지 업무",
+          "로컬 sLLM이면 데이터가 내부에 머물러 보안에 유리"
+        ]
       }
     ],
     "labs": [
@@ -1044,6 +1062,16 @@ export const details = {
           "학습에 안 쓴 테스트 질문으로 일반화 확인",
           "과적합 징후: 학습셋만 잘하고 새 질문은 못함",
           "사람이 직접 읽어보는 정성 평가 병행"
+        ]
+      },
+      {
+        "h": "PEFT 변형 비교와 sLLM 서비스",
+        "items": [
+          "LoRA/QLoRA: 도메인 지식 주입에 두루 강함(대세)",
+          "Adapter: 여러 작업을 부품처럼 갈아 끼울 때",
+          "Prefix/Prompt Tuning: 극소 자원·초경량이 필요할 때",
+          "선택 가이드: 목적(지식·자원·전환)에 맞게 고르기",
+          "서비스화: 파인튜닝 sLLM + 임베딩 + Vector DB(RAG) 연결"
         ]
       }
     ],

@@ -37,12 +37,12 @@ export const periods = {
   ],
   "transformer-2": [
     "[강의] Multi-Head Attention — 여러 명이 각자 관점으로 읽기",
-    "[강의] Positional Encoding — 단어에 '몇 번째인지' 번호표 붙이기",
-    "[실습] Positional Encoding 직접 만들고 그려보기",
-    "[강의] FFN·잔차연결(Residual)·LayerNorm — 블록 조립하기",
+    "[강의] Positional Encoding·FFN·잔차연결(Residual)·LayerNorm 조립",
     "[강의] Encoder vs Decoder, 그리고 BERT·GPT·T5",
     "[실습] 사전학습 BERT로 문장 임베딩 뽑아 유사도 비교하기",
-    "[강의] 사전학습·파인튜닝과 스케일링 법칙",
+    "[강의] Transformer 이후 혁신 ① Scaling Law · In-Context Learning",
+    "[강의] Transformer 이후 혁신 ② RLHF · MoE(Mixture of Experts)",
+    "[강의] LLM 생태계: Open-Weight vs Closed Model, 벤치마크·Leaderboard",
     "[실습] GPT-2로 문장 생성하고 다음 토큰 확률 들여다보기"
   ],
   "python-1": [
@@ -176,24 +176,24 @@ export const periods = {
     "8교시 [실습] 통합 테스트·시연·정리"
   ],
   "sllm-1": [
-    "1교시 — sLLM이 뭐길래? 작은 LLM의 정체와 쓰는 이유 (비유로 시작)",
-    "2교시 — 대표 오픈소스 모델 둘러보기: Llama·Qwen·Gemma 한눈에",
-    "3교시 [실습] Hugging Face 모델 카드 읽고 내 노트북에서 첫 추론 돌려보기",
-    "4교시 — 양자화(quantization): 큰 모델을 작은 가방에 넣는 기술",
-    "5교시 [실습] Ollama 설치하고 로컬에서 모델 채팅 띄우기",
-    "6교시 [실습] vLLM·Transformers로 같은 모델을 서로 다른 방식으로 서빙해 보기",
+    "1교시 — sLLM이 뭐길래? LLM 서빙 파이프라인과 작은 LLM의 정체",
+    "2교시 — MLM vs CLM 구조 비교, LLM vs sLLM(토크나이저·임베딩·경량화)",
+    "3교시 [실습] Hugging Face 모델 카드 읽고 첫 추론 돌려보기",
+    "4교시 — 양자화(quantization)와 On-Device 추론",
+    "5교시 [실습] Ollama로 로컬에서 모델 채팅 띄우기",
+    "6교시 — sLLM Use Case 시나리오: DBMS·영업비밀·개인정보 등 보안 민감 영역",
     "7교시 — PEFT·LoRA 맛보기: 통째로 안 바꾸고 살짝만 고치는 학습",
     "8교시 [실습] 로컬 모델을 API로 호출하는 미니 챗봇 완성·점검"
   ],
   "sllm-2": [
-    "1교시 — 파인튜닝이 뭐고 언제 쓰나? '재교육' 비유로 이해하기",
-    "2교시 — 학습 데이터 만들기: instruction 포맷(지시-입력-출력) 설계",
-    "3교시 [실습] 내 도메인 데이터를 JSONL 학습셋으로 가공하기",
-    "4교시 — LoRA·QLoRA 원리: 부품만 끼워 가볍게 가르치기",
-    "5교시 [실습] LoRA 학습 코드 작성하고 첫 학습 돌려보기",
-    "6교시 [실습] 학습 곡선(loss) 보며 하이퍼파라미터 조정하기",
-    "7교시 — 평가와 추론 검증: 잘 배웠는지 어떻게 확인하나",
-    "8교시 [실습] 학습한 LoRA 어댑터 합쳐 추론·비교·저장하고 마무리"
+    "1교시 — 파인튜닝이 뭐고 언제 쓰나? PEFT가 필요한 이유",
+    "2교시 — PEFT 변형 비교: LoRA·QLoRA vs Adapter vs Prefix/Prompt tuning",
+    "3교시 — 목적별 PEFT 선택 가이드(도메인 지식·극소 파라미터·추론 강화)",
+    "4교시 [실습] instruction 데이터 JSONL 가공 + LoRA 학습 코드 작성",
+    "5교시 [실습] LoRA 첫 학습 돌리고 loss 곡선 보기",
+    "6교시 — sLLM 서비스 파이프라인: 임베딩 연결·Vector DB 선정·설계",
+    "7교시 [실습] sLLM + Vector DB(RAG) 연동해 보기",
+    "8교시 [실습] 학습한 LoRA 합쳐 추론·서빙 배포·마무리"
   ],
   "ml-dl-1": [
     "1교시 · 머신러닝이 뭐길래? 학습 유형(지도·비지도·강화) 한눈에",
