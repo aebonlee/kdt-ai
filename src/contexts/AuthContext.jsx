@@ -12,10 +12,11 @@ export function AuthProvider({ children }) {
       setLoading(false)
       return
     }
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      setLoading(false)
-    })
+    supabase.auth
+      .getSession()
+      .then(({ data }) => setSession(data.session))
+      .catch(() => setSession(null)) // 토큰 손상·갱신 실패로 reject돼도 로딩을 풀어 보호 페이지가 스피너에 갇히지 않게
+      .finally(() => setLoading(false))
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
     return () => sub.subscription.unsubscribe()
   }, [])
@@ -25,10 +26,15 @@ export function AuthProvider({ children }) {
       alert('Supabase 연결 설정이 필요합니다. (관리자에게 문의)')
       return
     }
-    await supabase.auth.signInWithOAuth({
-      provider, // 'google' | 'kakao'
-      options: { redirectTo: window.location.origin + import.meta.env.BASE_URL },
-    })
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider, // 'google' | 'kakao'
+        options: { redirectTo: window.location.origin + import.meta.env.BASE_URL },
+      })
+      if (error) alert('로그인에 실패했습니다: ' + error.message)
+    } catch (e) {
+      alert('로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
+    }
   }
 
   const signOut = async () => {

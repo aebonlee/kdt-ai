@@ -17,25 +17,37 @@ export default function AdminTeams() {
       .catch((e) => setErr(e.message || '불러오기 실패'))
   }, [])
 
-  // 이름 → 진도 레코드 매핑
+  // 이름 → 진도 레코드 "목록"(동명이인 보존: 같은 이름의 서로 다른 user_id를 모두 담는다)
   const byName = useMemo(() => {
     const m = new Map()
-    ;(rows || []).forEach((r) => m.set(normName(r.user_name), r))
+    ;(rows || []).forEach((r) => {
+      const k = normName(r.user_name)
+      if (!m.has(k)) m.set(k, [])
+      m.get(k).push(r)
+    })
     return m
   }, [rows])
 
-  // 팀별 명단 구성 + 팀 배정 안 된 학습자
+  // 팀별 명단 구성 + 팀 배정 안 된 학습자 (매칭·미배정 판정은 user_id 기준)
   const { teamViews, unassigned } = useMemo(() => {
-    const assigned = new Set()
+    const assignedIds = new Set()
     const teamViews = teams.map((t) => {
       const members = t.members.map((name) => {
-        const r = byName.get(normName(name))
-        if (r) assigned.add(normName(name))
-        return { name, joined: !!r, pct: r ? pctOf(r) : 0, updated: r?.updated_at }
+        const matches = byName.get(normName(name)) || []
+        matches.forEach((r) => assignedIds.add(r.user_id)) // 동명이인 전원을 배정 처리
+        const r = matches[0]
+        return {
+          name,
+          joined: matches.length > 0,
+          pct: r ? pctOf(r) : 0,
+          updated: r?.updated_at,
+          dupCount: matches.length, // 2 이상이면 동명이인 → 경고 표시
+        }
       })
       return { ...t, members }
     })
-    const unassigned = (rows || []).filter((r) => !assigned.has(normName(r.user_name)))
+    // user_id 기준으로 미배정 판정 → 동명이인 두 번째 계정이 누락되지 않는다
+    const unassigned = (rows || []).filter((r) => !assignedIds.has(r.user_id))
     return { teamViews, unassigned }
   }, [byName, rows])
 
@@ -78,8 +90,8 @@ export default function AdminTeams() {
                     <span style={{ fontSize: 12, color: 'var(--ink-soft)', marginLeft: 'auto' }}>{t.members.length}명</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {t.members.map((m) => (
-                      <MemberRow key={m.name} {...m} />
+                    {t.members.map((m, i) => (
+                      <MemberRow key={`${t.no}-${i}-${m.name}`} {...m} />
                     ))}
                   </div>
                 </div>
@@ -121,11 +133,16 @@ export default function AdminTeams() {
   )
 }
 
-function MemberRow({ name, joined, pct, updated }) {
+function MemberRow({ name, joined, pct, updated, dupCount = 0 }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <span style={{ width: 150, fontSize: 13.5, color: 'var(--navy-700)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {name}
+        {dupCount > 1 && (
+          <span title="같은 이름의 계정이 여러 개입니다. 진도율은 그중 하나 기준입니다." style={{ marginLeft: 6, fontSize: 11, color: '#D9730D', fontWeight: 700 }}>
+            ⚠︎동명 {dupCount}
+          </span>
+        )}
       </span>
       {joined ? (
         <>

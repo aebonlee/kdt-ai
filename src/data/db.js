@@ -91,7 +91,9 @@ export async function syncProgress(user, dates) {
 
 export async function getMyProgress(userId) {
   guard()
-  const { data } = await supabase.from('skala_progress').select('*').eq('user_id', userId).maybeSingle()
+  const { data, error } = await supabase.from('skala_progress').select('*').eq('user_id', userId).maybeSingle()
+  // error 를 삼키면 '진도 없음(null)'과 '조회 실패'가 구분되지 않아, 이후 syncProgress 가 서버 진도를 빈 값으로 덮어쓸 수 있다.
+  if (error) throw error
   return data
 }
 
@@ -108,6 +110,7 @@ export async function listAllProgress() {
 
 export async function countPosts() {
   guard()
-  const { count } = await supabase.from('skala_posts').select('*', { count: 'exact', head: true })
+  const { count, error } = await supabase.from('skala_posts').select('*', { count: 'exact', head: true })
+  if (error) throw error
   return count ?? 0
 }

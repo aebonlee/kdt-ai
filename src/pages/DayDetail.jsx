@@ -20,6 +20,11 @@ function Block({ title, items }) {
 
 export default function DayDetail() {
   const { date } = useParams()
+  // 훅은 조기 return 이전에 무조건 호출해야 한다(Rules of Hooks).
+  // react-router v6는 :date 파라미터만 바뀔 때 컴포넌트를 재마운트하지 않으므로,
+  // 조건부로 useProgress를 부르면 유효↔무효 날짜 전환 시 훅 개수가 달라져 크래시한다.
+  const done = useProgress()
+  const isDone = !!done[date]
   const session = sessionByDate(date)
 
   if (!session) {
@@ -33,8 +38,6 @@ export default function DayDetail() {
     )
   }
 
-  const done = useProgress()
-  const isDone = !!done[date]
   const subj = subjectById(session.subjectId)
   const d = dayOf(session)
   const all = sortedSessions()

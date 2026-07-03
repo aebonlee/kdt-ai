@@ -24,6 +24,11 @@ export default function BoardDetail() {
   }
 
   useEffect(() => {
+    // id 변경 시 컴포넌트가 재마운트되지 않으므로 이전 글의 상태를 먼저 비운다.
+    // (안 그러면 이전 글이 잠깐 노출되거나, 에러났던 글의 err 가 남아 정상 글도 에러 화면이 됨)
+    setPost(null)
+    setErr(null)
+    setComments([])
     getPost(id).then(setPost).catch((e) => setErr(e.message))
     loadComments()
   }, [id])
@@ -44,8 +49,12 @@ export default function BoardDetail() {
 
   const removePost = async () => {
     if (!confirm('이 글을 삭제할까요?')) return
-    await deletePost(id)
-    navigate('/board')
+    try {
+      await deletePost(id)
+      navigate('/board')
+    } catch (e) {
+      alert('삭제 실패: ' + e.message)
+    }
   }
 
   if (err) {
@@ -104,7 +113,11 @@ export default function BoardDetail() {
                 {canManage(c.author_id) && (
                   <button
                     onClick={async () => {
-                      await deleteComment(c.id)
+                      try {
+                        await deleteComment(c.id)
+                      } catch (e) {
+                        alert('댓글 삭제 실패: ' + e.message)
+                      }
                       loadComments()
                     }}
                     style={{ marginTop: 6, background: 'none', border: 'none', color: 'var(--ink-soft)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}

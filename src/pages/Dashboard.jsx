@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { isAdmin } from '../config/admin'
 import { useProgress } from '../hooks/useProgress'
-import { totalSessions } from '../data/curriculum'
+import { totalSessions, sortedSessions } from '../data/curriculum'
 import { listPosts, syncProgress, listAllProgress } from '../data/db'
 
 const fmt = (s) => new Date(s).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
@@ -12,7 +12,8 @@ export default function Dashboard() {
   const { user } = useAuth()
   const admin = isAdmin(user)
   const done = useProgress()
-  const doneCount = Object.keys(done).length
+  // 저장된 키가 아니라 실제 세션 기준 집계(stale 키로 100% 초과 방지)
+  const doneCount = sortedSessions().filter((s) => done[s.date]).length
   const pct = Math.round((doneCount / totalSessions) * 100)
 
   const [notices, setNotices] = useState([])

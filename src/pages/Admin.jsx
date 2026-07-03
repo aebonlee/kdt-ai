@@ -147,9 +147,16 @@ export default function Admin() {
                     <a href={driveView(selected.id)} target="_blank" rel="noreferrer" className="btn btn-cta" style={{ fontSize: 13, padding: '7px 14px' }}>
                       새 탭에서 크게 보기 ↗
                     </a>
-                    <a href={driveDownload(selected.id)} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ fontSize: 13, padding: '7px 14px' }}>
-                      ⬇ 다운로드
-                    </a>
+                    {selected.b > 25 * 1024 * 1024 ? (
+                      // 25MB 초과 파일은 uc?export=download 가 구글 확인 페이지로 리다이렉트되어 원클릭이 안 됨 → view로 안내
+                      <a href={driveView(selected.id)} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ fontSize: 13, padding: '7px 14px' }} title="25MB 초과 파일은 새 탭에서 열어 다운로드하세요">
+                        ⬇ 다운로드(새 탭)
+                      </a>
+                    ) : (
+                      <a href={driveDownload(selected.id)} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ fontSize: 13, padding: '7px 14px' }}>
+                        ⬇ 다운로드
+                      </a>
+                    )}
                   </div>
                 </div>
                 <iframe

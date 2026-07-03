@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -63,7 +63,8 @@ export default function App() {
             {/* 관리자(강사) 전용 자료실 — 구글드라이브 강의자료 열람 */}
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
             <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
-            <Route path="*" element={<Home />} />
+            {/* 알 수 없는 경로는 홈으로 정규화(주소창에 죽은 URL 남지 않게) */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </main>

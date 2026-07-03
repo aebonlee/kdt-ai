@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { sessionsBySubject, dayOf, totalSessions } from '../data/curriculum'
+import { sessionsBySubject, dayOf, totalSessions, sortedSessions } from '../data/curriculum'
 import { useProgress, setDone, resetProgress } from '../hooks/useProgress'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
@@ -7,7 +7,9 @@ const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ul
 export default function Progress() {
   const done = useProgress()
   const groups = sessionsBySubject()
-  const doneCount = Object.keys(done).length
+  // 저장된 키 개수(Object.keys)가 아니라 실제 세션 기준으로 집계 —
+  // 일정이 바뀌어 stale 날짜 키가 남아도 pct 가 100%를 넘거나 과목별 합계와 어긋나지 않게.
+  const doneCount = sortedSessions().filter((s) => done[s.date]).length
   const pct = Math.round((doneCount / totalSessions) * 100)
 
   return (
