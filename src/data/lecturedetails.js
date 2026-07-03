@@ -1514,7 +1514,7 @@ export const details = {
         "steps": [
           "터미널에서 작업 폴더로 이동한 뒤 'python -m venv venv' 로 가상환경을 만든다.",
           "'source venv/bin/activate' (윈도우는 venv\\Scripts\\activate)로 가상환경을 켠다.",
-          "'pip install langchain langchain-community langchain-openai chromadb pypdf numpy' 로 라이브러리를 설치한다.",
+          "'pip install langchain langchain-chroma langchain-community langchain-openai chromadb pypdf numpy' 로 라이브러리를 설치한다.",
           "'python -c \"import langchain; print(langchain.__version__)\"' 를 실행해 버전이 출력되면 설치 성공이다."
         ]
       },

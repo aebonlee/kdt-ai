@@ -205,7 +205,7 @@ export const examples = {
     {
       "title": "application.yml — Anthropic(클로드) 프로바이더 설정",
       "lang": "yaml",
-      "code": "# Spring 관련 설정의 최상위 키\nspring:\n  ai:\n    # Anthropic(클로드) 공급사 설정 묶음\n    anthropic:\n      # 클로드 API 키를 환경변수에서 읽어 온다(코드에 키를 노출하지 않기 위함)\n      api-key: ${ANTHROPIC_API_KEY}\n      # 채팅 모델의 세부 옵션 묶음\n      chat:\n        options:\n          # 사용할 모델 식별자(클로드 계열 모델 이름)\n          model: claude-sonnet-4-20250514\n          # 창의성 정도: 0에 가까우면 일관적, 1에 가까우면 다양\n          temperature: 0.7",
+      "code": "# Spring 관련 설정의 최상위 키\nspring:\n  ai:\n    # Anthropic(클로드) 공급사 설정 묶음\n    anthropic:\n      # 클로드 API 키를 환경변수에서 읽어 온다(코드에 키를 노출하지 않기 위함)\n      api-key: ${ANTHROPIC_API_KEY}\n      # 채팅 모델의 세부 옵션 묶음\n      chat:\n        options:\n          # 사용할 모델 식별자(클로드 계열 모델 이름)\n          model: claude-opus-4-8\n          # (opus-4-8 계열은 temperature 미지원 — 창의성은 프롬프트로 유도)",
       "note": "키를 코드가 아닌 환경변수(${...})로 읽어 보안을 지키는 것이 핵심 포인트다."
     },
     {
@@ -323,7 +323,7 @@ export const examples = {
     {
       "title": "범주형을 원-핫 인코딩으로 바꾸기",
       "lang": "python",
-      "code": "import pandas as pd  # 데이터 처리 라이브러리\n\n# 색깔이라는 글자 범주가 든 표\ndf = pd.DataFrame({'color': ['red', 'blue', 'red', 'green']})\n\n# get_dummies: 각 색깔마다 0/1 칸을 자동 생성\nonehot = pd.get_dummies(df['color'])\n\nprint(onehot.columns.tolist())  # 결과: ['blue', 'green', 'red']\nprint(onehot.iloc[0].tolist())  # 첫 행(red): [0, 0, 1]",
+      "code": "import pandas as pd  # 데이터 처리 라이브러리\n\n# 색깔이라는 글자 범주가 든 표\ndf = pd.DataFrame({'color': ['red', 'blue', 'red', 'green']})\n\n# get_dummies: 각 색깔마다 0/1 칸을 자동 생성\nonehot = pd.get_dummies(df['color'])\n\nprint(onehot.columns.tolist())  # 결과: ['blue', 'green', 'red']\nprint(onehot.iloc[0].tolist())  # 첫 행(red): [False, False, True]  (pandas 2.0+ 기본 dtype=bool)",
       "note": "순서 없는 범주는 원-핫으로 바꿔야 모델이 크기 오해를 하지 않는다."
     },
     {
@@ -371,7 +371,7 @@ export const examples = {
     {
       "title": "긴 글을 조각으로 잘라 개수와 모양 확인하기",
       "lang": "python",
-      "code": "from langchain.text_splitter import RecursiveCharacterTextSplitter  # 분할기 불러오기\n\ntext = \"RAG는 검색과 생성을 합친 방법이다. \" * 20  # 같은 문장을 20번 이어 붙여 긴 글을 만든다\nsplitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=20)  # 100자씩, 20자 겹치게\nchunks = splitter.split_text(text)  # 긴 글을 조각 리스트로 자른다\n\nprint(f\"조각 수: {len(chunks)}\")  # 결과: 조각 수: 8 (글 길이에 따라 달라짐)\nprint(chunks[0])  # 결과: 첫 조각 내용이 100자 안쪽으로 출력됨",
+      "code": "from langchain_text_splitters import RecursiveCharacterTextSplitter  # 분할기 불러오기\n\ntext = \"RAG는 검색과 생성을 합친 방법이다. \" * 20  # 같은 문장을 20번 이어 붙여 긴 글을 만든다\nsplitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=20)  # 100자씩, 20자 겹치게\nchunks = splitter.split_text(text)  # 긴 글을 조각 리스트로 자른다\n\nprint(f\"조각 수: {len(chunks)}\")  # 결과: 조각 수: 8 (글 길이에 따라 달라짐)\nprint(chunks[0])  # 결과: 첫 조각 내용이 100자 안쪽으로 출력됨",
       "note": "chunk_size 와 chunk_overlap 숫자를 바꾸면 조각 수가 달라지는 것을 체감하는 예제다."
     }
   ],
@@ -379,13 +379,13 @@ export const examples = {
     {
       "title": "리트리버로 관련 조각만 빠르게 가져오기",
       "lang": "python",
-      "code": "from langchain_community.vectorstores import Chroma  # 벡터 DB 불러오기\nfrom langchain_openai import OpenAIEmbeddings  # 임베딩 모델\n\nembeddings = OpenAIEmbeddings(model=\"text-embedding-3-small\")  # 색인 때와 같은 모델\nvectordb = Chroma(persist_directory=\"chroma_db\", embedding_function=embeddings)  # 저장 폴더 로드\nretriever = vectordb.as_retriever(search_kwargs={\"k\": 3})  # 상위 3개만 가져오는 리트리버\n\ndocs = retriever.invoke(\"환불은 며칠 안에 가능한가요?\")  # 질문을 넣어 관련 조각을 가져온다\nprint(f\"가져온 조각 수: {len(docs)}\")  # 결과: 가져온 조각 수: 3\nprint(docs[0].page_content[:60])  # 결과: 첫 조각의 앞 60자가 출력됨",
+      "code": "from langchain_chroma import Chroma  # 벡터 DB 불러오기\nfrom langchain_openai import OpenAIEmbeddings  # 임베딩 모델\n\nembeddings = OpenAIEmbeddings(model=\"text-embedding-3-small\")  # 색인 때와 같은 모델\nvectordb = Chroma(persist_directory=\"chroma_db\", embedding_function=embeddings)  # 저장 폴더 로드\nretriever = vectordb.as_retriever(search_kwargs={\"k\": 3})  # 상위 3개만 가져오는 리트리버\n\ndocs = retriever.invoke(\"환불은 며칠 안에 가능한가요?\")  # 질문을 넣어 관련 조각을 가져온다\nprint(f\"가져온 조각 수: {len(docs)}\")  # 결과: 가져온 조각 수: 3\nprint(docs[0].page_content[:60])  # 결과: 첫 조각의 앞 60자가 출력됨",
       "note": "k 값을 바꾸면 가져오는 조각 수가 그대로 바뀌는 것을 확인한다."
     },
     {
       "title": "키워드(BM25)와 벡터를 합친 하이브리드 검색",
       "lang": "python",
-      "code": "from langchain_community.retrievers import BM25Retriever  # 키워드 기반 검색기\nfrom langchain.retrievers import EnsembleRetriever  # 여러 검색기를 합치는 도구\nfrom langchain_core.documents import Document  # 문서 조각 객체\n\ndocs = [Document(page_content=t) for t in [  # 간단한 예시 문서 3개를 만든다\n    \"환불은 구매 후 7일 이내 가능합니다\",\n    \"배송은 보통 2~3일 걸립니다\",\n    \"회원 등급은 구매액에 따라 정해집니다\",\n]]\nbm25 = BM25Retriever.from_documents(docs)  # 단어가 겹치는지로 찾는 키워드 검색기 생성\nbm25.k = 2  # 상위 2개만 반환하도록 설정\n# 실제로는 벡터 리트리버와 EnsembleRetriever([bm25, vector], weights=[0.5,0.5])로 합친다\nprint(bm25.invoke(\"환불\")[0].page_content)  # 결과: 환불은 구매 후 7일 이내 가능합니다",
+      "code": "from langchain_community.retrievers import BM25Retriever  # 키워드 기반 검색기\n# (EnsembleRetriever는 langchain 1.0에서 langchain_classic으로 이동 — 실제 사용 시 그 경로로 import)\nfrom langchain_core.documents import Document  # 문서 조각 객체\n\ndocs = [Document(page_content=t) for t in [  # 간단한 예시 문서 3개를 만든다\n    \"환불은 구매 후 7일 이내 가능합니다\",\n    \"배송은 보통 2~3일 걸립니다\",\n    \"회원 등급은 구매액에 따라 정해집니다\",\n]]\nbm25 = BM25Retriever.from_documents(docs)  # 단어가 겹치는지로 찾는 키워드 검색기 생성\nbm25.k = 2  # 상위 2개만 반환하도록 설정\n# 실제로는 벡터 리트리버와 EnsembleRetriever([bm25, vector], weights=[0.5,0.5])로 합친다\nprint(bm25.invoke(\"환불\")[0].page_content)  # 결과: 환불은 구매 후 7일 이내 가능합니다",
       "note": "키워드 검색은 정확한 단어 일치에 강해 벡터 검색의 약점을 보완한다."
     }
   ],
@@ -399,7 +399,7 @@ export const examples = {
     {
       "title": "메타데이터 필터로 특정 문서만 검색하기",
       "lang": "python",
-      "code": "from langchain_community.vectorstores import Chroma  # 벡터 DB\nfrom langchain_openai import OpenAIEmbeddings  # 임베딩 모델\n\nembeddings = OpenAIEmbeddings(model=\"text-embedding-3-small\")  # 색인 때와 같은 모델\nvectordb = Chroma(persist_directory=\"chroma_db\", embedding_function=embeddings)  # 인덱스 로드\n\n# filter 에 조건을 주면 꼬리표가 맞는 조각만 검색 대상으로 삼는다\nresults = vectordb.similarity_search(\n    \"휴가 규정\",                    # 검색할 질문\n    k=3,                            # 상위 3개\n    filter={\"source\": \"docs/company_policy.pdf\"}  # 이 파일에서 온 조각만 검색\n)\nprint(len(results))  # 결과: 3 (해당 문서 안에서만 찾음)",
+      "code": "from langchain_chroma import Chroma  # 벡터 DB\nfrom langchain_openai import OpenAIEmbeddings  # 임베딩 모델\n\nembeddings = OpenAIEmbeddings(model=\"text-embedding-3-small\")  # 색인 때와 같은 모델\nvectordb = Chroma(persist_directory=\"chroma_db\", embedding_function=embeddings)  # 인덱스 로드\n\n# filter 에 조건을 주면 꼬리표가 맞는 조각만 검색 대상으로 삼는다\nresults = vectordb.similarity_search(\n    \"휴가 규정\",                    # 검색할 질문\n    k=3,                            # 상위 3개\n    filter={\"source\": \"docs/company_policy.pdf\"}  # 이 파일에서 온 조각만 검색\n)\nprint(len(results))  # 결과: 3 (해당 문서 안에서만 찾음)",
       "note": "여러 문서가 섞여 있을 때 원하는 문서로 검색 범위를 좁혀 정확도와 속도를 높인다."
     }
   ],
@@ -427,7 +427,7 @@ export const examples = {
     {
       "title": "대화 메모리로 앞말 기억하기",
       "lang": "python",
-      "code": "# 대화 기록을 자동으로 끼워 주는 래퍼를 가져온다\nfrom langchain_core.runnables.history import RunnableWithMessageHistory\n# 대화를 메모리에 보관하는 저장소를 가져온다\nfrom langchain_community.chat_message_histories import ChatMessageHistory\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 세션별 대화 기록을 담아 둘 딕셔너리를 만든다\nstore = {}\n# 세션 id로 그 사람의 대화 기록을 돌려주는 함수를 정의한다\ndef get_history(session_id):\n    if session_id not in store:           # 처음 보는 세션이면\n        store[session_id] = ChatMessageHistory()  # 새 기록 객체를 만들어 둔다\n    return store[session_id]              # 해당 세션의 기록을 돌려준다\n# 모델에 '기록을 자동으로 함께 보내기' 기능을 입힌다\nchat = RunnableWithMessageHistory(ChatAnthropic(model=\"claude-opus-4-8\"), get_history)\n# 같은 session_id로 첫 마디를 보낸다(이름을 알려 준다)\ncfg = {\"configurable\": {\"session_id\": \"u1\"}}  # 누구의 대화인지 식별\nchat.invoke(\"내 이름은 길동이야\", config=cfg)   # 모델이 기록에 저장\n# 같은 세션으로 다시 물으면 앞말을 기억해 답한다\nprint(chat.invoke(\"내 이름이 뭐였지?\", config=cfg).content)  # 결과: '길동입니다.'",
+      "code": "# 대화 기록을 자동으로 끼워 주는 래퍼를 가져온다\nfrom langchain_core.runnables.history import RunnableWithMessageHistory\n# 대화를 메모리에 보관하는 저장소를 가져온다\nfrom langchain_core.chat_history import InMemoryChatMessageHistory\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 세션별 대화 기록을 담아 둘 딕셔너리를 만든다\nstore = {}\n# 세션 id로 그 사람의 대화 기록을 돌려주는 함수를 정의한다\ndef get_history(session_id):\n    if session_id not in store:           # 처음 보는 세션이면\n        store[session_id] = InMemoryChatMessageHistory()  # 새 기록 객체를 만들어 둔다\n    return store[session_id]              # 해당 세션의 기록을 돌려준다\n# 모델에 '기록을 자동으로 함께 보내기' 기능을 입힌다\nchat = RunnableWithMessageHistory(ChatAnthropic(model=\"claude-opus-4-8\"), get_history)\n# 같은 session_id로 첫 마디를 보낸다(이름을 알려 준다)\ncfg = {\"configurable\": {\"session_id\": \"u1\"}}  # 누구의 대화인지 식별\nchat.invoke(\"내 이름은 길동이야\", config=cfg)   # 모델이 기록에 저장\n# 같은 세션으로 다시 물으면 앞말을 기억해 답한다\nprint(chat.invoke(\"내 이름이 뭐였지?\", config=cfg).content)  # 결과: '길동입니다.'",
       "note": "session_id를 같게 유지하면 모델이 직전 대화를 이어받아 맥락을 기억한다."
     },
     {
@@ -525,7 +525,7 @@ export const examples = {
     {
       "title": "코사인 유사도를 손으로 계산해 보기",
       "lang": "python",
-      "code": "import numpy as np  # 벡터 계산용 라이브러리\n\n# 세 개의 짧은 벡터를 직접 정의한다 (실제 임베딩 대신 이해용 예시)\na = np.array([1.0, 0.0, 1.0])  # 기준 문장 벡터\nb = np.array([0.9, 0.1, 1.0])  # a와 방향이 비슷한 벡터\nc = np.array([0.0, 1.0, 0.0])  # a와 방향이 다른 벡터\n\n# 코사인 유사도 = 내적 / (각 벡터 길이의 곱)\ndef cosine(x, y):\n    return np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))\n\nprint(round(cosine(a, b), 3))  # 결과: 0.995  (매우 비슷)\nprint(round(cosine(a, c), 3))  # 결과: 0.0    (관련 없음)",
+      "code": "import numpy as np  # 벡터 계산용 라이브러리\n\n# 세 개의 짧은 벡터를 직접 정의한다 (실제 임베딩 대신 이해용 예시)\na = np.array([1.0, 0.0, 1.0])  # 기준 문장 벡터\nb = np.array([0.9, 0.1, 1.0])  # a와 방향이 비슷한 벡터\nc = np.array([0.0, 1.0, 0.0])  # a와 방향이 다른 벡터\n\n# 코사인 유사도 = 내적 / (각 벡터 길이의 곱)\ndef cosine(x, y):\n    return np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))\n\nprint(round(cosine(a, b), 3))  # 결과: 0.996  (매우 비슷)\nprint(round(cosine(a, c), 3))  # 결과: 0.0    (관련 없음)",
       "note": "값이 1에 가까울수록 비슷하고 0에 가까울수록 무관하다는 직관을 숫자로 확인한다."
     },
     {

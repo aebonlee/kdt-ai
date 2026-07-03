@@ -193,7 +193,7 @@ export const plans = {
         "clean 리스트를 np.array 로 바꿔 prices 변수에 담고, prices.sum() · prices.mean() · prices.max() 를 각각 print 한다.",
         "각 주문에 10% 부가세를 더한 배열을 'prices * 1.1' 한 줄로 계산해 with_tax 변수에 담는다(반복문 없이 한 번에).",
         "딕셔너리 summary 를 만들어 {'건수': len(prices), '합계': int(prices.sum()), '평균': round(float(prices.mean()))} 형태로 저장한다.",
-        "print(summary) 를 실행해 화면에 건수 5, 합계 76000, 평균 15200 같은 결과가 나오는지 확인한다(기대 결과).",
+        "print(summary) 를 실행해 화면에 건수 4, 합계 76000, 평균 19000 같은 결과가 나오는지 확인한다(기대 결과).",
         "마지막으로 clean 결과를 컴프리헨션 한 줄 '[p for p in orders if p and p > 0]' 로도 똑같이 만들어 두 방식의 결과가 같은지 비교한다."
       ],
       "deliverable": "지저분한 주문 리스트를 정제해 건수·합계·평균을 출력하는 .ipynb 노트북 파일"
@@ -1282,7 +1282,7 @@ export const plans = {
       "title": "내 PDF 문서를 검색 가능한 벡터 인덱스로 만드는 파이프라인 구축",
       "steps": [
         "터미널을 열고 'python -m venv venv' 명령으로 가상환경을 만든 뒤 'source venv/bin/activate'(윈도우는 venv\\Scripts\\activate)로 활성화한다.",
-        "'pip install langchain langchain-community langchain-openai chromadb pypdf' 를 실행해 필요한 라이브러리를 한 번에 설치한다.",
+        "'pip install langchain langchain-chroma langchain-community langchain-openai chromadb pypdf' 를 실행해 필요한 라이브러리를 한 번에 설치한다.",
         "작업 폴더에 'docs' 폴더를 만들고, 검색 대상이 될 PDF 파일 1개(예: 회사 규정집)를 그 안에 복사한다.",
         "환경변수에 OpenAI API 키를 넣는다: 터미널에서 'export OPENAI_API_KEY=sk-...' (윈도우는 set 사용).",
         "PyPDFLoader 로 PDF를 불러와 전체 페이지 수를 print 로 확인한다(기대 결과: 예 '총 12페이지 로드').",
