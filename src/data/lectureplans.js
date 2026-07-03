@@ -1917,59 +1917,31 @@ export const plans = {
   },
   "vectordb-1": {
     "schedule": [
-      {
-        "time": "09:00–09:50",
-        "topic": "1교시 — 오리엔테이션: 벡터 검색이 왜 필요한가 (검색의 진화)"
-      },
-      {
-        "time": "10:00–10:50",
-        "topic": "2교시 — 임베딩과 벡터 공간, 코사인/내적 유사도 개념"
-      },
-      {
-        "time": "11:00–11:50",
-        "topic": "3교시 [실습] 문장을 임베딩 벡터로 바꿔보고 유사도 직접 계산"
-      },
-      {
-        "time": "12:00–13:00",
-        "topic": "점심 휴식",
-        "lunch": true
-      },
-      {
-        "time": "13:00–13:50",
-        "topic": "4교시 — 인덱싱 알고리즘: 완전탐색의 한계와 HNSW·IVF 직관"
-      },
-      {
-        "time": "14:00–14:50",
-        "topic": "5교시 [실습] FAISS로 Flat vs HNSW 인덱스 만들어 속도 비교"
-      },
-      {
-        "time": "15:00–15:50",
-        "topic": "6교시 — 대표 Vector DB 비교: pgvector·Chroma·FAISS·Pinecone"
-      },
-      {
-        "time": "16:00–16:50",
-        "topic": "7교시 [실습] Chroma로 문서 임베딩·저장·검색 미니 파이프라인"
-      },
-      {
-        "time": "17:00–17:50",
-        "topic": "8교시 [실습] 메타데이터 필터링 + 키워드/벡터 하이브리드 검색"
-      }
+      { "time": "09:00–09:50", "topic": "1교시 — 오리엔테이션: 벡터 검색이 왜 필요한가, RAG 한계 진단" },
+      { "time": "10:00–10:50", "topic": "2교시 — 임베딩과 벡터 공간, 코사인/내적 유사도, 인덱싱(HNSW·IVF)" },
+      { "time": "11:00–11:50", "topic": "3교시 [실습] 임베딩·유사도 계산 + FAISS Flat vs HNSW 속도 비교" },
+      { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
+      { "time": "13:00–13:50", "topic": "4교시 — 대표 Vector DB 비교: FAISS·Chroma·pgvector·Qdrant·Pinecone" },
+      { "time": "14:00–14:50", "topic": "5교시 [실습] FAISS→Qdrant로 문서 임베딩·저장·검색 옮기기" },
+      { "time": "15:00–15:50", "topic": "6교시 — Chunking Engineering과 하이브리드 검색, Re-ranking" },
+      { "time": "16:00–16:50", "topic": "7교시 [실습] Hybrid + Reranking으로 검색 정확도 높이기" },
+      { "time": "17:00–17:50", "topic": "8교시 — Agentic RAG와 Production Architecture, 최신 동향(MEMO)" }
     ],
     "practice": {
-      "title": "나만의 문서 검색기 만들기 — Chroma로 임베딩·저장·질문 검색까지",
+      "title": "문서 검색기 만들기 — 임베딩·저장·검색 + FAISS→Qdrant 이전 + Re-ranking",
       "steps": [
-        "터미널에서 `pip install chromadb sentence-transformers` 를 실행해 필요한 라이브러리를 설치한다 (설치 로그 마지막에 Successfully installed 가 보이면 성공).",
-        "작업 폴더에 `search.py` 파일을 새로 만들고, 검색 대상이 될 문장 5~6개를 파이썬 리스트 `docs` 로 직접 입력한다 (예: 강아지·고양이·날씨·주식 같은 서로 다른 주제 문장).",
-        "`SentenceTransformer('all-MiniLM-L6-v2')` 모델을 불러와 `model.encode(docs)` 로 각 문장을 숫자 벡터로 바꾼다 (벡터 1개의 길이가 384인지 `shape` 로 확인).",
-        "`chromadb.Client()` 로 메모리 DB를 만들고 `create_collection('my_docs')` 로 문서를 담을 컬렉션(서랍장)을 생성한다.",
-        "`collection.add(documents=docs, embeddings=벡터, ids=...)` 로 문장 원문·벡터·고유번호를 함께 저장한다 (id는 'd0','d1'처럼 문자열로).",
-        "질문 문장 하나(예: '반려동물 키우기')를 같은 모델로 임베딩한 뒤 `collection.query(query_embeddings=..., n_results=2)` 로 가장 비슷한 문서 2개를 찾는다.",
-        "터미널에 검색 결과 문서와 거리(distance)를 `print` 로 출력하고, 질문과 주제가 같은 문장이 가장 위에 오는지 눈으로 확인한다 (기대 결과: 강아지·고양이 문장이 상위에 노출).",
-        "이번엔 각 문서에 `metadatas=[{'topic':'pet'} ...]` 로 주제 태그를 달아 다시 저장하고, `where={'topic':'pet'}` 조건을 걸어 특정 주제 안에서만 검색되는지 확인한다.",
-        "질문을 2~3개 바꿔가며 검색해 보고, 결과가 기대와 다르면 어떤 문장 때문에 헷갈리는지 한 줄로 메모한다.",
-        "완성된 `search.py` 를 저장하고, 실행 화면(질문→상위 문서 출력) 캡처를 산출물로 남긴다."
+        "`pip install sentence-transformers faiss-cpu qdrant-client` 로 설치한다.",
+        "검색 대상 문장 6~8개를 리스트로 준비하고, `SentenceTransformer('all-MiniLM-L6-v2')` 로 임베딩한다(벡터 길이 384 확인).",
+        "먼저 FAISS(`IndexFlatIP`)에 벡터를 넣고 질문 하나로 top-3 검색이 되는지 확인한다.",
+        "같은 데이터를 Qdrant(로컬 `QdrantClient(':memory:')`)의 컬렉션에 upsert 하고, 동일 질문으로 검색해 FAISS와 결과가 같은지 비교한다.",
+        "질문과 주제가 같은 문장이 상위에 오는지 눈으로 확인한다(기대 결과: 같은 주제 문장이 top에 노출).",
+        "키워드(BM25)와 벡터 결과를 합치는 하이브리드 검색을 구성한다.",
+        "가져온 후보에 Cross-Encoder Re-ranking을 적용해, 재순위 전/후 상위 3개가 어떻게 달라지는지 출력해 비교한다.",
+        "각 문서에 주제 태그(metadata)를 달고 필터 검색으로 특정 주제 안에서만 검색되는지 확인한다.",
+        "질문을 2~3개 바꿔가며 재순위가 정말 더 나은 순서를 만드는지 한 줄로 메모한다.",
+        "완성 코드를 저장하고 FAISS/Qdrant/재순위 결과 캡처를 산출물로 남긴다."
       ],
-      "deliverable": "search.py 소스 파일 1개 + 질문 2개에 대한 검색 결과 출력 캡처(스크린샷 또는 콘솔 텍스트), 그리고 '잘된 검색 / 헷갈린 검색' 1줄 회고"
+      "deliverable": "검색기 소스 + FAISS↔Qdrant 결과 비교 + 재순위 전/후 상위3 비교 캡처 + '재순위 효과' 1줄 회고"
     }
   },
   "capstone-1": {

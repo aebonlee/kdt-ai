@@ -366,14 +366,14 @@ export const periods = {
     "8교시 [실습] 멀티 에이전트 워크플로 완성 + 회고"
   ],
   "vectordb-1": [
-    "1교시 — 오리엔테이션: 벡터 검색이 왜 필요한가 (검색의 진화)",
-    "2교시 — 임베딩과 벡터 공간, 코사인/내적 유사도 개념",
-    "3교시 [실습] 문장을 임베딩 벡터로 바꿔보고 유사도 직접 계산",
-    "4교시 — 인덱싱 알고리즘: 완전탐색의 한계와 HNSW·IVF 직관",
-    "5교시 [실습] FAISS로 Flat vs HNSW 인덱스 만들어 속도 비교",
-    "6교시 — 대표 Vector DB 비교: pgvector·Chroma·FAISS·Pinecone",
-    "7교시 [실습] Chroma로 문서 임베딩·저장·검색 미니 파이프라인",
-    "8교시 [실습] 메타데이터 필터링 + 키워드/벡터 하이브리드 검색"
+    "1교시 — 오리엔테이션: 벡터 검색이 왜 필요한가, RAG 한계 진단",
+    "2교시 — 임베딩과 벡터 공간, 코사인/내적 유사도, 인덱싱(HNSW·IVF)",
+    "3교시 [실습] 임베딩·유사도 계산 + FAISS Flat vs HNSW 속도 비교",
+    "4교시 — 대표 Vector DB 비교: FAISS·Chroma·pgvector·Qdrant·Pinecone",
+    "5교시 [실습] FAISS→Qdrant로 문서 임베딩·저장·검색 옮기기",
+    "6교시 — Chunking Engineering과 하이브리드 검색, Re-ranking",
+    "7교시 [실습] Hybrid + Reranking으로 검색 정확도 높이기",
+    "8교시 — Agentic RAG와 Production Architecture, 최신 동향(MEMO)"
   ],
   "capstone-1": [
     "1교시 OT: 캡스톤 목표와 Backend·VectorDB·Agent(MCP)·Frontend 전체 그림",

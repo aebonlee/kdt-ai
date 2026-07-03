@@ -1075,11 +1075,19 @@ export const concepts = {
     },
     {
       "term": "Vector DB(벡터 데이터베이스)",
-      "desc": "임베딩 벡터를 대량으로 저장하고, 비슷한 벡터를 빠르게 찾아주는 일에 특화된 데이터베이스다.\npgvector·Chroma·FAISS·Pinecone 등이 있다."
+      "desc": "임베딩 벡터를 대량으로 저장하고, 비슷한 벡터를 빠르게 찾아주는 일에 특화된 데이터베이스다.\nFAISS(로컬 라이브러리)·Chroma·pgvector·Qdrant·Pinecone 등이 있으며, 실습에서는 FAISS로 시작해 Qdrant로 옮겨 본다."
     },
     {
       "term": "메타데이터 필터링",
       "desc": "벡터와 함께 저장해 둔 꼬리표(작성일·카테고리·작성자 등)로 검색 범위를 먼저 좁히는 기능이다.\n'2024년 글 중에서만' 처럼 조건을 걸어 더 정확한 검색을 만든다."
+    },
+    {
+      "term": "재순위(Re-ranking)",
+      "desc": "벡터 검색으로 후보를 넉넉히 가져온 뒤, Cross-Encoder 같은 더 정교한 모델로 다시 점수를 매겨 진짜 관련 높은 것을 위로 올리는 단계다.\n검색 정확도를 크게 끌어올리는 프로덕션 필수 기법이다."
+    },
+    {
+      "term": "Agentic RAG · Production Architecture",
+      "desc": "단순 검색을 넘어, 결과가 부족하면 스스로 재검색·재작성하는 검색(Agentic RAG)과, 임베딩·인덱싱·재순위·캐싱을 갖춘 실서비스용 구조(Production Architecture)를 말한다."
     }
   ],
   "capstone-1": [

@@ -2122,10 +2122,19 @@ export const details = {
       {
         "h": "대표 Vector DB와 실전 검색 기능",
         "items": [
-          "임베디드형 FAISS·Chroma vs 서버/클라우드형 Pinecone·pgvector",
-          "기존 PostgreSQL에 벡터를 더하는 pgvector",
+          "임베디드형 FAISS·Chroma vs 서버형 Qdrant·pgvector·Pinecone",
+          "FAISS로 시작해 Qdrant(서버형)로 옮기는 경로",
           "메타데이터 필터링으로 검색 범위 좁히기",
           "키워드(BM25)+벡터를 합치는 하이브리드 검색"
+        ]
+      },
+      {
+        "h": "재순위·Agentic RAG·Production",
+        "items": [
+          "Re-ranking(Cross-Encoder)으로 검색 정확도 향상",
+          "Chunking Engineering: 검색 품질을 좌우하는 청킹 설계",
+          "Agentic RAG: 부족하면 스스로 재검색하는 검색",
+          "Production Architecture와 최신 동향(MEMO: Memory as a Model)"
         ]
       }
     ],
@@ -2162,8 +2171,8 @@ export const details = {
       }
     ],
     "homework": [
-      "오늘 만든 search.py를 발전시켜, 본인 관심 분야 문장 10개 이상을 넣고 질문 3개에 대한 검색 결과를 표로 정리해 제출한다 (질문 / 1위 문서 / 유사도).",
-      "pgvector·Chroma·FAISS·Pinecone 중 2개를 골라 '저장 위치(메모리/파일/서버)·설치 난이도·메타데이터 필터 지원' 3가지 기준으로 비교하는 5줄 요약을 작성한다."
+      "오늘 만든 검색 코드를 FAISS에서 Qdrant로 옮기고, 같은 질문에 대한 검색 결과가 동일한지 표로 정리해 제출한다.",
+      "하이브리드 검색 결과에 Re-ranking을 적용해, 재순위 전/후 상위 3개 문서가 어떻게 달라지는지 비교해 3문장으로 정리한다."
     ]
   },
   "capstone-1": {
