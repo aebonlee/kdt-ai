@@ -1020,6 +1020,14 @@ export const concepts = {
     {
       "term": "조건부 엣지(Conditional Edge)",
       "desc": "상태를 보고 '다음에 어느 노드로 갈지'를 그때그때 갈림길처럼 정해주는 연결선이다."
+    },
+    {
+      "term": "Agentic Workflow(Goal·Plan·Execute·Reflect)",
+      "desc": "에이전트가 목표를 세우고(Goal) 단계를 계획하고(Plan) 도구로 실행하고(Execute) 결과를 되돌아보며(Reflect) 개선하는, 일하는 방식의 설계 틀이다."
+    },
+    {
+      "term": "Agent Protocol",
+      "desc": "에이전트끼리, 또는 클라이언트와 표준 방식으로 요청·응답을 주고받게 정한 규약으로, 서로 다른 에이전트를 갈아 끼울 수 있게 한다."
     }
   ],
   "agent-2": [
@@ -1050,6 +1058,18 @@ export const concepts = {
     {
       "term": "checkpointer(체크포인터)",
       "desc": "에이전트가 멈춘 순간의 상태를 저장해 두었다가 나중에 그 자리에서 이어갈 수 있게 해주는 저장소다."
+    },
+    {
+      "term": "Middleware(미들웨어)",
+      "desc": "에이전트 실행 전후에 로깅·검증·입력 가공 같은 공통 처리를 끼워 넣는 중간 계층으로, 여러 에이전트가 같은 규칙을 공유하게 한다."
+    },
+    {
+      "term": "Harness Engineering",
+      "desc": "에이전트 두뇌(LLM) 바깥의 '주변 장치(하네스)' — 도구 연결·병렬 실행·오류 처리·관측 — 를 잘 갖추도록 설계하는 것으로, 실서비스 성능을 좌우한다."
+    },
+    {
+      "term": "Parallel Execution(Fan-out)",
+      "desc": "여러 작업을 한 줄로 순서대로 하지 않고 동시에 펼쳐(Fan-out) 실행한 뒤 결과를 모아, 전체 시간을 크게 줄이는 기법이다."
     }
   ],
   "vectordb-1": [

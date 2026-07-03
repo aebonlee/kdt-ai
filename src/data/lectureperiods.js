@@ -346,22 +346,22 @@ export const periods = {
     "8교시 AIOps: 이상탐지·자동 대응과 과정 마무리"
   ],
   "agent-1": [
-    "1교시 AI 에이전트란 무엇인가 - 챗봇과 에이전트의 차이",
+    "1교시 AI 에이전트란 - 챗봇과의 차이, Agent Protocol 개요",
     "2교시 ReAct 패턴 - 생각하고(Reason) 행동하기(Act)",
-    "3교시 [실습] 환경 셋업과 첫 LLM 호출 따라하기",
-    "4교시 LangGraph 핵심 개념 - 그래프·노드·엣지·State",
-    "5교시 [실습] State와 노드로 가장 단순한 그래프 만들기",
+    "3교시 Agentic Workflow 설계: Goal · Plan · Execute · Reflect",
+    "4교시 [실습] 환경 셋업 + LangGraph 핵심(그래프·노드·State)",
+    "5교시 [실습] State와 노드로 단순 그래프 만들기",
     "6교시 도구(Tool) 정의와 LLM이 도구를 부르게 하기",
-    "7교시 [실습] 조건부 분기로 도구 호출 루프 만들기",
+    "7교시 Agentic RAG Workflow(검색·판단 루프) 개념과 조건 분기",
     "8교시 [실습] 단일 에이전트 완성 + 실행 결과 점검"
   ],
   "agent-2": [
     "1교시 단일 에이전트의 한계와 멀티 에이전트의 필요성",
-    "2교시 멀티 에이전트 구조 - 슈퍼바이저와 작업자 패턴",
-    "3교시 [실습] 두 전문가 에이전트를 라우터로 나눠 호출하기",
-    "4교시 서브그래프와 메모리로 역할 조립하기",
-    "5교시 Human-in-the-loop - 사람이 승인해야 진행하는 흐름",
-    "6교시 [실습] interrupt 로 사람 승인 받고 이어가기",
+    "2교시 멀티 에이전트 패턴: Supervisor · Middleware",
+    "3교시 [실습] Supervisor로 전문가 에이전트 라우팅",
+    "4교시 Harness Engineering과 Parallel Execution(Fan-out)",
+    "5교시 [실습] Fan-out으로 여러 작업 동시 실행하기",
+    "6교시 Human-in-the-loop - interrupt로 사람 승인 받기",
     "7교시 에러 복구·재시도·관측(로깅/추적) 다루기",
     "8교시 [실습] 멀티 에이전트 워크플로 완성 + 회고"
   ],
