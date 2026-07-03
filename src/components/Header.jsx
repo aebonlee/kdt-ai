@@ -2,6 +2,8 @@ import { NavLink, Link } from 'react-router-dom'
 import { course } from '../data/course'
 import ThemeToggle from './ThemeToggle'
 import AuthButtons from './AuthButtons'
+import { useAuth } from '../contexts/AuthContext'
+import { isAdmin } from '../config/admin'
 
 const nav = [
   { to: '/', label: 'About', end: true },
@@ -18,6 +20,9 @@ const nav = [
 ]
 
 export default function Header() {
+  const { user } = useAuth()
+  const admin = isAdmin(user)
+
   return (
     <>
       <div className="topbar">
@@ -58,6 +63,16 @@ export default function Header() {
                   {n.label}
                 </NavLink>
               ),
+            )}
+            {/* 관리자(강사)에게만 노출 */}
+            {admin && (
+              <NavLink
+                to="/admin"
+                className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+                style={{ color: 'var(--gold)', fontWeight: 800 }}
+              >
+                🔒 자료실
+              </NavLink>
             )}
           </nav>
         </div>

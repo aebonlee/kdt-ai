@@ -4,6 +4,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import RequireAuth from './components/RequireAuth'
+import RequireAdmin from './components/RequireAdmin'
 
 // 라우트 단위 코드 스플리팅 — 각 페이지를 필요할 때만 내려받는다.
 // 특히 무거운 강의안 데이터(lecture*.js)는 Lectures 청크에만 포함되어 초기 번들에서 빠진다.
@@ -21,6 +22,7 @@ const Login = lazy(() => import('./pages/Login'))
 const Board = lazy(() => import('./pages/Board'))
 const BoardDetail = lazy(() => import('./pages/BoardDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Admin = lazy(() => import('./pages/Admin'))
 
 // lazy 청크를 내려받는 동안 잠깐 보여줄 로딩 표시
 function PageFallback() {
@@ -56,6 +58,9 @@ export default function App() {
             <Route path="/board" element={<RequireAuth><Board /></RequireAuth>} />
             <Route path="/board/:id" element={<RequireAuth><BoardDetail /></RequireAuth>} />
             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+
+            {/* 관리자(강사) 전용 자료실 — 구글드라이브 강의자료 열람 */}
+            <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>
