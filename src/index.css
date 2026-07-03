@@ -108,7 +108,18 @@ ul { list-style: none; }
 }
 .topbar-tag { display: inline-flex; align-items: center; gap: var(--s-2); }
 .topbar-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
-.topbar-right { display: flex; gap: var(--s-5); }
+.topbar-right { display: flex; align-items: center; gap: var(--s-5); }
+/* 관리자(강사) 전용 자료실 링크 — 최상단 띠줄 */
+.topbar-admin {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 800; line-height: 1;
+  color: #fff; background: var(--gold);
+  border: 1px solid transparent; white-space: nowrap;
+  transition: filter .12s;
+}
+.topbar-admin:hover { filter: brightness(1.08); }
+.topbar-admin.active { box-shadow: 0 0 0 2px rgba(255,255,255,0.35) inset; }
 
 /* ── Navbar ── */
 .navbar {

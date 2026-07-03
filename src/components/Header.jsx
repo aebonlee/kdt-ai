@@ -31,6 +31,15 @@ export default function Header() {
             {course.subtitle} · {course.cohort}
           </span>
           <span className="topbar-right">
+            {/* 관리자(강사) 로그인 시에만 띠줄에 노출 */}
+            {admin && (
+              <NavLink
+                to="/admin"
+                className={({ isActive }) => `topbar-admin${isActive ? ' active' : ''}`}
+              >
+                🔒 자료실
+              </NavLink>
+            )}
             <AuthButtons />
             <ThemeToggle />
           </span>
@@ -63,16 +72,6 @@ export default function Header() {
                   {n.label}
                 </NavLink>
               ),
-            )}
-            {/* 관리자(강사)에게만 노출 */}
-            {admin && (
-              <NavLink
-                to="/admin"
-                className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-                style={{ color: 'var(--gold)', fontWeight: 800 }}
-              >
-                🔒 자료실
-              </NavLink>
             )}
           </nav>
         </div>
