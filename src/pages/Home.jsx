@@ -104,6 +104,10 @@ export default function Home() {
             <img
               src="/curriculum_graph.png"
               alt="SKALA 4기 전체 커리큘럼 흐름도"
+              width={2364}
+              height={890}
+              loading="lazy"
+              decoding="async"
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />
           </div>

@@ -5,10 +5,10 @@ import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import RequireAuth from './components/RequireAuth'
 import RequireAdmin from './components/RequireAdmin'
+import Home from './pages/Home' // 랜딩은 정적 import — entry→Home→curriculum 워터폴 제거(-1 RTT)
 
 // 라우트 단위 코드 스플리팅 — 각 페이지를 필요할 때만 내려받는다.
 // 특히 무거운 강의안 데이터(lecture*.js)는 Lectures 청크에만 포함되어 초기 번들에서 빠진다.
-const Home = lazy(() => import('./pages/Home'))
 const Subjects = lazy(() => import('./pages/Subjects'))
 const Schedule = lazy(() => import('./pages/Schedule'))
 const DayDetail = lazy(() => import('./pages/DayDetail'))

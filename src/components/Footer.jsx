@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="container">
-        <img src="/brandLogo.png" alt="SKALA" style={{ height: 24, marginBottom: 12 }} />
+        <img src="/brandLogo.png" alt="SKALA" width={228} height={56} style={{ height: 24, width: 'auto', marginBottom: 12 }} />
         <h4>
           4기 · {course.instructor} 강사
         </h4>

@@ -1,7 +1,7 @@
 // 코드 블록 — 주석을 녹색으로 표기 + 복사 버튼.
 // 언어별 라인 주석 토큰을 감지해 주석 부분만 .cmt(녹색)로 감싼다.
 // URL의 '//'(앞이 ':') 같은 오탐을 피하려고 토큰 앞이 공백/줄머리일 때만 주석으로 본다.
-import { useState } from 'react'
+import { useState, useMemo, memo } from 'react'
 
 const LINE_TOKEN = {
   python: '#',
@@ -40,9 +40,13 @@ function segments(line, lang) {
   return [{ t: line }]
 }
 
-export default function CodeBlock({ code, lang }) {
+function CodeBlock({ code, lang }) {
   const [copied, setCopied] = useState(false)
-  const lines = String(code).split('\n')
+  // 라인 분할 + 주석 토큰화를 캐시 — 월탭 전환 등 본문 무관 재렌더 시 재계산 방지
+  const tokenized = useMemo(
+    () => String(code).split('\n').map((ln) => segments(ln, lang)),
+    [code, lang],
+  )
 
   const copy = async () => {
     try {
@@ -67,9 +71,9 @@ export default function CodeBlock({ code, lang }) {
       </button>
       <pre className="codeblock">
         <code>
-          {lines.map((ln, i) => (
+          {tokenized.map((segs, i) => (
             <span key={i}>
-              {segments(ln, lang).map((s, j) =>
+              {segs.map((s, j) =>
                 s.c ? (
                   <span key={j} className="cmt">
                     {s.t}
@@ -86,3 +90,5 @@ export default function CodeBlock({ code, lang }) {
     </div>
   )
 }
+
+export default memo(CodeBlock)
