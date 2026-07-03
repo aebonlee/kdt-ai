@@ -111,22 +111,24 @@ print(f"{len(chunks)}개 청크 (출처 메타 포함)")  # 검색 결과에 출
     {
       title: '실전: RAGAS 자동 평가 스크립트',
       lang: 'python',
-      code: `from datasets import Dataset
-from ragas import evaluate
+      code: `from ragas import EvaluationDataset, evaluate   # ragas 0.2+ 기준
 from ragas.metrics import faithfulness, answer_relevancy, context_precision
 
-# 평가셋: 질문 / 생성답변 / 검색컨텍스트 / 정답
-rows = {
-    "question":     [q for q, *_ in eval_data],
-    "answer":       [rag.invoke(q) for q, *_ in eval_data],   # 우리 RAG 출력
-    "contexts":     [[c.page_content for c in retriever.invoke(q)] for q, *_ in eval_data],
-    "ground_truth": [gt for *_, gt in eval_data],
-}
-report = evaluate(Dataset.from_dict(rows),
-                  metrics=[faithfulness, answer_relevancy, context_precision])
+# 평가셋: 각 항목을 user_input/response/retrieved_contexts/reference 로(0.2 필드명)
+samples = [
+    {
+        "user_input": q,                                          # (구 'question')
+        "response": rag.invoke(q),                                # (구 'answer') 우리 RAG 출력
+        "retrieved_contexts": [c.page_content for c in retriever.invoke(q)],  # (구 'contexts')
+        "reference": gt,                                          # (구 'ground_truth')
+    }
+    for q, *_, gt in eval_data
+]
+dataset = EvaluationDataset.from_list(samples)   # Dataset.from_dict 대신 이 형식
+report = evaluate(dataset, metrics=[faithfulness, answer_relevancy, context_precision])
 print(report)   # 충실도/관련성/문맥정밀도 → 튜닝 전후 정량 비교
 # faithfulness 낮으면 생성(프롬프트), context_precision 낮으면 검색을 손본다`,
-      note: '지표가 어디서 낮은지로 병목(검색 vs 생성)을 진단한다. 튜닝 전/후 같은 평가셋으로 점수를 비교해 개선을 증명.',
+      note: 'ragas 0.2부터 EvaluationDataset + user_input/response/retrieved_contexts/reference 형식. 지표로 병목(검색 vs 생성)을 진단하고, 튜닝 전/후 같은 평가셋으로 개선을 증명.',
     },
   ],
   'langchain-2': [
