@@ -865,64 +865,84 @@ export const theory = {
   "capstone-1": {
     "theory": [
       {
-        "h": "에이전트는 '시키면 알아서 하는' 직원이다",
-        "body": "일반 챗봇은 질문 하나에 답 하나를 돌려주는 자판기 같은 존재다.\n반면 에이전트는 '항공권 가장 싼 걸로 예약해줘' 같은 목표를 받으면 스스로 검색하고 비교하고 결정까지 합니다.\n즉 사람이 한 단계씩 지시하지 않아도, 목표만 주면 중간 단계를 알아서 채워 일을 끝내는 신입 직원에 가깝다.\n\n이렇게 '스스로 다음 행동을 정하는' 능력이 에이전트의 핵심이며, 캡스톤에서 우리는 이 직원에게 어떤 도구와 자료를 쥐여줄지를 설계하는 것이다."
+        "h": "MCP는 '도구 연결의 표준(USB-C)'이다",
+        "body": "MCP(Model Context Protocol)가 없던 시절에는, 에이전트마다 도구를 붙이는 방식이 제각각이었습니다.\nA 서비스의 검색 도구를 B 서비스에 옮기려면 매번 새로 짜야 했죠.\nMCP는 '도구·자료·프롬프트를 이런 규격으로 내보내라'고 표준을 정해, 어떤 에이전트(클라이언트)든 똑같은 방식으로 연결하게 만듭니다.\n마치 노트북·모니터·충전기가 저마다 다른 단자를 쓰다가 USB-C 하나로 통일된 것과 같다.\n\n캡스톤에서 우리는 우리 서비스의 기능을 MCP 서버로 감싸, 여러 곳에서 재사용 가능한 표준 부품으로 만든다."
       },
       {
-        "h": "좋은 설계가 절반이다 — 먼저 그림부터 그리자",
-        "body": "집을 지을 때 설계도 없이 벽돌부터 쌓으면 나중에 다 부숴야 합니다.\n소프트웨어도 똑같아서, 코드를 짜기 전에 '데이터가 어디서 들어와 어디로 흐르는지'를 그림으로 먼저 그려야 한다.\n우리 캡스톤의 기본 골격은 '사용자 질문 → LLM이 판단 → 필요하면 문서 검색(RAG)이나 도구 호출 → 결과를 모아 최종 답변' 이라는 한 줄 흐름이다.\n이 흐름을 박스와 화살표로 그려두면, 팀원 모두가 같은 그림을 보며 각자 맡은 박스를 만들 수 있어 협업이 쉬워진다."
+        "h": "Tool·Resource·Prompt를 나누는 이유",
+        "body": "MCP 서버는 세 종류를 내보냅니다.\nTool은 '실행'이다 — 검색·계산·DB 저장처럼 무언가를 바꾸거나 바깥을 건드리는 동작.\nResource는 '읽기 전용 자료'다 — 문서·설정·레코드처럼 그냥 가져다 보는 것.\nPrompt는 '재사용 지시 템플릿'이다 — 자주 쓰는 요청을 정형화해 둔 것.\n둘을 가르는 기준은 간단하다: 부작용(쓰기·과금·외부 호출)이 있으면 Tool, 단순 조회면 Resource.\n\n이렇게 나눠두면 권한 관리가 쉽고(위험한 건 Tool만 통제), 모델이 무엇을 해도 되는지 명확해진다."
       },
       {
-        "h": "범위를 작게 잡아야 끝낼 수 있다",
-        "body": "처음 프로젝트에서 가장 흔한 실패는 '욕심내서 기능을 너무 많이 넣는 것'이다.\n3일 안에 발표까지 해야 하므로, 핵심 기능 하나가 처음부터 끝까지 동작하는 것을 1순위 목표로 삼아야 한다.\n예를 들어 '문서를 검색해 출처와 함께 답해주는 에이전트' 하나만 확실히 완성하면 충분히 좋은 캡스톤이다.\n화려한 기능 10개가 반쯤 되는 것보다, 핵심 기능 1개가 완벽히 도는 것이 발표에서 훨씬 강한 인상을 준다."
+        "h": "통합 아키텍처 — 하나의 백엔드로 묶기",
+        "body": "우리 캡스톤은 네 조각으로 나뉜다: Backend(FastAPI) · VectorDB(RAG 지식) · AI Agent(판단) · Frontend(화면).\nFastAPI가 허브가 되어 RAG 검색 결과와 MCP 서버의 도구를 에이전트에게 전달하고, 에이전트의 답을 프론트로 돌려준다.\n여기에 Thread(대화 세션) 개념을 더해, 사용자마다 대화 맥락을 따로 기억하게 한다.\n\n코드를 짜기 전 이 네 박스와 화살표를 그려두면, 팀원이 각자 다른 박스를 맡아 병렬로 개발할 수 있다."
       }
     ],
     "realCode": [
       {
-        "title": "app.py — 캡스톤 스켈레톤(환경 점검용 최소 실행 코드)",
+        "title": "server.py — MCP Server(도구·자료 노출) with MCP Inspector",
         "lang": "python",
-        "code": "import os  # 운영체제 기능(환경변수 읽기 등)을 쓰기 위한 표준 라이브러리\nfrom dotenv import load_dotenv  # .env 파일에 적어둔 비밀 키를 불러오는 도구\nfrom langchain_anthropic import ChatAnthropic  # Claude 모델을 파이썬에서 부르는 연결 객체\n\nload_dotenv()  # 같은 폴더의 .env 파일을 읽어 환경변수로 등록한다(여기서 API 키가 메모리에 올라옴)\n\n# 환경변수에서 API 키를 꺼낸다. 키가 없으면 None 이 되어 아래에서 안내 메시지를 띄운다\napi_key = os.getenv('ANTHROPIC_API_KEY')  # .env 의 ANTHROPIC_API_KEY 값을 가져옴\n\nif not api_key:  # 키가 비어 있으면(설정을 깜빡한 경우) 사용자에게 친절히 안내\n    print('[안내] .env 파일에 ANTHROPIC_API_KEY 를 먼저 적어주세요.')  # 해결 방법 출력\n    raise SystemExit  # 키 없이는 진행 불가하므로 프로그램을 안전하게 종료\n\n# Claude 모델 객체를 만든다. temperature 가 낮을수록 답이 일정하고 정확해진다\nllm = ChatAnthropic(\n    model='claude-sonnet-4-5',  # 사용할 모델 이름(가성비 좋은 범용 모델)\n    temperature=0.2,  # 답변의 창의성 정도(0에 가까울수록 보수적·일관적)\n)\n\ndef ask(question):  # 질문 문자열을 받아 모델 답변을 돌려주는 함수\n    response = llm.invoke(question)  # invoke 는 모델에 질문을 보내고 답을 받는 함수\n    return response.content  # 응답 객체에서 실제 텍스트만 꺼내 반환\n\nif __name__ == '__main__':  # 이 파일을 직접 실행했을 때만 아래가 동작(다른 파일이 import 하면 실행 안 됨)\n    print('에이전트 준비 완료! 무엇을 도와드릴까요?')  # 결과: 환경이 정상이면 이 인사가 출력됨\n    answer = ask('한 문장으로 자기소개를 해줘.')  # 모델 연결이 되는지 가벼운 질문으로 점검\n    print('에이전트:', answer)  # 결과: 모델이 만든 자기소개 문장이 화면에 표시됨\n",
-        "note": "1일차에는 '환경이 제대로 깔렸는지'만 확인하면 됩니다.\n인사 문구와 모델 답변이 에러 없이 출력되면 내일 본격 구현을 시작할 준비가 끝난 것이다."
+        "code": "from mcp.server.fastmcp import FastMCP  # MCP 서버를 쉽게 만드는 헬퍼\n\nmcp = FastMCP('skala-tools')  # 'skala-tools' 라는 이름의 MCP 서버 생성\n\n@mcp.tool()  # 이 함수를 MCP '도구(Tool)'로 노출 — 부작용 있는 실행 기능\ndef search_docs(query: str) -> str:\n    \"\"\"사내 문서에서 query와 관련된 내용을 찾아 돌려준다.\"\"\"  # 모델이 언제 쓸지 판단하는 설명\n    # 실제로는 Vector DB 검색으로 교체한다\n    return f\"'{query}' 관련 문서 3건을 찾았습니다.\"\n\n@mcp.resource('config://team')  # 이건 '자료(Resource)' — 읽기 전용\ndef team_config() -> str:\n    \"\"\"팀 설정 정보(읽기 전용).\"\"\"\n    return '팀=skala4, 기본모델=claude-sonnet-4-5'\n\nif __name__ == '__main__':\n    mcp.run()  # 서버 실행. 점검은 터미널에서 'mcp dev server.py' → Inspector 웹이 열림\n",
+        "note": "'mcp dev server.py' 를 실행하면 MCP Inspector가 브라우저에 뜹니다.\nTools 탭에 search_docs 가 보이고, 값을 넣어 직접 호출해볼 수 있다."
+      },
+      {
+        "title": "main.py — FastAPI에 MCP 도구 + 에이전트 통합(/chat)",
+        "lang": "python",
+        "code": "from fastapi import FastAPI  # API 서버 프레임워크\nfrom pydantic import BaseModel  # 요청 본문의 모양을 정의\nfrom langchain_mcp_adapters.client import MultiServerMCPClient  # MCP 서버의 도구를 불러오는 어댑터\nfrom langgraph.prebuilt import create_react_agent  # 도구를 쓰는 ReAct 에이전트를 한 줄로 생성\nfrom langchain_anthropic import ChatAnthropic\n\napp = FastAPI()\n\nclass Ask(BaseModel):  # /chat 이 받을 입력: 질문 + 세션 구분용 thread_id\n    question: str\n    thread_id: str = 'default'\n\n# server.py(MCP 서버)를 자식 프로세스로 띄워 그 도구들을 가져온다\nclient = MultiServerMCPClient({\n    'tools': {'command': 'python', 'args': ['server.py'], 'transport': 'stdio'},\n})\n\n@app.post('/chat')  # POST /chat 으로 질문을 받는 엔드포인트\nasync def chat(req: Ask):\n    tools = await client.get_tools()  # MCP 서버가 노출한 도구 목록(search_docs 등)\n    agent = create_react_agent(ChatAnthropic(model='claude-sonnet-4-5'), tools)  # 에이전트 조립\n    result = await agent.ainvoke({'messages': [('user', req.question)]})  # 실행\n    return {'answer': result['messages'][-1].content}  # 최종 답만 돌려줌\n",
+        "note": "'uvicorn main:app --reload' 로 띄운 뒤 http://localhost:8000/docs 에서 /chat 을 테스트합니다.\nMCP 서버 하나만 바꿔 끼우면 도구 세트가 통째로 교체되는 게 MCP의 힘이다."
       }
     ]
   },
   "capstone-2": {
     "theory": [
       {
-        "h": "LangGraph는 '순서도'를 코드로 만드는 도구다",
-        "body": "어릴 때 그려본 순서도를 떠올려 보세요.\n네모(작업)와 마름모(판단)를 화살표로 잇던 그 그림이 바로 LangGraph의 개념이다.\nLangGraph에서는 '생각하는 칸(노드)'들을 만들고, 일이 끝나면 다음에 어디로 갈지 화살표(엣지)로 연결한다.\n특히 '도구가 필요한가?'를 판단해 길을 나누는 갈림길(조건 분기) 덕분에, 에이전트가 상황에 맞게 스스로 다른 행동을 고를 수 있다.\n\n결국 우리는 순서도를 그리듯 에이전트의 일하는 방식을 코드로 설계하는 것이다."
+        "h": "스트리밍은 '다 만들고 주기'가 아니라 '만들며 흘리기'다",
+        "body": "LLM은 답을 한 번에 완성하지 않고 토큰을 하나씩 이어 만듭니다.\n기본 방식은 그 토큰이 다 모일 때까지 기다렸다 한꺼번에 보여주는 것인데, 답이 길면 사용자는 몇 초씩 빈 화면을 봐야 한다.\n스트리밍은 토큰이 생기는 대로 즉시 흘려보내, ChatGPT처럼 글자가 타이핑되듯 나오게 한다.\n체감 대기 시간(첫 글자까지, TTFT)이 확 줄어 이탈이 감소한다.\n\n이 흐름은 세 차원으로 나뉜다: 모델이 흘리고 → 서버가 전달하고 → 프론트가 이어붙인다."
       },
       {
-        "h": "도구(Tool)는 에이전트의 손과 발이다",
-        "body": "LLM은 글을 아주 잘 쓰지만, 혼자서는 오늘 날씨나 실시간 환율을 알 수 없습니다.\n이때 '환율을 가져오는 함수'를 도구로 만들어 주면, 모델이 필요할 때 그 함수를 불러 진짜 정보를 가져온다.\n중요한 점은, 모델이 도구를 '직접 실행'하는 게 아니라 '이 도구를 이런 값으로 써줘'라고 요청만 한다는 것이다.\n실제 실행은 우리 코드(tools 노드)가 대신 해주고, 그 결과를 다시 모델에게 돌려주어 최종 문장을 만들게 한다.\n이렇게 역할을 나눠 두면 안전하고 통제 가능한 에이전트가 된다."
+        "h": "SSE — 서버가 클라이언트로 계속 밀어 보내기",
+        "body": "보통의 HTTP는 '요청 한 번 → 응답 한 번'으로 끝납니다.\n하지만 스트리밍은 서버가 답 조각을 여러 번 나눠 보내야 하므로, 연결을 열어둔 채 계속 밀어 보내는 방식이 필요하다.\n그게 SSE(Server-Sent Events)로, 서버→클라이언트 단방향으로 'data: 조각' 을 반복해 전송한다.\nFastAPI에서는 StreamingResponse에 제너레이터를 물려 media_type을 'text/event-stream'으로 주면 된다.\n\n프론트는 Vercel AI SDK의 useChat 같은 도구로 이 조각들을 받아 화면에 이어 붙이기만 하면 된다."
+      },
+      {
+        "h": "Observability — 보이지 않으면 고칠 수 없다",
+        "body": "에이전트는 검색·판단·도구 호출 여러 단계를 거치므로, 문제가 나도 '어디서' 났는지 알기 어렵습니다.\nObservability(관측 가능성)는 각 단계의 입력·출력·시간·토큰을 기록해 안을 들여다보게 하는 것이다.\nLangSmith를 붙이면 한 번의 실행이 어떤 단계를 거쳤는지 나무처럼 펼쳐 보여, 느린 단계와 비싼 단계를 바로 찾는다.\n여기에 Eval(평가)을 더하면 '답이 정확한가·근거가 있는가'를 정량 점수로 채점할 수 있다.\n\n관측과 평가가 있어야 '느낌'이 아니라 '숫자'로 서비스를 개선할 수 있다."
       }
     ],
     "realCode": [
       {
-        "title": "agent.py — 도구를 쓰는 LangGraph 에이전트(엔드투엔드)",
+        "title": "main.py — FastAPI SSE 토큰 스트리밍 엔드포인트",
         "lang": "python",
-        "code": "import os  # 환경변수 읽기용 표준 라이브러리\nfrom dotenv import load_dotenv  # .env 의 비밀 키 불러오기\nfrom typing import Annotated  # 상태 항목에 '합치는 규칙'을 붙이기 위한 타입 도구\nfrom typing_extensions import TypedDict  # 상태의 모양(키와 값)을 정의하는 사전형 타입\nfrom langchain_anthropic import ChatAnthropic  # Claude 모델 연결\nfrom langchain_core.tools import tool  # 일반 함수를 에이전트 도구로 만드는 스티커\nfrom langgraph.graph import StateGraph, START, END  # 그래프 본체와 시작/끝 표시\nfrom langgraph.graph.message import add_messages  # 메시지를 차곡차곡 누적해주는 규칙\nfrom langgraph.prebuilt import ToolNode, tools_condition  # 도구 실행 노드와 분기 판단기\n\nload_dotenv()  # API 키를 환경변수로 등록\n\nclass State(TypedDict):  # 에이전트가 들고 다닐 상태(메모장)의 모양을 정의\n    messages: Annotated[list, add_messages]  # 대화 메시지 목록(새 메시지는 덮어쓰지 않고 뒤에 쌓임)\n\n@tool  # 아래 함수를 에이전트가 부를 수 있는 '도구'로 등록\ndef get_exchange_rate(currency: str) -> str:  # 통화 코드를 받아 환율을 돌려주는 도구\n    \"\"\"주어진 통화(USD 등)의 원화 환율을 알려준다.\"\"\"  # 이 설명을 보고 모델이 언제 쓸지 판단함\n    rates = {'USD': 1380, 'EUR': 1490, 'JPY': 9}  # 예시용 고정 환율(실제론 API로 교체)\n    return f\"1 {currency} = {rates.get(currency, '알수없음')}원\"  # 결과 문자열 반환\n\ntools = [get_exchange_rate]  # 에이전트가 쓸 도구들을 목록으로 모음\nllm = ChatAnthropic(model='claude-sonnet-4-5', temperature=0)  # 일관된 답을 위해 창의성 0\nllm_with_tools = llm.bind_tools(tools)  # 모델에게 '이런 도구들이 있다'고 알려줌\n\ndef agent_node(state: State):  # '생각하는 칸' — 모델이 답하거나 도구 사용을 요청\n    answer = llm_with_tools.invoke(state['messages'])  # 지금까지 대화를 모델에 전달\n    return {'messages': [answer]}  # 모델의 응답을 상태에 추가\n\ngraph = StateGraph(State)  # 위에서 정의한 State 모양으로 빈 그래프 생성\ngraph.add_node('agent', agent_node)  # '생각' 노드 등록\ngraph.add_node('tools', ToolNode(tools))  # '도구 실행' 노드 등록(요청된 도구를 실제로 실행)\ngraph.add_edge(START, 'agent')  # 시작하면 먼저 agent 로 들어감\ngraph.add_conditional_edges('agent', tools_condition)  # 도구가 필요하면 tools, 아니면 END 로 분기\ngraph.add_edge('tools', 'agent')  # 도구 결과를 들고 다시 agent 로 돌아가 최종 답 작성\napp = graph.compile()  # 그래프를 실행 가능한 형태로 완성\n\nif __name__ == '__main__':  # 직접 실행할 때만 동작\n    result = app.invoke({'messages': [('user', '오늘 1달러는 몇 원이야?')]})  # 질문을 넣어 실행\n    print('에이전트:', result['messages'][-1].content)  # 결과: 약 1380원이라는 문장이 출력됨\n",
-        "note": "이 코드 한 파일이 '생각 → 도구 호출 → 결과 반영 → 최종 답변'의 전체 흐름을 담고 있습니다.\n환율 부분만 실제 API로 바꾸면 바로 실서비스 골격이 된다."
+        "code": "from fastapi import FastAPI  # API 서버\nfrom fastapi.responses import StreamingResponse  # 조각을 이어 보내는 응답 타입\nfrom langchain_anthropic import ChatAnthropic\n\napp = FastAPI()\nllm = ChatAnthropic(model='claude-sonnet-4-5')  # 모델 준비\n\nasync def token_stream(question: str):  # 토큰을 하나씩 흘려보내는 제너레이터\n    async for chunk in llm.astream(question):  # astream: 모델이 만드는 대로 조각을 받음\n        if chunk.content:  # 빈 조각은 건너뜀\n            yield f'data: {chunk.content}\\n\\n'  # SSE 형식으로 한 조각 전송\n    yield 'data: [DONE]\\n\\n'  # 끝났음을 알리는 신호\n\n@app.get('/stream')  # GET /stream?q=... 로 질문을 받음\nasync def stream(q: str):\n    # media_type 을 event-stream 으로 주면 브라우저·클라이언트가 SSE로 인식\n    return StreamingResponse(token_stream(q), media_type='text/event-stream')\n",
+        "note": "'uvicorn main:app --reload' 실행 후 'curl -N \"http://localhost:8000/stream?q=안녕\"' 로 확인합니다.\n-N(버퍼 끔) 덕분에 답이 한꺼번에가 아니라 조금씩 흘러나오는 걸 눈으로 볼 수 있다."
+      },
+      {
+        "title": ".env / 실행 — LangSmith로 실행 추적(Observability) 켜기",
+        "lang": "bash",
+        "code": "# .env 파일에 아래 3줄을 추가하면, 코드를 바꾸지 않아도 모든 실행이 자동 추적된다\nLANGCHAIN_TRACING_V2=true          # 추적 기능 켜기\nLANGCHAIN_API_KEY=lsv2_여기에_키    # smith.langchain.com 에서 발급\nLANGCHAIN_PROJECT=skala-capstone   # 대시보드에서 묶어 볼 프로젝트 이름\n\n# 그런 다음 평소처럼 실행하면 됨\n# python main.py   또는   uvicorn main:app --reload\n# → smith.langchain.com 대시보드에서 방금 실행의 단계별 trace를 확인\n",
+        "note": "trace를 열면 검색·모델호출·도구실행이 나무처럼 펼쳐집니다.\n가장 오래 걸린 단계(Latency)와 토큰을 많이 쓴 단계(Cost)를 바로 찾아 개선점을 잡을 수 있다."
       }
     ]
   },
   "capstone-3": {
     "theory": [
       {
-        "h": "데모는 '될 때까지'가 아니라 '안 될 때도' 대비한다",
-        "body": "발표장에서 인터넷이 끊기거나 API가 느려지는 일은 생각보다 자주 일어납니다.\n그래서 프로다운 팀은 항상 '정상 동작 녹화 영상'이라는 백업을 준비해 둔다.\n라이브 데모가 성공하면 영상은 안 써도 되고, 실패하면 영상으로 매끄럽게 넘어가면 됩니다.\n또한 데모용 질문은 미리 여러 번 돌려본 '확실히 되는 질문'으로 고르는 것이 안전하다.\n\n준비된 팀은 사고가 나도 당황하지 않으며, 그 침착함 자체가 좋은 평가로 이어진다."
+        "h": "실서비스는 '실패를 전제로' 설계한다",
+        "body": "API는 가끔 느려지거나 잠깐 죽고, 네트워크는 종종 끊깁니다.\n초보 코드는 이런 일이 나면 그대로 멈추지만, 실서비스는 '실패는 당연히 난다'고 보고 미리 대비한다.\n핵심은 세 가지다: try/except로 오류를 붙잡고, 재시도(지수 백오프)로 일시적 실패를 흡수하고, 타임아웃으로 무한 대기를 막는다.\n그리고 그래도 안 되면 '잠시 후 다시 시도해 주세요' 같은 친절한 대체 응답으로 사용자를 안심시킨다.\n\n멈추지 않고 우아하게 실패하는 것(graceful degradation)이 프로다운 서비스의 조건이다."
       },
       {
-        "h": "한계를 솔직히 말하는 것이 더 높은 점수를 받는다",
-        "body": "캡스톤은 완벽한 제품을 만드는 대회가 아니라, 배운 것을 적용하고 문제를 이해했음을 보여주는 자리입니다.\n그래서 '아직 이런 경우는 틀린 답을 낼 수 있다'처럼 한계를 솔직히 인정하는 발표가 오히려 신뢰를 줍니다.\n중요한 것은 한계를 알고, 왜 그런지 설명하며, 어떻게 개선할지 방향을 제시하는 것이다.\n예를 들어 '문서가 없으면 환각이 생길 수 있어 다음엔 검색 신뢰도 점수를 붙이겠다'처럼 말하면 깊이가 드러난다.\n평가자는 완성도뿐 아니라 '이 팀이 무엇을 이해했는가'를 보기 때문이다."
+        "h": "비용·지연·확장 — Stateless가 열쇠다",
+        "body": "사용자가 늘면 서버를 여러 대로 늘려야 하는데, 서버가 대화 상태를 자기 메모리에 들고 있으면 문제가 생깁니다.\n같은 사용자의 다음 요청이 다른 서버로 가면 대화 맥락을 잃기 때문이다.\n그래서 상태를 서버 밖(DB·Redis)에 저장하는 Stateless 구조로 만들면, 아무 서버나 요청을 처리할 수 있어 수평 확장이 쉬워진다.\n비용은 작은 모델·캐싱으로, 지연은 불필요한 재검색 제거로 줄인다.\n\n'싸고 · 빠르고 · 잘 늘어나는' 세 가지를 함께 저울질하는 것이 운영의 핵심이다."
+      },
+      {
+        "h": "에이전트 확장 — 라우팅·검증·동적 계획",
+        "body": "서비스가 커지면 하나의 에이전트로 모든 질문을 처리하기 어렵습니다.\nQuery Routing은 질문의 종류(요약·검색·계산)에 따라 알맞은 경로로 보내고, Conditional Routing은 중간 조건에 따라 흐름을 바꾼다.\nValidator Agent는 다른 에이전트의 답이 형식·근거에 맞는지 검사해, 틀리면 다시 시키거나 걸러낸다.\nDynamic Planning은 정해진 순서만 따르지 않고 중간 결과를 보며 계획을 새로 짠다.\n\n이 장치들이 모이면, 단순 챗봇이 아니라 스스로 점검하고 길을 고르는 견고한 에이전트 시스템이 된다."
       }
     ],
     "realCode": [
       {
-        "title": "app_web.py — Streamlit으로 에이전트를 웹 데모로 배포하기",
+        "title": "safe.py — 재시도·타임아웃 + Validator Agent(출력 검증)",
         "lang": "python",
-        "code": "import streamlit as st  # 파이썬으로 웹 화면을 만드는 라이브러리(별칭 st)\nfrom agent import app  # 어제 만든 컴파일된 에이전트 그래프를 그대로 가져옴\n\nst.title('우리 팀 AI 에이전트 데모')  # 웹 페이지 맨 위에 큰 제목 표시\nst.caption('질문을 입력하면 도구와 문서를 활용해 답합니다.')  # 제목 아래 작은 설명\n\nif 'history' not in st.session_state:  # 대화 기록을 저장할 공간이 아직 없으면\n    st.session_state.history = []  # 빈 목록으로 처음 한 번만 만들어 둔다\n\nfor role, text in st.session_state.history:  # 이전 대화를 하나씩 꺼내\n    st.chat_message(role).write(text)  # 사람/에이전트 말풍선으로 화면에 다시 그림\n\nquestion = st.chat_input('무엇이 궁금하신가요?')  # 화면 아래 채팅 입력창을 만든다\n\nif question:  # 사용자가 무언가 입력하고 엔터를 쳤다면\n    st.session_state.history.append(('user', question))  # 사용자 질문을 기록에 추가\n    st.chat_message('user').write(question)  # 사용자 말풍선으로 즉시 표시\n\n    try:  # 모델 호출 중 오류가 나도 앱이 죽지 않도록 보호\n        result = app.invoke({'messages': [('user', question)]})  # 에이전트 실행\n        answer = result['messages'][-1].content  # 마지막 메시지(최종 답)만 꺼냄\n    except Exception as e:  # 어떤 오류든 붙잡아\n        answer = f'죄송해요, 처리 중 문제가 생겼어요: {e}'  # 친절한 안내 문구로 대체\n\n    st.session_state.history.append(('assistant', answer))  # 답변도 기록에 추가\n    st.chat_message('assistant').write(answer)  # 에이전트 말풍선으로 답 표시\n",
-        "note": "터미널에서 'streamlit run app_web.py' 만 치면 브라우저에 채팅형 데모가 뜹니다.\ntry/except 로 감싸 두었기 때문에 발표 중 오류가 나도 앱이 멈추지 않고 안내 문구를 보여준다."
+        "code": "import asyncio  # 비동기 실행·타임아웃 도구\nfrom tenacity import retry, wait_exponential, stop_after_attempt  # 재시도 데코레이터\nfrom langchain_anthropic import ChatAnthropic\n\nllm = ChatAnthropic(model='claude-sonnet-4-5', temperature=0)\n\n# 실패하면 1→2→4초 기다렸다 최대 3번까지 다시 시도\n@retry(wait=wait_exponential(multiplier=1, max=8), stop=stop_after_attempt(3))\nasync def call_llm(prompt: str) -> str:\n    # 20초를 넘기면 강제로 끊어 무한 대기를 막는다\n    resp = await asyncio.wait_for(llm.ainvoke(prompt), timeout=20)\n    return resp.content\n\nasync def validate(answer: str) -> bool:  # Validator Agent — 답에 근거가 있는지 검사\n    check = await call_llm(f'다음 답변에 근거/출처가 있으면 OK, 없으면 NO만 출력:\\n{answer}')\n    return 'OK' in check\n\nasync def safe_answer(question: str) -> str:  # 최종 진입점\n    try:\n        answer = await call_llm(question)  # 1차 답변\n        if not await validate(answer):  # 검증 실패 시\n            answer = await call_llm(question + '\\n반드시 근거를 포함해 다시 답하라.')  # 재생성\n        return answer\n    except Exception as e:  # 재시도까지 실패하면 우아하게 대체 응답\n        return f'일시적 오류로 답변을 못 드렸어요. 잠시 후 다시 시도해 주세요. ({e})'\n",
+        "note": "재시도·타임아웃·검증을 한 파일에 모았습니다.\n일부러 잘못된 키로 call_llm 을 부르면 3번 재시도 후 대체 응답이 나오고, 근거 없는 답은 validate 에서 걸러져 다시 생성된다."
       }
     ]
   },

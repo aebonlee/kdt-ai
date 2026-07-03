@@ -537,44 +537,44 @@ export const examples = {
   ],
   "capstone-1": [
     {
-      "title": "사용자 시나리오를 코드로 정리해두기",
+      "title": "우리 서비스 기능을 Tool·Resource·Prompt로 분류하기",
       "lang": "python",
-      "code": "# 우리가 만들 에이전트가 처리할 장면을 리스트(목록)로 적어둔다\nscenarios = [  # 대괄호 [] 는 여러 항목을 담는 목록을 뜻함\n    {'상황': '규정이 궁금한 신입사원', '질문': '연차는 며칠인가요?', '기대행동': '규정 문서 검색 후 출처와 함께 답변'},\n    {'상황': '보고서를 쓰는 직원', '질문': '작년 매출 요약해줘', '기대행동': '데이터 조회 도구 호출 후 요약'},\n    {'상황': '외부 정보가 필요한 직원', '질문': '오늘 환율 알려줘', '기대행동': '환율 API 도구 호출'},\n]\n\nfor s in scenarios:  # 목록의 항목을 하나씩 꺼내 s 에 담아 반복\n    print(f\"[{s['상황']}] {s['질문']} -> {s['기대행동']}\")  # 결과: 시나리오 3줄이 보기 좋게 출력됨\n",
-      "note": "기획을 머릿속이 아니라 코드/데이터로 적어두면 구현할 때 '무엇을 만들지' 흔들리지 않습니다."
+      "code": "# MCP 서버에 무엇을 넣을지, 기능을 3종류로 나눠 적어둔다\ncatalog = {\n    'Tool': ['문서 검색(search_docs)', '매출 조회(get_sales)'],      # 실행·부작용 있는 기능\n    'Resource': ['팀 설정(config://team)', '규정 원문(doc://policy)'],  # 읽기 전용 자료\n    'Prompt': ['요약 요청 템플릿', '분류 요청 템플릿'],                 # 재사용 지시 템플릿\n}\n\nfor kind, items in catalog.items():  # 종류별로 꺼내\n    print(f'[{kind}] ' + ', '.join(items))  # 결과: 3줄로 분류표가 출력됨\n",
+      "note": "부작용(쓰기·과금·외부호출)이 있으면 Tool, 단순 조회면 Resource로 나누는 것이 기준입니다."
     },
     {
-      "title": "필요한 라이브러리가 잘 깔렸는지 한 번에 점검",
+      "title": "MCP 라이브러리가 잘 깔렸는지 점검",
       "lang": "python",
-      "code": "# 설치가 끝났는지 import 로 확인한다. 에러가 안 나면 정상 설치된 것\nimport langgraph  # 에이전트의 흐름(그래프)을 만드는 핵심 라이브러리\nimport langchain  # LLM 앱을 조립하는 도구 모음\nimport langchain_anthropic  # Claude 연결용 패키지\n\nprint('langgraph 버전:', langgraph.__version__)  # 결과: 예) 0.2.x 같은 버전 숫자 출력\nprint('모든 라이브러리 import 성공!')  # 결과: 이 줄이 보이면 환경 준비 완료\n",
-      "note": "import 에서 빨간 에러가 나면 pip install 을 다시 하거나 가상환경이 켜져 있는지 확인하세요."
+      "code": "import mcp  # MCP 파이썬 SDK\nfrom mcp.server.fastmcp import FastMCP  # 서버 헬퍼가 import 되는지 확인\n\nprint('mcp import 성공!')  # 결과: 이 줄이 보이면 설치 정상\nprint('FastMCP 준비 완료:', FastMCP.__name__)  # 결과: FastMCP 준비 완료: FastMCP\n",
+      "note": "import 에러가 나면 'pip install \"mcp[cli]\"' 를 다시 실행하거나 가상환경이 켜졌는지 확인하세요."
     }
   ],
   "capstone-2": [
     {
-      "title": "나만의 도구 함수 만들어 보기",
+      "title": "토큰이 하나씩 흘러나오는 걸 눈으로 보기",
       "lang": "python",
-      "code": "from langchain_core.tools import tool  # 함수를 도구로 만드는 스티커 불러오기\n\n@tool  # 아래 함수를 에이전트 도구로 등록\ndef add(a: int, b: int) -> int:  # 두 정수를 받아 더하는 도구\n    \"\"\"두 숫자를 더한 값을 반환한다.\"\"\"  # 모델이 보고 용도를 이해하는 설명\n    return a + b  # 덧셈 결과 반환\n\nprint(add.name)  # 결과: add (도구 이름)\nprint(add.invoke({'a': 3, 'b': 5}))  # 결과: 8 (도구를 직접 실행해 본 값)\n",
-      "note": "도구의 설명문(\"\"\"...\"\"\")이 곧 모델에게 주는 사용설명서이므로, 짧고 명확하게 적는 것이 중요합니다."
+      "code": "from langchain_anthropic import ChatAnthropic  # Claude 연결\n\nllm = ChatAnthropic(model='claude-sonnet-4-5')\n\n# stream 은 답을 한꺼번에가 아니라 조각(청크)으로 나눠 준다\nfor chunk in llm.stream('가을에 대한 짧은 시를 써줘'):  # 조각을 하나씩 꺼내\n    print(chunk.content, end='', flush=True)  # end='' 로 줄바꿈 없이 이어붙여 출력\n# 결과: 글자가 타이핑되듯 조금씩 화면에 나타남\n",
+      "note": "이 '조각을 흘려보내는' 동작이 스트리밍의 핵심이며, 서버는 이 조각을 SSE로 클라이언트에 전달합니다."
     },
     {
-      "title": "그래프가 어떻게 생겼는지 그림으로 확인하기",
+      "title": "SSE 전송 형식 만들어 보기",
       "lang": "python",
-      "code": "# agent.py 에서 만든 app(컴파일된 그래프)을 가져와 구조를 텍스트로 출력\nfrom agent import app  # 같은 폴더의 agent.py 에서 완성된 그래프를 불러옴\n\n# get_graph() 는 그래프 구조를, draw_ascii() 는 그것을 글자 그림으로 보여줌\nprint(app.get_graph().draw_ascii())  # 결과: START→agent→(분기)→tools/END 형태의 글자 도식 출력\n",
-      "note": "내가 만든 에이전트의 흐름이 머릿속 설계와 같은지 눈으로 확인하는 좋은 습관입니다."
+      "code": "# SSE는 각 조각을 'data: 내용' 뒤에 빈 줄을 붙여 보낸다\ndef to_sse(text):  # 한 조각을 SSE 한 덩어리로 감싸는 함수\n    return f'data: {text}\\n\\n'  # 끝의 빈 줄(\\n\\n)이 '한 이벤트 끝' 표시\n\nfor piece in ['안', '녕', '하세요']:  # 조각들을 하나씩\n    print(repr(to_sse(piece)))  # 결과: \"data: 안\\n\\n\" 처럼 SSE 형식 확인\n",
+      "note": "FastAPI StreamingResponse가 이 형식을 그대로 흘려보내면 브라우저·클라이언트가 SSE로 받아들입니다."
     }
   ],
   "capstone-3": [
     {
-      "title": "응답 시간(성능) 측정해 보기",
+      "title": "실패하면 자동으로 다시 시도하기(재시도)",
       "lang": "python",
-      "code": "import time  # 시간을 재는 표준 라이브러리\nfrom agent import app  # 완성된 에이전트 그래프 불러오기\n\nstart = time.time()  # 측정 시작 시각 기록(현재 시간을 초로 저장)\nresult = app.invoke({'messages': [('user', '1달러 환율 알려줘')]})  # 에이전트 한 번 실행\nelapsed = time.time() - start  # 끝난 시각에서 시작 시각을 빼 걸린 시간 계산\n\nprint('답변:', result['messages'][-1].content)  # 결과: 환율 답변 문장 출력\nprint(f'걸린 시간: {elapsed:.2f}초')  # 결과: 예) 걸린 시간: 1.83초\n",
-      "note": "발표용 '성능 표'에 넣을 응답 시간을 이렇게 직접 재서 근거 있는 숫자로 제시하세요."
+      "code": "from tenacity import retry, wait_exponential, stop_after_attempt  # 재시도 도구\n\ncount = {'n': 0}  # 몇 번 시도했는지 세는 상자\n\n@retry(wait=wait_exponential(multiplier=1, max=8), stop=stop_after_attempt(3))\ndef flaky():  # 두 번 실패하고 세 번째에 성공하는 함수(흉내)\n    count['n'] += 1\n    print(f\"{count['n']}번째 시도\")  # 결과: 1번째..2번째..3번째 시도 출력\n    if count['n'] < 3:\n        raise ValueError('일시적 오류')  # 실패를 흉내\n    return '성공!'\n\nprint(flaky())  # 결과: 3번째에서 '성공!' 출력\n",
+      "note": "wait_exponential 은 1→2→4초로 점점 더 기다렸다 재시도해 서버 부담을 줄입니다."
     },
     {
-      "title": "빈 입력 같은 예외 상황 막아 두기",
+      "title": "무한 대기 막기(타임아웃)",
       "lang": "python",
-      "code": "def safe_ask(question):  # 안전하게 질문을 처리하는 함수\n    if not question or question.strip() == '':  # 입력이 없거나 공백뿐이면\n        return '질문을 입력해 주세요.'  # 모델을 부르지 않고 바로 안내\n    return f'정상 질문 처리: {question}'  # 정상이면 처리 진행(여기선 예시 문구)\n\nprint(safe_ask(''))  # 결과: 질문을 입력해 주세요.\nprint(safe_ask('환율 알려줘'))  # 결과: 정상 질문 처리: 환율 알려줘\n",
-      "note": "엉뚱한 입력을 미리 걸러 두면 데모 도중 갑작스러운 에러를 크게 줄일 수 있습니다."
+      "code": "import asyncio  # 비동기·타임아웃 도구\n\nasync def slow():  # 5초나 걸리는 느린 작업 흉내\n    await asyncio.sleep(5)\n    return '완료'\n\nasync def main():\n    try:\n        result = await asyncio.wait_for(slow(), timeout=2)  # 2초 안에 안 끝나면 끊음\n        print(result)\n    except asyncio.TimeoutError:  # 시간 초과 시\n        print('시간 초과! 대체 응답을 보냅니다.')  # 결과: 이 줄이 출력됨\n\nasyncio.run(main())\n",
+      "note": "타임아웃이 없으면 느린 API 하나가 서비스 전체를 멈추게 할 수 있습니다."
     }
   ],
   "miniproject-1": [

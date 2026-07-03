@@ -2168,170 +2168,166 @@ export const details = {
   "capstone-1": {
     "topics": [
       {
-        "h": "캡스톤 1일차에 반드시 정할 것",
+        "h": "MCP를 왜 쓰나 — 통합의 뼈대",
         "items": [
-          "해결할 문제 한 줄(누가·무엇을·왜)",
-          "핵심 기능 1개(MVP) — 욕심내지 않기",
-          "사용자 시나리오 3개",
-          "사용할 기술 스택(LLM·RAG·도구) 목록"
+          "도구·자료·프롬프트를 표준 규격으로 노출 → 어떤 클라이언트든 동일하게 연결",
+          "'USB-C처럼' 한 번 만들면 여러 서비스가 재사용",
+          "Backend·VectorDB·Agent·Frontend의 경계를 명확히 분리",
+          "팀별로 MCP 서버를 나눠 병렬 개발 가능"
         ]
       },
       {
-        "h": "아키텍처 다이어그램에 들어갈 박스",
+        "h": "MCP 설계: Tool·Resource·Prompt 분리",
         "items": [
-          "사용자 입력(질문)",
-          "에이전트 두뇌(LLM, 다음 행동 결정)",
-          "지식 저장소(RAG·Vector DB)",
-          "외부 도구/API(검색·계산·조회)",
-          "최종 응답(출처 포함)"
+          "Tool = 실행 기능(검색·계산·DB 조회 등 부작용 있는 동작)",
+          "Resource = 읽기 전용 자료(문서·레코드·설정)",
+          "Prompt = 재사용 지시 템플릿(정형화된 요청)",
+          "판단 기준: 권한·부작용 있으면 Tool, 단순 조회면 Resource"
         ]
       },
       {
-        "h": "협업·일정 관리 기본",
+        "h": "통합 백엔드(FastAPI) 구성",
         "items": [
-          "역할 분담(프론트·에이전트·데이터·발표)",
-          "깃 저장소 생성과 브랜치 규칙",
-          ".env 키는 절대 깃에 올리지 않기",
-          "3일 타임라인(설계→구현→발표) 합의"
+          "FastAPI에 RAG 검색 + Agent 실행 + MCP Client 연결",
+          "Thread(세션) 관리로 사용자별 대화 분리",
+          "/chat 엔드포인트 하나로 요청 받기",
+          "MCP Inspector로 서버 점검 후 통합"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. 가상환경 만들고 라이브러리 설치하기",
+        "title": "Lab 1. MCP Server 만들고 Inspector로 점검",
         "steps": [
-          "프로젝트 폴더를 만든다: 'mkdir my-agent' 입력 후 'cd my-agent' 로 들어간다.",
-          "가상환경 생성: 'python -m venv venv' 를 입력한다(폴더에 venv 가 생긴다).",
-          "가상환경 활성화: 맥/리눅스는 'source venv/bin/activate', 윈도우는 'venv\\Scripts\\activate' 입력. 줄 앞에 (venv) 가 보이면 성공.",
-          "라이브러리 설치: 'pip install langgraph langchain langchain-anthropic python-dotenv' 입력.",
-          "설치 확인: 'pip list' 를 입력해 목록에 langgraph 가 보이는지 확인한다."
+          "설치: 'pip install \"mcp[cli]\"' 를 입력한다.",
+          "server.py 를 만들고 realCode의 MCP Server 예제를 붙여넣는다(@mcp.tool() 로 도구 1개 정의).",
+          "'mcp dev server.py' 를 실행하면 MCP Inspector 웹 화면이 열린다.",
+          "Inspector에서 Tools 목록에 내 도구가 보이는지 확인하고, 직접 호출해 결과가 나오는지 테스트한다."
         ]
       },
       {
-        "title": "Lab 2. .env 키 등록하고 첫 실행하기",
+        "title": "Lab 2. FastAPI에 MCP Client·RAG 붙이기",
         "steps": [
-          "폴더에 '.env' 라는 이름의 파일을 새로 만든다(점으로 시작하는 것에 주의).",
-          "그 안에 'ANTHROPIC_API_KEY=sk-ant-여기에_키' 한 줄을 적고 저장한다.",
-          "'.gitignore' 파일을 만들고 그 안에 '.env' 와 'venv/' 두 줄을 적어 비밀 파일이 깃에 안 올라가게 한다.",
-          "위 realCode의 app.py 를 폴더에 저장한다.",
-          "'python app.py' 를 실행해 인사 문구와 자기소개 답변이 나오는지 확인한다."
+          "'pip install fastapi uvicorn' 로 설치한다.",
+          "main.py 에 realCode의 /chat 엔드포인트를 붙여넣는다(MCP Client로 server.py 도구 목록 로드).",
+          "'uvicorn main:app --reload' 를 실행한다.",
+          "브라우저에서 'http://localhost:8000/docs' 를 열어 /chat 에 질문을 넣고 응답을 확인한다."
         ]
       }
     ],
     "homework": [
-      "우리 팀 설계서를 한 장으로 깔끔히 정리해 깃 저장소 README.md 에 올리기(문제정의·시나리오·아키텍처 그림 링크 포함).",
-      "내일 구현할 핵심 기능 1개를 정하고, 그 기능에 필요한 도구·데이터가 무엇인지 메모로 적어오기."
+      "우리 서비스에 필요한 기능을 Tool·Resource·Prompt로 분류한 표를 만들어 README.md 에 올리기.",
+      "MCP Server에 도구 2개를 정의하고 MCP Inspector로 동작을 확인한 화면을 캡처해 제출하기."
     ]
   },
   "capstone-2": {
     "topics": [
       {
-        "h": "에이전트 구현 핵심 4단계",
+        "h": "스트리밍의 3가지 차원",
         "items": [
-          "상태(State) 정의 — 무엇을 기억할까",
-          "도구(Tool) 작성 — 어떤 일을 시킬까",
-          "노드 연결 — 생각·도구·검색 칸 잇기",
-          "조건 분기 — 언제 도구를 쓸까"
+          "모델: LLM이 토큰을 하나씩 생성하며 흘려보냄(stream=True)",
+          "서버: FastAPI가 그 토큰을 SSE로 클라이언트에 전달",
+          "클라이언트: 프론트가 받은 조각을 화면에 이어붙임",
+          "효과: 첫 글자까지의 체감 대기(TTFT) 감소 → 이탈 줄어듦"
         ]
       },
       {
-        "h": "RAG 검색 노드 붙이기 순서",
+        "h": "Backend SSE 엔드포인트",
         "items": [
-          "문서를 잘게 자르기(청킹)",
-          "임베딩으로 벡터화해 Vector DB에 저장",
-          "질문과 비슷한 문서 top-k 검색",
-          "찾은 내용을 프롬프트에 넣어 답하기",
-          "답변에 출처(문서명) 함께 표시"
+          "FastAPI StreamingResponse로 media_type='text/event-stream' 반환",
+          "LLM 스트림을 'async for' 로 받아 청크마다 yield",
+          "각 청크를 'data: {...}\\n\\n' 형식으로 전송",
+          "연결 종료·중간 에러 처리(끊김 감지)"
         ]
       },
       {
-        "h": "흔한 에러와 점검 포인트",
+        "h": "Frontend·Multi-Agent·Observability",
         "items": [
-          "API 키 미설정 → .env 확인",
-          "도구가 안 불림 → bind_tools 했는지 확인",
-          "무한 루프 → tools→agent 엣지·종료 조건 점검",
-          "한글 깨짐 → 파일 인코딩 utf-8 확인"
+          "Vercel AI SDK useChat 로 스트리밍 수신·렌더",
+          "Multi-Agent면 에이전트별 이벤트 태그로 구분해 표시",
+          "LangSmith로 각 단계(검색·생성·도구) 추적",
+          "Eval로 응답의 정확도·근거 품질 점검"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. State와 첫 노드 만들어 실행하기",
+        "title": "Lab 1. FastAPI SSE 스트리밍 엔드포인트",
         "steps": [
-          "agent.py 를 만들고 realCode의 State 클래스 부분까지 붙여넣는다.",
-          "agent_node 함수를 추가하고, 도구 없이 'graph.add_edge(START, agent)'와 'graph.add_edge(agent, END)'만 연결해 본다.",
-          "app.invoke 로 '안녕'을 넣어 모델이 인사로 답하는지 확인한다.",
-          "잘 되면 도구와 조건 분기를 추가해 realCode 완성본으로 발전시킨다."
+          "realCode의 SSE 스트리밍 예제를 main.py 에 붙여넣는다(StreamingResponse 사용).",
+          "LLM 호출을 stream=True 로 바꾸고, 제너레이터로 청크를 yield 한다.",
+          "'uvicorn main:app --reload' 실행 후 터미널에서 'curl -N http://localhost:8000/stream?q=안녕' 을 입력한다.",
+          "-N 옵션 덕분에 답이 한꺼번에가 아니라 조금씩 흘러나오는지 확인한다."
         ]
       },
       {
-        "title": "Lab 2. 도구 호출이 실제로 일어나는지 추적하기",
+        "title": "Lab 2. LangSmith로 실행 추적 붙이기",
         "steps": [
-          "app.invoke 의 결과에서 result['messages'] 전체를 print 로 출력한다.",
-          "메시지 목록 중간에 'tool_calls' 가 들어간 메시지가 있는지 찾는다(도구가 불린 증거).",
-          "tool 메시지에 환율 도구의 반환값이 담겼는지 확인한다.",
-          "마지막 메시지가 사람이 읽기 좋은 최종 문장인지 확인한다."
+          ".env 에 'LANGCHAIN_TRACING_V2=true' 와 'LANGCHAIN_API_KEY=...' 를 추가한다.",
+          "기존 체인/에이전트를 그대로 한 번 실행한다.",
+          "smith.langchain.com 대시보드에서 방금 실행의 trace(단계별 흐름)를 연다.",
+          "가장 오래 걸린 단계와 토큰을 가장 많이 쓴 단계를 찾아 메모한다."
         ]
       }
     ],
     "homework": [
-      "우리 서비스에 꼭 필요한 도구 1개를 실제 동작하도록 완성하기(가짜 데이터를 진짜 API나 DB 조회로 교체).",
-      "오늘 만든 agent.py 를 깃에 커밋·푸시하고, 실행 화면을 캡처해 팀 노션에 기록하기."
+      "우리 서비스의 응답을 스트리밍으로 바꾸고, 프론트에서 실시간으로 표시되는 화면을 영상으로 캡처해 제출하기.",
+      "LangSmith trace에서 가장 느린 단계·토큰이 많은 단계를 찾아 개선 아이디어 2가지를 적어 제출하기."
     ]
   },
   "capstone-3": {
     "topics": [
       {
-        "h": "발표 슬라이드 5장 구성",
+        "h": "안정성: 오류·재시도·타임아웃",
         "items": [
-          "1장 문제 정의와 왜 필요한지",
-          "2장 아키텍처 다이어그램",
-          "3장 핵심 기능 라이브 데모",
-          "4장 성능·비용·한계",
-          "5장 배운 점과 다음 개선 방향"
+          "try/except로 실패를 감싸 서비스가 멈추지 않게",
+          "지수 백오프 재시도(1→2→4초)로 일시적 오류 흡수",
+          "타임아웃을 걸어 무한 대기 방지",
+          "실패 시 사용자에게 친절한 대체 응답 제공"
         ]
       },
       {
-        "h": "배포 전 최종 점검 리스트",
+        "h": "비용·지연·세션",
         "items": [
-          "시나리오 3개 모두 정상 동작",
-          "빈 입력·오류 입력 예외 처리 확인",
-          ".env 키가 깃에 안 올라갔는지 확인",
-          "백업 데모 영상 준비"
+          "작은 모델·캐싱으로 Cost 절감",
+          "불필요한 재검색 줄여 Latency 개선",
+          "Stateless로 만들어 세션을 외부(DB·Redis)에 저장",
+          "→ 어느 서버든 처리 가능 → 수평 확장 쉬움"
         ]
       },
       {
-        "h": "KPT 회고 항목",
+        "h": "에이전트 확장: 라우팅·검증·동적계획",
         "items": [
-          "Keep: 잘 되어 계속할 점",
-          "Problem: 아쉬웠던 문제점",
-          "Try: 다음에 시도할 개선안"
+          "Query Routing으로 질문 종류별 경로 분기",
+          "Validator Agent로 출력의 형식·근거 검증",
+          "Conditional Routing으로 조건에 따라 흐름 전환",
+          "Dynamic Planning으로 중간 결과 보고 계획 재수립"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. Streamlit 데모 띄우기",
+        "title": "Lab 1. 재시도·타임아웃 붙이기",
         "steps": [
-          "'pip install streamlit' 으로 라이브러리를 설치한다.",
-          "realCode의 app_web.py 를 폴더에 저장한다.",
-          "'streamlit run app_web.py' 를 실행하면 브라우저가 자동으로 열린다.",
-          "입력창에 시나리오 질문을 넣어 말풍선으로 답이 나오는지 확인한다."
+          "'pip install tenacity' 로 설치한다.",
+          "LLM/도구 호출 함수 위에 '@retry(wait=wait_exponential(...), stop=stop_after_attempt(3))' 를 붙인다.",
+          "호출을 'asyncio.wait_for(coro, timeout=20)' 로 감싸 20초 넘으면 끊기게 한다.",
+          "일부러 잘못된 키·주소로 실패시켜, 재시도 로그가 찍히고 최종적으로 대체 응답이 나오는지 확인한다."
         ]
       },
       {
-        "title": "Lab 2. 발표 리허설하기",
+        "title": "Lab 2. Validator Agent 추가하기",
         "steps": [
-          "발표 순서를 정한다(누가 문제정의, 누가 데모, 누가 마무리).",
-          "타이머를 켜고 7분 안에 끝나는지 한 번 실제로 말해 본다.",
-          "데모 질문을 미리 2~3번 돌려 확실히 되는 질문만 고른다.",
-          "정상 동작 화면을 영상으로 녹화해 백업으로 둔다."
+          "출력 검증용 프롬프트를 작성한다(예: '답변에 근거 출처가 있는가? JSON 형식이 맞는가?').",
+          "메인 에이전트 뒤에 검증 노드를 두고, 실패면 재생성하도록 분기(Conditional Edge)한다.",
+          "일부러 근거 없는 답을 만들어 넣어 검증에서 걸러지는지 테스트한다.",
+          "통과/실패 로그를 남겨 검증이 실제로 동작함을 확인한다."
         ]
       }
     ],
     "homework": [
-      "최종 발표 슬라이드와 배포 링크(또는 실행 방법)를 팀 깃 저장소 README.md 에 정리해 제출하기.",
-      "KPT 회고를 바탕으로 '이 서비스를 한 단계 더 발전시킨다면 무엇을 할지' 개선안 3가지를 적어 제출하기."
+      "우리 서비스에 오류 처리·재시도·타임아웃을 적용하고, 일부러 오류를 냈을 때도 멈추지 않음을 시연 영상으로 제출하기.",
+      "최종 발표(5장): 문제정의 · 아키텍처(MCP 포함) · 라이브 데모 · 운영(비용/지연/관측) · 개선방향 을 정리해 제출하기."
     ]
   },
   "miniproject-1": {

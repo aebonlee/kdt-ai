@@ -2030,173 +2030,89 @@ export const plans = {
   },
   "capstone-1": {
     "schedule": [
-      {
-        "time": "09:00–09:50",
-        "topic": "1교시 OT: 캡스톤 목표와 평가 기준 이해하기"
-      },
-      {
-        "time": "10:00–10:50",
-        "topic": "2교시 [실습] 문제 정의와 사용자 시나리오 작성하기"
-      },
-      {
-        "time": "11:00–11:50",
-        "topic": "3교시 에이전트 + RAG + 도구(Tool) 아키텍처 개념 잡기"
-      },
-      {
-        "time": "12:00–13:00",
-        "topic": "점심 휴식",
-        "lunch": true
-      },
-      {
-        "time": "13:00–13:50",
-        "topic": "4교시 [실습] 시스템 아키텍처 다이어그램 그리기"
-      },
-      {
-        "time": "14:00–14:50",
-        "topic": "5교시 [실습] 데이터·모델·인터페이스 계획 세우기"
-      },
-      {
-        "time": "15:00–15:50",
-        "topic": "6교시 [실습] 개발 환경 셋업과 스켈레톤 코드 만들기"
-      },
-      {
-        "time": "16:00–16:50",
-        "topic": "7교시 [실습] 팀별 기획·설계서 완성하기"
-      },
-      {
-        "time": "17:00–17:50",
-        "topic": "8교시 팀별 계획 발표와 상호 피드백"
-      }
+      { "time": "09:00–09:50", "topic": "1교시 OT: 캡스톤 목표와 Backend·VectorDB·Agent(MCP)·Frontend 전체 그림" },
+      { "time": "10:00–10:50", "topic": "2교시 MCP(Model Context Protocol) 개요와 MCP Server 구성요소" },
+      { "time": "11:00–11:50", "topic": "3교시 MCP 설계: Tool·Resource·Prompt 분리 의사결정" },
+      { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
+      { "time": "13:00–13:50", "topic": "4교시 [실습] MCP Server 구현하고 MCP Inspector로 점검" },
+      { "time": "14:00–14:50", "topic": "5교시 통합 아키텍처: 시스템 경계(Backend·VectorDB·Agent·Frontend) 설계" },
+      { "time": "15:00–15:50", "topic": "6교시 [실습] FastAPI에 RAG + Agent + MCP Client 통합" },
+      { "time": "16:00–16:50", "topic": "7교시 [실습] Thread(대화 세션) 관리 붙이기" },
+      { "time": "17:00–17:50", "topic": "8교시 통합 스모크 테스트와 중간 점검" }
     ],
     "practice": {
-      "title": "우리 팀 AI 에이전트 서비스 기획서 + 아키텍처 설계 + 실행되는 스켈레톤 만들기",
+      "title": "MCP Server를 만들고 FastAPI 백엔드에 통합해 동작하는 /chat 엔드포인트 완성하기",
       "steps": [
-        "팀에서 해결할 문제 한 줄을 정한다. 예: '사내 규정 문서를 대신 찾아 답해주는 에이전트'처럼 '누가, 무엇을, 왜'가 들어가게 적는다.",
-        "구글 문서나 노션에 '사용자 시나리오'를 3개 적는다. 각 시나리오는 (상황 → 사용자가 입력하는 질문 → 에이전트가 해주길 바라는 행동) 순서로 쓴다.",
-        "종이나 화이트보드, 또는 draw.io(diagrams.net) 사이트에 접속해 박스 4개(사용자 → 에이전트 두뇌(LLM) → 도구/검색(RAG) → 외부 API)를 그리고 화살표로 데이터가 흐르는 방향을 잇는다.",
-        "터미널을 열고 'python -m venv venv' 를 입력해 가상환경을 만든 뒤 'source venv/bin/activate'(윈도우는 venv\\Scripts\\activate)로 활성화한다.",
-        "'pip install langgraph langchain langchain-anthropic langchain-community python-dotenv' 명령으로 필요한 라이브러리를 한 번에 설치한다.",
-        "프로젝트 폴더에 '.env' 파일을 만들고 'ANTHROPIC_API_KEY=발급받은_키' 한 줄을 적어 저장한다. 이 파일은 비밀번호와 같으니 깃에 올리지 않도록 .gitignore에 추가한다.",
-        "아래 realCode의 'app.py' 스켈레톤을 그대로 붙여넣고 'python app.py'를 실행한다.",
-        "화면에 '에이전트 준비 완료! 무엇을 도와드릴까요?' 가 출력되면 환경 구성 성공이다. (기대 결과) 에러 없이 인사 문구가 뜨면 1일차 목표 달성.",
-        "팀 설계서(문제정의 + 시나리오 3개 + 아키텍처 그림 + 사용할 기술스택 목록)를 한 장으로 정리한다.",
-        "팀별로 3분씩 발표하고, 다른 팀에게 '이 부분은 어떻게 구현할 거냐'는 질문을 최소 1개씩 받아 답한다."
+        "팀 서비스를 정하고, 필요한 기능을 Tool(실행)·Resource(읽기)·Prompt(템플릿) 3가지로 분류한 표를 만든다.",
+        "가상환경을 만들고(activate) 'pip install \"mcp[cli]\" fastapi uvicorn langchain-mcp-adapters langgraph langchain-anthropic python-dotenv' 로 설치한다.",
+        "'.env' 에 'ANTHROPIC_API_KEY=발급받은_키' 를 적고 .gitignore에 .env·venv/ 를 추가한다.",
+        "아래 realCode의 'server.py' 를 붙여넣어 @mcp.tool() 로 도구 1개(search_docs 등)를 정의한다.",
+        "'mcp dev server.py' 를 실행하면 MCP Inspector 웹이 열린다. Tools 탭에서 도구가 보이고 직접 호출해 결과가 나오는지 확인한다.",
+        "아래 realCode의 'main.py' 를 붙여넣어 FastAPI /chat 에 MCP Client + 에이전트를 통합한다.",
+        "'uvicorn main:app --reload' 실행 후 'http://localhost:8000/docs' 에서 /chat 에 질문을 넣어 본다.",
+        "(기대 결과) 질문을 넣으면 에이전트가 MCP 도구를 거쳐 답을 만들어 돌려주면 성공.",
+        "팀 아키텍처 그림(4박스: Backend·VectorDB·Agent·Frontend)과 Tool·Resource·Prompt 분류표를 한 장으로 정리한다.",
+        "코드를 깃에 커밋·푸시한다('feat: MCP 서버 + FastAPI 통합')."
       ],
-      "deliverable": "한 장짜리 팀 설계서(문제정의·사용자 시나리오 3개·아키텍처 다이어그램·기술스택) + 실행되는 app.py 스켈레톤(인사 문구 출력 확인)"
+      "deliverable": "MCP Server(server.py, Inspector 확인) + 통합 백엔드(main.py, /chat 동작) + Tool·Resource·Prompt 분류표와 아키텍처 그림"
     }
   },
   "capstone-2": {
     "schedule": [
-      {
-        "time": "09:00–09:50",
-        "topic": "1교시 LangGraph의 상태(State)·노드·엣지 빠르게 복습"
-      },
-      {
-        "time": "10:00–10:50",
-        "topic": "2교시 [실습] State 정의하고 첫 노드 만들기"
-      },
-      {
-        "time": "11:00–11:50",
-        "topic": "3교시 [실습] 에이전트가 쓸 도구(Tool) 함수 작성하기"
-      },
-      {
-        "time": "12:00–13:00",
-        "topic": "점심 휴식",
-        "lunch": true
-      },
-      {
-        "time": "13:00–13:50",
-        "topic": "4교시 [실습] RAG 검색 노드 연결하기"
-      },
-      {
-        "time": "14:00–14:50",
-        "topic": "5교시 [실습] 그래프 조립과 조건 분기(도구 쓸지 말지) 만들기"
-      },
-      {
-        "time": "15:00–15:50",
-        "topic": "6교시 [실습] 외부 API 도구 연동하기"
-      },
-      {
-        "time": "16:00–16:50",
-        "topic": "7교시 [실습] 간단한 프론트(웹/CLI)와 백엔드 연결하기"
-      },
-      {
-        "time": "17:00–17:50",
-        "topic": "8교시 중간 점검과 함께 디버깅하기"
-      }
+      { "time": "09:00–09:50", "topic": "1교시 스트리밍의 3가지 차원(모델·서버·클라이언트) 이해" },
+      { "time": "10:00–10:50", "topic": "2교시 Backend: SSE(Server-Sent Events) 스트리밍 엔드포인트 설계" },
+      { "time": "11:00–11:50", "topic": "3교시 [실습] FastAPI SSE 엔드포인트 구현" },
+      { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
+      { "time": "13:00–13:50", "topic": "4교시 Frontend: Vue.js/Next.js + Vercel AI SDK 연동" },
+      { "time": "14:00–14:50", "topic": "5교시 [실습] 프론트에서 토큰 스트리밍 렌더링" },
+      { "time": "15:00–15:50", "topic": "6교시 [실습] Multi-Agent Streaming(에이전트별 진행 스트림)" },
+      { "time": "16:00–16:50", "topic": "7교시 Observability & Eval: 추적·로그·응답 품질 평가" },
+      { "time": "17:00–17:50", "topic": "8교시 [실습] LangSmith/로깅으로 실행 추적 붙이기" }
     ],
     "practice": {
-      "title": "LangGraph로 '검색하고 도구도 쓰는' 동작하는 에이전트 완성하기",
+      "title": "응답을 SSE 스트리밍으로 바꾸고 LangSmith로 실행을 추적하기",
       "steps": [
-        "어제 만든 app.py 옆에 'agent.py' 파일을 새로 만든다.",
-        "아래 realCode의 'State 정의'를 붙여넣어 에이전트가 기억할 정보(대화 메시지)를 담을 그릇을 만든다.",
-        "에이전트가 사용할 도구 함수(예: 환율 조회, 문서 검색)를 @tool 데코레이터로 1~2개 작성한다.",
-        "ChatAnthropic 모델에 '.bind_tools(도구목록)' 를 붙여 모델이 도구를 쓸 수 있게 연결한다.",
-        "StateGraph 에 'agent(생각하는 노드)' 와 'tools(도구 실행 노드)' 를 add_node 로 추가한다.",
-        "add_conditional_edges 로 '도구가 필요하면 tools로, 아니면 끝(END)으로' 가는 분기를 연결한다.",
-        "graph.compile() 로 그래프를 완성하고, 'app.invoke(질문)' 로 실제 질문을 던져본다.",
-        "터미널에서 'python agent.py' 실행 후 '오늘 1달러는 몇 원이야?' 라고 물어 도구가 호출되는지 확인한다.",
-        "(기대 결과) 에이전트가 환율 도구를 호출하고, 그 결과를 문장으로 풀어 '오늘 1달러는 약 OOOO원입니다' 형태로 답하면 성공.",
-        "잘 되면 코드를 깃에 커밋하고 'feat: 도구 사용 에이전트 구현' 메시지로 푸시한다."
+        "어제 만든 main.py 에 아래 realCode의 SSE 스트리밍 엔드포인트(/stream)를 추가한다.",
+        "LLM 호출을 'llm.astream(...)' 으로 바꾸고, 토큰을 'data: ...\\n\\n' 형식으로 yield 한다.",
+        "'uvicorn main:app --reload' 실행 후 터미널에서 'curl -N \"http://localhost:8000/stream?q=안녕\"' 을 입력한다.",
+        "(기대 결과) 답이 한꺼번에가 아니라 글자 단위로 조금씩 흘러나오면 스트리밍 성공.",
+        "프론트(Vue/Next)에서 Vercel AI SDK의 useChat 로 /stream 을 연결해 화면에 타이핑되듯 렌더한다(간단히는 EventSource 로도 가능).",
+        "여러 에이전트를 쓰면 각 에이전트의 진행 상황에 태그를 붙여 따로 표시(Multi-Agent Streaming)한다.",
+        "'.env' 에 'LANGCHAIN_TRACING_V2=true' 와 'LANGCHAIN_API_KEY' 를 추가해 LangSmith 추적을 켠다.",
+        "서비스를 한 번 실행한 뒤 smith.langchain.com 에서 trace(단계별 흐름)를 연다.",
+        "가장 오래 걸린 단계(Latency)와 토큰을 많이 쓴 단계(Cost)를 찾아 캡처한다.",
+        "코드를 깃에 커밋·푸시한다('feat: SSE 스트리밍 + LangSmith 추적')."
       ],
-      "deliverable": "질문에 따라 스스로 도구를 호출하고 답하는 agent.py(실행 로그 캡처 포함) + 깃 커밋"
+      "deliverable": "스트리밍 응답(/stream, curl 확인) + 프론트 실시간 렌더 화면 + LangSmith trace 캡처(느린/비싼 단계 표시)"
     }
   },
   "capstone-3": {
     "schedule": [
-      {
-        "time": "09:00–09:50",
-        "topic": "1교시 통합 테스트 계획 세우기(무엇을·어떻게 검증할까)"
-      },
-      {
-        "time": "10:00–10:50",
-        "topic": "2교시 [실습] 엔드투엔드 시나리오 테스트 돌리기"
-      },
-      {
-        "time": "11:00–11:50",
-        "topic": "3교시 [실습] 발견한 버그 수정과 안정화"
-      },
-      {
-        "time": "12:00–13:00",
-        "topic": "점심 휴식",
-        "lunch": true
-      },
-      {
-        "time": "13:00–13:50",
-        "topic": "4교시 [실습] 성능·비용·한계 점검하기"
-      },
-      {
-        "time": "14:00–14:50",
-        "topic": "5교시 [실습] 배포와 시연 환경 구성하기"
-      },
-      {
-        "time": "15:00–15:50",
-        "topic": "6교시 [실습] 발표자료와 라이브 데모 준비"
-      },
-      {
-        "time": "16:00–16:50",
-        "topic": "7교시 팀별 결과 발표와 데모 시연"
-      },
-      {
-        "time": "17:00–17:50",
-        "topic": "8교시 상호 피드백과 회고(KPT)"
-      }
+      { "time": "09:00–09:50", "topic": "1교시 Error Handling과 재시도 전략 설계" },
+      { "time": "10:00–10:50", "topic": "2교시 [실습] 예외·타임아웃·재시도 처리 붙이기" },
+      { "time": "11:00–11:50", "topic": "3교시 Cost & Latency 관리(토큰·모델·캐싱)" },
+      { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
+      { "time": "13:00–13:50", "topic": "4교시 Stateless Session 전환(수평 확장 대비)" },
+      { "time": "14:00–14:50", "topic": "5교시 Query Routing과 Conditional Routing" },
+      { "time": "15:00–15:50", "topic": "6교시 [실습] Validator Agent 출력 검증 + Dynamic Planning" },
+      { "time": "16:00–16:50", "topic": "7교시 팀별 최종 통합·발표·라이브 데모" },
+      { "time": "17:00–17:50", "topic": "8교시 상호 피드백·회고(KPT) · Wrap-up QUIZ" }
     ],
     "practice": {
-      "title": "에이전트 서비스 통합·테스트·배포 후 라이브 데모로 발표하기",
+      "title": "오류 처리·재시도·검증을 붙여 안정화하고, 최종 통합·발표하기",
       "steps": [
-        "어제까지 만든 agent.py 를 Streamlit 웹앱(app_web.py)으로 감싸 누구나 브라우저에서 쓸 수 있게 만든다.",
-        "아래 realCode의 Streamlit 코드를 붙여넣고 'streamlit run app_web.py' 를 실행한다.",
-        "브라우저가 자동으로 열리면 입력창에 시나리오 3개 질문을 차례로 넣어 모두 정상 동작하는지 확인한다.",
-        "일부러 이상한 질문(빈 입력, 엉뚱한 요청)을 넣어 에러 없이 안내 메시지가 나오는지 확인한다(예외 처리 점검).",
-        "한 번 호출에 토큰이 얼마나 드는지, 응답까지 몇 초 걸리는지 측정해 '성능·비용' 표를 만든다.",
-        "발표 슬라이드를 5장으로 만든다: (1)문제정의 (2)아키텍처 그림 (3)핵심 기능 데모 (4)성능·한계 (5)배운 점.",
-        "라이브 데모가 실패할 때를 대비해 정상 동작 화면을 미리 녹화해 둔다(백업 영상).",
-        "(기대 결과) 발표 중 입력창에 질문을 넣으면 출처와 함께 답이 나오는 장면을 청중 앞에서 시연한다.",
-        "팀별 7분 발표 + 3분 질의응답을 진행한다.",
-        "발표 후 KPT 회고(Keep 좋았던 점·Problem 아쉬운 점·Try 다음에 시도할 것)를 팀별로 작성한다."
+        "'pip install tenacity' 로 재시도 라이브러리를 설치한다.",
+        "아래 realCode의 safe.py(재시도·타임아웃 + Validator Agent)를 붙여넣고, 메인 호출을 safe_answer 로 교체한다.",
+        "일부러 잘못된 키나 주소로 실패시켜, 1→2→4초 재시도 후에도 안 되면 친절한 대체 응답이 나오는지 확인한다.",
+        "근거 없는 답을 일부러 만들어 넣어, Validator가 걸러내고 재생성하는지 확인한다.",
+        "(선택) 질문 종류에 따라 경로를 나누는 Query Routing 이나 조건 분기(Conditional Routing)를 추가한다.",
+        "한 번 호출의 토큰·응답시간을 측정해 'Cost·Latency' 표를 만들고, 작은 모델·캐싱으로 줄일 지점을 찾는다.",
+        "발표 슬라이드 5장을 만든다: (1)문제정의 (2)아키텍처(MCP 포함) (3)라이브 데모 (4)운영(비용·지연·관측) (5)개선방향.",
+        "라이브 데모 실패에 대비해 정상 동작 화면을 미리 녹화한다(백업 영상).",
+        "(기대 결과) 발표 중 질문을 넣으면 출처와 함께 답이 나오고, 오류를 내도 서비스가 멈추지 않음을 시연한다.",
+        "팀별 발표 + 질의응답 후 KPT 회고(Keep·Problem·Try)를 작성한다."
       ],
-      "deliverable": "배포된 웹 데모(Streamlit) + 발표 슬라이드 5장 + 성능·한계 표 + KPT 회고 문서"
+      "deliverable": "안정화된 서비스(재시도·타임아웃·Validator) + 발표 슬라이드 5장 + Cost·Latency 표 + KPT 회고"
     }
   },
   "miniproject-1": {
