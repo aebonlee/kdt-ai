@@ -5,6 +5,16 @@ export const details = {
   "git-1": {
     "topics": [
       {
+        "h": "오전 · 프로그래밍 개요와 개발환경 구축",
+        "items": [
+          "프로그래밍이란: 코드→실행 과정 한눈에 이해",
+          "Frontend vs Backend와 API로 주고받는 관계",
+          "기초 IT 용어: 서버·클라이언트·API·라이브러리·프레임워크",
+          "VS Code 설치·한국어/필수 확장·Workspace(작업폴더) 열기",
+          "Git 설치 확인(git --version)과 이름·이메일 설정"
+        ]
+      },
+      {
         "h": "오전 · 팀빌딩으로 협업 기반 다지기",
         "items": [
           "OT: 과정 목표·일정·평가 방식 공유와 강사/동료 자기소개",
@@ -34,11 +44,23 @@ export const details = {
           "원격 연결: git remote add origin, git push/pull",
           "Pull Request: 변경 제안과 코드리뷰·승인 흐름",
           "동기화: 작업 전 git pull 로 최신화하는 습관",
-          "협업 규칙: main 보호·작은 단위 커밋·명확한 메시지"
+          "협업 규칙: main 보호·작은 단위 커밋·명확한 메시지",
+          "SSH 키 관리: ssh-keygen으로 키 생성 → 공개키를 GitHub에 등록 → ssh -T로 연결 확인",
+          "VS Code Source Control 패널로 stage·commit·Sync Changes 하기(터미널 없이)"
         ]
       }
     ],
     "labs": [
+      {
+        "title": "Lab 0. VS Code로 Workspace 만들고 소스 제어 패널로 첫 커밋하기",
+        "steps": [
+          "폴더를 VS Code로 열어 Workspace로 삼는다.",
+          "파일을 하나 새로 만들어 내용을 적고 저장한다.",
+          "왼쪽 소스 제어(가지 아이콘) 패널에서 + 로 변경을 stage 한다.",
+          "커밋 메시지를 입력하고 체크(commit) 버튼을 눌러 터미널 없이 첫 커밋을 만든다.",
+          "커밋 이력이 소스 제어 패널에 남는지 확인한다."
+        ]
+      },
       {
         "title": "Lab 1. 내 첫 저장소 만들고 3번 커밋해 역사 만들기",
         "steps": [
@@ -175,7 +197,13 @@ export const details = {
           "In-Context Learning: 예시만 보여주면 그 자리에서 학습",
           "RLHF: 사람 선호를 학습해 도움·안전하게 정렬",
           "MoE: 전문가 일부만 골라 써 효율↑",
-          "생태계: Open-Weight vs Closed, 벤치마크·Leaderboard"
+          "생태계: Open-Weight vs Closed, 벤치마크·Leaderboard",
+          "주요 플레이어 — Closed(API 전용): OpenAI GPT·Anthropic Claude·Google Gemini(최고 성능·안전장치, 가중치 비공개)",
+          "주요 플레이어 — Open-Weight(가중치 공개): Meta Llama·Alibaba Qwen·Mistral·DeepSeek(직접 파인튜닝·온프레미스 배포 가능)",
+          "고르는 기준: 성능·비용·데이터 보안(사내 데이터를 외부 API에 보낼 수 있나)·커스터마이징 필요성",
+          "대표 벤치마크 — MMLU(지식·추론)·GSM8K(수학)·HumanEval(코드)·HellaSwag(상식)",
+          "리더보드 — HuggingFace Open LLM Leaderboard(공개 모델 자동 채점)·LMSYS Chatbot Arena(사람 블라인드 비교 Elo)",
+          "주의: 벤치마크 점수가 높아도 내 업무에선 다를 수 있으니 내 데이터·과제로 직접 평가(오프라인 테스트)하는 습관이 중요"
         ]
       }
     ],
@@ -216,139 +244,193 @@ export const details = {
   "python-1": {
     "topics": [
       {
-        "h": "기본 문법 기초",
+        "h": "실행 구조·개발 환경",
         "items": [
-          "변수와 대입(=)",
-          "정수·실수·문자열·불(bool)",
-          "산술·비교·논리 연산자",
-          "문자열 슬라이싱과 메서드(split, strip, replace)"
+          "Homebrew·Python 3.11·VS Code로 개발 환경 갖추기",
+          "venv로 가상환경 만들고 pip로 패키지 관리",
+          "소스→AST→바이트코드→PVM 실행 과정 이해"
         ]
       },
       {
-        "h": "자료구조 다루기",
+        "h": "자료구조·컴프리헨션",
         "items": [
-          "리스트 인덱싱·슬라이싱·append",
-          "딕셔너리 키-값 조회·추가",
-          "튜플의 불변성",
-          "집합(set)으로 중복 제거"
+          "list/dict/set/tuple의 특징과 시간복잡도",
+          "리스트·딕셔너리 컴프리헨션",
+          "제너레이터로 메모리 아끼기",
+          "dataclass·TypedDict로 구조 표현"
         ]
       },
       {
-        "h": "흐름 제어와 재사용",
+        "h": "함수·파일·예외",
         "items": [
-          "if·elif·else 조건 분기",
-          "for·while 반복",
-          "함수 정의(def)와 return",
-          "리스트 컴프리헨션"
+          "functools(partial·reduce) 활용",
+          "CSV·JSON·Parquet 읽고 쓰기",
+          "pathlib로 경로 다루기",
+          "예외 처리(try/except)로 안전하게"
+        ]
+      },
+      {
+        "h": "타입·검증",
+        "items": [
+          "타입 힌트로 의도 드러내기",
+          "Pydantic v2(BaseModel·Field·model_dump/validate)",
+          "mypy로 타입 검사"
+        ]
+      },
+      {
+        "h": "코드 품질·테스트",
+        "items": [
+          "Ruff로 린트·포맷 자동화",
+          "pytest로 테스트 작성",
+          "requirements.txt로 의존성 고정",
+          "VS Code 디버거로 단계 실행"
+        ]
+      },
+      {
+        "h": "비동기·병렬",
+        "items": [
+          "asyncio(async/await)로 비동기 처리",
+          "httpx로 비동기 HTTP 호출",
+          "멀티프로세싱으로 CPU 병렬 처리",
+          "timeit·cProfile로 성능 측정"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. Colab 환경 셋업하고 첫 코드 실행",
+        "title": "Lab1. venv 만들고 개발환경 검증",
         "steps": [
-          "브라우저에서 colab.research.google.com 에 접속해 구글 계정으로 로그인한다.",
-          "'새 노트' 버튼을 눌러 빈 노트북을 연다.",
-          "첫 셀에 print(\"안녕 데이터 분석\") 을 입력한다.",
-          "Shift+Enter 를 눌러 셀을 실행하고, 아래에 안녕 데이터 분석 이 출력되는지 확인한다.",
-          "새 셀에 1 + 2 * 3 을 입력해 실행하고 결과가 7 인지 확인한다(계산기처럼 동작)."
+          "터미널에서 'python3.11 -m venv .venv' 로 가상환경을 만든다.",
+          "'source .venv/bin/activate' 로 가상환경을 활성화한다.",
+          "'pip install httpx pydantic ruff pytest' 로 필요한 패키지를 설치한다.",
+          "'pip freeze > requirements.txt' 로 환경을 기록한다.",
+          "VS Code에서 인터프리터를 .venv로 지정한다."
         ]
       },
       {
-        "title": "Lab 2. 리스트와 반복문으로 합계·평균 구하기",
+        "title": "Lab2. 컴프리헨션·제너레이터·dataclass로 데이터 모델링",
         "steps": [
-          "scores = [80, 95, 70, 88, 100] 리스트를 만든다.",
-          "total = 0 으로 합계를 담을 변수를 0 으로 초기화한다.",
-          "for s in scores: 반복문 안에서 total = total + s 로 점수를 누적한다.",
-          "average = total / len(scores) 로 평균을 계산한다(len 은 개수).",
-          "print(total, average) 를 실행해 433 86.6 이 나오는지 확인한다."
+          "주문 리스트를 컴프리헨션으로 정제한다.",
+          "@dataclass로 Order(상품·수량·금액)를 정의해 표현한다.",
+          "제너레이터로 대용량 로그를 한 줄씩 읽어 합계를 구한다.",
+          "리스트 방식과 제너레이터 방식의 메모리 차이를 체감한다."
         ]
       },
       {
-        "title": "Lab 3. 함수로 묶어 재사용하기",
+        "title": "Lab3. Pydantic 검증 + pytest + Ruff",
         "steps": [
-          "def stats(numbers): 형태로 함수를 정의하기 시작한다.",
-          "함수 안에서 return sum(numbers), max(numbers), min(numbers) 로 세 값을 한꺼번에 돌려준다.",
-          "함수 밖에서 a, b, c = stats([3, 9, 1]) 처럼 호출해 결과를 세 변수에 나눠 받는다.",
-          "print(a, b, c) 로 13 9 1 이 나오는지 확인한다.",
-          "다른 리스트로 한 번 더 호출해 같은 함수가 재사용되는지 확인한다."
+          "BaseModel로 주문 스키마를 정의해 잘못된 데이터가 걸러지는지 확인한다.",
+          "핵심 함수에 pytest 테스트를 작성한다.",
+          "'ruff check .' 와 'ruff format .' 으로 코드를 정리한다."
         ]
       }
     ],
     "homework": [
-      "오늘 만든 주문 전처리 스크립트에 최저가·최고가 출력을 추가하고, 음수·None 외에 100만원 초과도 이상치로 걸러내도록 조건을 보강해 제출한다.",
-      "본인이 자주 쓰는 데이터(예: 한 주 지출 내역) 10개를 리스트로 만들고, 반복문과 함수로 합계·평균·최댓값을 출력하는 노트북을 작성한다."
+      "공공 데이터포털 등 무료 JSON API에서 asyncio·httpx로 데이터를 비동기 수집하고, Pydantic으로 스키마를 검증한 뒤 Parquet로 저장하는 스크립트를 작성해 제출한다.",
+      "위 스크립트의 수집·변환 함수에 pytest 테스트를 최소 2개 붙이고, ruff로 정리한 뒤 requirements.txt와 함께 Git으로 커밋해 재현 가능한 형태로 만든다."
     ]
   },
   "python-2": {
     "topics": [
       {
-        "h": "Pandas 기본",
+        "h": "Pandas 2.x",
         "items": [
-          "Series·DataFrame 구조",
-          "CSV/엑셀 적재(read_csv)",
-          "head·tail·info·describe 로 훑어보기",
-          "loc·iloc 인덱싱과 열 선택"
+          "로딩·탐색·선택·정렬",
+          "결측치·이상치 다루기",
+          "groupby·pivot_table·merge",
+          "Copy-on-Write 이해"
         ]
       },
       {
-        "h": "정제와 집계",
+        "h": "Polars+DuckDB",
         "items": [
-          "결측치 처리(dropna·fillna)",
-          "이상치 필터링과 조건 선택",
-          "정렬(sort_values)",
-          "groupby 그룹 집계와 파생 열"
+          "Lazy API(scan_csv·filter·group_by·collect)",
+          "Pandas와 성능 비교",
+          "DuckDB SQL로 분석",
+          "데이터 크기별 처리 전략 선택"
         ]
       },
       {
-        "h": "재구조화와 시각화",
+        "h": "시각화",
         "items": [
-          "merge 로 표 합치기",
-          "pivot_table 재구조화",
-          "matplotlib 기본 그래프",
-          "seaborn 막대·산점도·히트맵"
+          "Matplotlib 기본 그래프",
+          "Plotly Express 인터랙티브 차트",
+          "Altair 선언형 시각화",
+          "Streamlit으로 공유"
+        ]
+      },
+      {
+        "h": "통계·ML",
+        "items": [
+          "기술통계·상관계수",
+          "t-test·카이제곱 검정",
+          "sklearn Pipeline 구성",
+          "joblib으로 모델 저장"
+        ]
+      },
+      {
+        "h": "자동화",
+        "items": [
+          "schedule·cron으로 반복 실행",
+          "Jinja2로 리포트 생성",
+          "LLM API 개요",
+          "파이프라인 설계"
+        ]
+      },
+      {
+        "h": "구조화·공유",
+        "items": [
+          "Jupyter vs .py 선택",
+          "프로젝트 폴더 표준",
+          "모듈화로 재사용",
+          "GitHub로 공유"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1. CSV 불러와 첫 탐색하기",
+        "title": "Lab1. Polars Lazy로 대용량 CSV 빠르게 집계",
         "steps": [
-          "import pandas as pd 를 실행한다.",
-          "df = pd.read_csv('파일경로.csv') 로 데이터를 불러온다(Colab 은 좌측 폴더에 파일을 업로드).",
-          "df.head() 로 위쪽 5줄을, df.tail() 로 아래 5줄을 확인한다.",
-          "df.info() 로 열 이름·자료형·결측 여부를 살펴본다.",
-          "df.describe() 로 숫자 열의 평균·최소·최대를 한눈에 확인한다."
+          "pl.scan_csv로 대용량 파일을 lazy로 연다.",
+          "filter·group_by·agg로 처리 계획을 쌓는다.",
+          "collect()로 실제 실행한다.",
+          "같은 작업을 Pandas로도 해 timeit으로 속도를 비교한다."
         ]
       },
       {
-        "title": "Lab 2. 결측치 처리하고 필터링하기",
+        "title": "Lab2. DuckDB로 Parquet에 SQL 분석",
         "steps": [
-          "df.isna().sum() 으로 열별 빈칸 개수를 확인한다.",
-          "df['나이'].fillna(df['나이'].mean()) 로 나이 빈칸을 평균으로 채운다.",
-          "df = df.dropna() 로 남은 빈칸 행을 제거한다.",
-          "adults = df[df['나이'] >= 20] 으로 성인만 골라 낸다.",
-          "print(len(df), len(adults)) 로 정제 전후 개수를 비교한다."
+          "duckdb.sql(\"SELECT day, AVG(tip) FROM 'tips.parquet' GROUP BY day\") 처럼 파일에 직접 SQL을 실행한다.",
+          "결과를 DataFrame으로 받아 확인한다.",
+          "Pandas로 같은 집계를 했을 때와 코드 길이를 비교한다."
         ]
       },
       {
-        "title": "Lab 3. groupby 집계 결과를 그래프로 그리기",
+        "title": "Lab3. Plotly EDA + 기초 통계 + Pipeline",
         "steps": [
-          "import seaborn as sns 와 import matplotlib.pyplot as plt 를 실행한다.",
-          "result = df.groupby('지역')['매출'].sum() 으로 지역별 매출 합계를 구한다.",
-          "print(result) 로 숫자 결과를 먼저 확인한다.",
-          "sns.barplot(data=df, x='지역', y='매출') 로 막대그래프를 그린다.",
-          "plt.title('region sales') 로 제목을 달고 plt.show() 로 그림을 출력한다."
+          "Plotly Express로 산점도·막대 인터랙티브 차트를 그린다.",
+          "두 그룹 평균 차이를 t-test로 검정한다.",
+          "sklearn Pipeline(전처리+모델)을 구성한다.",
+          "joblib으로 파이프라인을 저장한다."
         ]
       }
     ],
     "homework": [
-      "오늘 사용한 tips 데이터로 성별(sex)·흡연여부(smoker)별 평균 팁 비율을 groupby 로 구하고, seaborn 막대그래프로 그려 결론을 한 문장으로 정리해 제출한다.",
-      "관심 분야의 공개 CSV 데이터를 하나 골라 적재→결측치 처리→groupby 집계→그래프 1개→결론 한 문장으로 이어지는 EDA 노트북을 작성한다."
+      "공개 데이터셋 하나를 골라 Polars(또는 Pandas)로 EDA→Plotly 시각화 2개→관심 있는 두 집단 평균 차이를 t-test로 검정하고 결론을 한 문장으로 정리해 노트북으로 제출한다.",
+      "전처리+모델을 sklearn Pipeline으로 묶어 joblib으로 저장하고, 분석 프로젝트를 data/·src/·notebooks/ 폴더 구조로 정리해 README와 함께 GitHub에 공유한다."
     ]
   },
   "prompt-1": {
     "topics": [
+      {
+        "h": "생성형 AI 이해(트렌드·비즈니스)",
+        "items": [
+          "AI의 진화: 규칙기반 → 머신러닝 → 딥러닝 → 생성형 AI",
+          "최신 트렌드: 파운데이션 모델·멀티모달·에이전트로의 확장",
+          "비즈니스 활용: 마케팅 카피·문서 요약·코드 생성·시장조사/전략 초안",
+          "LLM의 한계: 확률적 생성이라 사실을 지어내는 할루시네이션 발생 → 근거 요구·사람 검증 필요"
+        ]
+      },
       {
         "h": "프롬프트 구성요소",
         "items": [
@@ -406,11 +488,20 @@ export const details = {
           "4) 예시 수가 늘수록 답 형식이 일정해지는지 표로 기록한다.",
           "5) '예시가 많을수록 토큰도 늘어 비용이 오른다'는 점을 함께 적는다."
         ]
+      },
+      {
+        "title": "Lab3. 할루시네이션 확인하기",
+        "steps": [
+          "모델에게 실존하지 않을 법한 통계·논문을 물어 답을 받아 본다.",
+          "그 답의 근거(출처)를 요구해 답이 어떻게 달라지는지 관찰한다.",
+          "왜 지어내는지를 확률적 생성 관점에서 한 줄로 정리한다."
+        ]
       }
     ],
     "homework": [
       "본인 업무에서 자주 하는 반복 작업 1가지를 골라, 역할·지시·예시·제약 4요소를 모두 갖춘 프롬프트로 만들고 개선 전후 결과를 비교해 제출한다.",
-      "같은 질문을 temperature 0과 1로 각각 3번씩 실행해, 답이 얼마나 달라지는지 관찰한 메모를 제출한다."
+      "같은 질문을 temperature 0과 1로 각각 3번씩 실행해, 답이 얼마나 달라지는지 관찰한 메모를 제출한다.",
+      "본인 업무나 관심 분야에서 시장조사가 필요한 주제 1개를 골라, 역할·지시·예시·제약을 갖춘 리서치 프롬프트로 조사 결과를 뽑고, 그 결과를 근거로 한 의사결정 추천까지 이어지는 2단계 프롬프트를 만들어 제출한다."
     ]
   },
   "vue-1": {
@@ -441,6 +532,15 @@ export const details = {
           "v-on(@)으로 이벤트 연결",
           "v-model 로 폼 양방향 바인딩"
         ]
+      },
+      {
+        "h": "개발환경과 Vue Devtools",
+        "items": [
+          "Node.js/WSL 위에서 Vite 개발 서버 구동",
+          "브라우저 Vue Devtools 확장 설치",
+          "Devtools의 Components 탭에서 각 컴포넌트의 ref/props 실시간 값 관찰",
+          "상태를 바꿨을 때 트리에서 값이 갱신되는지 눈으로 확인"
+        ]
       }
     ],
     "labs": [
@@ -460,6 +560,14 @@ export const details = {
           "const name = ref('') 로 이름 상태를 만든다",
           "<template> 에 <input v-model=\"name\"> 를 두고 그 아래 <p>안녕하세요, {{ name }}님</p> 을 적는다",
           "입력창에 글자를 칠 때마다 인사 문구가 실시간으로 바뀌는지 확인한다"
+        ]
+      },
+      {
+        "title": "Lab 3. Vue Devtools로 반응형 상태 들여다보기",
+        "steps": [
+          "브라우저에 Vue Devtools 확장을 설치한다",
+          "개발 서버를 띄우고 Devtools의 Components 탭을 연다",
+          "입력창에 글자를 칠 때마다 todos/text 상태가 트리에서 바뀌는 것을 관찰한다"
         ]
       }
     ],
@@ -495,6 +603,15 @@ export const details = {
           "컴포저블 useXxx 로 로직 분리",
           "여러 컴포넌트에서 재사용"
         ]
+      },
+      {
+        "h": "Provide & Inject",
+        "items": [
+          "부모에서 provide(키, 값)로 데이터 제공",
+          "자손 어디서나 inject(키)로 주입받기",
+          "props 릴레이(중간 전달) 없이 깊은 자식에 전달",
+          "트리 범위 공유는 Provide/Inject, 앱 전역 공유는 Pinia"
+        ]
       }
     ],
     "labs": [
@@ -514,6 +631,14 @@ export const details = {
           "버튼 클릭 시 emit('inc') 를 호출한다",
           "부모에서 @inc=\"count++\" 로 받아 숫자를 올린다",
           "버튼을 누를 때마다 부모의 숫자가 증가하는지 확인한다"
+        ]
+      },
+      {
+        "title": "Lab 3. 테마 값 provide/inject로 내려주기",
+        "steps": [
+          "App.vue에서 provide로 색 테마를 제공한다",
+          "2단계 아래 버튼 컴포넌트에서 inject로 테마를 받는다",
+          "받은 테마 값을 버튼 배경색에 적용해 깊은 자식까지 전달됨을 확인한다"
         ]
       }
     ],
@@ -602,7 +727,33 @@ export const details = {
           ".env 환경변수와 VITE_ 접두사",
           "npm run build 로 dist 생성",
           "npm run preview 확인",
-          "정적 호스팅 배포"
+          "정적 호스팅 배포",
+          "ESLint: 문법 오류·안티패턴을 자동 검출해 실수 예방",
+          "Prettier: 저장 시 코드 서식(들여쓰기·따옴표)을 자동 정리해 팀 스타일 통일",
+          "npm run lint로 검사, 에디터 저장 시 자동 포맷 설정",
+          "vite.config.js에서 별칭(@ → src)·server 포트·base 경로 설정",
+          "import.meta.env.VITE_ 접두사 환경변수의 빌드 시 주입 원리"
+        ]
+      },
+      {
+        "h": "UI 라이브러리 Element Plus",
+        "items": [
+          "npm install element-plus로 설치, main.js에서 app.use(ElementPlus) 등록",
+          "el-button·el-input·el-table 등 미리 만들어진 공통 컴포넌트 사용",
+          "직접 CSS를 짜지 않고 검증된 UI로 화면 생산성 향상",
+          "아이콘·폼·다이얼로그 같은 실무 빈발 컴포넌트"
+        ]
+      },
+      {
+        "h": "Modern JavaScript(ES6+) 핵심 문법",
+        "items": [
+          "구조분해 할당: const {name, email} = user / const [first] = arr",
+          "전개·나머지: {...obj}, [...arr], function(...args)",
+          "화살표 함수와 짧은 반환",
+          "템플릿 리터럴 백틱 문자열",
+          "import/export 모듈 시스템",
+          "옵셔널 체이닝 user?.address?.city 와 null 병합 ??",
+          "배열 고차함수 map·filter·reduce·find"
         ]
       }
     ],
@@ -623,6 +774,31 @@ export const details = {
           "생성된 dist 폴더 안 파일들을 확인한다",
           "'npm run preview' 로 빌드 결과를 로컬에서 열어본다",
           "개발 모드와 빌드 결과가 동일하게 보이는지 확인한다"
+        ]
+      },
+      {
+        "title": "Lab 3. Element Plus로 폼·테이블 5분 만에 만들기",
+        "steps": [
+          "npm install element-plus로 설치하고 main.js에서 app.use(ElementPlus)를 등록한다",
+          "el-form에 el-input 두 개와 el-button을 배치한다",
+          "입력 결과를 el-table로 표시해 화면이 빠르게 완성되는지 확인한다"
+        ]
+      },
+      {
+        "title": "Lab 4. Vue 코드에 자주 쓰는 ES6+ 연습",
+        "steps": [
+          "props를 구조분해 할당으로 받아 쓴다",
+          "배열을 map으로 돌려 목록을 렌더링한다",
+          "옵셔널 체이닝(user?.address?.city)으로 안전하게 값에 접근한다"
+        ]
+      },
+      {
+        "title": "Lab 5. ESLint·Prettier 붙이고 저장 시 자동 정리 확인",
+        "steps": [
+          "ESLint·Prettier를 설치하고 설정 파일을 추가한다",
+          "일부러 들여쓰기·따옴표를 흩뜨린 코드를 작성한다",
+          "파일을 저장했을 때 서식이 자동으로 정리되는지 확인한다",
+          "npm run lint로 남은 경고를 확인하고 고친다"
         ]
       }
     ],
@@ -658,6 +834,16 @@ export const details = {
           "Git 저장소 초기화",
           "작업 분담표",
           "일정(마일스톤) 표"
+        ]
+      },
+      {
+        "h": "제출 산출물 & 평가 기준(첫날 공유)",
+        "items": [
+          "제출물: ① 기획서(주제·시나리오·기능명세) ② 화면 설계(와이어프레임) ③ 동작하는 코드 저장소 ④ 배포 URL ⑤ 발표 자료·회고",
+          "평가: 완성도(기능이 실제로 도는가)",
+          "평가: AI 기능의 적절성(서비스에 AI가 자연스럽게 쓰였는가)",
+          "평가: 설계 충실도(기획과 결과가 일치하는가)·협업/커밋 이력·발표 전달력",
+          "첫날부터 '무엇을 내야 하고 어떻게 채점되는지'를 알고 역산해 작업하기"
         ]
       }
     ],
@@ -770,7 +956,10 @@ export const details = {
           "시연 시나리오 준비",
           "발표 자료 구성",
           "성과·한계 정리",
-          "팀 회고와 개선점"
+          "팀 회고와 개선점",
+          "3분 시연 시나리오 대본(어떤 순서로 무엇을 눌러 보일지)",
+          "AI 기능이 실제로 도는 장면을 반드시 시연에 포함",
+          "평가 기준(완성도·AI 적절성·설계 충실도·발표)에 맞춰 발표 구성"
         ]
       }
     ],
@@ -807,7 +996,18 @@ export const details = {
           "JDK 17 이상 설치 확인",
           "Spring Boot 3.x 프로젝트 생성(start.spring.io)",
           "Spring Web + 모델 프로바이더(Anthropic/OpenAI) 의존성",
-          "API 키를 환경변수로 등록"
+          "API 키를 환경변수로 등록",
+          "API Key 관리: 환경변수·외부 설정으로 분리하고 키를 코드·깃에 커밋 금지",
+          "팀 공유 시 .env·비밀저장소 사용"
+        ]
+      },
+      {
+        "h": "기초 개념 정리(LLM·Token·모델 종류)",
+        "items": [
+          "LLM=다음 단어를 확률로 예측하는 모델",
+          "Token=모델이 글을 쪼개 세는 단위(대략 한글 1~2자/영어 3~4자), 입력+출력 토큰이 곧 비용",
+          "Chat Model=대화형 응답 모델 / Embedding Model=문장을 벡터로 바꾸는 모델(RAG에서 사용)",
+          "Spring AI가 이 둘을 각각 ChatModel·EmbeddingModel 추상화로 제공"
         ]
       },
       {
@@ -903,11 +1103,22 @@ export const details = {
           "topK 값을 2와 6으로 바꿔 검색 결과 차이를 비교한다.",
           "질문 단어를 동의어로 바꿔도 같은 문단이 잡히는지 확인한다."
         ]
+      },
+      {
+        "title": "Lab3. 대화 기억하는 챗봇 만들기(ChatMemory)",
+        "steps": [
+          "ChatMemory 빈(InMemoryChatMemory)을 등록한다.",
+          "ChatClient에 MessageChatMemoryAdvisor를 defaultAdvisors로 붙인다.",
+          "요청마다 conversationId(대화방 번호)를 넘긴다.",
+          "'내 이름은 민수야'라고 보낸 뒤 다음 요청에서 '내 이름 뭐였지?'로 물어 기억하는지 확인한다.",
+          "conversationId를 바꿔 호출하면 기억이 초기화되는지 비교한다."
+        ]
       }
     ],
     "homework": [
       "QnA 응답에 '참고한 문단의 출처(파일명·일부 텍스트)'를 함께 반환하도록 ask()를 개선하라.",
-      "청크 크기(TokenTextSplitter 설정)를 작게/크게 두 가지로 바꿔 같은 질문의 답 품질을 비교하고 3줄로 정리하라."
+      "청크 크기(TokenTextSplitter 설정)를 작게/크게 두 가지로 바꿔 같은 질문의 답 품질을 비교하고 3줄로 정리하라.",
+      "QuestionAnswerAdvisor(Prebuilt)로 Day2 RAG를 Advisor 방식으로 리팩터링해 코드가 얼마나 짧아지는지 3줄로 정리하라."
     ]
   },
   "spring-ai-3": {
@@ -1012,6 +1223,16 @@ export const details = {
           "Use Case: DBMS·영업비밀·개인정보 등 외부 반출 금지 업무",
           "로컬 sLLM이면 데이터가 내부에 머물러 보안에 유리"
         ]
+      },
+      {
+        "h": "LLM이 답을 만들기까지 — 공통 4단계",
+        "items": [
+          "① 토크나이저: 문장을 모델이 아는 숫자 조각(토큰)으로 쪼갬",
+          "② 임베딩: 각 토큰을 의미를 담은 벡터로 바꿈",
+          "③ 전처리: 프롬프트 템플릿(chat template)으로 질문을 정해진 대화 양식으로 감쌈",
+          "④ 후처리: 생성된 토큰을 다시 글자로 되돌리고 stop token에서 끊어 필요한 부분만 남김",
+          "sLLM도 이 4단계는 똑같고, 다만 모델 본체가 경량화·양자화되어 있고 PEFT로 갈아 끼우기 쉽다는 점이 다름"
+        ]
       }
     ],
     "labs": [
@@ -1082,6 +1303,27 @@ export const details = {
           "선택 가이드: 목적(지식·자원·전환)에 맞게 고르기",
           "서비스화: 파인튜닝 sLLM + 임베딩 + Vector DB(RAG) 연결"
         ]
+      },
+      {
+        "h": "목적별 PEFT 시나리오 3종 — 무엇이 달라지나",
+        "items": [
+          "① 도메인 지식/말투 주입 → LoRA·QLoRA, 지시-출력 쌍 수십~수백 장, r=8~16, 에폭 3 안팎(가장 흔한 기본값)",
+          "② 극소 자원·초경량 배포 → Prefix/Prompt Tuning, 본체는 그대로 두고 가상 토큰만 학습",
+          "③ 여러 작업 전환 → Adapter, 작업별 부품을 끼웠다 뺐다 하며 한 본체로 다역",
+          "④ 추론 능력 강화 → 사고과정이 담긴 데이터로 LoRA 학습하거나 큰 모델 답을 증류",
+          "핵심 차이: 목적이 바뀌면 데이터 형태·붙이는 위치·학습 강도가 함께 바뀜 — 기법만 고르는 게 아니라 데이터부터 다르게 준비"
+        ]
+      },
+      {
+        "h": "서빙 기본 성능 튜닝 — 배포 전 체크리스트",
+        "items": [
+          "샘플링: temperature 낮추면(0~0.3) 일관, 높이면 다양 — 업무용은 낮게",
+          "길이 제한: max_new_tokens로 답 길이·응답시간 통제",
+          "스트리밍: 한 글자씩 흘려보내면 체감 속도가 빨라짐",
+          "양자화 추론: 4비트로 올리면 메모리↓ 속도↑, 품질은 소폭↓",
+          "동시 처리: 트래픽이 많으면 vLLM 같은 서버로 배치 처리, KV 캐시로 반복 연산 절약",
+          "어댑터 병합: 배포 시 LoRA를 본체에 합치면(merge) 로딩·추론이 단순해짐"
+        ]
       }
     ],
     "labs": [
@@ -1135,10 +1377,10 @@ export const details = {
       {
         "h": "대표 알고리즘",
         "items": [
-          "선형회귀·로지스틱회귀",
-          "결정트리·랜덤포레스트",
-          "KNN(최근접 이웃)",
-          "SVM(서포트 벡터 머신)"
+          "트리 기반: 결정트리(Decision Tree)",
+          "앙상블: 랜덤포레스트·Gradient Boosting/XGBoost",
+          "정규화·커널 기반: Lasso/Ridge, SVM 커널",
+          "선형/로지스틱 회귀·KNN(최근접 이웃)"
         ]
       },
       {
@@ -1173,7 +1415,8 @@ export const details = {
     ],
     "homework": [
       "scikit-learn 의 `load_wine()` 와인 데이터로 결정트리와 KNN 분류 모델을 각각 학습시키고, 정확도와 classification_report 를 비교해 어느 모델이 더 나은지 한 단락으로 정리해 제출한다.",
-      "과적합을 일부러 만들어보자: DecisionTreeClassifier 의 max_depth 를 1, 3, None 으로 바꿔가며 학습용 정확도와 평가용 정확도를 표로 정리하고, 차이가 가장 큰 경우를 찾아 그 이유를 한 줄로 적는다."
+      "과적합을 일부러 만들어보자: DecisionTreeClassifier 의 max_depth 를 1, 3, None 으로 바꿔가며 학습용 정확도와 평가용 정확도를 표로 정리하고, 차이가 가장 큰 경우를 찾아 그 이유를 한 줄로 적는다.",
+      "load_breast_cancer 데이터로 결정트리·랜덤포레스트·GradientBoosting 세 모델의 평가 정확도를 비교하고, 앙상블이 단일 트리보다 나은지 한 단락으로 정리한다."
     ]
   },
   "ml-dl-2": {
@@ -1202,7 +1445,8 @@ export const details = {
           "활성화 함수(ReLU·Sigmoid·Softmax)",
           "손실 함수(CrossEntropy·MSE)",
           "옵티마이저(SGD·Adam)",
-          "학습률(learning rate)"
+          "학습률(learning rate)과 학습률 스케줄",
+          "배치 정규화(Batch Normalization)"
         ]
       }
     ],
@@ -1228,7 +1472,8 @@ export const details = {
     ],
     "homework": [
       "본문 신경망의 은닉층 크기를 32 에서 64, 128 로 늘려가며 평가 정확도가 어떻게 바뀌는지 표로 정리하고, 무조건 크다고 좋아지는지 한 줄로 결론을 적는다.",
-      "옵티마이저를 Adam 대신 `torch.optim.SGD(model.parameters(), lr=0.01)` 로 바꿔 같은 100 에폭을 학습시키고, 손실이 줄어드는 속도를 Adam 과 비교해 짧게 정리한다."
+      "옵티마이저를 Adam 대신 `torch.optim.SGD(model.parameters(), lr=0.01)` 로 바꿔 같은 100 에폭을 학습시키고, 손실이 줄어드는 속도를 Adam 과 비교해 짧게 정리한다.",
+      "nn.Linear 층 사이에 nn.BatchNorm1d 를 넣은 모델과 넣지 않은 모델을 같은 학습률로 학습시켜, 손실이 줄어드는 속도와 최종 정확도를 표로 비교한다."
     ]
   },
   "ml-dl-3": {
@@ -1311,9 +1556,28 @@ export const details = {
           "상관관계·피처 중요도로 불필요한 피처 제거",
           "PCA 등 차원 축소로 피처 수 줄이기"
         ]
+      },
+      {
+        "h": "전처리 고급 기법",
+        "items": [
+          "고급 결측 대치: 중앙값·최빈값 대신 KNNImputer(비슷한 행 참고)·IterativeImputer(다른 열로 예측해 채우기)",
+          "분포 정규화: 로그·Box-Cox·Yeo-Johnson(PowerTransformer)로 치우친 분포를 종 모양에 가깝게 펴기",
+          "이상치 처리: 삭제 대신 윈저라이징(경계값으로 눌러 담기)·RobustScaler(중앙값·IQR 기준 스케일링)",
+          "고카디널리티 범주: 원-핫 대신 빈도·타깃 인코딩 + 누수 방지용 스무딩"
+        ]
       }
     ],
     "labs": [
+      {
+        "title": "Lab 0. EDA로 데이터와 친해지기",
+        "steps": [
+          "df.info()·df.describe()로 변수 유형과 요약통계를 확인한다.",
+          "df.hist(bins=30)로 숫자 열 분포를 그려 쏠림·이상치를 눈으로 본다.",
+          "df.corr(numeric_only=True)를 seaborn.heatmap으로 그려 서로 강하게 상관된 중복 후보 열을 찾는다.",
+          "df.groupby('타깃')[피처].mean()으로 타깃 그룹별 피처 평균을 비교해 어떤 피처가 답과 관련 있어 보이는지 가설을 세운다.",
+          "이 가설을 다음 Lab의 파생 피처·선택 근거로 메모한다."
+        ]
+      },
       {
         "title": "Lab 1. 결측치·이상치 진단하고 채우기",
         "steps": [
@@ -1378,6 +1642,16 @@ export const details = {
           "회귀: MAE·RMSE·R^2",
           "데이터 불균형 시 정확도 함정 주의"
         ]
+      },
+      {
+        "h": "성능 평가 지표 고르기",
+        "items": [
+          "분류는 혼동 행렬에서 시작한다",
+          "헛알람 줄이기=정밀도, 놓침 줄이기=재현율",
+          "F1=둘의 균형, ROC-AUC=임계값 무관 종합 성능",
+          "회귀=MAE(직관)·RMSE(큰 오차 벌점)·R²(설명력)",
+          "불균형 데이터에서 정확도 함정 주의"
+        ]
       }
     ],
     "labs": [
@@ -1406,6 +1680,15 @@ export const details = {
           "scores.mean() 과 scores.std() 를 출력한다.",
           "표준편차가 크면 무슨 뜻인지(점수가 들쭉날쭉) 메모한다.",
           "cv=10 으로 바꿔 평균이 비슷한지 확인한다."
+        ]
+      },
+      {
+        "title": "Lab4. 혼동 행렬과 지표 직접 계산하기",
+        "steps": [
+          "모델 예측을 confusion_matrix로 출력한다.",
+          "TP/FP/FN/TN을 손으로 지목해 본다.",
+          "classification_report로 precision·recall·f1을 확인한다.",
+          "roc_auc_score를 출력하고 0.5(찍기)와 비교한다."
         ]
       }
     ],
@@ -1596,7 +1879,9 @@ export const details = {
         "items": [
           "Naive: 검색 → 붙여넣기 → 생성(가장 단순)",
           "Advanced: 재순위·질문 재작성으로 검색 개선",
-          "Modular: 검색·라우팅·생성을 부품으로 조립",
+          "Modular: 검색·생성을 고정 순서가 아닌 '갈아 끼우는 부품'으로 다룸",
+          "Modular 모듈 예 — 라우팅(질문 종류별 인덱스/도구 분기)·검색 융합(키워드·벡터·질문변형 결과를 RRF로 재정렬)·메모리/재작성(검색 앞단에 이전 대화·질문 재작성 삽입)",
+          "Advanced가 '검색을 잘하게'라면 Modular는 '흐름 자체를 조립·교체 가능하게', 여기에 스스로 판단·반복이 더해지면 Agentic",
           "Agentic: 결과가 부족하면 스스로 재검색·재작성"
         ]
       },
@@ -1616,6 +1901,15 @@ export const details = {
           "청킹·임베딩·k·재순위를 한 번에 하나씩 튜닝",
           "캐싱으로 반복 질문 비용·지연 절감",
           "토큰 비용과 응답 지연의 trade-off 관리"
+        ]
+      },
+      {
+        "h": "조별 산출물 체크리스트",
+        "items": [
+          "설계: 대상 문서/도메인, 청킹 전략과 근거, 리트리버 조합, 평가셋(질문+정답), 목표 지표 기준선",
+          "개발: 동작하는 RAG(가능하면 재검색 루프 포함), RAGAS 3지표 측정값, 튜닝 전/후 비교 1건",
+          "개발: 실패 사례 1건과 개선 시도 기록",
+          "발표: 무엇을 왜 그렇게 정했고 지표가 어떻게 움직였는지 3분 요약"
         ]
       }
     ],
@@ -1746,8 +2040,10 @@ export const details = {
         "items": [
           "RunnableParallel: 여러 작업을 병렬로 동시에",
           "RunnableLambda: 체인 중간에 커스텀 함수 삽입",
+          "RunnableBranch: 조건에 따라 다른 체인으로 분기(if-else), 분기·조건 처리의 핵심",
           "RunnableWithMessageHistory: 세션별 대화 히스토리 유지",
-          "bind_tools 결과를 이 부품들과 조합해 복합 체인 구성"
+          "bind_tools 결과를 이 부품들과 조합해 복합 체인 구성",
+          "이 분기를 LCEL(RunnableBranch)로만 표현하면 조건이 많아질수록 읽기 어려워지고, 이 한계가 Day3에서 LangGraph가 필요한 이유로 이어진다"
         ]
       }
     ],
@@ -1773,11 +2069,21 @@ export const details = {
           "근거만 보고 답하라는 프롬프트로 체인을 조립한다.",
           "문서 안 질문과 문서 밖 질문을 각각 던져 답을 비교한다."
         ]
+      },
+      {
+        "title": "Lab 3. 댓글 한 방에 분석하고 부정 댓글만 따로 처리하기",
+        "steps": [
+          "댓글 문장 하나를 입력으로 두고 요약·감정·키워드 3개 체인을 RunnableParallel로 동시에 실행한다.",
+          "세 결과를 {요약, 감정, 키워드} JSON으로 합친다.",
+          "RunnableBranch로 감정이 negative일 때만 '사과+담당자 이관' 답변을, 그 외엔 '감사 답변'을 생성한다.",
+          "긍정 댓글 1개·부정 댓글 1개를 넣어 분기가 실제로 갈리는지 확인한다."
+        ]
       }
     ],
     "homework": [
       "Lab 2의 QA 챗봇에 메모리(Lab 1)를 결합해, '아까 물어본 거 다시 설명해줘' 같은 후속 질문에도 답하는 버전을 만들고 대화 로그를 제출한다.",
-      "@tool로 '오늘 날짜를 돌려주는 도구'를 직접 만들어 모델에 연결하고, 모델이 그 도구를 호출하는 tool_calls 출력을 캡처해 제출한다."
+      "@tool로 '오늘 날짜를 돌려주는 도구'를 직접 만들어 모델에 연결하고, 모델이 그 도구를 호출하는 tool_calls 출력을 캡처해 제출한다.",
+      "실제 리뷰 5개를 넣어 감정별로 다른 답변이 나오는 로그를 캡처해 제출한다."
     ]
   },
   "langchain-3": {
@@ -1877,6 +2183,16 @@ export const details = {
           "BentoML 로 서비스 묶기",
           "버전 태그(v1.0.0)와 변경 이력 관리"
         ]
+      },
+      {
+        "h": "비동기·로딩 전략",
+        "items": [
+          "동기 vs 비동기 엔드포인트(async def/await)",
+          "동시 요청 처리로 throughput 개선",
+          "요청 배치(batching)와 지연-처리량 트레이드오프",
+          "Eager 로딩(기동 시 적재) vs Lazy 로딩(첫 요청 시 적재)",
+          "서빙 아키텍처 패턴: REST vs gRPC, 동기 vs 비동기"
+        ]
       }
     ],
     "labs": [
@@ -1908,6 +2224,16 @@ export const details = {
           "응답 코드가 422(검증 실패)로 오는지 확인한다.",
           "에러 메시지에서 어떤 필드가 문제인지 읽어 본다.",
           "올바른 입력으로 다시 보내 200 응답을 받아 비교한다."
+        ]
+      },
+      {
+        "title": "Lab 4. 동기·비동기·로딩 전략 비교하기",
+        "steps": [
+          "/predict_sync(동기)와 /predict_async(async def) 두 엔드포인트를 같은 모델로 만든다.",
+          "간단한 부하 스크립트로 동시에 여러 요청을 보내 각 버전의 초당 처리 건수를 비교한다.",
+          "모델 로딩을 Eager(앱 시작 시 load)로 한 버전과 Lazy(첫 요청 때 load)로 한 버전을 만든다.",
+          "서버 기동 직후 첫 요청의 응답 시간을 두 버전에서 재어 차이를 기록한다.",
+          "어떤 서비스에 어떤 조합이 맞는지 한 줄로 결론을 적는다."
         ]
       }
     ],
@@ -1976,7 +2302,21 @@ export const details = {
           "최근 들어온 입력들의 평균을 계산하는 함수를 만든다.",
           "기준값과 최근 평균의 차이가 임계치를 넘는지 비교한다.",
           "임계치를 넘으면 콘솔에 '드리프트 의심' 경고를 출력한다.",
-          "일부러 다른 분포의 입력을 보내 경고가 뜨는지 확인한다."
+          "일부러 다른 분포의 입력을 보내 경고가 뜨는지 확인한다.",
+          "경고가 발생하면 콘솔뿐 아니라 파일·로그에 '드리프트 알림' 레코드(시각·어떤 피처가·기준 대비 얼마나 벗어났는지)를 남긴다.",
+          "알림이 일정 횟수 이상 쌓이면 '재학습 필요' 플래그를 세우고, 재학습 스크립트를 호출하는 트리거 함수를 연결한다.",
+          "정상 분포로 기준 통계를 산출한 뒤 일부러 다른 분포를 주입해 이상탐지→알림→재학습 트리거가 순서대로 동작하는지 로그로 확인한다(Day3 AIOps 자동 대응의 축소판)."
+        ]
+      },
+      {
+        "title": "Lab 4. model_version 파라미터로 버전별 모델 서빙 + 미니 레지스트리",
+        "steps": [
+          "서로 다른 설정으로 학습한 모델 두 개를 model_v1.joblib, model_v2.joblib로 저장한다.",
+          "각 모델의 메타데이터(버전·학습일시·정확도·학습데이터 이름)를 registry.json(또는 SQLite)에 기록해 미니 레지스트리를 만든다.",
+          "/predict에 model_version 쿼리 파라미터를 추가한다(예: /predict?model_version=v2).",
+          "파라미터 값에 따라 registry에서 해당 버전의 파일 경로를 찾아 그 모델을 로딩·예측하도록 라우팅한다.",
+          "v1과 v2를 번갈아 호출해 다른 모델이 응답하는지, 응답에 어떤 버전이 답했는지 함께 반환되는지 확인한다.",
+          "응답이 이상하면 파라미터 하나만 바꿔 v1으로 되돌리는(롤백) 것을 체감한다(MLflow 레지스트리의 축소판)."
         ]
       }
     ],
@@ -2054,6 +2394,15 @@ export const details = {
   },
   "agent-1": {
     "topics": [
+      {
+        "h": "LangChain과 LangGraph의 역할 구분",
+        "items": [
+          "LangChain: LLM 호출·도구 정의(@tool)·출력 파싱 등 낱개 기능 제공",
+          "LangGraph: 상태(State)를 들고 노드 사이를 도는 그래프로 반복·분기·기억을 제어",
+          "단순 1회 응답이면 LangChain만으로 충분, 도구를 여러 번 부르고 조건에 따라 갈라지면 LangGraph가 필요",
+          "실무 에이전트는 LangChain 부품 + LangGraph 흐름을 함께 사용"
+        ]
+      },
       {
         "h": "에이전트의 4가지 구성요소",
         "items": [
@@ -2190,7 +2539,12 @@ export const details = {
           "텍스트를 벡터로 바꾸는 임베딩 모델의 역할",
           "벡터 차원(예: 384, 768)의 의미와 모델별 차이",
           "코사인 유사도와 내적(dot product)의 관계",
-          "벡터 길이 정규화(normalize)가 필요한 이유"
+          "벡터 길이 정규화(normalize)가 필요한 이유",
+          "임베딩 모델은 성능이 고정된 게 아니라 골라 쓰는 부품 — 같은 문서라도 모델을 바꾸면 검색 결과가 달라짐",
+          "MTEB 리더보드로 후보 모델을 좁히고, 실제 우리 질문 20~30개로 직접 top-k 정확도를 재보는 게 정답에 가장 가까움",
+          "차원이 클수록 표현력은 좋지만 저장·검색 비용이 커짐 — 검색 품질과 인프라 비용의 균형",
+          "도메인 특화가 안 맞으면 (1) 더 나은 모델 교체 (2) 도메인 데이터로 임베딩 파인튜닝 (3) 하이브리드+재순위 순으로 접근",
+          "한국어 서비스는 다국어/한국어 임베딩 모델을 기본으로 검토"
         ]
       },
       {
@@ -2306,6 +2660,15 @@ export const details = {
           "'uvicorn main:app --reload' 를 실행한다.",
           "브라우저에서 'http://localhost:8000/docs' 를 열어 /chat 에 질문을 넣고 응답을 확인한다."
         ]
+      },
+      {
+        "title": "Lab 3. Thread(세션) 기억 확인",
+        "steps": [
+          "main.py의 에이전트에 MemorySaver 체크포인터를 붙인다.",
+          "/chat 호출 시 thread_id='alice'로 '내 이름은 앨리스야'를 보낸다.",
+          "같은 thread_id='alice'로 '내 이름이 뭐였지?'를 물어 '앨리스'라고 답하는지 확인한다.",
+          "thread_id='bob'으로 같은 질문을 던져 이름을 모른다고 답하는지 확인해 세션이 실제로 분리됨을 검증한다."
+        ]
       }
     ],
     "homework": [
@@ -2394,7 +2757,8 @@ export const details = {
           "Query Routing으로 질문 종류별 경로 분기",
           "Validator Agent로 출력의 형식·근거 검증",
           "Conditional Routing으로 조건에 따라 흐름 전환",
-          "Dynamic Planning으로 중간 결과 보고 계획 재수립"
+          "Dynamic Planning: ReAct(그때그때 한 걸음씩 판단) vs Plan-and-Execute(먼저 전체 계획을 세우고 실행하며 필요 시 재계획)",
+          "LangGraph에선 계획→실행→재계획 노드를 Conditional Edge로 이어, 남은 계획이 있으면 실행 노드로·없으면 종료로 분기(Conditional Routing과 Dynamic Planning이 한 그래프에서 맞물림)"
         ]
       }
     ],
@@ -2511,6 +2875,17 @@ export const details = {
           "검색 결과 없을 때 안내",
           "try-except로 네트워크 오류 잡기"
         ]
+      },
+      {
+        "h": "Multi-Agent 설계 산출물 항목",
+        "items": [
+          "에이전트 목록과 각 역할",
+          "Supervisor 라우팅 규칙",
+          "공유 상태(State) 스키마",
+          "종료 조건",
+          "전체 협업 흐름도",
+          "미니프로젝트 주제와의 연결"
+        ]
       }
     ],
     "labs": [
@@ -2534,11 +2909,21 @@ export const details = {
           "빈 줄을 입력해 안내 메시지가 나오는지(죽지 않는지) 확인한다",
           "'q'를 입력해 정상 종료되는지 확인하고 커밋한다"
         ]
+      },
+      {
+        "title": "Lab 3. Multi-Agent 설계 문서 만들기",
+        "steps": [
+          "미니프로젝트 주제를 확정한다",
+          "필요한 워커(작업자)와 각자의 역할을 나눈다",
+          "Supervisor 프롬프트 초안을 작성한다(워커 카탈로그+종료 조건 포함)",
+          "위 내용을 설계 문서로 정리해 제출한다"
+        ]
       }
     ],
     "homework": [
       "오늘 만든 RAG 앱에서 잘 못 답하는 질문 3개를 찾아, 원인(청킹 크기·검색 개수 등)을 한 줄씩 메모해 오기",
-      "내일 발표용 데모 질문 3개를 정하고, 각 질문의 기대 답변을 미리 적어 오기"
+      "내일 발표용 데모 질문 3개를 정하고, 각 질문의 기대 답변을 미리 적어 오기",
+      "Day3에 구현할 워커별 입력/출력 인터페이스를 표로 정의해 오기"
     ]
   },
   "miniproject-3": {
@@ -2568,6 +2953,33 @@ export const details = {
           "아키텍처와 핵심 기술 설명",
           "실시간 시연(질문→답변)",
           "어려웠던 점과 배운 점·회고"
+        ]
+      },
+      {
+        "h": "전 과정 Wrap-up 체크리스트",
+        "items": [
+          "Prompt 설계: 역할·지시·예시·제약으로 원하는 출력을 유도했는가",
+          "Context/RAG: 근거 문서를 검색해 넣고 출처를 제시했는가",
+          "Harness: 도구·오류처리·관측 등 주변 장치를 갖췄는가",
+          "Supervisor Agent: 작업자들을 지휘하고 종료 조건을 두었는가"
+        ]
+      },
+      {
+        "h": "Agentic RAG 개선 포인트",
+        "items": [
+          "질의 재작성으로 검색이 잘 되게 다듬기",
+          "검색 결과 grading으로 쓸만한 근거만 남기기",
+          "근거가 부족하면 재검색 루프 돌리기",
+          "끝내 근거가 없으면 '모른다'로 안전하게 처리"
+        ]
+      },
+      {
+        "h": "RAG 정량 평가 항목",
+        "items": [
+          "검색 정확도: 관련 문서를 제대로 찾아왔는가",
+          "근거 충실도: 답이 근거에 실제로 기반했는가",
+          "답변 관련성: 질문에 맞는 답을 했는가",
+          "샘플 QA셋 5~10개를 만들어 점수를 표로 집계"
         ]
       }
     ],
@@ -2601,11 +3013,21 @@ export const details = {
           "KPT(Keep·Problem·Try)로 회고를 작성해 README 맨 아래 추가한다",
           "최종 커밋과 함께 원격 저장소에 push 한다"
         ]
+      },
+      {
+        "title": "Lab 4. naive RAG 개선하고 점수로 비교하기",
+        "steps": [
+          "naive RAG로 답하게 한 뒤 틀리거나 근거가 약한 실패 사례를 찾는다",
+          "검색 결과 grading과 재검색 루프를 붙여 Agentic하게 개선한다",
+          "샘플 QA셋 5~10개로 개선 전/후 점수를 각각 측정한다",
+          "개선 전/후 점수 비교표를 만들어 무엇이 좋아졌는지 정리한다"
+        ]
       }
     ],
     "homework": [
       "프로젝트 README를 최종본으로 다듬어(주제·실행법·아키텍처·회고 포함) 팀 저장소에 push 하기",
-      "이번 미니 프로젝트에서 더 발전시키고 싶은 기능 1개를 골라, 어떤 기술(재순위·메모리·웹UI 등)로 확장할지 3줄로 적어 제출하기"
+      "이번 미니 프로젝트에서 더 발전시키고 싶은 기능 1개를 골라, 어떤 기술(재순위·메모리·웹UI 등)로 확장할지 3줄로 적어 제출하기",
+      "RAG 정량 평가 결과물(검색 정확도·근거 충실도·답변 관련성 점수표)을 제출하기"
     ]
   }
 }

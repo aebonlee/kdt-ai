@@ -7,15 +7,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "OT · 과정 소개 · 아이스브레이킹"
+        "topic": "OT · 프로그래밍 개요: 프로그래밍 이해 · Frontend vs Backend · IT 용어"
       },
       {
         "time": "10:00–10:50",
-        "topic": "팀빌딩: 팀 구성 · 역할 정하기"
+        "topic": "개발환경 구축: VS Code 설치 · Workspace 만들기 · Git 설치/설정"
       },
       {
         "time": "11:00–11:50",
-        "topic": "팀 그라운드룰 · 협업 목표 설정"
+        "topic": "Git 기초 개념 + VS Code Source Control로 첫 커밋"
       },
       {
         "time": "12:00–13:00",
@@ -24,23 +24,23 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "버전관리 개념 · Git 설치/설정"
+        "topic": "Git 기초 명령어: init·add·commit·status·log·diff"
       },
       {
         "time": "14:00–14:50",
-        "topic": "Git 기본: add·commit·status·log"
+        "topic": ".gitignore · 되돌리기(restore/reset/revert)"
       },
       {
         "time": "15:00–15:50",
-        "topic": ".gitignore · diff · 커밋 되돌리기"
+        "topic": "Remote Repository 이해 + GitHub 설정 · SSH 키 생성/등록"
       },
       {
         "time": "16:00–16:50",
-        "topic": "브랜치 · 머지 · 충돌 해결"
+        "topic": "원격 사용법: clone·push·pull · Sync Changes"
       },
       {
         "time": "17:00–17:50",
-        "topic": "GitHub 원격: clone·push·pull · PR"
+        "topic": "(심화) 브랜치 · 머지 · 충돌 · PR 협업 실습"
       }
     ],
     "practice": {
@@ -51,6 +51,7 @@ export const plans = {
         "작업할 폴더를 만들고 그 안에서 `git init` 을 실행해 빈 저장소를 만든다. (.git 폴더가 생기고 `git status` 가 동작하면 성공)",
         "`README.md` 파일을 만들어 팀 이름을 한 줄 적고, `git add README.md` → `git commit -m \"docs: 팀 소개 추가\"` 로 첫 커밋을 만든다.",
         "GitHub 에서 팀 저장소(Repository)를 하나 새로 만들고, `git remote add origin <저장소주소>` → `git branch -M main` → `git push -u origin main` 으로 내 컴퓨터의 커밋을 인터넷(GitHub)으로 올린다.",
+        "(대안) SSH 방식: `ssh-keygen -t ed25519` 로 키를 만들고 공개키(.pub)를 GitHub 의 Settings → SSH Keys 에 등록한 뒤, `git remote set-url origin git@github.com:계정/저장소.git` 처럼 원격 주소를 SSH 형식으로 바꿔 비밀번호 입력 없이 push 되는지 확인한다.",
         "팀원 각자 `git switch -c feature/내이름` 으로 본인 작업용 브랜치(가지)를 만들고, 같은 파일의 같은 줄을 일부러 서로 다르게 고친 뒤 각자 커밋한다.",
         "한 사람의 브랜치를 main 에 먼저 머지(합치기)하고, 다른 사람이 main 을 자기 브랜치로 `git merge main` 하면 충돌(conflict) 메시지가 나오는 것을 확인한다.",
         "충돌난 파일을 열어 `<<<<<<<`, `=======`, `>>>>>>>` 표시 구간을 보고 최종 내용을 직접 정리한 뒤 표시줄을 지우고, `git add` → `git commit` 으로 충돌을 마무리한다.",
@@ -129,8 +130,14 @@ export const plans = {
       { "time": "17:00–17:50", "topic": "[실습] GPT-2로 문장 생성하고 다음 토큰 확률 들여다보기" }
     ],
     "practice": {
-      "title": "사전학습 모델(GPT-2)로 텍스트 생성하고 '다음 토큰 확률' 직접 확인하기",
+      "title": "Lab 0. 손으로 만드는 bigram 언어모델 → 사전학습 GPT-2로 텍스트 생성·'다음 토큰 확률' 확인하기",
       "steps": [
+        "[Lab 0] 짧은 예문(예: i love ai i love code i love you)을 단어 리스트로 만든다.",
+        "[Lab 0] 연속한 (앞단어, 뒷단어) 쌍을 세어 bigram 카운트 표를 만든다.",
+        "[Lab 0] 각 행을 합이 1이 되도록 나눠 다음-단어 확률표를 만든다(이 표 자체가 언어모델).",
+        "[Lab 0] 'i' 다음 단어 확률을 출력해 love가 가장 높게 나오는지 확인한다.",
+        "[Lab 0] 이 확률표로 다음 단어를 샘플링해 문장을 이어 생성해 본다.",
+        "[Lab 0] 한계를 관찰한다: 바로 앞 한 단어만 보므로 긴 문맥을 못 살린다 — '그래서 Transformer가 필요하다'로 오후 GPT-2 실습에 연결한다.",
         "Colab에서 `pip install transformers torch` 로 라이브러리를 설치한다.",
         "from transformers import GPT2LMHeadModel, GPT2Tokenizer 로 GPT-2 모델·토크나이저를 불러온다.",
         "model = GPT2LMHeadModel.from_pretrained('gpt2') 와 tokenizer = GPT2Tokenizer.from_pretrained('gpt2') 를 실행한다.",
@@ -148,15 +155,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 데이터 분석과 Python 시작하기 · 환경 둘러보기"
+        "topic": "1교시 개발환경과 실행 구조 (Homebrew · Python 3.11 · venv · AST→PVM)"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 [실습] Jupyter/Colab 셋업과 첫 코드 실행"
+        "topic": "2교시 [실습] venv 생성 · pip · requirements.txt · VS Code 설정"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 변수·자료형·연산자와 문자열 다루기"
+        "topic": "3교시 자료구조 시간복잡도 · 컴프리헨션 · 제너레이터"
       },
       {
         "time": "12:00–13:00",
@@ -165,53 +172,53 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 [실습] 리스트·딕셔너리·튜플·집합 자료구조"
+        "topic": "4교시 [실습] dataclass · TypedDict 로 데이터 모델링"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 조건문·반복문으로 데이터 흐름 제어"
+        "topic": "5교시 함수 · 파일 · 예외 (functools · Parquet · pathlib)"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 [실습] 함수와 컴프리헨션으로 코드 정리"
+        "topic": "6교시 [실습] 타입 힌트 · Pydantic · mypy"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 NumPy 배열과 벡터 연산 기초"
+        "topic": "7교시 코드 품질과 테스트: Ruff · pytest · 디버거"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [메인 실습] 데이터 전처리 스크립트 만들기"
+        "topic": "8교시 [메인 실습] 비동기 · 병렬 (asyncio · httpx · 멀티프로세싱)"
       }
     ],
     "practice": {
-      "title": "고객 주문 데이터 전처리 스크립트 만들기",
+      "title": "공공 API 데이터를 비동기로 수집→검증→저장하는 재현 가능한 파이프라인 만들기",
       "steps": [
-        "Colab 노트북을 새로 열고 셀에 'import numpy as np' 를 입력한 뒤 Shift+Enter 로 실행해 오류 없이 넘어가는지 확인한다.",
-        "orders 라는 리스트 변수에 주문 금액 7개를 직접 입력한다(예: [12000, 0, 35000, -1, 8000, None, 21000]) — 0·음수·None 은 일부러 넣은 '지저분한 값'이다.",
-        "for 반복문과 if 조건문으로 orders 를 하나씩 검사해, None 이거나 0 이하인 값은 건너뛰고 정상 금액만 clean 리스트에 append 한다.",
-        "clean 리스트를 np.array 로 바꿔 prices 변수에 담고, prices.sum() · prices.mean() · prices.max() 를 각각 print 한다.",
-        "각 주문에 10% 부가세를 더한 배열을 'prices * 1.1' 한 줄로 계산해 with_tax 변수에 담는다(반복문 없이 한 번에).",
-        "딕셔너리 summary 를 만들어 {'건수': len(prices), '합계': int(prices.sum()), '평균': round(float(prices.mean()))} 형태로 저장한다.",
-        "print(summary) 를 실행해 화면에 건수 4, 합계 76000, 평균 19000 같은 결과가 나오는지 확인한다(기대 결과).",
-        "마지막으로 clean 결과를 컴프리헨션 한 줄 '[p for p in orders if p and p > 0]' 로도 똑같이 만들어 두 방식의 결과가 같은지 비교한다."
+        "터미널에서 `python -m venv .venv` 로 가상환경을 만들고 활성화한 뒤, `pip install httpx pydantic pyarrow pandas pytest ruff` 를 설치하고 `pip freeze > requirements.txt` 로 버전을 고정한다.",
+        "무료 공공 API(예: 공공데이터포털·오픈 API) 하나를 정하고, `httpx.AsyncClient` 로 여러 페이지를 `asyncio.gather` 로 동시에 받아 오는 비동기 수집 함수를 작성한다.",
+        "받아 온 각 레코드를 Pydantic 모델(BaseModel)로 정의해 필수 필드·타입을 검증하고, 형식이 어긋나는 레코드는 걸러 내거나 오류를 남긴다.",
+        "검증을 통과한 레코드를 pandas DataFrame 으로 모아 `to_parquet` 로 Parquet 파일에 저장한다(같은 데이터를 CSV 대신 Parquet 로 저장하는 이유를 한 줄 메모).",
+        "핵심 함수(수집·검증·저장)에 대해 pytest 테스트를 최소 2개 작성해 `pytest` 로 모두 통과하는지 확인한다.",
+        "`ruff check .` 로 코드 스타일·오류를 검사하고 지적된 부분을 고쳐 통과시킨다.",
+        "전체 실행 스크립트(`main.py`)를 한 번 돌려 '수집 → 검증 → Parquet 저장'이 끊김 없이 완료되는지 확인한다.",
+        "`git init` 후 requirements.txt 를 포함해 커밋하고, 다른 사람이 clone 해 `pip install -r requirements.txt` 만으로 똑같이 재현되는지 점검한다."
       ],
-      "deliverable": "지저분한 주문 리스트를 정제해 건수·합계·평균을 출력하는 .ipynb 노트북 파일"
+      "deliverable": "재현 가능한(requirements.txt 포함) Git 저장소와 공공 API 수집·Pydantic 검증·Parquet 저장 스크립트, pytest 통과 로그"
     }
   },
   "python-2": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 Pandas 시작 · Series와 DataFrame 구조 이해"
+        "topic": "1교시 Pandas 2.x 실전 · Copy-on-Write 이해"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 [실습] CSV 데이터 적재와 인덱싱·선택"
+        "topic": "2교시 [실습] groupby · pivot_table · merge"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 결측치·이상치 처리와 데이터 정제"
+        "topic": "3교시 Polars Lazy API · Pandas 성능 비교"
       },
       {
         "time": "12:00–13:00",
@@ -220,66 +227,63 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 [실습] 필터링·정렬·groupby 집계"
+        "topic": "4교시 [실습] DuckDB로 Parquet에 SQL 질의하기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 merge·pivot으로 데이터 재구조화"
+        "topic": "5교시 시각화(Plotly · Altair) · Streamlit 소개"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 [실습] matplotlib·seaborn 시각화 기초"
+        "topic": "6교시 [실습] 기초 통계 · 가설 검정"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 탐색적 데이터 분석(EDA) 흐름 익히기"
+        "topic": "7교시 sklearn Pipeline · joblib · 분석 자동화(schedule · Jinja2)"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [메인 실습] 실데이터 EDA 미니 리포트 완성"
+        "topic": "8교시 [메인 실습] 공개 데이터 EDA→시각화+통계→Pipeline 모델→GitHub"
       }
     ],
     "practice": {
-      "title": "공공 판매 데이터로 탐색적 분석(EDA) 리포트 만들기",
+      "title": "공개 데이터로 EDA→시각화+통계→Pipeline 모델까지 만들어 GitHub에 올리기",
       "steps": [
-        "Colab 새 셀에 'import pandas as pd' 와 'import seaborn as sns' 를 입력해 실행한다.",
-        "sns.load_dataset('tips') 로 식당 팁 데이터를 불러와 df 변수에 담는다(인터넷 없이 바로 쓰는 연습용 데이터).",
-        "df.head() 를 실행해 표의 위쪽 5줄을 눈으로 확인하고, df.shape 로 행·열 개수를 파악한다(기대 결과: (244, 7)).",
-        "df.isna().sum() 으로 열별 결측치 개수를 확인하고, 결측이 있으면 df = df.dropna() 로 제거한다.",
-        "df[df['total_bill'] > 30] 로 결제액 30 초과 주문만 필터링해 high 변수에 담고 len(high) 를 출력한다.",
-        "df.groupby('day')['tip'].mean() 으로 요일별 평균 팁을 계산해 출력한다(어느 요일이 팁이 후한지 확인).",
-        "sns.barplot(data=df, x='day', y='tip') 로 요일별 평균 팁 막대그래프를 그린다.",
-        "df.groupby('day')['tip'].mean() 결과를 표로 정리하고, df.to_csv('eda_result.csv') 로 저장한다.",
-        "마지막 셀에 가장 팁이 후한 요일은 무슨 요일 처럼 분석 결론을 한 문장 주석으로 적어 리포트를 마무리한다."
+        "가상환경에 `pip install polars pandas pyarrow plotly scipy scikit-learn joblib` 를 설치하고, 공개 데이터셋(예: seaborn 'tips'나 공공데이터 CSV) 하나를 정한다.",
+        "Polars(또는 Pandas)로 데이터를 불러와 결측치·타입을 정리하고, groupby/pivot 으로 핵심 지표를 요약하는 EDA 를 수행한다(같은 집계를 Polars Lazy 로도 해 보며 속도를 비교).",
+        "Plotly(또는 Altair)로 분포·관계를 보여 주는 그래프를 2개 이상 그려, 데이터에서 눈에 띄는 패턴을 캡처한다.",
+        "두 그룹의 평균 차이를 검증하는 가설 검정을 수행한다: `scipy.stats.ttest_ind` 로 t-test 를 돌리고 p-value 로 결론(유의미/아님)을 적는다.",
+        "예측 목표를 하나 정하고, `make_pipeline(StandardScaler(), 모델)` 형태의 sklearn Pipeline 으로 학습·평가한 뒤 `joblib.dump` 로 모델을 파일로 저장한다.",
+        "프로젝트를 data/ · notebooks/ · src/ 처럼 폴더 구조로 정리하고 README 에 분석 요약을 적는다.",
+        "`git init` 후 전체를 커밋하고 GitHub 저장소에 push 해, 링크로 결과가 재현·확인되는지 점검한다."
       ],
-      "deliverable": "결측치 처리·집계·그래프·결론이 담긴 EDA 노트북(.ipynb)과 집계 결과 CSV"
+      "deliverable": "Polars/Pandas EDA + Plotly 시각화 + t-test + Pipeline 모델(joblib 저장)을 담고 폴더 구조로 정리해 GitHub에 올린 프로젝트"
     }
   },
   "prompt-1": {
     "schedule": [
-      { "time": "09:00–09:50", "topic": "1교시 LLM은 어떻게 답을 만들까 - 다음 단어 예측과 프롬프트의 역할" },
-      { "time": "10:00–10:50", "topic": "2교시 Prompt Design Framework: 역할·지시·예시·제약 뜯어보기" },
+      { "time": "09:00–09:50", "topic": "1교시 (이론) LLM은 어떻게 답을 만들까 - 다음 단어 예측과 프롬프트의 역할" },
+      { "time": "10:00–10:50", "topic": "2교시 (이론) Prompt Design Framework: 역할·지시·예시·제약 뜯어보기" },
       { "time": "11:00–11:50", "topic": "3교시 실습: 나쁜 프롬프트를 좋은 프롬프트로 바꿔보기" },
       { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
-      { "time": "13:00–13:50", "topic": "4교시 주요 기법: Zero-shot / Few-shot / Chain-of-Thought" },
-      { "time": "14:00–14:50", "topic": "5교시 System·User·Assistant 메시지 설계와 역할 분리" },
-      { "time": "15:00–15:50", "topic": "6교시 실습: Few-shot + CoT로 업무 분류기 만들기" },
-      { "time": "16:00–16:50", "topic": "7교시 컨텍스트 윈도우·토큰 비용과 Context Engineering(맥락 설계)" },
-      { "time": "17:00–17:50", "topic": "8교시 Prompt를 넘어서: Context → AI Agent·Harness Engineering + 개선 실습" }
+      { "time": "13:00–13:50", "topic": "4교시 (이론) 주요 기법: Zero-shot / Few-shot / Chain-of-Thought" },
+      { "time": "14:00–14:50", "topic": "5교시 (이론) System·User·Assistant 메시지 설계와 역할 분리" },
+      { "time": "15:00–15:50", "topic": "6교시 실습: 시장조사 프롬프트에 Few-shot·형식지정 적용하기" },
+      { "time": "16:00–16:50", "topic": "7교시 (이론) 컨텍스트 윈도우·토큰 비용과 Context Engineering(맥락 설계)" },
+      { "time": "17:00–17:50", "topic": "8교시 실습: 리서치 결과 기반 의사결정 프롬프트 체이닝 + 개선" }
     ],
     "practice": {
-      "title": "고객 문의 메일을 자동 분류·요약하는 업무 프롬프트 완성하기",
+      "title": "신제품 시장조사 → 전략 도출 → 의사결정을 돕는 리서치 프롬프트 완성하기",
       "steps": [
-        "1단계: 무료로 쓸 수 있는 LLM 환경(예: Google Colab 새 노트북)을 열고, 코드 셀에 '!pip install openai' 를 입력해 실행한다. (설치 완료 메시지가 보이면 성공)",
-        "2단계: 화면 상단에서 받은 API 키를 코드의 api_key 자리에 붙여넣고, client 객체를 만드는 셀을 실행한다. (에러가 없으면 연결 준비 완료)",
-        "3단계: 분류할 고객 문의 메일 예시 문장 3개를 파이썬 리스트 emails 에 넣는다. (배송/환불/단순질문이 섞이게 작성)",
-        "4단계: 역할(role)·지시(instruction)·제약(constraint)을 담은 system 메시지 문자열을 만든다. '너는 CS 분류 담당자다. 카테고리는 배송/환불/기타 중 하나만 고른다' 처럼 적는다.",
-        "5단계: Few-shot 예시 2개(입력 메일 → 정답 카테고리)를 프롬프트에 추가해, 모델이 답 형식을 흉내 내도록 만든다.",
-        "6단계: 반복문으로 emails 를 하나씩 모델에 보내고, 돌아온 카테고리와 한 줄 요약을 출력한다. (화면에 '배송 / 요약: ...' 형태로 3줄이 찍히면 성공)",
-        "7단계: 결과가 틀린 메일이 있으면, system 메시지의 제약을 더 구체적으로 고치거나 예시를 1개 더 추가해 다시 실행한다. (개선 전후 정확도를 눈으로 비교)",
-        "8단계: 완성된 프롬프트와 출력 결과를 캡처해, '개선 전 → 개선 후'가 드러나도록 정리한다."
+        "1단계: 조사할 제품·시장 주제를 한 문장으로 정한다(예: '20대를 겨냥한 친환경 텀블러 시장').",
+        "2단계: 역할('너는 시장조사 애널리스트다')·지시('경쟁사 3곳, 타깃 고객, 강점·약점을 표로 정리해줘')·제약('추측한 내용은 「추정」이라고 표시하고, 맨 끝에 5줄 이내 요약을 붙일 것')을 갖춘 프롬프트를 작성해 실행한다.",
+        "3단계: 나온 결과에서 빠진 항목(가격대·시장 리스크·규제 등)을 찾아, 지시에 그 항목을 추가해 프롬프트를 보강하고 다시 실행한다.",
+        "4단계: 조사 결과를 근거로 '시장 진입 / 보류'를 추천하고 그 이유 3가지를 뽑게 하는 후속 프롬프트를 만들어, 앞 결과를 입력으로 이어 붙인다(프롬프트 체이닝).",
+        "5단계: Few-shot 예시(좋은 조사표 1개)와 출력 형식 지정(표·머리말·요약 위치)을 더해, 결과 형식이 일정하게 나오도록 다듬는다.",
+        "6단계: 개선 전 프롬프트의 결과와 개선 후 결과를 나란히 캡처해, 무엇이 좋아졌는지(누락 항목 채움·형식 일관·근거 표시) 한눈에 비교한다.",
+        "7단계: 완성 프롬프트가 '시장조사 표 → 전략 요약 → 진입/보류 추천'까지 한 번에 이어지는지 다른 주제로 한 번 더 실행해 재현되는지 확인한다."
       ],
-      "deliverable": "고객 문의 3건을 배송/환불/기타로 분류하고 한 줄 요약까지 출력하는 완성 프롬프트 코드 + 개선 전후 비교 캡처 1장"
+      "deliverable": "'시장조사 표 + 전략 요약 + 의사결정 추천'을 산출하는 완성 프롬프트(체이닝 포함)와 개선 전후 비교 캡처 1장"
     }
   },
   "vue-1": {
@@ -472,15 +476,15 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 폼 입력과 유효성 검사 (실습)"
+        "topic": "4교시 UI Library — Element Plus로 컴포넌트·폼·테이블 붙이기 (실습)"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 환경변수와 API 베이스 설정 (실습)"
+        "topic": "5교시 Modern JS(ES6+): 구조분해·전개·고차함수 (실습)"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 미니 SPA 통합: 목록·상세·폼 (실습)"
+        "topic": "6교시 ESLint·Prettier로 코드 품질 검사 설정 (실습)"
       },
       {
         "time": "16:00–16:50",
@@ -501,6 +505,7 @@ export const plans = {
         "통신 성공 시 데이터를 posts 에 담고, 실패 시 error 메시지를 화면에 표시한다(try/catch)",
         "v-if 로 loading·error·정상 상태에 따라 다른 화면을 보여준다",
         "글 작성 폼을 만들어 제목이 비어 있으면 '제목을 입력하세요' 경고를 띄우는 유효성 검사를 넣는다",
+        "목록·폼 UI를 Element Plus 컴포넌트(el-table·el-form 등)로 교체하고, 구조분해·전개 같은 ES6+ 문법으로 코드를 정리한 뒤 `npx eslint .` 로 검사해 지적사항을 고친다",
         "'npm run build' 로 dist 폴더를 생성하고 'npm run preview' 로 빌드 결과를 확인한다",
         "dist 폴더를 정적 호스팅(GitHub Pages 등)에 올려 실제 주소에서 동작을 확인한다",
         "최종 동작 화면(목록·로딩·에러·폼)과 배포 주소를 캡처해 제출한다"
@@ -512,7 +517,7 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 OT·미니프로젝트 목표와 한 사이클(기획→배포) 흐름 잡기"
+        "topic": "1교시 OT · 과정 소개 · 웹서비스 개념 + 제출 산출물 목록 · 평가 기준 공유"
       },
       {
         "time": "10:00–10:50",
@@ -552,6 +557,8 @@ export const plans = {
       "title": "내 미니 웹 서비스 기획서 + 화면 설계 + 프로젝트 뼈대 만들기",
       "steps": [
         "팀에서 만들 서비스 주제를 한 문장으로 정한다(예: '동네 맛집을 기록하는 메모 앱').",
+        "서비스에 넣을 AI 기능 1개를 정하고 '입력 → 출력 → 화면 표시 위치'를 한 문장으로 적는다(예: '메모를 입력하면 한 줄 요약을 만들어 카드 아래에 보여준다').",
+        "제출 산출물 체크리스트와 평가 기준을 팀 README 상단에 붙여, 무엇을 언제까지 내야 하는지 팀 전체가 같은 기준을 공유한다.",
         "사용자 시나리오를 '누가 / 언제 / 무엇을 하고 싶다' 형식으로 3개 적는다.",
         "종이나 Figma에 메인 화면, 목록 화면, 상세/입력 화면 3개의 와이어프레임을 그린다.",
         "기능 명세서를 표로 만들고 각 기능에 '필수/선택' 우선순위를 표시한다.",
@@ -561,7 +568,7 @@ export const plans = {
         "브라우저에서 http://localhost:5173 에 접속해 Vite 기본 화면이 뜨는지 확인한다(기대 결과: Vue 로고가 보이는 시작 페이지).",
         "README.md 에 주제·기능 목록·담당자·일정을 적어 커밋한다."
       ],
-      "deliverable": "기획서(주제·시나리오·기능명세)+와이어프레임 3장+mock.json+실행되는 Vue 프로젝트 초기 저장소"
+      "deliverable": "기획서(주제·AI 기능 정의 한 문장·시나리오·기능명세)+와이어프레임 3장+mock.json+실행되는 Vue 프로젝트 초기 저장소"
     }
   },
   "webproject-2": {
@@ -615,9 +622,10 @@ export const plans = {
         "새 글 입력 폼(input·textarea)을 만들고 제출 버튼을 누르면 store의 items에 추가되게 한다.",
         "제목이 비어 있으면 '제목을 입력하세요' 경고를 띄우는 유효성 검사를 넣는다.",
         "브라우저에서 글을 추가해 목록에 바로 나타나는지 확인한다(기대 결과: 새 카드가 목록 맨 위에 추가됨).",
+        "서비스에 넣기로 한 AI 기능 1개를, LLM API에 요청을 보내고 받은 결과를 화면에 표시하는 형태로 구현한다(예: 메모 저장 시 한 줄 요약을 함께 보여주기).",
         "동작이 확인되면 'git commit -m \"핵심 화면 구현\"' 으로 저장한다."
       ],
-      "deliverable": "목록→상세 이동·새 글 추가·유효성 검사가 동작하는 Vue 앱(중간 빌드)"
+      "deliverable": "목록→상세 이동·새 글 추가·유효성 검사와 AI 기능 1개가 실제로 동작하는 Vue 앱(중간 빌드)"
     }
   },
   "webproject-3": {
@@ -793,15 +801,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "1교시 Function Calling이란 — LLM이 우리 함수를 호출하게 하기"
+        "topic": "1교시 MCP(Model Context Protocol) 개념 — 왜 필요한가"
       },
       {
         "time": "10:00–10:50",
-        "topic": "2교시 [실습] Tool(함수) 정의 — @Tool 애너테이션"
+        "topic": "2교시 MCP Protocol 구조 (STDIO vs Streamable HTTP)"
       },
       {
         "time": "11:00–11:50",
-        "topic": "3교시 [실습] 구조화 출력(Structured Output) — 답을 자바 객체로 받기"
+        "topic": "3교시 [실습] 자바 MCP Server 만들기 (@Tool로 도구 노출)"
       },
       {
         "time": "12:00–13:00",
@@ -810,40 +818,38 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "4교시 [실습] 스트리밍 응답 — 토큰을 실시간으로 흘려보내기"
+        "topic": "4교시 [실습] MCP Client 연결 · 도구 호출 확인"
       },
       {
         "time": "14:00–14:50",
-        "topic": "5교시 예외·재시도 처리와 보안 고려사항"
+        "topic": "5교시 AI Agent 개념 · Single vs Multi Agent"
       },
       {
         "time": "15:00–15:50",
-        "topic": "6교시 [실습] AI 기능을 실제 서비스에 통합"
+        "topic": "6교시 [실습] MCP 도구를 쓰는 Single Agent 구성"
       },
       {
         "time": "16:00–16:50",
-        "topic": "7교시 [실습·메인] 도구 연동형 AI 기능 서비스 완성"
+        "topic": "7교시 [실습·메인] MCP 서버 기반 AI Agent 완성 (목표를 주면 스스로 도구 호출)"
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습] 통합 테스트·시연·정리"
+        "topic": "8교시 시연 · Quiz · 회고"
       }
     ],
     "practice": {
-      "title": "도구 연동형 AI 기능 서비스 (LLM이 필요할 때 날씨 조회 함수를 스스로 호출해 답하는 API)",
+      "title": "MCP 서버 기반 AI Agent 개발 — 직접 만든 자바 MCP Server의 도구를 에이전트가 자율 호출해 과제 수행",
       "steps": [
-        "com.example.springai.tool 패키지에 ToolController(또는 WeatherTools) 클래스를 만들고 getWeather(String city) 메서드에 @Tool 애너테이션을 붙인다.",
-        "@Tool의 description에 '특정 도시의 현재 날씨를 조회한다' 처럼 LLM이 언제 쓸지 알 수 있는 설명을 적는다.",
-        "컨트롤러에서 chatClient.prompt().user(질문).tools(this) 형태로 도구를 함께 넘긴다.",
-        "구조화 출력을 위해 WeatherReport(record) 클래스를 만들고 .entity(WeatherReport.class)로 객체를 직접 받는 코드를 추가한다.",
-        "예외·재시도를 위해 호출을 try-catch로 감싸고 실패 시 사용자 친화 메시지를 반환하도록 처리한다.",
-        "./gradlew bootRun으로 서버를 띄운다.",
-        "GET /api/tool?message=서울 날씨 알려줘 를 호출한다.",
-        "기대 결과: LLM이 getWeather(\"서울\")를 스스로 호출하고, 그 결과를 녹여 '서울은 맑고 26도입니다' 같은 자연스러운 문장으로 답한다.",
-        "도구가 필요 없는 질문(예: '안녕')을 보냈을 때는 함수 호출 없이 일반 답이 오는지 확인한다.",
-        "/api/stream?message=... 로 스트리밍 엔드포인트를 호출해 글자가 실시간으로 흘러나오는지 확인한다."
+        "Spring Boot 프로젝트에 MCP Server 스타터 의존성을 추가하고, com.example.mcp 패키지에 도구를 노출할 서비스 클래스를 만든다.",
+        "예: searchProduct(String keyword) 또는 getWeather(String city) 메서드에 @Tool 애너테이션과 description(LLM이 언제 쓸지 알 수 있는 설명)을 붙여 MCP 도구로 노출한다.",
+        "MCP Server를 STDIO 또는 Streamable HTTP 방식으로 띄우고, MCP Client(또는 Inspector)로 연결해 노출된 도구 목록이 보이고 직접 호출하면 결과가 오는지 확인한다.",
+        "AI Agent 쪽에서 ChatClient에 이 MCP 도구들을 연결해, 사용자가 목표(예: '이 조건에 맞는 상품을 찾아 요약해줘')를 주면 에이전트가 필요한 도구를 스스로 골라 호출하도록 구성한다.",
+        "Single Agent가 한 번의 목표에 대해 '판단 → 도구 호출 → 결과 반영 → 답변'까지 한 흐름으로 처리하는지 실행해 확인한다.",
+        "도구가 필요 없는 질문(예: '안녕')에는 도구를 부르지 않고 바로 답하는지 비교해, 에이전트가 상황에 맞게 도구 사용을 결정하는지 검증한다.",
+        "예외·타임아웃을 대비해 도구 호출을 try-catch로 감싸 실패 시에도 서비스가 멈추지 않고 안내 메시지를 반환하게 한다.",
+        "최종 시연 시나리오(목표 → 에이전트의 도구 호출 → 완성된 답)를 정하고 스크린샷으로 남긴다."
       ],
-      "deliverable": "@Tool 함수 호출 + 구조화 출력 + 스트리밍 + 예외처리를 갖춘 도구 연동형 AI 서비스 프로젝트"
+      "deliverable": "직접 만든 자바 MCP Server + 그 서버의 도구를 자율 호출해 과제를 수행하는 AI Agent 애플리케이션(시연 스크린샷 포함)"
     }
   },
   "sllm-1": {
@@ -877,8 +883,8 @@ export const plans = {
   },
   "sllm-2": {
     "schedule": [
-      { "time": "09:00–09:50", "topic": "1교시 — 파인튜닝이 뭐고 언제 쓰나? PEFT가 필요한 이유" },
-      { "time": "10:00–10:50", "topic": "2교시 — PEFT 변형 비교: LoRA·QLoRA vs Adapter vs Prefix/Prompt tuning" },
+      { "time": "09:00–09:50", "topic": "1교시 — sLLM·PEFT 최신 동향: 온디바이스 붐 · 증류로 똑똑해진 소형모델 · QLoRA 이후 신기법(학계/업계/현장)" },
+      { "time": "10:00–10:50", "topic": "2교시 — 파인튜닝이 뭐고 언제 쓰나? PEFT가 필요한 이유 + 변형 비교(LoRA·QLoRA vs Adapter vs Prefix/Prompt tuning)" },
       { "time": "11:00–11:50", "topic": "3교시 — 목적별 PEFT 선택 가이드(도메인 지식·극소 파라미터·추론 강화)" },
       { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
       { "time": "13:00–13:50", "topic": "4교시 [실습] instruction 데이터 JSONL 가공 + LoRA 학습 코드 작성" },
@@ -1057,18 +1063,18 @@ export const plans = {
       }
     ],
     "practice": {
-      "title": "PyTorch CNN 으로 손글씨 이미지 분류 + 드롭아웃으로 과적합 잡기",
+      "title": "한 데이터셋으로 ML 베이스라인 → 딥러닝 → 성능 비교 → 규제로 개선까지 (종합 실습)",
       "steps": [
-        "Colab 새 노트에서 `import torch`, `import torch.nn as nn` 을 실행한다.",
-        "`from sklearn.datasets import load_digits` 로 8x8 손글씨를 불러오고, 입력을 이미지 형태로 만들기 위해 `X = torch.tensor(d.data, dtype=torch.float32).reshape(-1, 1, 8, 8)` 로 (개수, 채널 1, 8, 8) 모양으로 바꾼다.",
-        "`class CNN(nn.Module):` 를 정의해 `nn.Conv2d(1, 8, 3, padding=1)`(특징 추출) → `ReLU` → `nn.MaxPool2d(2)`(크기 절반) → `Dropout` → `nn.Linear` 순서로 층을 쌓는다.",
-        "학습/평가 데이터를 train_test_split 으로 나누고 정답을 `torch.long` 텐서로 만든다.",
-        "`loss_fn = nn.CrossEntropyLoss()`, `opt = torch.optim.Adam(model.parameters(), lr=0.01)` 를 준비하고 60 에폭 학습 루프를 돌린다.",
-        "매 에폭마다 학습 정확도와 평가 정확도를 함께 출력해, 두 값의 차이가 벌어지면 과적합이 시작된 것이다(기대 결과: 드롭아웃 없으면 차이가 크게 벌어짐).",
-        "모델 정의의 드롭아웃을 `nn.Dropout(0.3)` 으로 살려 다시 학습시키고, 학습-평가 정확도 차이가 줄어드는지 비교한다.",
-        "두 경우(드롭아웃 없음 vs 있음)의 평가 정확도를 표로 정리하고, 드롭아웃이 과적합을 어떻게 줄였는지 한 줄로 적는다."
+        "Colab 새 노트에서 하나의 데이터셋을 정한다: `from sklearn.datasets import load_digits` 의 8x8 손글씨(또는 원하면 이미지 데이터셋)를 불러오고 train_test_split 으로 학습/평가를 나눈다.",
+        "① 머신러닝 베이스라인: `from sklearn.ensemble import RandomForestClassifier`(또는 GradientBoosting)로 모델을 학습시키고 평가 정확도를 출력해 '기준점'으로 삼는다.",
+        "② 딥러닝 모델: 같은 데이터를 텐서로 바꿔 PyTorch MLP(`nn.Sequential(nn.Linear(...), nn.ReLU(), nn.Linear(...))`) 또는 CNN(`nn.Conv2d → ReLU → MaxPool2d → Linear`)을 만들고 학습 루프(forward→loss→backward→step)를 돌린다.",
+        "③ 두 접근 비교: 머신러닝 베이스라인 정확도와 딥러닝 정확도를 나란히 출력해 어느 쪽이 이 데이터에서 더 나은지 확인한다.",
+        "④ 성능 개선 ①: 딥러닝 모델에 `nn.Dropout(0.3)` 과 가중치 감쇠(weight_decay) 같은 규제를 넣고, 학습-평가 정확도 차이(과적합)가 줄어드는지 확인한다.",
+        "④ 성능 개선 ②: 하이퍼파라미터(학습률·은닉 차원·에폭 수) 중 하나씩만 바꿔 재학습하며 평가 정확도가 어떻게 달라지는지 기록한다.",
+        "⑤ 결과 정리: 'ML 베이스라인 / DL 기본 / DL 개선' 세 값을 한 표로 만들고, 개선 전후 정확도 변화를 숫자로 보여준다.",
+        "무엇이 성능을 가장 많이 끌어올렸는지(규제인지, 하이퍼파라미터인지, 모델 종류인지)를 한 단락 회고로 적어 마무리한다."
       ],
-      "deliverable": "드롭아웃 적용 전후의 학습/평가 정확도 비교표가 들어간 Colab 노트 1개와, 과적합이 줄어든 이유 한 줄 설명"
+      "deliverable": "ML과 DL 두 모델의 성능 비교표 + 개선 전후 정확도 변화 + 무엇이 성능을 끌어올렸는지 한 단락 회고가 담긴 Colab 노트 1개"
     }
   },
   "feature-1": {
@@ -1220,7 +1226,7 @@ export const plans = {
       },
       {
         "time": "17:00–17:50",
-        "topic": "8교시 [실습] 모델 경량화·추론 속도 비교 & 튜닝 전후 성능 정리"
+        "topic": "8교시 MLOps 모델 운영: 성능 모니터링 · 재학습과 Drift 대응"
       }
     ],
     "practice": {
@@ -1233,9 +1239,11 @@ export const plans = {
         "grid.best_params_ 와 grid.best_score_ 를 출력해 '가장 좋았던 설정'과 '그때의 교차검증 점수'를 확인한다.",
         "grid.best_estimator_ 로 최적 모델을 꺼내 테스트 데이터에서 최종 점수를 측정한다.",
         "베이스라인 점수와 튜닝 후 점수를 print 로 나란히 출력해 얼마나 올랐는지 비교한다.",
-        "마지막으로 '어떤 파라미터를 키웠더니 왜 좋아졌는지' 한 줄 해석을 마크다운 셀에 남겨 산출물로 제출한다."
+        "마지막으로 '어떤 파라미터를 키웠더니 왜 좋아졌는지' 한 줄 해석을 마크다운 셀에 남겨 산출물로 제출한다.",
+        "(운영 보조 실습) 학습에 쓴 데이터와, 값의 범위를 일부러 바꾼 '신규 데이터'를 각각 만들어 두 경우의 예측 정확도를 재고, 데이터 분포가 바뀌면(드리프트) 성능이 얼마나 떨어지는지 비교한다.",
+        "정확도가 어느 선 아래로 떨어지면 재학습이 필요하다는 '재학습 판단 기준'을 한 줄로 적어 둔다."
       ],
-      "deliverable": "튜닝 비교 노트북(.ipynb) — param_grid, GridSearchCV 코드, best_params_/best_score_, 베이스라인 대비 테스트 점수 비교표(또는 두 줄 출력)가 포함되어야 함"
+      "deliverable": "튜닝 비교 노트북(.ipynb) — param_grid, GridSearchCV 코드, best_params_/best_score_, 베이스라인 대비 테스트 점수 비교표(또는 두 줄 출력)와 드리프트·재학습 판단 기준 메모가 포함되어야 함"
     }
   },
   "rag-1": {
@@ -1348,9 +1356,13 @@ export const plans = {
         "각 질문의 답변·컨텍스트를 모아 RAGAS로 faithfulness·answer_relevancy·context_precision 을 측정한다(기준선).",
         "k(4→6)나 청킹(500→800) 중 하나만 바꿔 다시 측정하고 점수를 비교한다.",
         "캐싱을 켜고 같은 질문을 두 번 던져 두 번째가 빠른지 시간을 잰다.",
-        "최종 설정을 'config 메모'로 남기고 비용·속도 trade-off를 한 줄로 정리한다."
+        "최종 설정을 'config 메모'로 남기고 비용·속도 trade-off를 한 줄로 정리한다.",
+        "[조별 캡스톤 안내] 이 과목은 Day2 후반부터 Day3까지 개인 실습이 아니라 조별 캡스톤으로 이어진다 — 위 개인 homework는 팀 산출물을 위한 연습으로 연결된다.",
+        "(1) 설계 산출물: 조별로 도메인·문서·질문셋을 정하고, 어떤 로더·청킹·리트리버·평가지표를 왜 골랐는지 담은 RAG 파이프라인 설계 문서를 먼저 제출한다.",
+        "(2) 개발 산출물: 설계대로 구현해 동작하는 Agentic RAG 와 RAGAS 평가 결과를 개발 산출물로 제출한다.",
+        "(3) 발표·마무리: 조별로 발표하고 서로 Feedback 을 주고받은 뒤, Wrap-up 과 QUIZ 로 과정을 마무리한다."
       ],
-      "deliverable": "Agentic RAG 그래프(재검색 루프) + 평가셋(질문5+정답) + 튜닝 전후 RAGAS 점수표 + config 메모"
+      "deliverable": "Agentic RAG 그래프(재검색 루프) + 평가셋(질문5+정답) + 튜닝 전후 RAGAS 점수표 + config 메모, 그리고 조별 캡스톤 산출물(설계 문서 → 개발 결과 → 발표·피드백)"
     }
   },
   "langchain-1": {
@@ -1854,7 +1866,7 @@ export const plans = {
         "아래 realCode의 safe.py(재시도·타임아웃 + Validator Agent)를 붙여넣고, 메인 호출을 safe_answer 로 교체한다.",
         "일부러 잘못된 키나 주소로 실패시켜, 1→2→4초 재시도 후에도 안 되면 친절한 대체 응답이 나오는지 확인한다.",
         "근거 없는 답을 일부러 만들어 넣어, Validator가 걸러내고 재생성하는지 확인한다.",
-        "(선택) 질문 종류에 따라 경로를 나누는 Query Routing 이나 조건 분기(Conditional Routing)를 추가한다.",
+        "질문을 유형(요약·검색·계산)으로 분류하는 라우터 노드를 만들고, 유형에 따라 서로 다른 도구·프롬프트로 분기(Conditional Edge)한 뒤, 각 경로가 실제로 다르게 처리되는지 로그로 확인한다.",
         "한 번 호출의 토큰·응답시간을 측정해 'Cost·Latency' 표를 만들고, 작은 모델·캐싱으로 줄일 지점을 찾는다.",
         "발표 슬라이드 5장을 만든다: (1)문제정의 (2)아키텍처(MCP 포함) (3)라이브 데모 (4)운영(비용·지연·관측) (5)개선방향.",
         "라이브 데모 실패에 대비해 정상 동작 화면을 미리 녹화한다(백업 영상).",
@@ -1868,15 +1880,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "OT · 미니프로젝트 개요와 평가 기준 안내"
+        "topic": "[self-study] 전 과정 Wrap-up ① Prompt–Context–Harness Engineering 복습"
       },
       {
         "time": "10:00–10:50",
-        "topic": "주제 선정과 사용자 시나리오 정의"
+        "topic": "[self-study] 전 과정 Wrap-up ② RAG Pipeline & Evaluation 복습"
       },
       {
         "time": "11:00–11:50",
-        "topic": "[실습] 요구사항 명세서 한 장으로 정리하기"
+        "topic": "[self-study] 전 과정 Wrap-up ③ Supervisor Agent · 멀티에이전트 복습"
       },
       {
         "time": "12:00–13:00",
@@ -1885,55 +1897,53 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "AI 서비스 아키텍처 설계 (LLM · RAG · Agent)"
+        "topic": "[실습] 개발환경 짧게 확인(venv·API 키·smoke test는 선행 완료 가정)"
       },
       {
         "time": "14:00–14:50",
-        "topic": "데이터 플로우와 API 인터페이스 설계"
+        "topic": "[실습] Agentic RAG로 검색 오류 원인 찾기"
       },
       {
         "time": "15:00–15:50",
-        "topic": "[실습] 기술 스택 선정과 개발 환경 셋업"
+        "topic": "[실습] 검색 성능 확보: 청킹·리트리버·재검색 루프 개선"
       },
       {
         "time": "16:00–16:50",
-        "topic": "[실습] 프로젝트 폴더 구조 만들고 .env로 키 연결하기"
+        "topic": "[실습] RAG 정량 평가(정확도·충실도·관련성) 측정"
       },
       {
         "time": "17:00–17:50",
-        "topic": "작업 분담 · 일정 수립과 Day1 회고"
+        "topic": "[실습] 개선 전/후 평가표 작성·제출"
       }
     ],
     "practice": {
-      "title": "AI 서비스 기획서 + 동작하는 프로젝트 뼈대 만들기",
+      "title": "Agentic RAG로 검색 성능 올리고 점수로 증명하기",
       "steps": [
-        "팀별로 '해결하고 싶은 문제'를 한 문장으로 적는다. 예: '사내 규정 문서를 질문하면 근거와 함께 답해주는 챗봇'",
-        "노션이나 종이에 사용자 시나리오를 3단계로 적는다 — 누가(사용자) → 무엇을 입력 → 어떤 결과를 기대",
-        "터미널을 열고 'mkdir ai-mini && cd ai-mini' 로 프로젝트 폴더를 만든다",
-        "'python -m venv .venv' 로 가상환경을 만들고 'source .venv/bin/activate'(윈도우는 .venv\\Scripts\\activate)로 켠다",
-        "'pip install openai python-dotenv' 로 필수 라이브러리를 설치한다",
-        "프로젝트 폴더에 .env 파일을 만들고 'OPENAI_API_KEY=sk-...' 한 줄을 적어 저장한다(키는 강사 제공)",
-        "config.py를 만들어 .env의 키를 불러오는 코드를 작성한다(아래 realCode 참고)",
-        "smoke_test.py를 만들어 LLM에게 '안녕'을 보내고 답이 오는지 확인한다",
-        "'python smoke_test.py' 를 실행해 터미널에 모델의 한국어 인사 응답이 출력되면 환경 셋업 성공이다",
-        "README.md에 주제·아키텍처 그림(글로 묘사)·역할 분담표를 적고 git으로 첫 커밋을 남긴다"
+        "선행 과정에서 만든 개발환경(venv·API 키·smoke test)이 그대로 도는지 짧게 확인한다 — 새로 셋업하지 말고 기존 프로젝트를 재사용한다.",
+        "선행에서 구축한 RAG 파이프라인에 검색 품질이 나쁜 질문 5개를 던져, 엉뚱한 문단을 가져오는 '검색 오류' 사례를 먼저 수집한다.",
+        "오류 원인을 진단한다 — 청킹이 너무 크거나 작지 않은지, top-k가 부족한지, 질문 표현과 문서 표현이 어긋나는지 항목별로 적는다.",
+        "Agentic RAG 구조로 바꾼다: 검색 결과가 부실하면 질문을 다시 쓰고(rewrite) 재검색하는 루프를 넣되 최대 반복 횟수를 정해 무한루프를 막는다.",
+        "개선안(청킹 크기·top-k·하이브리드 검색 중 하나)을 실제로 적용해 같은 질문 5개를 다시 검색한다.",
+        "RAGAS 같은 지표로 정확도·충실도(faithfulness)·관련성(answer relevancy)을 개선 전/후 각각 측정한다.",
+        "두 결과를 한 표에 나란히 정리해 어떤 조치가 점수를 얼마나 올렸는지 숫자로 보여준다.",
+        "가장 효과가 컸던 조치와 그 이유를 한 단락으로 회고해 산출물에 덧붙인다."
       ],
-      "deliverable": "기획서(주제·시나리오·아키텍처·역할분담)와, LLM 호출이 성공하는 프로젝트 뼈대(폴더구조 + .env + smoke_test 통과 로그)"
+      "deliverable": "개선 전/후 검색 성능 정량 평가표(정확도·충실도·관련성)와, 무엇이 점수를 끌어올렸는지 한 단락 회고"
     }
   },
   "miniproject-2": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "어제 설계 점검과 오늘 구현 목표 확정"
+        "topic": "미니프로젝트 안내: 목표 · 산출물 · 평가 기준 공유"
       },
       {
         "time": "10:00–10:50",
-        "topic": "[실습] LLM 호출 모듈(llm.py) 구현"
+        "topic": "[설계] 주제 정하고 사용자 시나리오 한 문장으로 좁히기"
       },
       {
         "time": "11:00–11:50",
-        "topic": "[실습] RAG ① 문서 적재 · 청킹 · 임베딩 · 색인"
+        "topic": "[설계] 워커 에이전트 역할 나누기(3개 이내)"
       },
       {
         "time": "12:00–13:00",
@@ -1942,55 +1952,53 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "[실습] RAG ② Retriever로 관련 문서 검색하기"
+        "topic": "[설계] Supervisor 라우팅 규칙 · 종료 조건 정하기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "[실습] Agent와 도구(Tool) 연동으로 기능 확장"
+        "topic": "[설계] 공유 상태(State) 스키마 정의"
       },
       {
         "time": "15:00–15:50",
-        "topic": "[실습] 전체 파이프라인 통합(입력→검색→생성→출력)"
+        "topic": "[설계] 협업 흐름도(Multi-Agent Workflow) 그리기"
       },
       {
         "time": "16:00–16:50",
-        "topic": "[실습] 예외 처리와 안정화(빈 입력·키 오류 대응)"
+        "topic": "[실습] 개발 착수: 뼈대 코드에 노드·엣지 배치"
       },
       {
         "time": "17:00–17:50",
-        "topic": "중간 시연과 팀 상호 피드백"
+        "topic": "[실습] 설계 리뷰와 팀 상호 피드백"
       }
     ],
     "practice": {
-      "title": "LLM + RAG를 묶은 '문서 기반 질의응답' 핵심 기능 완성",
+      "title": "주제 정하고 Supervisor 멀티에이전트 설계하기",
       "steps": [
-        "어제 모은 문서를 data/ 폴더에 둔 뒤, 'pip install scikit-learn numpy' 로 검색에 쓸 라이브러리를 추가 설치한다",
-        "rag.py를 만들어 문서를 일정 길이로 자르는 청킹(chunking) 함수를 작성한다(아래 realCode 참고)",
-        "각 조각을 임베딩(숫자 벡터)으로 바꾸고 리스트에 저장하는 색인 함수를 작성한다",
-        "사용자 질문이 들어오면 가장 비슷한 조각 top-k를 찾아 돌려주는 search 함수를 작성한다",
-        "llm.py에 검색된 조각을 프롬프트에 끼워 LLM에게 답을 시키는 함수를 작성한다",
-        "app.py에서 '질문 입력 → search → LLM 답변 → 출력' 흐름을 한 줄기로 연결한다",
-        "'python app.py' 를 실행하고 어제 정한 시나리오 질문을 입력해 본다",
-        "답변과 함께 '근거 문서 조각'이 같이 출력되는지 확인한다(출처가 보이면 RAG 성공)",
-        "빈 질문이나 관련 문서가 없을 때 프로그램이 죽지 않고 안내 메시지를 내도록 예외 처리를 추가한다",
-        "동작하는 화면을 캡처하고 'git commit -m \"RAG 질의응답 구현\"' 으로 저장한다"
+        "우리 팀이 만들 서비스 주제를 한 문장으로 적는다. 예: '사용자가 준 자료를 조사·요약·검수해 보고서 초안을 만들어 주는 서비스'",
+        "그 주제를 처리하는 데 꼭 필요한 워커(worker) 에이전트 역할을 3개 이내로 나눈다(예: 조사자·작성자·검수자) — 역할이 겹치지 않게 한 줄씩 정의한다.",
+        "Supervisor(감독) 에이전트의 라우팅 규칙을 적는다: 지금 상태가 어떠할 때 어느 워커에게 일을 넘길지 조건을 표로 정리한다.",
+        "언제 작업을 끝낼지 종료 조건(FINISH)을 명확히 정한다 — 예: 검수자가 '통과'를 반환하면 종료.",
+        "에이전트들이 함께 쓰는 공유 상태(State) 스키마를 정의한다: messages, next(다음 에이전트), 중간 산출물 필드 등을 이름·타입과 함께 적는다.",
+        "전체 협업 흐름을 흐름도로 그린다: Supervisor를 가운데 두고 워커들과의 왕복, 조건 분기, 종료 지점을 화살표로 표현한다.",
+        "흐름도대로 LangGraph 뼈대 코드에 노드(각 에이전트)와 조건 엣지를 배치해 설계가 코드로 옮겨지는지 확인한다(구현 완성은 다음 날).",
+        "설계 산출물을 팀끼리 리뷰하며 라우팅이 막히는 지점(무한루프·미종료)이 없는지 점검하고 보완한다."
       ],
-      "deliverable": "질문을 입력하면 우리 문서를 검색해 근거와 함께 답하는, 실행되는 RAG 챗봇 코드와 시연 캡처"
+      "deliverable": "Multi-Agent 설계 산출물 문서 — 에이전트 역할, Supervisor 라우팅 규칙·종료 조건, 공유 상태 스키마, 협업 흐름도"
     }
   },
   "miniproject-3": {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "오늘 목표 공유와 테스트 전략 안내"
+        "topic": "오늘 목표 공유: 설계대로 구현해 AI 서비스로 완성하기"
       },
       {
         "time": "10:00–10:50",
-        "topic": "[실습] 기능 테스트와 버그 수정"
+        "topic": "[실습] 워커 에이전트 구현 ① 조사·검색 담당"
       },
       {
         "time": "11:00–11:50",
-        "topic": "[실습] requirements.txt 정리와 Dockerfile 작성"
+        "topic": "[실습] 워커 에이전트 구현 ② 작성·검수 담당"
       },
       {
         "time": "12:00–13:00",
@@ -1999,40 +2007,38 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "[실습] 컨테이너 빌드·실행으로 배포 환경 만들기"
+        "topic": "[실습] Supervisor 라우팅·종료 조건 연결"
       },
       {
         "time": "14:00–14:50",
-        "topic": "[실습] 데모 시나리오 작성과 발표 리허설"
+        "topic": "[실습] 전체 멀티에이전트 파이프라인 통합·안정화"
       },
       {
         "time": "15:00–15:50",
-        "topic": "팀별 결과 발표 (시연 + 설명)"
+        "topic": "[실습] 통합 시연 준비와 데모 시나리오 작성 (Docker 배포는 선택 심화)"
       },
       {
         "time": "16:00–16:50",
-        "topic": "상호 피드백과 코드 리뷰"
+        "topic": "팀별 통합 시연 발표"
       },
       {
         "time": "17:00–17:50",
-        "topic": "회고와 개선점 정리 · 수료"
+        "topic": "Course Wrap-up & QUIZ · 회고"
       }
     ],
     "practice": {
-      "title": "테스트로 버그를 잡고 Docker로 배포한 뒤 발표까지",
+      "title": "설계한 Supervisor 멀티에이전트를 구현해 AI 서비스로 완성",
       "steps": [
-        "어제 메모한 '잘 못 답하는 질문'을 다시 넣어 보며 문제를 재현한다",
-        "청킹 크기(size)나 검색 개수(top_k) 값을 바꿔가며 답변이 좋아지는지 비교한다",
-        "테스트 코드(test_app.py)를 만들어 핵심 함수가 기대대로 동작하는지 자동으로 확인한다",
-        "'pip freeze > requirements.txt' 로 설치된 라이브러리 목록을 파일로 고정한다",
-        "Dockerfile을 작성해 우리 앱을 어디서나 똑같이 실행할 수 있게 포장한다(아래 realCode 참고)",
-        "'docker build -t ai-mini .' 로 이미지를 만들고 'docker run --env-file .env ai-mini' 로 실행해 본다",
-        "컨테이너 안에서도 동일하게 질문·답변이 되는지 확인한다",
-        "발표용 데모 시나리오(질문 3개 → 기대 답변)를 적고 한 번 리허설한다",
-        "팀별로 화면을 공유하며 '문제→해결방법→시연→배운 점' 순서로 5분 발표한다",
-        "다른 팀 발표에 피드백을 남기고, 우리 팀 개선점을 README에 정리해 마지막 커밋을 남긴다"
+        "전날 만든 설계 문서(역할·라우팅·상태·흐름도)를 펼쳐 두고, 오늘 구현할 노드 순서를 체크리스트로 정리한다.",
+        "워커 에이전트를 하나씩 함수로 구현한다: 조사·검색 담당 노드가 도구를 호출해 자료를 모으는지 단독으로 먼저 확인한다.",
+        "작성·검수 담당 노드를 구현해, 조사 결과를 받아 초안을 쓰고 스스로 검수하는지 확인한다.",
+        "Supervisor 노드에 설계한 라우팅 규칙과 종료 조건(FINISH)을 연결하고, 조건 엣지로 워커 사이를 오가게 한다.",
+        "전체 그래프를 invoke 해 '입력 → Supervisor 분기 → 워커 협업 → 종료' 흐름이 한 번에 도는지 통합 실행한다.",
+        "빈 입력·도구 실패·무한루프 같은 예외 상황을 넣어, 서비스가 멈추지 않고 안내하거나 최대 반복에서 멈추는지 안정화한다.",
+        "데모 시나리오(질문 3개 → 기대 동작)를 적고 통합 시연을 리허설한다. (원하는 팀은 Docker로 포장해 배포까지 선택 심화로 진행)",
+        "팀별로 '문제 → 멀티에이전트 설계 → 시연 → 배운 점' 순서로 발표하고, 과정 전체를 돌아보는 회고를 남긴다."
       ],
-      "deliverable": "테스트를 통과하고 Docker로 실행되는 AI 서비스, 발표 자료(데모 시나리오), 회고가 담긴 최종 README와 커밋 이력"
+      "deliverable": "멀티에이전트가 협업해 답하는 동작 서비스 + 데모(시연) + 과정 회고"
     }
   }
 }

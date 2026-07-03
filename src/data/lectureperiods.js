@@ -16,14 +16,14 @@ export const PERIOD_TIMES = [
 
 export const periods = {
   "git-1": [
-    "OT · 과정 소개 · 아이스브레이킹",
-    "팀빌딩: 팀 구성 · 역할 정하기",
-    "팀 그라운드룰 · 협업 목표 설정",
-    "버전관리 개념 · Git 설치/설정",
-    "Git 기본: add·commit·status·log",
+    "OT · 프로그래밍 개요(Frontend vs Backend · IT 용어)",
+    "개발환경 구축: VS Code 설치 · Workspace · Git 설정",
+    "Git 기초 개념 + VS Code Source Control",
+    "Git 기초 명령어: init·add·commit·status·log",
     ".gitignore · diff · 커밋 되돌리기",
-    "브랜치 · 머지 · 충돌 해결",
-    "GitHub 원격: clone·push·pull · PR"
+    "Remote Repository 이해 + GitHub 설정 · SSH 키 관리",
+    "원격 사용법: clone·push·pull · Sync Changes",
+    "(심화) 브랜치 · 머지 · 충돌 · PR 협업"
   ],
   "transformer-1": [
     "[강의] LLM이 뭐길래? '다음 단어 맞히기' 게임으로 시작하기",
@@ -46,24 +46,24 @@ export const periods = {
     "[실습] GPT-2로 문장 생성하고 다음 토큰 확률 들여다보기"
   ],
   "python-1": [
-    "1교시 데이터 분석과 Python 시작하기 · 환경 둘러보기",
-    "2교시 [실습] Jupyter/Colab 셋업과 첫 코드 실행",
-    "3교시 변수·자료형·연산자와 문자열 다루기",
-    "4교시 [실습] 리스트·딕셔너리·튜플·집합 자료구조",
-    "5교시 조건문·반복문으로 데이터 흐름 제어",
-    "6교시 [실습] 함수와 컴프리헨션으로 코드 정리",
-    "7교시 NumPy 배열과 벡터 연산 기초",
-    "8교시 [메인 실습] 데이터 전처리 스크립트 만들기"
+    "1교시 개발환경·실행 구조: Homebrew·3.11·VS Code·venv, 소스→AST→바이트코드→PVM",
+    "2교시 [실습] venv 생성·pip·requirements.txt·VS Code 설정",
+    "3교시 자료구조 시간복잡도·컴프리헨션·제너레이터",
+    "4교시 [실습] dataclass·TypedDict로 데이터 모델링",
+    "5교시 함수·파일·예외: functools·CSV/JSON/Parquet·pathlib",
+    "6교시 [실습] 타입 힌트·Pydantic v2·mypy",
+    "7교시 코드 품질: Ruff·pytest·VS Code 디버거",
+    "8교시 [메인 실습] 비동기 수집→Pydantic 검증→Parquet 저장→pytest→Git"
   ],
   "python-2": [
-    "1교시 Pandas 시작 · Series와 DataFrame 구조 이해",
-    "2교시 [실습] CSV 데이터 적재와 인덱싱·선택",
-    "3교시 결측치·이상치 처리와 데이터 정제",
-    "4교시 [실습] 필터링·정렬·groupby 집계",
-    "5교시 merge·pivot으로 데이터 재구조화",
-    "6교시 [실습] matplotlib·seaborn 시각화 기초",
-    "7교시 탐색적 데이터 분석(EDA) 흐름 익히기",
-    "8교시 [메인 실습] 실데이터 EDA 미니 리포트 완성"
+    "1교시 Pandas 2.x 실전·Copy-on-Write",
+    "2교시 [실습] groupby·pivot_table·merge",
+    "3교시 Polars Lazy API·Pandas vs Polars 성능 비교",
+    "4교시 [실습] DuckDB로 CSV·Parquet에 SQL 분석",
+    "5교시 시각화: Matplotlib·Plotly·Altair·Streamlit",
+    "6교시 [실습] 기초 통계·가설 검정(t-test·카이제곱)",
+    "7교시 sklearn Pipeline·joblib·분석 자동화(schedule·Jinja2)",
+    "8교시 [메인 실습] 공개 데이터 EDA→시각화+통계→Pipeline→GitHub 공유"
   ],
   "prompt-1": [
     "1교시 LLM은 어떻게 답을 만들까 - 다음 단어 예측과 프롬프트의 역할",
@@ -132,7 +132,7 @@ export const periods = {
     "4교시 상태 관리로 데이터 한곳에 모으기(실습)",
     "5교시 입력 폼 만들고 새 글 추가 기능 구현(실습)",
     "6교시 폼 유효성 검사와 예외 처리 넣기(실습)",
-    "7교시 API 연동(fetch)으로 가짜 서버에서 데이터 받아오기(실습)",
+    "7교시 LLM API 연동 — 입력을 보내고 요약/추천 결과를 화면에 표시(실습)",
     "8교시 중간 점검·코드 리뷰와 내일 통합 준비"
   ],
   "webproject-3": [
@@ -166,13 +166,13 @@ export const periods = {
     "8교시 [실습] 질의 테스트·정확도 점검·정리"
   ],
   "spring-ai-3": [
-    "1교시 Function Calling이란 — LLM이 우리 함수를 호출하게 하기",
-    "2교시 [실습] Tool(함수) 정의 — @Tool 애너테이션",
-    "3교시 [실습] 구조화 출력(Structured Output) — 답을 자바 객체로 받기",
-    "4교시 [실습] 스트리밍 응답 — 토큰을 실시간으로 흘려보내기",
-    "5교시 예외·재시도 처리와 보안 고려사항",
-    "6교시 [실습] AI 기능을 실제 서비스에 통합",
-    "7교시 [실습·메인] 도구 연동형 AI 기능 서비스 완성",
+    "1교시 Tool Calling 복습 — LLM이 우리 함수를 호출하게 하기",
+    "2교시 [실습] @Tool로 함수 등록하고 구조화 출력(자바 객체)으로 받기",
+    "3교시 MCP(Model Context Protocol)란 — 도구·자원을 표준으로 잇기",
+    "4교시 [실습] Spring AI MCP Client로 외부 MCP 서버 도구 연결",
+    "5교시 AI Agent 설계 — 목표·계획·실행·관찰(Reflect) 루프",
+    "6교시 [실습] 도구를 쓰는 에이전트 워크플로 만들기",
+    "7교시 [실습·메인] MCP·Agent 통합 AI 기능 서비스 완성",
     "8교시 [실습] 통합 테스트·시연·정리"
   ],
   "sllm-1": [
@@ -186,7 +186,7 @@ export const periods = {
     "8교시 [실습] 로컬 모델을 API로 호출하는 미니 챗봇 완성·점검"
   ],
   "sllm-2": [
-    "1교시 — 파인튜닝이 뭐고 언제 쓰나? PEFT가 필요한 이유",
+    "1교시 — sLLM·PEFT 최신 동향: 작은 모델이 뜨는 이유(온디바이스·증류·QLoRA 이후 흐름)",
     "2교시 — PEFT 변형 비교: LoRA·QLoRA vs Adapter vs Prefix/Prompt tuning",
     "3교시 — 목적별 PEFT 선택 가이드(도메인 지식·극소 파라미터·추론 강화)",
     "4교시 [실습] instruction 데이터 JSONL 가공 + LoRA 학습 코드 작성",
@@ -227,11 +227,11 @@ export const periods = {
   ],
   "feature-1": [
     "1교시 피처 엔지니어링이란? 모델 성능을 좌우하는 \"재료 손질\"",
-    "2교시 데이터 둘러보기: 결측치·이상치 진단 실습",
+    "2교시 데이터 둘러보기(EDA): 변수 유형·분포·상관 히트맵으로 데이터 파악",
     "3교시 [실습] 스케일링·정규화로 숫자 크기 맞추기",
     "4교시 범주형 인코딩: 원-핫·라벨·타깃 인코딩",
     "5교시 [실습] 수치·날짜·텍스트 파생 피처 만들기",
-    "6교시 피처 선택과 차원 축소(중요도·상관·PCA)",
+    "6교시 변수 선택(필터·래퍼·임베디드)과 차원 축소(PCA)",
     "7교시 [실습] 피처 엔지니어링 전후 성능 비교",
     "8교시 정리·코드 리뷰·미니 회고"
   ],
@@ -253,7 +253,7 @@ export const periods = {
     "5교시 [실습] 조기종료로 과적합 막기",
     "6교시 앙상블 - 배깅 · 부스팅 · 스태킹의 직관",
     "7교시 [실습] 앙상블(RandomForest·GradientBoosting)로 성능 끌어올리기",
-    "8교시 [실습] 모델 경량화·추론 속도 비교 & 튜닝 전후 성능 정리"
+    "8교시 [운영] MLOps 관점 모델 성능 관리와 Drift(데이터·컨셉) 대응 전략"
   ],
   "rag-1": [
     "1교시 RAG가 왜 필요한가: LLM의 한계와 검색 증강의 직관",
@@ -321,8 +321,8 @@ export const periods = {
     "3교시 [실습] 모델 저장·로드와 추론 함수 만들기",
     "4교시 FastAPI 기초: 엔드포인트·요청/응답 모델",
     "5교시 [실습] FastAPI 추론 API 만들고 호출하기",
-    "6교시 입력 검증·전처리·후처리와 에러 처리",
-    "7교시 BentoML로 모델 패키징과 버전 관리",
+    "6교시 입력 검증·에러 핸들링·헬스체크·로깅 기초",
+    "7교시 비동기 처리(async/await)·배치로 처리량 높이기 + Lazy vs Eager 로딩(모델 패키징·버전관리는 참고)",
     "8교시 [실습] 추론 REST API 완성·테스트·정리"
   ],
   "serving-2": [
@@ -349,9 +349,9 @@ export const periods = {
     "1교시 AI 에이전트란 - 챗봇과의 차이, Agent Protocol 개요",
     "2교시 ReAct 패턴 - 생각하고(Reason) 행동하기(Act)",
     "3교시 Agentic Workflow 설계: Goal · Plan · Execute · Reflect",
-    "4교시 [실습] 환경 셋업 + LangGraph 핵심(그래프·노드·State)",
-    "5교시 [실습] State와 노드로 단순 그래프 만들기",
-    "6교시 도구(Tool) 정의와 LLM이 도구를 부르게 하기",
+    "4교시 [실습] 환경 셋업 + LangGraph 설계 3요소(Workflow·Loop·Memory)",
+    "5교시 [실습] State·노드로 Workflow 그래프 만들기(Loop·Memory 반영)",
+    "6교시 도구(Tool) 정의와 LLM이 도구를 부르게 하기 + Distributed(분산 에이전트) 개념 맛보기",
     "7교시 Agentic RAG Workflow(검색·판단 루프) 개념과 조건 분기",
     "8교시 [실습] 단일 에이전트 완성 + 실행 결과 점검"
   ],

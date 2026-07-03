@@ -19,6 +19,18 @@ export const examples = {
       "lang": "bash",
       "code": "git reset --soft HEAD~1   # 가장 최근 커밋 1개를 취소(HEAD~1 = 한 칸 전)\n# --soft 라서 파일 내용과 스테이지는 그대로 남는다(되돌리기 안전)\ngit status                # 방금 커밋했던 변경이 다시 '커밋 대기' 상태로 보임",
       "note": "커밋 메시지를 잘못 썼거나 한 커밋에 너무 많이 담았을 때 가장 자주 쓰는 안전한 되돌리기다."
+    },
+    {
+      "title": "SSH 키 만들고 GitHub에 등록해 비밀번호 없이 연결하기",
+      "lang": "bash",
+      "code": "# 1) ed25519 방식으로 키 한 쌍을 만든다(엔터 3번이면 기본 경로에 저장)\nssh-keygen -t ed25519 -C \"me@team.com\"\n# 2) 공개키(.pub) 내용을 출력해 이 값을 복사한다\ncat ~/.ssh/id_ed25519.pub\n# 3) GitHub > Settings > SSH and GPG keys > New SSH key 에 붙여넣는다\n# 4) 연결이 되는지 시험한다\nssh -T git@github.com   # 성공하면 'Hi 이름! You've successfully authenticated' 메시지",
+      "note": "개인키(id_ed25519)는 절대 공유하지 말고 공개키(id_ed25519.pub)만 GitHub에 등록한다."
+    },
+    {
+      "title": "VS Code Source Control로 터미널 없이 커밋하기",
+      "lang": "text",
+      "code": "1. 왼쪽 세로 막대의 '가지(branch) 아이콘'(Source Control)을 클릭한다.\n2. Changes 목록에서 커밋할 파일 옆의 + 버튼을 눌러 stage 한다(= git add).\n3. 위쪽 입력창에 커밋 메시지를 적는다(예: 로그인 기능 추가).\n4. 체크(✓, Commit) 버튼을 눌러 커밋한다(= git commit).\n5. 우측 하단/상단의 'Sync Changes' 버튼을 누르면 push·pull 이 한 번에 처리된다.",
+      "note": "CLI의 add·commit·push가 VS Code에서 어떤 버튼인지 대응시켜 두면 터미널과 GUI를 자유롭게 오갈 수 있다."
     }
   ],
   "transformer-1": [
@@ -47,26 +59,32 @@ export const examples = {
       "lang": "python",
       "code": "from transformers import pipeline                  # 추론 파이프라인 불러오기\n\ngen = pipeline(\"text-generation\", model=\"gpt2\")     # 텍스트 생성 파이프라인 생성\nout = gen(\"The future of AI is\", max_length=20, num_return_sequences=1)  # 문장 이어쓰기\nprint(out[0][\"generated_text\"])                     # 결과: 입력에 이어 자연스러운 영어 문장 출력",
       "note": "GPT-2는 왼쪽부터 다음 토큰을 차례로 예측하며 문장을 만들어내는 Decoder-only 모델이다."
+    },
+    {
+      "title": "밑바닥부터 만드는 초소형 언어모델(bigram 카운트 기반)",
+      "lang": "python",
+      "code": "import numpy as np\n# 아주 작은 말뭉치\ntext = 'i love ai i love code i love you'\nwords = text.split()\nvocab = sorted(set(words))              # 단어 사전\nw2i = {w: i for i, w in enumerate(vocab)}  # 단어->번호\nn = len(vocab)\n# 1) bigram 카운트 표: '앞 단어' 다음에 '뒷 단어'가 몇 번 왔나\ncounts = np.zeros((n, n))\nfor a, b in zip(words[:-1], words[1:]):\n    counts[w2i[a], w2i[b]] += 1\n# 2) 각 행을 확률로 정규화 = 다음-단어 확률 분포 (이것이 언어모델!)\nprobs = counts / counts.sum(axis=1, keepdims=True)\n# 3) 'i' 다음에 올 단어를 확률로 예측\nrow = probs[w2i['i']]\nfor w in vocab:\n    print(w, round(row[w2i[w]], 2))     # love가 가장 높게 나옴\n",
+      "note": "외부 모델 없이 단어쌍 빈도를 세어 확률로 바꾸는 것만으로도 가장 단순한 언어모델이 만들어진다. GPT는 이 bigram 표를 Transformer라는 거대한 함수로 바꾸고 훨씬 긴 앞 문맥을 보게 한 확장판일 뿐임을 체감한다."
     }
   ],
   "python-1": [
     {
-      "title": "변수와 f-string으로 결과 예쁘게 출력",
+      "title": "제너레이터로 대용량 파일을 메모리 아끼며 처리하기",
       "lang": "python",
-      "code": "name = '김데이터'        # 글자(문자열)를 담은 변수\nscore = 92               # 정수를 담은 변수\n# f-string: 문자열 안에 {변수}를 넣으면 그 값으로 바뀐다\nprint(f'{name}님의 점수는 {score}점입니다')  # 결과: 김데이터님의 점수는 92점입니다",
-      "note": "f-string 은 문장 사이에 값을 끼워 넣는 가장 쉬운 출력 방법이다."
+      "code": "# 파일을 한 줄씩 흘려보내는 제너레이터(전체를 메모리에 올리지 않는다)\ndef read_lines(path):\n    with open(path, encoding='utf-8') as f:\n        for line in f:      # 파일 객체는 한 줄씩 순회할 수 있다\n            yield line       # return 이 아니라 yield: 한 줄을 내주고 멈췄다 재개\n\n# sum 이 제너레이터에서 한 줄씩 받아 길이를 더한다(리스트로 전부 읽지 않음)\ntotal = sum(len(l) for l in read_lines('big.log'))\nprint('전체 글자 수:', total)  # 수 GB 로그도 적은 메모리로 처리 가능",
+      "note": "리스트는 모든 줄을 한꺼번에 메모리에 올리지만, yield 제너레이터는 한 줄씩 흘려보내 큰 파일도 견딘다."
     },
     {
-      "title": "딕셔너리로 이름→값 빠르게 찾기",
+      "title": "dataclass로 데이터 레코드 깔끔하게 정의하기",
       "lang": "python",
-      "code": "prices = {'사과': 1000, '바나나': 1500}  # '품목 이름'을 키로, 가격을 값으로 저장\nprint(prices['바나나'])                    # 키로 값을 즉시 조회 → 결과: 1500\nprices['포도'] = 3000                       # 새 항목을 추가한다\nprint(len(prices))                          # 항목 개수 → 결과: 3",
-      "note": "딕셔너리는 이름표(키)만 알면 값을 바로 꺼낼 수 있어 검색이 매우 빠르다."
+      "code": "from dataclasses import dataclass  # 반복되는 __init__ 을 자동으로 만들어 준다\n\n@dataclass\nclass Order:\n    name: str    # 상품명\n    qty: int     # 수량\n    price: int   # 단가\n\norder = Order('사과', 3, 1000)   # 생성자를 직접 안 써도 필드 순서로 만들어진다\nprint(order.price)               # 결과: 1000 (점으로 필드 접근)\nprint(order)                     # 결과: Order(name='사과', qty=3, price=1000)",
+      "note": "@dataclass 한 줄이면 생성자·출력 형식이 자동 생성되어 데이터 묶음을 짧게 표현할 수 있다."
     },
     {
-      "title": "컴프리헨션으로 한 줄 필터링",
+      "title": "Pydantic으로 입력값 검증하기",
       "lang": "python",
-      "code": "nums = [3, -2, 7, 0, 5]                  # 양수만 골라낼 원본 데이터\n# [표현식 for 변수 in 리스트 if 조건] 형태로 한 줄에 반복+조건 처리\npositives = [n for n in nums if n > 0]   # 0보다 큰 값만 남긴다\nprint(positives)                          # 결과: [3, 7, 5]",
-      "note": "컴프리헨션은 for 문과 if 문을 한 줄로 압축해 정제 코드를 짧게 만든다."
+      "code": "from pydantic import BaseModel, Field, ValidationError\n\n# 가격은 0보다 커야 한다는 규칙(gt=0)을 스키마에 새긴다\nclass OrderIn(BaseModel):\n    name: str\n    price: int = Field(gt=0)\n\n# 올바른 입력은 통과하고 model_dump()로 dict 변환할 수 있다\nok = OrderIn(name='사과', price=1000)\nprint(ok.model_dump())  # 결과: {'name': '사과', 'price': 1000}\n\n# 규칙을 어기면(음수 가격) ValidationError 로 걸러진다\ntry:\n    OrderIn(name='사과', price=-1)\nexcept ValidationError as e:\n    print('검증 실패:', e.errors()[0]['msg'])  # 결과: 검증 실패: Input should be greater than 0",
+      "note": "dataclass는 형태만 잡지만, Pydantic은 값의 규칙(양수·형식)까지 검사해 잘못된 입력을 자동으로 막아 준다."
     }
   ],
   "python-2": [
@@ -199,6 +217,12 @@ export const examples = {
       "lang": "javascript",
       "code": "// 배포된 사이트에서 직접 눌러보며 확인할 항목들\nconst checklist = [\n  '메인 화면이 흰 화면 없이 뜬다',   // base 설정 점검\n  '목록이 정상 표시된다',            // 데이터 로딩 점검\n  '새 글을 추가할 수 있다',          // 쓰기 기능 점검\n  '상세 화면으로 이동된다'           // 라우팅 점검\n]\n// 하나씩 통과 여부를 출력한다(실제로는 손으로 눌러 확인)\nchecklist.forEach((item, i) => console.log(`${i + 1}. ${item}`))\n// 결과: 1. 메인 화면이 흰 화면 없이 뜬다 ... 4. 상세 화면으로 이동된다",
       "note": "배포 후에는 반드시 실제 주소에서 핵심 기능을 하나씩 다시 눌러 확인한다."
+    },
+    {
+      "title": "AI API로 메모 한 줄 요약 받아 화면에 표시하기",
+      "lang": "javascript",
+      "code": "// .env 의 키를 코드에 직접 쓰지 않고 import.meta.env 로 읽는다(VITE_ 접두사 필수)\nconst API_KEY = import.meta.env.VITE_LLM_API_KEY\nlet ref = ''  // 요약 결과를 담을 변수(Vue라면 ref('')로 반응형 처리)\n\nasync function summarize(memo) {\n  // LLM 채팅 엔드포인트에 '한 줄 요약' 요청을 POST 한다\n  const res = await fetch('https://api.example-llm.com/v1/chat', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${API_KEY}`,  // 키를 헤더에 실어 인증\n    },\n    body: JSON.stringify({\n      model: 'gpt-4o-mini',\n      messages: [{ role: 'user', content: `다음 메모를 한 줄로 요약해줘: ${memo}` }],\n    }),\n  })\n  const data = await res.json()               // 응답을 JSON 으로 변환\n  ref = data.choices[0].message.content       // 요약 문장만 꺼내 변수에 담는다\n  console.log('요약:', ref)                    // 화면에서는 이 값을 그대로 표시한다\n}\n\nsummarize('오늘 회의에서 배포 일정을 다음 주로 미루기로 했다')",
+      "note": "API 키는 절대 코드에 직접 쓰지 말고 .env에 두며, 실제 서비스에서는 키 노출을 막기 위해 백엔드(프록시)를 거치는 것이 안전하다."
     }
   ],
   "spring-ai-1": [
@@ -283,6 +307,12 @@ export const examples = {
       "lang": "python",
       "code": "from sklearn.metrics import accuracy_score  # 정확도 계산 함수\ny_true = [0, 1, 1, 0]   # 실제 정답\ny_pred = [0, 1, 0, 0]   # 모델 예측 (3번째만 틀림)\nprint(accuracy_score(y_true, y_pred))  # 결과: 0.75  (4개 중 3개 맞음)",
       "note": "정확도는 '전체 중 맞힌 비율'이라 직관적이지만, 정답이 한쪽으로 치우치면 정밀도·재현율도 함께 봐야 한다."
+    },
+    {
+      "title": "랜덤포레스트로 성능 끌어올리기",
+      "lang": "python",
+      "code": "from sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier  # 트리 여러 그루의 앙상블\n\nX, y = load_iris(return_X_y=True)\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)\n\n# 단일 결정트리\ntree = DecisionTreeClassifier(random_state=42).fit(X_tr, y_tr)\n# 트리 100그루를 학습시키는 랜덤포레스트\nrf = RandomForestClassifier(n_estimators=100, random_state=42)\nrf.fit(X_tr, y_tr)\n\nprint('단일 트리:', round(tree.score(X_te, y_te), 3))\nprint('랜덤포레스트:', round(rf.score(X_te, y_te), 3))  # 보통 더 안정적으로 높게 나옴\n",
+      "note": "트리 여러 그루의 다수결이 단일 트리보다 흔들림이 적고 과적합에 강하다."
     }
   ],
   "ml-dl-2": [
@@ -331,6 +361,12 @@ export const examples = {
       "lang": "python",
       "code": "import pandas as pd  # 날짜 처리에도 pandas 사용\n\n# 문자열 날짜를 진짜 날짜형으로 변환\ns = pd.to_datetime(['2026-06-30', '2026-12-25'])\n\n# 날짜에서 '월'과 '요일' 같은 숨은 정보 추출\nmonth = s.month        # 월 숫자\nweekday = s.dayofweek  # 0=월요일 ... 6=일요일\n\nprint(month.tolist())    # 결과: [6, 12]\nprint(weekday.tolist())  # 결과: [1, 4]  (화요일, 금요일)",
       "note": "원본 날짜보다 월·요일 같은 파생 피처가 패턴을 더 잘 드러낸다."
+    },
+    {
+      "title": "누수 없이 스케일러는 학습 데이터에만 fit",
+      "lang": "python",
+      "code": "from sklearn.model_selection import train_test_split  # 데이터 분할\nfrom sklearn.preprocessing import StandardScaler       # 표준화 스케일러\nfrom sklearn.datasets import load_iris\n\nX = load_iris().data\ny = load_iris().target\n# 먼저 학습/테스트로 나눈다\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)\n\nscaler = StandardScaler()\n# 학습 데이터에만 fit(평균·표준편차 계산)하고 그대로 변환한다\nX_train_scaled = scaler.fit_transform(X_train)\n# 테스트는 fit 하지 않고, 학습에서 구한 기준으로 transform 만 한다\nX_test_scaled = scaler.transform(X_test)\nprint(X_train_scaled.mean(axis=0).round(2))  # 결과: 0 근처(학습 데이터 평균이 0으로 정렬됨)\n",
+      "note": "테스트에도 fit 하면 테스트의 평균·표준편차가 학습에 새어 들어가 점수가 부풀려진다. transform 만 쓰는 것이 누수 방지의 핵심이다."
     }
   ],
   "modeldev-1": [
@@ -345,6 +381,18 @@ export const examples = {
       "lang": "python",
       "note": "이 점수보다 못하면 우리 모델은 '찍기'만도 못한 것이다.",
       "code": "from sklearn.dummy import DummyClassifier  # 일부러 단순하게 '찍는' 기준 모델\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\n\nX, y = load_iris(return_X_y=True)  # X, y 를 한 번에 받기\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, random_state=0)  # 기본 75:25 분할\n\n# strategy='most_frequent': 가장 많이 나온 정답만 계속 찍는 전략\ndummy = DummyClassifier(strategy='most_frequent')\ndummy.fit(X_tr, y_tr)                 # '찍기' 기준을 학습(사실상 다수 클래스 기억)\nprint('찍기 정확도:', round(dummy.score(X_te, y_te), 3))  # 결과 예: 찍기 정확도: 0.342"
+    },
+    {
+      "title": "분류 평가지표 한눈에 — 혼동행렬·정밀도·재현율·ROC AUC",
+      "lang": "python",
+      "note": "재현율이 낮으면 실제 양성(환자)을 놓친 경우가 많다는 뜻이라 의료·불량검출에서 특히 중요하다.",
+      "code": "from sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import confusion_matrix, classification_report, roc_auc_score\n\nX, y = load_breast_cancer(return_X_y=True)\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=0)\nclf = LogisticRegression(max_iter=5000).fit(X_tr, y_tr)\n\npred = clf.predict(X_te)               # 0/1 예측\nproba = clf.predict_proba(X_te)[:, 1]  # 양성(1)일 확률\n\n# 혼동행렬 = [[TN, FP], [FN, TP]] — 네 칸은 참/거짓 x 양성/음성 조합\nprint(confusion_matrix(y_te, pred))\n# precision·recall·f1 을 클래스별로 한 번에 보여준다\nprint(classification_report(y_te, pred))\n# ROC AUC 는 확률 기준으로 양성/음성을 얼마나 잘 가르는지(1에 가까울수록 좋음)\nprint('ROC AUC:', round(roc_auc_score(y_te, proba), 3))\n"
+    },
+    {
+      "title": "회귀 평가지표 — MAE·RMSE·R2",
+      "lang": "python",
+      "note": "MAE는 평균 오차 크기, RMSE는 큰 오차에 더 민감, R2는 1에 가까울수록 잘 맞춘 것이다.",
+      "code": "from sklearn.datasets import load_diabetes\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score\n\nX, y = load_diabetes(return_X_y=True)\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=0)\nreg = LinearRegression().fit(X_tr, y_tr)\npred = reg.predict(X_te)\n\nprint('MAE :', round(mean_absolute_error(y_te, pred), 2))        # 평균 절대 오차\nprint('RMSE:', round(mean_squared_error(y_te, pred) ** 0.5, 2))  # 제곱오차 평균의 제곱근\nprint('R2  :', round(r2_score(y_te, pred), 3))                   # 결정계수\n"
     }
   ],
   "modeldev-2": [
@@ -435,6 +483,18 @@ export const examples = {
       "lang": "python",
       "code": "# 함수를 도구로 등록해 주는 데코레이터를 가져온다\nfrom langchain_core.tools import tool\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# @tool을 붙여 일반 함수를 모델이 쓸 수 있는 도구로 만든다\n@tool\ndef add(a: int, b: int) -> int:\n    \"\"\"두 정수를 더한다\"\"\"  # 설명: 모델이 이 글을 보고 언제 쓸지 판단한다\n    return a + b           # 실제 덧셈 결과를 돌려준다\n# 모델에 도구 목록을 묶어(bind) 도구를 쓸 수 있게 한다\nmodel = ChatAnthropic(model=\"claude-opus-4-8\").bind_tools([add])\n# 계산이 필요한 질문을 던진다\nres = model.invoke(\"12345 더하기 6789는?\")\n# 모델이 직접 계산하지 않고 add 도구를 쓰겠다고 요청한 내역을 출력한다\nprint(res.tool_calls)  # 결과 예: [{'name':'add','args':{'a':12345,'b':6789}}]",
       "note": "모델은 답을 지어내는 대신 add 도구를 호출하겠다고 알려 주어 정확한 계산이 가능해진다."
+    },
+    {
+      "title": "RunnableParallel로 댓글을 한 번에 요약·감정·키워드 뽑고 부정이면 분기",
+      "lang": "python",
+      "code": "from langchain_core.prompts import ChatPromptTemplate\nfrom langchain_core.output_parsers import StrOutputParser\nfrom langchain_core.runnables import RunnableParallel, RunnableBranch\nfrom langchain_anthropic import ChatAnthropic\n\nmodel = ChatAnthropic(model='claude-opus-4-8')\n\n# 1) 작은 체인 3개를 만든다\nsummary_chain = ChatPromptTemplate.from_template('한 문장으로 요약: {comment}') | model | StrOutputParser()\n# 감정은 세 단어 중 하나로만 답하게 제약한다\nsentiment_chain = ChatPromptTemplate.from_template('positive/negative/neutral 중 하나로만 답해: {comment}') | model | StrOutputParser()\nkeyword_chain = ChatPromptTemplate.from_template('핵심 키워드 3개를 쉼표로: {comment}') | model | StrOutputParser()\n\n# 2) 셋을 병렬로 묶어 댓글 하나를 동시에 처리한다\nparallel = RunnableParallel(summary=summary_chain, sentiment=sentiment_chain, keywords=keyword_chain)\n\n# 3) 감정에 따라 뒤 처리를 가른다(부정이면 이관, 아니면 감사 답변)\ndef is_negative(d):\n    return 'negative' in d['sentiment'].lower()\n\nbranch = RunnableBranch(\n    (is_negative, lambda d: {**d, 'action': '담당자 이관 + 사과 답변 초안 생성'}),\n    lambda d: {**d, 'action': '자동 감사 답변'},\n)\n\nresult = (parallel | branch).invoke({'comment': '배송이 너무 늦어서 화가 나요'})\nprint(result['sentiment'], '->', result['action'])  # 결과 예: negative -> 담당자 이관 + 사과 답변 초안 생성\n",
+      "note": "한 번의 invoke로 세 분석이 병렬로 끝나고, 감정에 따라 뒤 처리가 갈라지는 것이 실서비스 댓글 처리의 전형이다."
+    },
+    {
+      "title": "정해진 모양(스키마)으로 강제해서 뽑기 — PydanticOutputParser",
+      "lang": "python",
+      "code": "from pydantic import BaseModel\nfrom langchain_core.output_parsers import PydanticOutputParser\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_anthropic import ChatAnthropic\n\n# 1) 원하는 결과의 '모양'을 클래스로 정의한다(이름은 문자열, 나이는 정수)\nclass Person(BaseModel):\n    name: str\n    age: int\n\n# 2) 이 스키마를 강제하는 파서를 만든다\nparser = PydanticOutputParser(pydantic_object=Person)\n\n# 3) 프롬프트에 형식 안내문을 끼워 모델이 그 모양을 지키게 한다\nprompt = ChatPromptTemplate.from_template(\n    '문장에서 인물 정보를 뽑아줘.\\n{format}\\n문장: {sentence}'\n).partial(format=parser.get_format_instructions())\n\nchain = prompt | ChatAnthropic(model='claude-opus-4-8') | parser\nout = chain.invoke({'sentence': '홍길동은 30살이다'})\n# 결과가 문자열이 아니라 Person 객체라 점(.)으로 필드에 접근할 수 있다\nprint(out.name, out.age)  # 결과: 홍길동 30\n",
+      "note": "JsonOutputParser는 아무 JSON이나 받지만, PydanticOutputParser는 타입·필드까지 강제해 잘못된 형식이면 에러로 걸러 준다."
     }
   ],
   "langchain-3": [
@@ -449,6 +509,12 @@ export const examples = {
       "lang": "python",
       "code": "# 시간 측정을 위해 time 모듈을 가져온다\nimport time\n# 캐시 설정 함수와 메모리 캐시를 가져온다\nfrom langchain_core.globals import set_llm_cache\nfrom langchain_community.cache import InMemoryCache\n# 모델을 가져온다\nfrom langchain_anthropic import ChatAnthropic\n# 메모리 캐시를 켠다(같은 입력은 저장된 답을 재사용)\nset_llm_cache(InMemoryCache())\n# 모델 객체를 만든다\nmodel = ChatAnthropic(model=\"claude-opus-4-8\")\n# 첫 호출 시각을 기록하고 모델을 부른다(실제로 모델이 일한다)\nt1 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 첫 호출에 걸린 시간을 출력한다(예: 1.8초)\nprint(\"1차:\", round(time.time() - t1, 2), \"초\")\n# 같은 질문을 다시 부른다(이번엔 캐시에서 즉시 가져온다)\nt2 = time.time(); model.invoke(\"하늘은 왜 파랄까?\")\n# 두 번째는 거의 0초임을 출력해 캐시 효과를 확인한다\nprint(\"2차:\", round(time.time() - t2, 2), \"초\")  # 결과 예: 2차: 0.0 초",
       "note": "두 번째 호출이 사실상 0초인 것은 모델을 다시 부르지 않고 캐시에서 답을 꺼냈기 때문이다."
+    },
+    {
+      "title": "스스로 도구를 골라 쓰는 ReAct 에이전트 맛보기",
+      "lang": "python",
+      "code": "from datetime import datetime\nfrom langchain_core.tools import tool\nfrom langchain.agents import create_tool_calling_agent, AgentExecutor\nfrom langchain_core.prompts import ChatPromptTemplate\nfrom langchain_anthropic import ChatAnthropic\n\n# 1) 도구 2개를 정의한다\n@tool\ndef add(a: int, b: int) -> int:\n    \"\"\"두 정수를 더한다.\"\"\"\n    return a + b\n\n@tool\ndef get_time() -> str:\n    \"\"\"지금 시각을 문자열로 알려준다.\"\"\"\n    return datetime.now().strftime('%H:%M')\n\n# 2) 프롬프트와 모델로 에이전트를 구성한다\nprompt = ChatPromptTemplate.from_messages([\n    ('system', '너는 도구를 활용하는 비서다.'),\n    ('human', '{input}'),\n    ('placeholder', '{agent_scratchpad}'),  # 생각·도구호출 기록이 쌓이는 자리\n])\nmodel = ChatAnthropic(model='claude-opus-4-8')\nagent = create_tool_calling_agent(model, [add, get_time], prompt)\nexecutor = AgentExecutor(agent=agent, tools=[add, get_time], verbose=True)  # 과정 관찰\n\n# 3) 실행하면 생각->도구호출->관찰을 반복해 최종 답을 낸다\nprint(executor.invoke({'input': '지금 몇 시야? 그리고 12+30은?'})['output'])\n",
+      "note": "체인은 흐름이 고정이지만 에이전트는 상황을 보고 어떤 도구를 몇 번 쓸지 스스로 정한다. 이 자유도가 커지면 LangGraph로 흐름을 통제한다."
     }
   ],
   "serving-1": [
@@ -463,6 +529,12 @@ export const examples = {
       "lang": "bash",
       "code": "# 실행 중인 FastAPI 서버에 JSON 입력을 POST로 보낸다\ncurl -X POST http://127.0.0.1:8000/predict \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"sepal_length\":5.1,\"sepal_width\":3.5,\"petal_length\":1.4,\"petal_width\":0.2}'\n# 결과 예시: {\"prediction\":\"setosa\",\"model_version\":\"v1.0.0\"}\n",
       "note": "-H 는 보내는 데이터가 JSON 이라는 표시이고, -d 는 실제 입력 본문이다."
+    },
+    {
+      "title": "동기 엔드포인트를 비동기로 바꾸기",
+      "lang": "python",
+      "code": "from fastapi import FastAPI\nfrom fastapi.concurrency import run_in_threadpool  # 무거운 연산을 스레드로 넘기는 도구\n\napp = FastAPI()\n\n# 외부 호출·대기가 있으면 async def + await 로 그 시간 동안 다른 요청도 함께 처리한다\n@app.post('/predict')\nasync def predict(payload: dict):\n    # 모델 예측처럼 CPU를 오래 쓰는 일은 이벤트 루프를 막으므로 스레드풀로 넘긴다\n    result = await run_in_threadpool(model.predict, [[payload['x']]])\n    return {'prediction': int(result[0])}\n",
+      "note": "async라고 무조건 빨라지는 게 아니라 대기(I/O)가 있을 때 이득이며, CPU 연산은 스레드풀이나 배치로 풀어야 다른 요청을 막지 않는다."
     }
   ],
   "serving-2": [
@@ -491,6 +563,18 @@ export const examples = {
       "lang": "python",
       "code": "import joblib                          # 모델 로드\nfrom sklearn.datasets import load_iris   # 검증 데이터\nfrom sklearn.metrics import accuracy_score  # 정확도 계산\n\ndef test_accuracy_threshold():      # 이름이 test_ 로 시작하면 pytest 가 자동 실행\n    model = joblib.load('model.joblib')  # 학습된 모델 불러오기\n    X, y = load_iris(return_X_y=True)    # 검증용 입력·정답\n    acc = accuracy_score(y, model.predict(X))  # 전체 정확도 계산\n    assert acc > 0.9                 # 0.9 미만이면 테스트 실패(배포 차단)\n",
       "note": "assert 가 거짓이면 테스트가 실패하고 CI 가 빨간불이 되어 나쁜 모델 배포를 막는다."
+    },
+    {
+      "title": "model_version 쿼리 파라미터로 버전 라우팅하기",
+      "lang": "python",
+      "code": "import json, joblib\nfrom fastapi import FastAPI\n\napp = FastAPI()\n# registry.json 예: {\"v1\": \"models/clf_v1.joblib\", \"v2\": \"models/clf_v2.joblib\"}\nregistry = json.load(open('registry.json', encoding='utf-8'))\n_cache = {}\n\ndef load_model(version):\n    if version not in _cache:                 # 같은 버전은 한 번만 로드해 캐시\n        _cache[version] = joblib.load(registry[version])\n    return _cache[version]\n\n@app.post('/predict')\ndef predict(x: float, model_version: str = 'v1'):  # 쿼리로 버전 선택\n    model = load_model(model_version)\n    pred = int(model.predict([[x]])[0])\n    return {'prediction': pred, 'model_version': model_version}  # 어느 버전이 답했는지 함께 반환\n",
+      "note": "버전 파라미터 하나로 A/B 비교와 롤백이 가능해진다."
+    },
+    {
+      "title": "구조화 로깅(structured logging)으로 집계하기 좋게 남기기",
+      "lang": "python",
+      "code": "import json, time\n\ndef log_event(endpoint, latency_ms, status, model_version):\n    # 사람이 읽는 문장 대신 JSON 한 줄로 남긴다\n    line = json.dumps({\n        'ts': time.time(),\n        'endpoint': endpoint,\n        'latency_ms': latency_ms,\n        'status': status,\n        'model_version': model_version,\n    }, ensure_ascii=False)\n    print(line)  # 실제로는 파일이나 로그 수집기로 보낸다\n\nlog_event('/predict', 42, 200, 'v2')\n# 결과: {\"ts\": 1750000000.0, \"endpoint\": \"/predict\", \"latency_ms\": 42, \"status\": 200, \"model_version\": \"v2\"}\n# 이렇게 쌓인 로그는 나중에 스크립트로 평균 응답시간·에러율을 쉽게 집계할 수 있다\n",
+      "note": "사람이 읽는 문장 로그보다 기계가 집계하기 좋은 구조화 로그가 모니터링·AIOps의 출발점이다."
     }
   ],
   "agent-1": [
@@ -561,6 +645,12 @@ export const examples = {
       "lang": "python",
       "code": "# SSE는 각 조각을 'data: 내용' 뒤에 빈 줄을 붙여 보낸다\ndef to_sse(text):  # 한 조각을 SSE 한 덩어리로 감싸는 함수\n    return f'data: {text}\\n\\n'  # 끝의 빈 줄(\\n\\n)이 '한 이벤트 끝' 표시\n\nfor piece in ['안', '녕', '하세요']:  # 조각들을 하나씩\n    print(repr(to_sse(piece)))  # 결과: \"data: 안\\n\\n\" 처럼 SSE 형식 확인\n",
       "note": "FastAPI StreamingResponse가 이 형식을 그대로 흘려보내면 브라우저·클라이언트가 SSE로 받아들입니다."
+    },
+    {
+      "title": "여러 에이전트의 진행을 한 스트림에서 event 태그로 구분하기",
+      "lang": "python",
+      "code": "from fastapi import FastAPI\nfrom fastapi.responses import StreamingResponse\n\napp = FastAPI()\n# agents: {'검색요원': 체인, '작성요원': 체인} 형태로 미리 준비돼 있다고 가정\n\nasync def multi_stream(question):\n    for agent_name in ['검색요원', '작성요원']:          # 에이전트를 차례로 실행\n        yield f'event: {agent_name}\\ndata: 시작\\n\\n'      # 이 에이전트가 시작했음을 알림\n        async for chunk in agents[agent_name].astream(question):  # 조각을 흘려받아\n            yield f'event: {agent_name}\\ndata: {chunk.content}\\n\\n'  # event 로 발신자 태깅\n\n@app.get('/multi')\nasync def multi(question: str):\n    # 여러 에이전트의 조각을 한 SSE 스트림에 섞어 보낸다\n    return StreamingResponse(multi_stream(question), media_type='text/event-stream')\n",
+      "note": "SSE의 event: 라인으로 발신자를 태깅하면 프론트에서 에이전트별 말풍선으로 나눠 렌더할 수 있다."
     }
   ],
   "capstone-3": [
@@ -575,6 +665,12 @@ export const examples = {
       "lang": "python",
       "code": "import asyncio  # 비동기·타임아웃 도구\n\nasync def slow():  # 5초나 걸리는 느린 작업 흉내\n    await asyncio.sleep(5)\n    return '완료'\n\nasync def main():\n    try:\n        result = await asyncio.wait_for(slow(), timeout=2)  # 2초 안에 안 끝나면 끊음\n        print(result)\n    except asyncio.TimeoutError:  # 시간 초과 시\n        print('시간 초과! 대체 응답을 보냅니다.')  # 결과: 이 줄이 출력됨\n\nasyncio.run(main())\n",
       "note": "타임아웃이 없으면 느린 API 하나가 서비스 전체를 멈추게 할 수 있습니다."
+    },
+    {
+      "title": "정해진 순서 대신 결과를 보고 계획을 고치는 Dynamic Planning 맛보기",
+      "lang": "python",
+      "code": "# run: 한 단계를 실행해 결과 문자열을 돌려준다고 가정(실제론 LLM/도구 호출)\ndef run(step):\n    return f'[{step}] 처리 결과'\n\n# needs_more: 결과를 보고 '추가 조사가 더 필요한가'를 판단(연습용은 간단 규칙)\ndef needs_more(result):\n    return '근거 부족' in result\n\nplan = ['정보 검색', '초안 작성', '근거 검증']  # 처음 세운 계획(할 일 목록)\ndone = []                                      # 끝낸 일들을 모아 둔다\n\nwhile plan:                     # 할 일이 남아 있는 동안 반복\n    step = plan.pop(0)          # 맨 앞 일을 꺼내\n    result = run(step)          # 실행하고\n    done.append(result)         # 결과를 기록\n    if needs_more(result):      # 결과가 부실하면\n        plan.insert(0, '추가 검색')  # 다음 할 일로 '추가 검색'을 새로 끼워 넣는다\n\nprint(done)  # 결과: 실행 도중 계획이 바뀌며 쌓인 결과 목록\n",
+      "note": "정적 계획은 한 번 짠 순서를 고정하지만, Dynamic Planning은 중간 결과를 보고 plan 리스트를 실행 도중 바꾼다는 점이 핵심이다."
     }
   ],
   "miniproject-1": [
@@ -599,10 +695,22 @@ export const examples = {
       "note": "유사도가 1에 가까울수록 의미가 가깝다는 것을 숫자로 직접 확인할 수 있다."
     },
     {
-      "title": "if 분기로 만드는 아주 작은 에이전트(계산 도구)",
+      "title": "Supervisor가 워커를 지휘하는 최소 멀티에이전트",
       "lang": "python",
-      "code": "# 계산을 대신 해주는 도구 함수(LLM의 약점인 정확한 산수를 보완)\ndef calculator(expr):\n    return eval(expr)  # 문자열 수식을 실제로 계산(연습용, 실무에선 안전검사 필요)\n\n# 질문을 보고 도구를 쓸지 LLM에 맡길지 정하는 미니 에이전트\ndef mini_agent(question):\n    if \"계산\" in question:                 # 질문에 '계산'이 들어 있으면\n        nums = question.replace(\"계산\", \"\")  # '계산' 글자를 빼고 수식만 남김\n        return f\"계산기 결과: {calculator(nums)}\"  # 도구 호출\n    return \"이 질문은 LLM이 답할게요.\"        # 아니면 LLM에게 넘긴다는 안내\n\nprint(mini_agent(\"계산 12*3\"))   # 결과: 계산기 결과: 36\nprint(mini_agent(\"오늘 날씨는?\"))  # 결과: 이 질문은 LLM이 답할게요.",
-      "note": "거창한 프레임워크 없이도 '도구를 골라 쓰는' 에이전트의 핵심 아이디어를 if 한 줄로 체험할 수 있다."
+      "code": "# 워커 1: RAG 검색 담당(실제론 벡터DB 조회, 여기선 흉내)\ndef search_worker(state):\n    state['messages'].append('검색결과: 환불은 7일 이내 가능')\n    return state\n\n# 워커 2: 계산 담당\ndef math_worker(state):\n    state['messages'].append('계산결과: 12000원')\n    return state\n\nworkers = {'search': search_worker, 'math': math_worker}\n\n# 조정자: 상태를 보고 다음 워커 이름이나 FINISH를 정한다(여기선 간단 규칙, 실무는 LLM)\ndef supervisor(state):\n    done = ' '.join(state['messages'])\n    if '검색결과' not in done:\n        return 'search'\n    if '계산결과' not in done:\n        return 'math'\n    return 'FINISH'\n\nstate = {'messages': []}\nwhile True:\n    nxt = supervisor(state)      # 다음에 누구를 시킬지 결정\n    if nxt == 'FINISH':          # 다 끝났으면 종료\n        break\n    state = workers[nxt](state)  # 지목된 워커를 호출\n\nprint(state['messages'])  # 결과: ['검색결과: ...', '계산결과: ...']\n",
+      "note": "조정자가 순서를 정하고 워커는 한 가지 일만 한다. 실무에서는 LangGraph의 StateGraph로 같은 구조를 노드·엣지로 표현한다."
+    },
+    {
+      "title": "검색결과를 채점하고 부실하면 질문을 고쳐 다시 검색하기",
+      "lang": "python",
+      "code": "# search: top-k 조각을 돌려준다고 가정(실제론 벡터DB 조회)\ndef search(query):\n    return ['환불 규정 문서 일부...', '배송 안내 문서...']\n\n# grade: 조각이 질문에 관련 있는지 LLM에 물어 yes/no를 받는다(여기선 흉내)\ndef grade(question, chunk):\n    return 'yes' if '환불' in chunk else 'no'\n\n# rewrite_query: 질문을 더 구체적으로 고쳐 쓴다\ndef rewrite_query(q):\n    return q + ' 기간 조건 포함'\n\nquestion = '환불 되나요?'\nfor attempt in range(2):                      # 최대 2회까지 재검색\n    chunks = search(question)\n    good = [c for c in chunks if grade(question, c) == 'yes']\n    if len(good) >= 1:                          # 관련 조각이 있으면 성공\n        print('검색 성공:', good[0][:10])\n        break\n    question = rewrite_query(question)          # 부실하면 질문을 고쳐 재시도\n    print('질문 재작성 ->', question)\n",
+      "note": "검색이 부실하면 곧장 답하지 않고 질문을 고쳐 다시 찾는 이 되먹임 구조가 Agentic RAG의 핵심이다."
+    },
+    {
+      "title": "RAG를 숫자로 평가하기(faithfulness·answer relevancy)",
+      "lang": "python",
+      "code": "# 샘플 QA셋: (질문, 정답 근거, 모델 답) — 실제론 여러 개를 넣는다\nsamples = [\n    ('환불 기간은?', '환불은 7일 이내 가능', '환불은 7일 안에 됩니다'),\n    ('배송 기간은?', '배송은 2~3일 소요', '배송은 보통 2~3일 걸립니다'),\n]\n\n# 실제로는 LLM에게 0~1 점수를 매기게 하지만, 여기선 원리만 흉내 낸다\ndef faithfulness(evidence, answer):  # 답이 근거 안에서 나왔나\n    return 1.0 if any(w in answer for w in evidence.split()) else 0.0\n\ndef answer_relevancy(question, answer):  # 질문에 답을 하긴 했나\n    return 1.0 if len(answer) > 0 else 0.0\n\nfa = sum(faithfulness(e, a) for _, e, a in samples) / len(samples)\nrel = sum(answer_relevancy(q, a) for q, _, a in samples) / len(samples)\nprint(f'충실도 평균 {fa:.2f}, 관련성 평균 {rel:.2f}')  # 이 점수표가 요구되는 정량 평가 결과물\n",
+      "note": "답이 근거 안에서 나왔는지(faithfulness)와 질문에 답했는지(answer relevancy)를 0~1로 채점해 평균을 낸다. 실무에서는 RAGAS 같은 도구로 자동화한다."
     }
   ],
   "miniproject-3": [
