@@ -375,6 +375,15 @@ export const details = {
           "System/User/Assistant 역할별 메시지 분리",
           "환각 줄이기: 근거 제시 요구·모르면 모른다고 답하게 하기"
         ]
+      },
+      {
+        "h": "Prompt를 넘어서: Context → Agent·Harness",
+        "items": [
+          "Prompt의 한계: 문장만으로는 최신·사내 정보를 못 넣음",
+          "Context Engineering: 무엇을·얼마나·어떤 순서로 맥락에 넣을까",
+          "AI Agent: 모델이 도구를 골라 스스로 실행",
+          "Harness Engineering: 도구·검색·오류처리 등 주변 장치 설계"
+        ]
       }
     ],
     "labs": [
@@ -1663,6 +1672,15 @@ export const details = {
           "PydanticOutputParser: 정해진 데이터 모양으로 강제",
           "파서가 형식 지시문을 프롬프트에 자동으로 끼워 주는 원리"
         ]
+      },
+      {
+        "h": "Runnable 인터페이스가 핵심이다",
+        "items": [
+          "모든 부품(프롬프트·모델·파서·리트리버)이 Runnable",
+          "공통 메서드: invoke(한 번)·stream(조각)·batch(여러 개)",
+          "그래서 | 로 아무 부품이나 끼워 넣을 수 있음",
+          "LangGraph의 Node도 Runnable을 감싼 것 → 시그니처 동일"
+        ]
       }
     ],
     "labs": [
@@ -1722,6 +1740,15 @@ export const details = {
           "리트리버로 top-k 검색 → 프롬프트에 근거 주입",
           "'근거에 없으면 모른다'로 환각 줄이기"
         ]
+      },
+      {
+        "h": "복합 체인과 대화 메모리",
+        "items": [
+          "RunnableParallel: 여러 작업을 병렬로 동시에",
+          "RunnableLambda: 체인 중간에 커스텀 함수 삽입",
+          "RunnableWithMessageHistory: 세션별 대화 히스토리 유지",
+          "bind_tools 결과를 이 부품들과 조합해 복합 체인 구성"
+        ]
       }
     ],
     "labs": [
@@ -1780,6 +1807,15 @@ export const details = {
           "with_retry로 일시 오류 자동 재시도",
           "try/except와 폴백 메시지로 장애 격리",
           "FastAPI로 API화하고 환경변수로 키 관리"
+        ]
+      },
+      {
+        "h": "LangChain vs LangGraph, 언제 무엇을?",
+        "items": [
+          "LangChain = 연결(Chain): 직선 흐름·간단한 조합에 적합",
+          "LangGraph = 상태·흐름 제어(Graph): 반복·분기·루프에 적합",
+          "Runnable 통일성: Node가 Runnable을 감싸 invoke/stream 동일",
+          "판단: 분기·재시도·루프가 필요하면 그래프가 더 적합"
         ]
       }
     ],

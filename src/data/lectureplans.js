@@ -257,43 +257,15 @@ export const plans = {
   },
   "prompt-1": {
     "schedule": [
-      {
-        "time": "09:00–09:50",
-        "topic": "1교시 LLM은 어떻게 답을 만들까 - 다음 단어 예측과 프롬프트의 역할"
-      },
-      {
-        "time": "10:00–10:50",
-        "topic": "2교시 프롬프트 4대 구성요소(역할·지시·예시·제약) 뜯어보기"
-      },
-      {
-        "time": "11:00–11:50",
-        "topic": "3교시 실습: 나쁜 프롬프트를 좋은 프롬프트로 바꿔보기"
-      },
-      {
-        "time": "12:00–13:00",
-        "topic": "점심 휴식",
-        "lunch": true
-      },
-      {
-        "time": "13:00–13:50",
-        "topic": "4교시 Zero-shot / Few-shot / Chain-of-Thought 프롬프팅 기법"
-      },
-      {
-        "time": "14:00–14:50",
-        "topic": "5교시 System·User·Assistant 메시지 설계와 역할 분리"
-      },
-      {
-        "time": "15:00–15:50",
-        "topic": "6교시 실습: Few-shot + CoT로 업무 분류기 만들기"
-      },
-      {
-        "time": "16:00–16:50",
-        "topic": "7교시 컨텍스트 윈도우·토큰 비용과 컨텍스트 압축·요약 전략"
-      },
-      {
-        "time": "17:00–17:50",
-        "topic": "8교시 실습: 업무 프롬프트 작성 → 평가 → 개선 사이클 돌리기"
-      }
+      { "time": "09:00–09:50", "topic": "1교시 LLM은 어떻게 답을 만들까 - 다음 단어 예측과 프롬프트의 역할" },
+      { "time": "10:00–10:50", "topic": "2교시 Prompt Design Framework: 역할·지시·예시·제약 뜯어보기" },
+      { "time": "11:00–11:50", "topic": "3교시 실습: 나쁜 프롬프트를 좋은 프롬프트로 바꿔보기" },
+      { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
+      { "time": "13:00–13:50", "topic": "4교시 주요 기법: Zero-shot / Few-shot / Chain-of-Thought" },
+      { "time": "14:00–14:50", "topic": "5교시 System·User·Assistant 메시지 설계와 역할 분리" },
+      { "time": "15:00–15:50", "topic": "6교시 실습: Few-shot + CoT로 업무 분류기 만들기" },
+      { "time": "16:00–16:50", "topic": "7교시 컨텍스트 윈도우·토큰 비용과 Context Engineering(맥락 설계)" },
+      { "time": "17:00–17:50", "topic": "8교시 Prompt를 넘어서: Context → AI Agent·Harness Engineering + 개선 실습" }
     ],
     "practice": {
       "title": "고객 문의 메일을 자동 분류·요약하는 업무 프롬프트 완성하기",
@@ -1402,7 +1374,7 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "LCEL 개념: 파이프(|)로 부품을 조립한다는 발상"
+        "topic": "LCEL과 Runnable 인터페이스: 파이프(|) 조립과 invoke/stream/batch"
       },
       {
         "time": "14:00–14:50",
@@ -1459,7 +1431,7 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "[실습] 나만의 Tool 정의하고 모델에 연결하기"
+        "topic": "[실습] bind_tools로 Tool 연결 + RunnableParallel/Lambda 복합 체인"
       },
       {
         "time": "14:00–14:50",
@@ -1507,7 +1479,7 @@ export const plans = {
       },
       {
         "time": "11:00–11:50",
-        "topic": "콜백(Callback)으로 내부 동작 들여다보기"
+        "topic": "LangChain vs LangGraph 경계와 Runnable 통일성"
       },
       {
         "time": "12:00–13:00",

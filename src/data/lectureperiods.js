@@ -67,13 +67,13 @@ export const periods = {
   ],
   "prompt-1": [
     "1교시 LLM은 어떻게 답을 만들까 - 다음 단어 예측과 프롬프트의 역할",
-    "2교시 프롬프트 4대 구성요소(역할·지시·예시·제약) 뜯어보기",
+    "2교시 Prompt Design Framework: 역할·지시·예시·제약 뜯어보기",
     "3교시 실습: 나쁜 프롬프트를 좋은 프롬프트로 바꿔보기",
-    "4교시 Zero-shot / Few-shot / Chain-of-Thought 프롬프팅 기법",
+    "4교시 주요 기법: Zero-shot / Few-shot / Chain-of-Thought",
     "5교시 System·User·Assistant 메시지 설계와 역할 분리",
     "6교시 실습: Few-shot + CoT로 업무 분류기 만들기",
-    "7교시 컨텍스트 윈도우·토큰 비용과 컨텍스트 압축·요약 전략",
-    "8교시 실습: 업무 프롬프트 작성 → 평가 → 개선 사이클 돌리기"
+    "7교시 컨텍스트 윈도우·토큰 비용과 Context Engineering(맥락 설계)",
+    "8교시 Prompt를 넘어서: Context → AI Agent·Harness Engineering + 개선 실습"
   ],
   "vue-1": [
     "1교시 Vue 소개와 왜 프레임워크가 필요한가 (개념)",
@@ -289,7 +289,7 @@ export const periods = {
     "오리엔테이션: LangChain이 왜 필요한가 (LLM 앱의 고민거리)",
     "[실습] 개발환경 셋업 - 파이썬 가상환경·LangChain·API 키 연결",
     "[실습] 첫 LLM 호출 - 모델·프롬프트·출력 파서 따로 써보기",
-    "LCEL 개념: 파이프(|)로 부품을 조립한다는 발상",
+    "LCEL과 Runnable 인터페이스: 파이프(|) 조립과 invoke/stream/batch",
     "[실습] LCEL로 첫 체인 만들기 (프롬프트 | 모델 | 파서)",
     "출력 파서 깊이보기: 문자열·JSON·구조화 출력",
     "[실습] 번역기·요약기 체인 만들고 입력 바꿔보기",
@@ -298,8 +298,8 @@ export const periods = {
   "langchain-2": [
     "복습: 어제의 체인에 '기억'과 '도구'를 더하면? (오늘의 그림)",
     "[실습] 대화 메모리 - 앞말을 기억하는 챗봇 만들기",
-    "도구(Tool) 개념: LLM이 계산기·검색을 직접 쓰게 하기",
-    "[실습] 나만의 Tool 정의하고 모델에 연결하기",
+    "Tool Binding: bind_tools() 동작 원리와 도구 호출 결정",
+    "[실습] bind_tools로 Tool 연결 + RunnableParallel/Lambda 복합 체인",
     "문서 QA 큰그림: 임베딩·벡터스토어·리트리버",
     "[실습] PDF/텍스트 읽어 벡터스토어에 넣기",
     "[실습] 리트리버 결합 문서 QA 체인 완성",
@@ -308,7 +308,7 @@ export const periods = {
   "langchain-3": [
     "복습: 동작하는 챗봇을 '서비스'로 만들려면 무엇이 더 필요한가",
     "[실습] 스트리밍 응답 - 글자가 흐르듯 나오게 하기",
-    "콜백(Callback)으로 내부 동작 들여다보기",
+    "LangChain vs LangGraph 경계와 Runnable 통일성",
     "[실습] LangSmith로 체인 추적·디버깅하기",
     "비용·캐싱·에러 처리: 실서비스에서 꼭 챙길 것들",
     "[실습] 캐싱·재시도·예외 처리 붙이기",

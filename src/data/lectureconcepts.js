@@ -200,6 +200,18 @@ export const concepts = {
     {
       "term": "환각(Hallucination)",
       "desc": "모델이 사실이 아닌 내용을 자신 있게 지어내는 현상으로, 모르면서도 아는 척하는 것과 비슷하다."
+    },
+    {
+      "term": "Prompt Design Framework",
+      "desc": "좋은 프롬프트를 만들 때 챙길 요소를 역할(role)·지시(instruction)·예시(example)·제약(constraint)으로 정리한 설계 틀이다."
+    },
+    {
+      "term": "Context Engineering",
+      "desc": "프롬프트 문장만 다듬는 것을 넘어, 모델에게 '무엇을 얼마나·어떤 순서로' 맥락으로 넣을지(문서·대화·도구결과)를 설계하는 것이다."
+    },
+    {
+      "term": "Harness Engineering",
+      "desc": "프롬프트를 넘어, 모델 바깥의 도구 연결·검색·오류처리·반복 흐름 같은 '주변 장치'까지 설계해 AI Agent로 확장하는 것이다."
     }
   ],
   "vue-1": [
