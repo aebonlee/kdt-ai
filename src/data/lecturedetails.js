@@ -1499,21 +1499,22 @@ export const details = {
   "rag-2": {
     "topics": [
       {
-        "h": "Retriever 튜닝 포인트",
+        "h": "고급 리트리버 5종",
         "items": [
-          "top-k: 가져올 조각 수(3~5에서 시작)",
-          "search_type: similarity 와 mmr(다양성 확보)의 차이",
-          "score_threshold: 일정 점수 미만은 버리기",
-          "메타데이터 필터로 특정 문서만 검색하기"
+          "ParentDocumentRetriever: 작은 조각으로 검색, 넓은 원문 반환",
+          "MultiQueryRetriever: 질문을 여러 표현으로 바꿔 검색",
+          "EnsembleRetriever: 키워드·벡터 결과를 가중 합산",
+          "LongContextReorder: 중요 문서를 앞뒤로 재배치",
+          "SemanticChunker: 의미가 바뀌는 지점에서 청킹"
         ]
       },
       {
         "h": "검색 품질을 높이는 기법",
         "items": [
           "하이브리드 검색(BM25 + 벡터)",
-          "재순위 모델(Cross-Encoder, Cohere Rerank)",
-          "질문 재작성(query rewriting)",
-          "다중 질의(multi-query)로 검색 범위 넓히기"
+          "재순위(Re-ranking): Cross-Encoder · Cohere Rerank",
+          "top-k·score_threshold 튜닝, mmr로 다양성 확보",
+          "질문 재작성(query rewriting)"
         ]
       },
       {
@@ -1554,56 +1555,56 @@ export const details = {
   "rag-3": {
     "topics": [
       {
-        "h": "RAG 평가 지표",
+        "h": "RAG 확장 4단계",
         "items": [
-          "충실도(faithfulness): 답이 근거에 충실한가",
-          "답변 관련성(answer relevancy): 질문에 잘 맞는가",
-          "문맥 정밀도/재현율(context precision/recall): 검색이 좋은가",
-          "정답셋(ground truth) 만들기와 평가셋 규모"
+          "Naive: 검색 → 붙여넣기 → 생성(가장 단순)",
+          "Advanced: 재순위·질문 재작성으로 검색 개선",
+          "Modular: 검색·라우팅·생성을 부품으로 조립",
+          "Agentic: 결과가 부족하면 스스로 재검색·재작성"
         ]
       },
       {
-        "h": "성능을 올리는 튜닝 손잡이",
+        "h": "Agentic RAG를 LangGraph로",
         "items": [
-          "청킹: chunk_size·overlap·분할 기준",
-          "임베딩 모델 교체(차원·다국어·비용)",
-          "검색: k·하이브리드·재순위",
-          "한 번에 하나씩만 바꿔 비교하기"
+          "State(Messages)에 질문·검색결과·판단을 담기",
+          "노드: 검색 → 충분한지 판단 → (부족) 질문 재작성·재검색",
+          "조건 분기: 근거가 충분하면 생성, 아니면 검색 루프",
+          "종료 조건과 무한 루프 방지(최대 반복 수)"
         ]
       },
       {
-        "h": "운영(비용·지연·안정성)",
+        "h": "평가(RAGAS)와 운영",
         "items": [
-          "캐싱으로 반복 질문 비용 절감",
-          "메타데이터 필터로 검색 범위 축소",
-          "토큰 비용과 응답 지연의 trade-off",
-          "멀티 문서·접근 권한·갱신 주기 관리"
+          "충실도·답변 관련성·문맥 정밀도로 채점",
+          "청킹·임베딩·k·재순위를 한 번에 하나씩 튜닝",
+          "캐싱으로 반복 질문 비용·지연 절감",
+          "토큰 비용과 응답 지연의 trade-off 관리"
         ]
       }
     ],
     "labs": [
       {
-        "title": "Lab 1 — 작은 평가셋으로 채점해 보기",
+        "title": "Lab 1 — LangGraph로 Agentic RAG 뼈대 만들기",
         "steps": [
-          "내 문서에서 답이 분명한 질문 3개와 정답을 손으로 적는다.",
-          "실전 평가 스크립트의 questions·ground_truths 를 내 것으로 바꾼다.",
-          "evaluate 를 실행해 faithfulness 와 answer_relevancy 점수를 확인한다.",
-          "두 점수를 '기준선'으로 메모해 둔다."
+          "실전 코드의 Agentic RAG 그래프를 파일로 저장한다.",
+          "'검색 → 판단(충분?) → 생성' 3노드와 '부족하면 재검색' 분기를 확인한다.",
+          "문서에 답이 있는 질문을 넣어 한 번 검색으로 답하는지 확인한다.",
+          "일부러 애매한 질문을 넣어, 재검색 루프가 도는지(그리고 최대 횟수에서 멈추는지) 관찰한다."
         ]
       },
       {
-        "title": "Lab 2 — 한 손잡이만 바꿔 비교하기",
+        "title": "Lab 2 — RAGAS로 채점하고 한 손잡이만 바꿔 비교",
         "steps": [
-          "k 값만 4에서 6으로 바꿔 체인을 다시 만든다(다른 설정은 그대로).",
-          "같은 평가셋으로 evaluate 를 다시 실행한다.",
-          "점수가 올랐는지 내렸는지 기준선과 비교한다.",
+          "내 문서에서 답이 분명한 질문 3개와 정답을 적는다.",
+          "평가 스크립트의 questions·ground_truths 를 내 것으로 바꿔 faithfulness·answer_relevancy 를 측정한다(기준선).",
+          "k 값만 4→6으로 바꿔 다시 측정하고 기준선과 비교한다.",
           "결과를 '한 줄 실험 노트'로 남긴다(예: k 6으로 충실도 +0.05, 응답은 느려짐)."
         ]
       }
     ],
     "homework": [
-      "자신의 RAG에 질문 5개짜리 평가셋을 만들어 RAGAS 점수를 측정하고, 파라미터 하나를 바꿔 튜닝 전후 점수를 표로 정리해 제출한다.",
-      "3일간 만든 RAG 파이프라인(인덱싱→QA→평가)을 한 장으로 요약하고, 실무에 적용한다면 어떤 문서와 어떤 비용/속도 제약이 있을지 3문장으로 정리한다."
+      "Agentic RAG(재검색 루프 포함)를 완성해, 한 번에 답하는 질문과 재검색이 필요한 질문 각각의 실행 로그를 캡처해 제출한다.",
+      "질문 5개짜리 평가셋으로 RAGAS 점수를 재고, 파라미터 하나(k·청킹·재순위)를 바꿔 튜닝 전후 점수를 표로 정리해 제출한다."
     ]
   },
   "langchain-1": {

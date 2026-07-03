@@ -266,24 +266,24 @@ export const periods = {
     "8교시 [실습] 문서 인덱싱 파이프라인 완성하기"
   ],
   "rag-2": [
-    "1교시 어제 만든 인덱스 복습과 검색(Retriever)의 역할",
-    "2교시 Retriever 구성과 top-k 검색 튜닝",
-    "3교시 [실습] Retriever 로 관련 문서 가져오기",
-    "4교시 하이브리드 검색: 키워드(BM25)와 벡터의 결합",
-    "5교시 재순위(re-ranking)로 검색 품질 높이기",
-    "6교시 컨텍스트 결합 프롬프트 설계와 출처 인용",
-    "7교시 [실습] 질의응답(QA) 체인 완성하기",
-    "8교시 [실습] 출처를 제시하는 RAG 챗봇으로 마무리"
+    "1교시 어제 인덱스 복습과 Retriever의 역할, top-k·재순위 개요",
+    "2교시 하이브리드 검색(키워드 BM25 + 벡터)과 재순위(Re-ranking)",
+    "3교시 [실습] 하이브리드 + Reranker로 검색 품질 높이기",
+    "4교시 고급 리트리버: ParentDocumentRetriever·MultiQueryRetriever",
+    "5교시 고급 리트리버: EnsembleRetriever·LongContextReorder",
+    "6교시 SemanticChunker와 청킹 전략 심화",
+    "7교시 [실습] 고급 리트리버로 질의응답(QA) 체인 완성",
+    "8교시 [실습] 출처 인용 RAG 챗봇으로 마무리"
   ],
   "rag-3": [
-    "1교시 RAG는 어떻게 평가하나: 좋은 답의 기준",
-    "2교시 RAGAS 지표 이해(충실도·답변 관련성·문맥 정밀도)",
-    "3교시 [실습] 작은 평가셋으로 RAG 점수 매기기",
-    "4교시 청킹·임베딩·검색 파라미터 튜닝 전략",
-    "5교시 [실습] 파라미터 바꿔 점수 비교하기",
-    "6교시 멀티 문서·메타데이터 필터링과 운영 고려사항",
+    "1교시 RAG 확장 4단계: Naive → Advanced → Modular → Agentic",
+    "2교시 Agentic RAG 개념: 검색·판단을 에이전트 루프로",
+    "3교시 LangGraph 기본 구조(Messages·State·Graph) 빠르게",
+    "4교시 [실습] LangGraph로 Agentic RAG 뼈대 만들기",
+    "5교시 RAG 평가: RAGAS(충실도·답변 관련성·문맥 정밀도)",
+    "6교시 [실습] 평가셋으로 RAG 점수 매기고 개선하기",
     "7교시 비용·지연(latency)·캐싱 최적화",
-    "8교시 [실습] 캐싱 적용과 3일 통합 RAG 마무리"
+    "8교시 [실습] Agentic RAG 파이프라인 통합·마무리"
   ],
   "langchain-1": [
     "오리엔테이션: LangChain이 왜 필요한가 (LLM 앱의 고민거리)",

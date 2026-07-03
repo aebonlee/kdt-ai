@@ -617,8 +617,12 @@ export const theory = {
   "rag-3": {
     "theory": [
       {
+        "h": "Agentic RAG — 한 번 검색으로 끝내지 않는다",
+        "body": "기본(Naive) RAG는 '검색 한 번 → 생성 한 번'이다.\n그런데 질문이 애매하거나 검색이 빗나가면, 나쁜 근거를 붙잡고 나쁜 답을 만들어 버린다.\nAgentic RAG는 사람처럼 행동한다 — 가져온 근거가 부족하면 '다시 찾아볼까?'를 스스로 판단해, 질문을 더 구체적으로 고쳐 재검색한다.\n\nLangGraph로는 검색(retrieve)·판단(grade)·재작성(rewrite)·생성(generate)을 노드로 만들고, '근거가 충분한가?'라는 조건 분기로 루프를 돈다.\n충분하면 생성으로 빠지고, 부족하면 질문을 고쳐 다시 검색한다. 단, 무한 루프를 막으려면 최대 반복 횟수를 반드시 정해 둔다.\n확장 단계로 보면 Naive → Advanced → Modular → Agentic의 마지막 단계로, 검색 자체가 똑똑해지는 방식이다."
+      },
+      {
         "h": "RAG는 느낌이 아니라 숫자로 평가한다",
-        "body": "RAG를 만들고 나면 '잘 되는 것 같다'는 느낌만으로 끝내기 쉽다.\n하지만 느낌은 사람마다 다르고 어제와 오늘이 다르기 때문에, 개선 여부를 객관적으로 알 수 없다.\n그래서 시험 채점표처럼 점수를 매기는 평가가 필요하다.\n\nRAGAS는 대표적인 평가 도구로, 두 가지를 특히 많이 본다.\n첫째 충실도는 답이 가져온 문서에 충실한지, 즉 없는 말을 지어내지 않았는지를 본다.\n둘째 답변 관련성은 답이 질문에 제대로 맞는지를 본다.\n이 점수를 기준선으로 잡아 두면, 무언가를 바꿨을 때 좋아졌는지 나빠졌는지를 숫자로 확인할 수 있다."
+        "body": "RAG를 만들고 나면 '잘 되는 것 같다'는 느낌만으로 끝내기 쉽다.\n하지만 느낌은 사람마다 다르고 어제와 오늘이 다르기 때문에, 개선 여부를 객관적으로 알 수 없다.\n그래서 시험 채점표처럼 점수를 매기는 평가가 필요하다.\n\nRAGAS는 대표적인 평가 도구로, 세 가지를 많이 본다.\n충실도는 답이 가져온 문서에 충실한지(지어내지 않았는지), 답변 관련성은 답이 질문에 맞는지, 문맥 정밀도는 검색해 온 문서 중 실제로 쓸모 있던 비율을 본다.\n이 점수를 기준선으로 잡아 두면, 무언가를 바꿨을 때 좋아졌는지 나빠졌는지를 숫자로 확인할 수 있다."
       },
       {
         "h": "튜닝과 운영: 품질·비용·속도의 줄다리기",
@@ -627,10 +631,16 @@ export const theory = {
     ],
     "realCode": [
       {
+        "title": "LangGraph로 만드는 최소 Agentic RAG(근거 부족하면 재검색)",
+        "lang": "python",
+        "code": "# 근거가 부족하면 질문을 고쳐 다시 검색하는 Agentic RAG (설치: pip install langgraph)\nfrom typing_extensions import TypedDict  # 상태의 모양을 정의\nfrom langgraph.graph import StateGraph, START, END  # 그래프 본체와 시작/끝\nfrom langchain_openai import ChatOpenAI\n# retriever, format_docs 는 2일차 rag-2에서 만든 것을 재사용한다고 가정\n\nllm = ChatOpenAI(model='gpt-4o-mini', temperature=0)\n\nclass State(TypedDict):  # 그래프가 들고 다닐 상태\n    question: str   # 현재 질문(재작성되며 바뀔 수 있음)\n    context: str    # 검색해 온 근거\n    tries: int      # 재검색 횟수(무한 루프 방지)\n    answer: str     # 최종 답 또는 판단 결과\n\ndef retrieve(state):  # 검색 노드\n    docs = retriever.invoke(state['question'])  # 현재 질문으로 검색\n    return {'context': format_docs(docs), 'tries': state.get('tries', 0) + 1}\n\ndef grade(state):  # 판단 노드 — 근거가 충분한가?\n    v = llm.invoke(f\"질문에 답하기에 근거가 충분하면 YES, 아니면 NO만 출력.\\n질문:{state['question']}\\n근거:{state['context']}\").content\n    return {'answer': '충분' if 'YES' in v else '부족'}\n\ndef rewrite(state):  # 질문 재작성 노드\n    better = llm.invoke(f\"검색이 잘 되도록 질문을 더 구체적으로 바꿔줘:\\n{state['question']}\").content\n    return {'question': better}\n\ndef generate(state):  # 생성 노드\n    ans = llm.invoke(f\"아래 근거만 사용해 답하라.\\n근거:{state['context']}\\n질문:{state['question']}\").content\n    return {'answer': ans}\n\ndef route(state):  # 조건 분기 — 충분하면 생성, 부족하고 3회 미만이면 재작성\n    if state['answer'] == '충분':\n        return 'generate'\n    return 'rewrite' if state['tries'] < 3 else 'generate'\n\ng = StateGraph(State)\ng.add_node('retrieve', retrieve); g.add_node('grade', grade)\ng.add_node('rewrite', rewrite); g.add_node('generate', generate)\ng.add_edge(START, 'retrieve'); g.add_edge('retrieve', 'grade')\ng.add_conditional_edges('grade', route, {'generate': 'generate', 'rewrite': 'rewrite'})\ng.add_edge('rewrite', 'retrieve'); g.add_edge('generate', END)  # 재작성하면 다시 검색\napp = g.compile()\n\nresult = app.invoke({'question': '연차 며칠?', 'tries': 0})  # 애매한 질문\nprint(result['answer'])  # 결과: (필요하면 재검색을 거쳐) 근거에 기반한 답이 나옴",
+        "note": "grade에서 '부족'이 나오면 rewrite→retrieve로 되돌아가 다시 검색합니다.\ntries로 최대 3회 제한을 두어 무한 루프를 막는 것이 Agentic RAG의 안전장치다."
+      },
+      {
         "title": "RAGAS로 RAG 답변을 자동 채점하는 평가 스크립트",
         "lang": "python",
-        "code": "# RAG 답변의 품질을 RAGAS로 자동 채점한다(설치: pip install ragas datasets)\nfrom datasets import Dataset  # 평가용 데이터를 표 형태로 묶는 도구\nfrom ragas import evaluate  # 실제 채점을 수행하는 함수\nfrom ragas.metrics import faithfulness, answer_relevancy  # 충실도·답변 관련성 지표\n\n# 1) 평가에 쓸 질문·정답을 사람이 미리 준비한다\nquestions = [\"연차 휴가는 며칠인가요?\", \"환불은 며칠 내 가능한가요?\"]  # 평가 질문 목록\nground_truths = [\"연 15일입니다\", \"구매 후 7일 이내 가능합니다\"]  # 각 질문의 모범 답안\n\n# 2) 우리 RAG가 만든 답과 근거 컨텍스트를 모은다(qa_chain은 2일차에서 만든 체인이라고 가정)\nanswers = []      # 체인이 생성한 답을 담을 리스트\ncontexts = []     # 답의 근거가 된 조각들을 담을 리스트\nfor q in questions:  # 질문을 하나씩 돌면서\n    answers.append(qa_chain.invoke(q))  # 체인으로 답을 생성해 저장\n    docs = retriever.invoke(q)          # 같은 질문으로 근거 조각을 가져오고\n    contexts.append([d.page_content for d in docs])  # 조각 본문만 리스트로 저장\n\n# 3) 모은 자료를 RAGAS가 요구하는 형식의 데이터셋으로 묶는다\ndataset = Dataset.from_dict({\n    \"question\": questions,        # 질문 열\n    \"answer\": answers,            # RAG가 만든 답 열\n    \"contexts\": contexts,         # 근거 조각 열(질문마다 리스트)\n    \"ground_truth\": ground_truths # 모범 답안 열\n})\n\n# 4) 충실도와 답변 관련성 두 지표로 채점을 실행한다\nresult = evaluate(dataset, metrics=[faithfulness, answer_relevancy])  # 채점 수행\nprint(result)  # 결과: {'faithfulness': 0.82, 'answer_relevancy': 0.79} 같은 점수표 출력",
-        "note": "사람이 만든 정답셋과 RAG의 답을 비교해 충실도·관련성을 숫자로 매겨 준다.\n파라미터를 바꾼 뒤 이 점수를 다시 재면 개선 여부를 객관적으로 알 수 있다."
+        "code": "# RAG 답변의 품질을 RAGAS로 자동 채점한다(설치: pip install ragas datasets)\nfrom datasets import Dataset  # 평가용 데이터를 표 형태로 묶는 도구\nfrom ragas import evaluate  # 실제 채점을 수행하는 함수\nfrom ragas.metrics import faithfulness, answer_relevancy, context_precision  # 지표 3종\n\n# 1) 평가에 쓸 질문·정답을 사람이 미리 준비한다\nquestions = [\"연차 휴가는 며칠인가요?\", \"환불은 며칠 내 가능한가요?\"]  # 평가 질문 목록\nground_truths = [\"연 15일입니다\", \"구매 후 7일 이내 가능합니다\"]  # 각 질문의 모범 답안\n\n# 2) 우리 RAG가 만든 답과 근거 컨텍스트를 모은다(qa_chain은 2일차에서 만든 체인이라고 가정)\nanswers = []      # 체인이 생성한 답을 담을 리스트\ncontexts = []     # 답의 근거가 된 조각들을 담을 리스트\nfor q in questions:  # 질문을 하나씩 돌면서\n    answers.append(qa_chain.invoke(q))  # 체인으로 답을 생성해 저장\n    docs = retriever.invoke(q)          # 같은 질문으로 근거 조각을 가져오고\n    contexts.append([d.page_content for d in docs])  # 조각 본문만 리스트로 저장\n\n# 3) 모은 자료를 RAGAS가 요구하는 형식의 데이터셋으로 묶는다\ndataset = Dataset.from_dict({\n    \"question\": questions,        # 질문 열\n    \"answer\": answers,            # RAG가 만든 답 열\n    \"contexts\": contexts,         # 근거 조각 열(질문마다 리스트)\n    \"ground_truth\": ground_truths # 모범 답안 열\n})\n\n# 4) 충실도·답변 관련성·문맥 정밀도 세 지표로 채점을 실행한다\nresult = evaluate(dataset, metrics=[faithfulness, answer_relevancy, context_precision])\nprint(result)  # 결과: {'faithfulness': 0.82, 'answer_relevancy': 0.79, 'context_precision': 0.88} 형태",
+        "note": "사람이 만든 정답셋과 RAG의 답을 비교해 세 지표를 숫자로 매겨 준다.\n파라미터를 바꾼 뒤 이 점수를 다시 재면 개선 여부를 객관적으로 알 수 있다."
       }
     ]
   },
