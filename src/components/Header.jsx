@@ -4,6 +4,7 @@ import ThemeToggle from './ThemeToggle'
 import AuthButtons from './AuthButtons'
 import { useAuth } from '../contexts/AuthContext'
 import { isAdmin } from '../config/admin'
+import AdminMenu from './AdminMenu'
 
 const nav = [
   { to: '/', label: 'About', end: true },
@@ -31,15 +32,8 @@ export default function Header() {
             {course.subtitle} · {course.cohort}
           </span>
           <span className="topbar-right">
-            {/* 관리자(강사) 로그인 시에만 띠줄에 노출 */}
-            {admin && (
-              <NavLink
-                to="/admin"
-                className={({ isActive }) => `topbar-admin${isActive ? ' active' : ''}`}
-              >
-                🔒 자료실
-              </NavLink>
-            )}
+            {/* 강사(최고 관리자) 로그인 시에만 띠줄에 관리 풍선메뉴 노출 */}
+            {admin && <AdminMenu />}
             <AuthButtons />
             <ThemeToggle />
           </span>

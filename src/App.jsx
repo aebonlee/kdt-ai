@@ -23,6 +23,7 @@ const Board = lazy(() => import('./pages/Board'))
 const BoardDetail = lazy(() => import('./pages/BoardDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Admin = lazy(() => import('./pages/Admin'))
+const AdminTeams = lazy(() => import('./pages/AdminTeams'))
 
 // lazy 청크를 내려받는 동안 잠깐 보여줄 로딩 표시
 function PageFallback() {
@@ -61,6 +62,7 @@ export default function App() {
 
             {/* 관리자(강사) 전용 자료실 — 구글드라이브 강의자료 열람 */}
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
+            <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>

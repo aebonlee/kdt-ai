@@ -1,0 +1,60 @@
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+// 강사(최고 관리자) 전용 풍선 메뉴 — 띠줄에서 관리 화면으로 바로가기.
+const ITEMS = [
+  { icon: '👥', label: '학생 명단', desc: '전체 학습자·진도', to: '/dashboard' },
+  { icon: '🧩', label: '팀별 명단', desc: '프로젝트 팀 편성', to: '/admin/teams' },
+  { icon: '📂', label: '자료실', desc: '강의자료(구글드라이브)', to: '/admin' },
+]
+
+export default function AdminMenu() {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const navigate = useNavigate()
+
+  // 바깥 클릭 · ESC 로 닫기
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  const go = (to) => { setOpen(false); navigate(to) }
+
+  return (
+    <span className="admin-menu" ref={ref}>
+      <button
+        type="button"
+        className="topbar-admin"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        🔒 관리 <span className="admin-caret">▾</span>
+      </button>
+
+      {open && (
+        <div className="admin-pop" role="menu">
+          <div className="admin-pop-arrow" />
+          <p className="admin-pop-title">강사 관리 메뉴</p>
+          {ITEMS.map((it) => (
+            <button key={it.to} type="button" role="menuitem" className="admin-pop-item" onClick={() => go(it.to)}>
+              <span className="admin-pop-ico">{it.icon}</span>
+              <span>
+                <span className="admin-pop-label">{it.label}</span>
+                <span className="admin-pop-desc">{it.desc}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </span>
+  )
+}
