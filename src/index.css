@@ -166,7 +166,7 @@ ul { list-style: none; }
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--skala-indigo); padding: 8px 12px; border-radius: 8px;
 }
-.brand-logo img { height: 20px; display: block; }
+.brand-logo img { height: 20px; width: auto; display: block; }
 .brand-sep { width: 1px; height: 18px; background: var(--line-strong); }
 .brand-sub {
   font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
