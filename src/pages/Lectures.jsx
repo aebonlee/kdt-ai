@@ -234,20 +234,31 @@ export default function Lectures() {
                 <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
                   📖 상세 학습 내용
                 </h3>
-                <div className="grid grid-3" style={{ marginTop: 12 }}>
-                  {detail.topics.map((t, i) => (
-                    <div key={i} className="card">
-                      <h4 style={{ fontSize: 14, fontWeight: 800, color: 'var(--gold)', marginBottom: 8 }}>{t.h}</h4>
-                      <ul style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {t.items.map((it, k) => (
-                          <li key={k} style={{ position: 'relative', paddingLeft: 16, fontSize: 13.5, color: 'var(--navy-700)' }}>
-                            <span style={{ position: 'absolute', left: 2, top: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)' }} />
-                            {it}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                {/* 기본 2열(2×2). 내용이 긴 박스는 전체폭으로 늘려(3+1 / 1개) 가독성 확보 */}
+                <div className="grid grid-2" style={{ marginTop: 12 }}>
+                  {detail.topics.map((t, i) => {
+                    const items = t.items || []
+                    const isLong = items.length >= 6 || items.join('').length > 240
+                    return (
+                      <div key={i} className="card" style={isLong ? { gridColumn: '1 / -1' } : undefined}>
+                        <h4 style={{ fontSize: 14, fontWeight: 800, color: 'var(--gold)', marginBottom: 8 }}>{t.h}</h4>
+                        <ul
+                          style={
+                            isLong
+                              ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '6px 24px', margin: 0, padding: 0, listStyle: 'none' }
+                              : { display: 'flex', flexDirection: 'column', gap: 6, margin: 0, padding: 0, listStyle: 'none' }
+                          }
+                        >
+                          {items.map((it, k) => (
+                            <li key={k} style={{ position: 'relative', paddingLeft: 16, fontSize: 13.5, color: 'var(--navy-700)' }}>
+                              <span style={{ position: 'absolute', left: 2, top: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)' }} />
+                              {it}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  })}
                 </div>
               </>
             )}
