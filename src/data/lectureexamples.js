@@ -1041,7 +1041,7 @@ export const examples = {
   ]
 }
 
-import { examplesExtra } from './lectureexamples2'
+import { examplesExtra } from './lectureexamples2.js'
 
 export const examplesFor = (subjectId, day) => {
   const key = `${subjectId}-${day}`

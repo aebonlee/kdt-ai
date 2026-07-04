@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } from '../data/curriculum'
-import { planFor } from '../data/lectureplans'
-import { examplesFor } from '../data/lectureexamples'
-import { conceptsFor } from '../data/lectureconcepts'
-import { detailsFor } from '../data/lecturedetails'
-import { theoryFor } from '../data/lecturetheory'
-import { realCodeExtraFor } from '../data/lecturetheory2'
-import { periodsFor, PERIOD_TIMES } from '../data/lectureperiods'
+import { PERIOD_TIMES } from '../data/lectureperiods'
 import CodeBlock from '../components/CodeBlock'
+
+// 과목별 강의 데이터는 현재 과목만 동적 로드 → 초기 강의안 청크에서 미사용 과목 제외.
+// (src/data/lectures/<subjectId>.js 는 prebuild/predev 코드모드가 생성)
+const subjectModules = import.meta.glob('../data/lectures/*.js', { import: 'default' })
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 const monthLabel = (m) => `${Number(m.slice(5))}월`
@@ -46,16 +44,44 @@ export default function Lectures() {
 
   const subj = subjectById(current.subjectId)
   const d = dayOf(current)
-  const plan = planFor(current.subjectId, current.day)
-  const codeExamples = examplesFor(current.subjectId, current.day)
-  const keyConcepts = conceptsFor(current.subjectId, current.day)
-  const detail = detailsFor(current.subjectId, current.day)
-  const deepTheory = theoryFor(current.subjectId, current.day)
-  const realCodes = [
-    ...(deepTheory?.realCode || []),
-    ...realCodeExtraFor(current.subjectId, current.day),
-  ]
-  const dayPeriods = periodsFor(current.subjectId, current.day)
+
+  // 현재 과목 강의 데이터를 동적 로드. 같은 과목 내 일차 전환은 재로드 없이 즉시,
+  // 과목이 바뀔 때만 짧게 로드. stale 가드로 늦게 도착한 이전 과목 데이터의 덮어쓰기 방지.
+  const [subjData, setSubjData] = useState(null)
+  const [dataLoading, setDataLoading] = useState(true)
+  useEffect(() => {
+    let cancelled = false
+    const sid = current.subjectId
+    setDataLoading(true)
+    setSubjData(null) // 과목 전환 시 이전 과목 내용이 잠깐 비치지 않게 즉시 비움
+    const loader = subjectModules[`../data/lectures/${sid}.js`]
+    if (!loader) {
+      setDataLoading(false)
+      return
+    }
+    loader()
+      .then((mod) => {
+        if (!cancelled) {
+          setSubjData(mod)
+          setDataLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setDataLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [current.subjectId])
+
+  const dd = subjData ? subjData[`${current.subjectId}-${current.day}`] : null
+  const plan = dd?.plan || null
+  const codeExamples = dd?.examples || []
+  const keyConcepts = dd?.concepts || []
+  const detail = dd?.detail || null
+  const deepTheory = dd?.theory || null
+  const realCodes = dd?.realCodes || []
+  const dayPeriods = dd?.periods || null
 
   // 탭 구성: 월별 그룹, 단 한 월에 지역이 여럿이면 지역별로 분리 (예: 10월 판교 / 10월 광주)
   const tabs = []
@@ -191,6 +217,13 @@ export default function Lectures() {
                     <li key={i}>{o}</li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* 과목 데이터 로딩 중(과목 전환 시 잠깐) */}
+            {dataLoading && !dd && (
+              <div style={{ marginTop: 20, padding: '48px 20px', textAlign: 'center', color: 'var(--ink-soft)' }}>
+                강의안을 불러오는 중…
               </div>
             )}
 

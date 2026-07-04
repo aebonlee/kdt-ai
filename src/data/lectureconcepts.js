@@ -224,8 +224,8 @@ export const concepts = {
       "desc": "본격 모델링 전에 데이터를 그래프·통계로 훑어보며 특징과 이상한 점을 찾는 단계다."
     },
     {
-      "term": "matplotlib/seaborn",
-      "desc": "데이터를 막대·선·점 그래프로 그려 주는 시각화 도구로, 숫자를 그림으로 바꿔 한눈에 보게 한다."
+      "term": "matplotlib/Plotly",
+      "desc": "데이터를 막대·선·점 그래프로 그려 주는 시각화 도구로, matplotlib은 정적 그래프, Plotly는 마우스로 확대·확인되는 인터랙티브 그래프를 그린다."
     },
     {
       "term": "Polars",
