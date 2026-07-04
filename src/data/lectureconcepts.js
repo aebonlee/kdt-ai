@@ -1170,6 +1170,18 @@ export const concepts = {
     {
       "term": "RAG",
       "desc": "질문과 관련된 문서를 먼저 찾아(Retrieval) 그 내용을 근거로 답을 생성(Generation)하게 하는 방식이다."
+    },
+    {
+      "term": "bind_tools (Tool Binding)",
+      "desc": "모델에게 쓸 수 있는 도구 목록(이름·설명·인자 모양)을 알려 주어, 모델이 필요할 때 '이 도구를 이런 인자로 불러 달라'고 요청(tool_calls)하게 만드는 연결 작업이다. 실제 실행은 우리가 한다."
+    },
+    {
+      "term": "RunnableLambda",
+      "desc": "LLM이 아닌 평범한 파이썬 함수를 체인 중간에 부품처럼 끼워 넣게 해 주는 도구다(예: 검색된 문서 조각들을 한 문자열로 합치기)."
+    },
+    {
+      "term": "tool_calls",
+      "desc": "모델이 직접 계산·검색하지 않고 '어떤 도구를 어떤 인자로 부르고 싶다'고 적어 돌려주는 주문서로, 우리가 이를 보고 실제 함수를 실행한다."
     }
   ],
   "langchain-3": [
@@ -1200,6 +1212,18 @@ export const concepts = {
     {
       "term": "토큰(Token)",
       "desc": "모델이 글을 처리하는 최소 단위로, 대략 단어 조각에 해당하며 이 개수에 비례해 비용이 매겨진다."
+    },
+    {
+      "term": "LangGraph",
+      "desc": "처리 단계를 점(Node), 이동 규칙을 선(Edge)으로 그려 분기·반복·상태 관리가 얽힌 복잡한 흐름을 다루는 도구다. LangChain이 '연결'이라면 LangGraph는 '그 연결의 흐름 제어'다."
+    },
+    {
+      "term": "ReAct 패턴",
+      "desc": "에이전트가 '생각(Reason)→도구 호출(Act)→결과 관찰(Observe)'을 답이 나올 때까지 반복하는 방식으로, 본질이 루프라 LangGraph로 자연스럽게 표현된다."
+    },
+    {
+      "term": "Runnable 통일성",
+      "desc": "프롬프트·모델·파서·리트리버는 물론 LangGraph의 Node까지 모두 Runnable이라, invoke/stream 같은 사용법이 어디서나 똑같아 서로 끼워 넣을 수 있다는 성질이다."
     }
   ],
   "serving-1": [

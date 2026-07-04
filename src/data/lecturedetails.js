@@ -90,6 +90,16 @@ export const details = {
           "충돌 메시지 없이 'Fast-forward' 또는 머지 완료가 뜨는지 확인한다.",
           "`git log --oneline --graph` 로 브랜치가 main 에 합쳐진 모습을 확인한다."
         ]
+      },
+      {
+        "title": "Lab 4. 잘못한 작업 되돌리기 — restore·reset·revert 직접 비교",
+        "steps": [
+          "note.txt 를 만들고 '1번 줄' 을 적어 add → commit 으로 기준 커밋을 만든다.",
+          "note.txt 를 엉뚱한 내용으로 덮어쓴 뒤 `git diff` 로 무엇이 바뀌었는지(+/-) 확인하고, `git restore note.txt` 로 편집을 취소해 원래대로 돌아오는지 본다.",
+          "note.txt 에 '2번 줄' 을 추가해 커밋한 뒤, 메시지가 마음에 안 든다고 가정하고 `git reset --soft HEAD~1` 로 커밋만 무른다. 파일 내용은 그대로 남고 스테이지에 다시 올라와 있는지 `git status` 로 확인한 뒤, 메시지를 고쳐 다시 커밋한다.",
+          "`git log --oneline` 으로 취소하고 싶은 과거 커밋의 7자리 번호를 확인하고, `git revert 그번호` 를 실행해 '되돌리는 새 커밋' 이 하나 더 쌓이는지 본다.",
+          "reset 은 역사를 지우고 revert 는 역사를 남긴다는 차이를, '이미 GitHub에 올린 커밋이라면 왜 revert 를 써야 하는지' 한 문장으로 팀원과 정리한다."
+        ]
       }
     ],
     "homework": [
@@ -413,6 +423,16 @@ export const details = {
           "sklearn Pipeline(전처리+모델)을 구성한다.",
           "joblib으로 파이프라인을 저장한다."
         ]
+      },
+      {
+        "title": "Lab. groupby·pivot_table·merge 로 표 요약·결합 (2교시 실습)",
+        "steps": [
+          "seaborn 의 tips 데이터를 불러온다: import seaborn as sns; df = sns.load_dataset('tips').",
+          "groupby: df.groupby('day')['tip'].mean() 으로 요일별 평균 팁을 구한다.",
+          "pivot_table: df.pivot_table(index='day', columns='smoker', values='tip', aggfunc='mean') 로 요일×흡연여부 교차표를 만든다.",
+          "merge: 요일별 평균을 담은 작은 표를 df 에 pd.merge(df, 평균표, on='day') 로 붙여 각 행에 '그 요일 평균'을 결합한다.",
+          "각 행의 tip 이 그 요일 평균보다 큰지 비교하는 파생 열을 만들어 결과를 확인한다."
+        ]
       }
     ],
     "homework": [
@@ -495,6 +515,16 @@ export const details = {
           "모델에게 실존하지 않을 법한 통계·논문을 물어 답을 받아 본다.",
           "그 답의 근거(출처)를 요구해 답이 어떻게 달라지는지 관찰한다.",
           "왜 지어내는지를 확률적 생성 관점에서 한 줄로 정리한다."
+        ]
+      },
+      {
+        "title": "Lab. System 메시지만 바꿔 챗봇 성격 갈아끼우기 (역할 분리 체감)",
+        "steps": [
+          "1) system 없이 user에만 '고객 문의에 답해줘'를 넣고 같은 문의('환불 언제 되나요?')에 답하게 해 기본 톤을 본다.",
+          "2) system에 '너는 근엄한 법률 상담사다. 반말 금지, 3문장 이내'를 넣고 똑같은 user 문의를 던진다.",
+          "3) 이번엔 system만 '너는 발랄한 20대 친구다. 이모지를 섞어 답해라'로 바꾸고 같은 문의를 던진다.",
+          "4) user 문장은 하나도 안 바꿨는데 system만으로 말투·형식·길이가 통째로 달라지는지 세 결과를 나란히 놓고 비교한다.",
+          "5) '규칙·성격은 System, 처리할 내용은 User'라는 역할 분리 원칙을 한 줄로 정리해 적는다."
         ]
       }
     ],
@@ -640,6 +670,16 @@ export const details = {
           "2단계 아래 버튼 컴포넌트에서 inject로 테마를 받는다",
           "받은 테마 값을 버튼 배경색에 적용해 깊은 자식까지 전달됨을 확인한다"
         ]
+      },
+      {
+        "title": "Lab 4. 라이프사이클과 컴포저블 묶어 연습하기",
+        "steps": [
+          "composables/useClock.js 를 만들고, ref 로 현재 시각 문자열 상태 now 를 선언한다",
+          "useClock 안에서 onMounted 로 setInterval 을 걸어 1초마다 now 를 new Date().toLocaleTimeString() 으로 갱신한다",
+          "useClock 안에서 onUnmounted 로 clearInterval 을 호출해 타이머를 정리한 뒤 { now } 를 반환한다",
+          "컴포넌트에서 const { now } = useClock() 로 꺼내 <p>{{ now }}</p> 로 화면에 실시간 시계를 표시한다",
+          "시계 컴포넌트를 v-if 로 켰다 껐다 하며, 껐을 때 onUnmounted 가 불려 타이머가 멈추는지 콘솔 로그로 확인한다"
+        ]
       }
     ],
     "homework": [
@@ -693,6 +733,26 @@ export const details = {
           "stores/counter.js 에 defineStore 로 count 상태와 inc 액션을 만든다",
           "두 개의 서로 다른 컴포넌트에서 같은 스토어를 import 한다",
           "한쪽에서 inc 를 호출했을 때 다른 쪽 숫자도 함께 늘어나는지 확인한다"
+        ]
+      },
+      {
+        "title": "Lab 3. 동적 파라미터로 목록→상세 왕복 만들기",
+        "steps": [
+          "라우트에 { path: '/product/:id', component: ProductDetail } 를 추가한다",
+          "ProductList.vue 에서 v-for 로 상품을 찍고 각 항목을 <router-link :to=\"'/product/' + p.id\"> 로 감싼다",
+          "ProductDetail.vue 에서 const route = useRoute() 후 route.params.id 로 번호를 읽어 화면에 표시한다",
+          "watch(() => route.params.id, 불러오기함수) 를 걸어, 상세에서 다른 상품으로 바로 이동해도 데이터가 갱신되는지 확인한다",
+          "상세 화면에 <router-link to=\"/\">목록으로</router-link> 를 두어 왕복 이동이 새로고침 없이 되는지 본다"
+        ]
+      },
+      {
+        "title": "Lab 4. 네비게이션 가드로 로그인 검문 붙이기",
+        "steps": [
+          "보호할 라우트에 meta: { requiresAuth: true } 를 달고, /login 라우트를 하나 만든다",
+          "로그인 상태를 흉내 낼 isLoggedIn 값(간단히 localStorage 또는 Pinia 스토어)을 둔다",
+          "router.beforeEach((to) => { ... }) 를 등록해 to.meta.requiresAuth 이면서 로그인 안 됐으면 return '/login' 을 반환한다",
+          "로그아웃 상태에서 주소창에 보호 경로를 직접 입력해 /login 으로 튕겨 나가는지 확인한다",
+          "isLoggedIn 을 true 로 바꾼 뒤 같은 경로로 정상 진입되는지 확인한다"
         ]
       }
     ],
@@ -867,6 +927,27 @@ export const details = {
           "README.md 를 열어 주제 한 문장, 기능 목록, 담당자, 일정을 적는다.",
           "'git add .' 와 'git commit -m \"기획·설계 초안\"' 으로 첫 커밋을 남긴다."
         ]
+      },
+      {
+        "title": "Lab 3. 주제→시나리오→기능명세→와이어프레임 설계 워크숍 (2·3·4교시 통합 실습)",
+        "steps": [
+          "팀이 만들 서비스를 한 문장으로 확정한다('___를 위한 ___ 앱, AI로 ___를 해준다' 빈칸 채우기).",
+          "사용자 시나리오를 '누가 / 언제 / 무엇을 하고 싶다' 형식으로 3개, 포스트잇에 적어 붙인다.",
+          "시나리오에서 나온 기능들을 MoSCoW 4칸(Must/Should/Could/Won't)에 나눠 붙이고, Must는 3개 이하로 줄인다(AI 기능 1개를 반드시 Must에 포함).",
+          "Must 기능만으로 화면 3장(메인·목록·상세 또는 입력)을 종이에 와이어프레임으로 그린다(색·디자인 없이 상자와 글자만).",
+          "각 화면에 '여기서 어디로 이동하는가'를 화살표로 이어 화면 흐름도를 완성한다.",
+          "완성한 4칸판·와이어프레임 사진을 찍어 README에 붙이고 커밋한다."
+        ]
+      },
+      {
+        "title": "Lab 4. 데이터 모델과 아키텍처 한 장 그리기 (5교시 실습)",
+        "steps": [
+          "와이어프레임 화면에 보이는 정보를 모두 적어 필드 목록을 뽑는다(예: 이름·별점·태그·메모).",
+          "각 필드의 이름(영문)·자료형·예시값을 표로 정리한다(예: id: number: 1 / name: string: '행복 김밥' / rating: number: 4.5).",
+          "이 표를 그대로 data/mock.json 한 덩어리로 옮겨 적는다(항목 3개 이상, 여기서 정한 키 이름이 나중에 DB 컬럼이 됨을 강조).",
+          "종이에 '브라우저 화면 → LLM API → 데이터 저장소'를 상자와 화살표로 그린다.",
+          "우리 AI 기능의 데이터 흐름(입력→요청→응답→표시)을 화살표 위에 한국어 문장으로 적어 아키텍처 그림을 완성하고 사진을 README에 첨부한다."
+        ]
       }
     ],
     "homework": [
@@ -922,6 +1003,17 @@ export const details = {
           "ref로 title·memo 변수를 만들고 v-model로 입력칸과 연결한다.",
           "제출 함수에서 빈칸 검사 후 store의 add()를 호출한다.",
           "추가 직후 입력칸을 빈 문자열로 비우고, 목록 맨 위에 새 카드가 뜨는지 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 3. AI 요약 기능을 화면에 붙이기 (7교시 실습)",
+        "steps": [
+          "프로젝트 루트에 .env 파일을 만들어 VITE_OPENAI_API_KEY=sk-... 를 적고, .gitignore에 .env가 포함돼 있는지 확인한다(키가 깃에 올라가면 즉시 폐기해야 함).",
+          "요약을 담당할 컴포넌트에 summary·loading·error 세 개의 반응형 변수(ref)를 만든다.",
+          "'AI 요약' 버튼을 누르면 loading을 true로 바꾸고, fetch로 LLM API에 메모와 프롬프트를 POST한다.",
+          "응답 JSON에서 요약 문장만 꺼내 summary에 담고 카드 아래에 표시한다.",
+          "실패 시 catch에서 error에 안내 문구를 담아 빨간 글씨로 보여주고, finally에서 loading을 false로 되돌린다.",
+          "브라우저에서 메모를 입력해 요약이 뜨는지, 요청 중 버튼이 잠기는지, 일부러 키를 틀리게 넣어 에러 문구가 뜨는지까지 확인하고 커밋한다."
         ]
       }
     ],
@@ -980,6 +1072,26 @@ export const details = {
           "package.json 의 scripts 에 \"deploy\": \"gh-pages -d dist\" 를 추가한다.",
           "'npm run build' 후 'npm run deploy' 를 실행한다.",
           "잠시 뒤 'https://<아이디>.github.io/저장소이름/' 에 접속해 동작을 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 3. 통합 테스트 시나리오 돌리고 버그 목록 만들기 (1·3교시 실습)",
+        "steps": [
+          "팀원들의 작업을 하나의 main 브랜치로 합치고(merge), 충돌이 나면 함께 해결한 뒤 npm run dev로 앱을 켠다.",
+          "'실사용자 시나리오' 순서(메인 접속→목록 보기→상세 이동→새 글 추가→AI 기능 실행→삭제)를 한 명이 천천히 클릭한다.",
+          "각 단계마다 기대한 대로 동작하는지, 콘솔에 빨간 에러가 없는지 확인한다.",
+          "어긋나는 지점을 '버그 목록' 표에 [증상 / 재현 순서 / 심각도(높음·낮음)] 형식으로 적는다.",
+          "심각도 높음(앱이 멈춤·핵심 기능이 안 됨)부터 고칠 순서를 매긴다."
+        ]
+      },
+      {
+        "title": "Lab 4. 버그 재현→수정→재검증 사이클 돌리기 (2교시 실습)",
+        "steps": [
+          "버그 목록에서 심각도 높은 항목 하나를 고른다.",
+          "재현 순서대로 눌러 버그를 눈앞에서 다시 만들어낸다(재현이 안 되면 조건을 더 좁힌다).",
+          "콘솔의 에러 메시지와 줄 번호를 읽고, 의심 구간에 console.log를 찍어 값이 어디서 이상해지는지 원인을 좁힌다.",
+          "원인 한 곳만 고쳐 저장한 뒤, 같은 순서로 다시 눌러 해결됐는지 확인한다.",
+          "주변 기능(목록·추가·AI 요약)도 다시 눌러 새 버그가 생기지 않았는지 재검증하고, 버그 목록에 해결 표시를 한 뒤 커밋한다."
         ]
       }
     ],
@@ -1048,6 +1160,26 @@ export const details = {
           "답변 말투가 바뀌는지 비교한다.",
           "temperature 값을 0.1과 0.9로 바꿔 결과 다양성을 비교한다."
         ]
+      },
+      {
+        "title": "Lab3. PromptTemplate으로 다국어 번역기 만들기",
+        "steps": [
+          "'{언어}로 번역해 줘: {문장}' 양식의 PromptTemplate을 만든다.",
+          "GET /api/translate?lang=&text= 로 두 값을 받아 render(Map.of(...))로 프롬프트를 완성한다.",
+          "lang을 영어·일본어·프랑스어로 바꿔 호출해 결과를 비교한다.",
+          "system 메시지('결과만 답해')를 잠깐 지우고 호출해, 설명이 덧붙는 등 답이 지저분해지는 것을 관찰한다.",
+          "문자열 이어붙이기(user(\"...\"+text)) 방식과 비교해 어느 쪽이 실수가 적은지 팀과 한 줄로 정리한다."
+        ]
+      },
+      {
+        "title": "Lab4. 자주 나는 오류 잡고 마무리 점검",
+        "steps": [
+          "일부러 api-key 환경변수를 지우고 실행해 401 인증 오류 메시지를 눈으로 확인한다(원인: 키 누락/오타).",
+          "application.yml의 model 이름을 존재하지 않는 값으로 바꿔 모델 오류를 재현하고, 로그의 어느 줄에 단서가 있는지 찾는다.",
+          "응답이 느릴 때를 대비해 spring.ai...chat.options에 타임아웃 관련 옵션을 넣고 동작을 확인한다.",
+          "오늘 만든 /api/chat, system 파라미터 버전, PromptTemplate 번역기를 한 번씩 호출해 최종 정상 동작을 확인한다.",
+          "막혔던 지점과 해결법을 '증상 → 원인 → 해결' 3줄로 팀 위키에 남긴다."
+        ]
       }
     ],
     "homework": [
@@ -1086,6 +1218,16 @@ export const details = {
       }
     ],
     "labs": [
+      {
+        "title": "Lab0. pgvector 띄우고 연결 확인하기",
+        "steps": [
+          "docker run 으로 pgvector/pgvector:pg16 컨테이너를 띄우고 docker ps 로 Up 상태를 확인한다.",
+          "application.yml에 datasource(url·username·password)와 spring.ai.vectorstore.pgvector.initialize-schema=true 를 적는다.",
+          "앱을 실행하면 vector_store 테이블이 자동 생성되는지 psql(또는 DBeaver)로 확인한다.",
+          "SELECT count(*) FROM vector_store; 로 지금은 0건임을 확인해 둔다(뒤 Lab1 적재 후 다시 세어 비교하기 위함).",
+          "컨테이너를 껐다 켰을 때 데이터가 사라지는지 관찰하고, 영속 볼륨(-v)이 왜 필요한지 한 줄로 정리한다."
+        ]
+      },
       {
         "title": "Lab1. 문서 한 개 적재하기",
         "steps": [
@@ -1176,6 +1318,39 @@ export const details = {
           ".stream().content()로 Flux를 반환한다.",
           "브라우저로 호출해 글자가 실시간으로 나오는지 본다."
         ]
+      },
+      {
+        "title": "Lab4. 외부 MCP 서버 도구 붙이기",
+        "steps": [
+          "오늘 만든 MCP Server 프로젝트를 ./gradlew build 로 jar로 만든다.",
+          "클라이언트 앱에 spring-ai-starter-mcp-client 의존성을 추가한다.",
+          "application.yml의 spring.ai.mcp.client.stdio.connections 에 서버 jar 실행 명령(command: java, args: -jar ...)을 등록한다.",
+          "ChatClient.Builder에 자동 주입된 ToolCallbackProvider(mcpTools)를 defaultToolCallbacks로 붙인다.",
+          "'3번 사원 정보 알려줘'로 호출해 서버의 findEmployee 도구가 실행되는지 양쪽 로그로 확인한다.",
+          "MCP 서버를 끄고 다시 호출해, 도구를 못 쓸 때 LLM이 어떻게 답하는지 관찰한다."
+        ]
+      },
+      {
+        "title": "Lab5. 도구 두 개를 스스로 쓰는 에이전트 만들기",
+        "steps": [
+          "getWeather, getAttractions 두 @Tool을 한 컨트롤러에 만든다.",
+          "defaultSystem으로 '목표를 이루려 도구를 스스로 골라 호출하라'는 지시를 준다.",
+          "'맑으면 야외, 비 오면 실내로 부산 반나절 코스 짜줘'로 호출한다.",
+          "로그에서 날씨 조회 → 명소 조회 순으로 도구가 연쇄 호출되는지 확인한다.",
+          "system에 '도구는 최대 2번만 호출' 같은 제약을 넣어 행동이 어떻게 달라지는지 비교한다.",
+          "도구 없이 같은 질문을 던진 경우와 답의 구체성을 비교해 팀과 한 줄로 정리한다."
+        ]
+      },
+      {
+        "title": "Lab6. MCP·에이전트 통합 시연과 마무리 점검",
+        "steps": [
+          "원격 MCP 서버 도구(findEmployee)와 로컬 @Tool(getWeather 등)을 한 에이전트에 함께 등록한다.",
+          "두 도구가 모두 필요한 질문(예: '3번 사원이 근무하는 도시 날씨 알려줘')을 던진다.",
+          "도구 호출 순서와 최종 답을 화면/로그로 캡처한다.",
+          "일부러 MCP 서버를 꺼서 연결 실패를 만들고, try-catch로 사용자 친화 메시지로 바꾼다.",
+          "3일간 배운 흐름(ChatClient → PromptTemplate → RAG → Tool → MCP → Agent)을 한 장 그림으로 정리한다.",
+          "팀 앞에서 30초로 시연하고, 우리가 코드로 짜지 않았는데 자동으로 일어난 일이 무엇인지 한 줄로 설명한다."
+        ]
       }
     ],
     "homework": [
@@ -1254,6 +1429,28 @@ export const details = {
           "model.num_parameters() 를 출력해 파라미터 개수를 확인한다.",
           "숫자가 약 5억(0.5B)인지 눈으로 확인한다.",
           "메모리가 부족하면 더 작은 모델로 바꿔 다시 시도한다."
+        ]
+      },
+      {
+        "title": "Lab 3 — Hugging Face 모델 카드 제대로 읽기",
+        "steps": [
+          "huggingface.co 에서 'Qwen/Qwen2.5-0.5B-Instruct' 페이지를 연다.",
+          "상단 요약에서 파라미터 규모(0.5B)와 지원 언어(한국어 포함 여부)를 확인한다.",
+          "'License' 항목을 찾아 상업적 사용이 가능한 라이선스인지 확인한다(회사 도입 시 필수 체크).",
+          "'Intended use'/'Limitations' 부분을 읽고 이 모델이 무엇에 강하고 무엇에 약한지 두 줄로 메모한다.",
+          "모델 이름 뒤 '-Instruct' 유무의 차이(대화용으로 다듬어졌는지)를 옆 사람과 설명해 본다.",
+          "같은 방식으로 'google/gemma-2-2b-it' 카드도 열어 라이선스·언어·크기를 표로 비교한다."
+        ]
+      },
+      {
+        "title": "Lab 4 — 우리 팀 sLLM Use Case 도출 워크숍",
+        "steps": [
+          "우리 회사·부서에서 '외부로 데이터를 보내면 안 되는' 업무를 3개 적어 본다(예: 계약서 요약, 상담로그 분류, 사내 DB 질의).",
+          "각 업무에 대해 '작업 난이도(상/중/하)'와 '데이터 민감도(상/중/하)'를 표로 매긴다.",
+          "두 값을 놓고 sLLM이 맞는지(민감도 높음+난이도 중하), 큰 API가 맞는지 판정한다.",
+          "sLLM으로 정한 업무 하나를 골라 입력(무엇을 넣고)·출력(무엇을 받는지)을 한 문장씩 정의한다.",
+          "그 업무를 오늘 배운 로컬 서빙으로 구현한다면 어떤 순서일지 3단계로 스케치한다.",
+          "팀별로 1분씩 발표하고, 강사와 함께 '가장 현실적인 첫 과제'를 하나 정한다."
         ]
       }
     ],
@@ -1356,6 +1553,18 @@ export const details = {
           "PeftModel로 베이스+my-lora를 다시 불러온다.",
           "질문을 던져 학습 결과가 그대로 재현되는지 확인한다."
         ]
+      },
+      {
+        "title": "Lab 4 — 사내 문서 3개로 미니 RAG 붙이기",
+        "steps": [
+          "우리 팀 규정·매뉴얼에서 한두 문장짜리 사실 문장 3~5개를 골라 docs 리스트로 적는다.",
+          "'pip install sentence-transformers numpy' 로 임베딩 라이브러리를 설치한다.",
+          "examples의 rag.py 코드를 그대로 만들고 docs만 우리 문장으로 교체한다.",
+          "Ollama가 켜져 있는지(ollama run qwen2.5:0.5b) 확인한다.",
+          "우리 문서로만 답할 수 있는 질문을 던져 모델이 올바른 근거를 인용하는지 확인한다.",
+          "일부러 문서에 없는 질문을 던져 '근거에 없다'고 답하는지, 아니면 지어내는지(환각) 관찰하고 한 줄 코멘트를 단다.",
+          "top_k를 1에서 2로 늘려 답변이 어떻게 달라지는지 비교한다."
+        ]
       }
     ],
     "homework": [
@@ -1410,6 +1619,16 @@ export const details = {
           "`from sklearn.metrics import precision_score, recall_score` 를 가져온다.",
           "`print(precision_score(y_te, pred, average='macro'))` 와 `print(recall_score(y_te, pred, average='macro'))` 를 실행한다.",
           "두 숫자가 비슷한지 보고, 차이가 크면 어떤 품종에서 차이가 났는지 혼동행렬로 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 3 · 모델 세 개 대결 + 혼동행렬로 오답 분석",
+        "steps": [
+          "`from sklearn.tree import DecisionTreeClassifier`, `from sklearn.ensemble import RandomForestClassifier`, `from sklearn.neighbors import KNeighborsClassifier` 를 모두 불러온다.",
+          "앞에서 나눠 둔 X_tr, y_tr 로 세 모델을 각각 `.fit()` 한 뒤, `for name, m in [('트리',tree),('랜덤포레스트',rf),('KNN',knn)]:` 반복문으로 `m.score(X_te, y_te)` 를 출력해 정확도를 나란히 비교한다.",
+          "가장 점수가 낮게 나온 모델을 골라 `confusion_matrix(y_te, m.predict(X_te))` 를 찍어, 어느 품종을 어느 품종으로 헷갈렸는지 대각선 밖의 칸을 찾는다.",
+          "`classification_report` 로 그 모델의 품종별 정밀도·재현율을 확인하고, '어느 품종의 재현율이 가장 낮은가, 그 이유가 무엇일지'를 한 줄로 메모한다.",
+          "(마무리 토의) 세 모델 중 무엇을 실제 서비스에 쓸지, 정확도 말고 어떤 근거로 골랐는지 팀별로 한 문장씩 발표한다."
         ]
       }
     ],
@@ -1468,6 +1687,24 @@ export const details = {
           "학습이 끝난 뒤 `plt.plot(losses); plt.xlabel('epoch'); plt.ylabel('loss'); plt.show()` 를 실행한다.",
           "그래프가 왼쪽 위에서 오른쪽 아래로 내려가면 학습이 잘 된 것이다."
         ]
+      },
+      {
+        "title": "Lab 0 · 텐서와 자동미분 손으로 만져보기",
+        "steps": [
+          "`import torch` 후 `t = torch.tensor([[1.,2.,3.],[4.,5.,6.]])` 로 2x3 텐서를 만들고 `t.shape`, `t.dtype` 을 출력해 모양과 자료형을 확인한다.",
+          "`t * 2`, `t + 10`, `t.sum()`, `t.mean(dim=0)` 을 차례로 실행하며 넘파이처럼 원소별 연산과 축(dim) 기준 집계가 되는 것을 눈으로 본다.",
+          "`x = torch.tensor(2.0, requires_grad=True)` 로 '미분을 추적하는' 텐서를 만들고, `y = x**2 + 3*x` 를 계산한 뒤 `y.backward()` 를 부른다.",
+          "`print(x.grad)` 를 실행해 7.0 이 나오는지 확인한다(2x+3 에 x=2 를 넣은 값). 이 자동미분이 뒤에 나올 역전파의 정체임을 메모한다."
+        ]
+      },
+      {
+        "title": "Lab 3 · 학습 루프를 한 줄씩 뜯어 돌리기",
+        "steps": [
+          "본문 손글씨 실습의 학습 루프에서 `opt.zero_grad()`, `out = model(X_tr)`, `loss = loss_fn(out, y_tr)`, `loss.backward()`, `opt.step()` 다섯 줄이 각각 '초기화→순전파→채점→역전파→이동'의 어느 단계인지 주석으로 적는다.",
+          "루프 안에 `if epoch % 10 == 0: print(epoch, round(loss.item(),4))` 를 넣어 10 에폭마다 손실이 줄어드는 흐름을 출력한다.",
+          "일부러 `opt.zero_grad()` 줄을 주석 처리하고 다시 돌려, 손실이 이상하게 요동치거나 학습이 망가지는 것을 확인한 뒤 다시 살린다(기울기 초기화의 중요성 체감).",
+          "학습률을 0.01 → 0.5 로 키워 손실이 발산(NaN/폭증)하는지, 0.0001 로 줄여 거의 안 줄어드는지 각각 관찰하고 '적당한 보폭'의 감을 한 줄로 정리한다."
+        ]
       }
     ],
     "homework": [
@@ -1523,6 +1760,25 @@ export const details = {
           "같은 에폭 수로 다시 학습시킨다.",
           "학습 정확도와 평가 정확도의 차이가 Lab 1 보다 줄었는지 비교한다.",
           "드롭아웃 비율을 0.5 로 올려 한 번 더 돌려보고, 너무 높이면 학습 정확도까지 낮아지는지 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 0 · CNN 한 층이 이미지를 어떻게 바꾸는지 들여다보기",
+        "steps": [
+          "본문 손글씨(load_digits) 데이터에서 이미지 한 장을 골라 `plt.imshow(X[0].reshape(8,8), cmap='gray')` 로 원본을 눈으로 본다.",
+          "`conv = nn.Conv2d(1, 4, 3, padding=1)` 로 필터 4개짜리 합성곱 층을 만들고, 이미지 한 장을 `(1,1,8,8)` 모양으로 넣어 `out = conv(img)` 를 실행한다.",
+          "`out.shape` 을 출력해 채널이 4개(필터 4개)로 늘고 가로세로는 padding 덕에 8x8 로 유지됨을 확인한다.",
+          "`for i in range(4): plt.subplot(1,4,i+1); plt.imshow(out[0,i].detach(), cmap='gray')` 로 필터 4개가 만든 서로 다른 특징 지도를 나란히 띄워, 필터마다 강조하는 부분이 다름을 관찰한다.",
+          "이어서 `nn.MaxPool2d(2)` 를 통과시키면 크기가 4x4 로 절반이 되는 것을 확인하고 '특징은 남기고 크기는 줄인다'를 메모한다."
+        ]
+      },
+      {
+        "title": "Lab 3 · 미니 개선 챌린지 — 내 손으로 정확도 올리기",
+        "steps": [
+          "본문 CNN 의 현재 평가 정확도를 기준선(baseline)으로 기록한다.",
+          "아래 카드 중 두 가지 이상을 골라 하나씩만 바꿔가며(한 번에 하나!) 평가 정확도가 오르는지 표로 기록한다: (a) 합성곱 필터 수 8→16 늘리기, (b) 드롭아웃 비율 0.3↔0.5 조절, (c) 학습률 0.01↔0.005, (d) 에폭 늘리되 학습/평가 정확도 격차를 함께 관찰(조기종료 감각), (e) 합성곱 층 하나 더 쌓기.",
+          "각 변경이 '왜' 효과가 있었는지/없었는지를 7교시에서 배운 하이퍼파라미터·과적합 관점으로 한 줄씩 설명한다.",
+          "가장 좋았던 조합을 최종 모델로 정하고, 기준선 대비 몇 %p 올랐는지와 '다음에 데이터가 100장뿐이라면 전이학습을 어떻게 쓸지'를 3문장으로 정리해 발표한다."
         ]
       }
     ],
@@ -1606,6 +1862,28 @@ export const details = {
           "`model.feature_importances_` 로 각 피처의 중요도를 확인한다.",
           "중요도를 내림차순 정렬해 상위 피처만 골라낸다.",
           "선택한 피처로만 다시 학습해 점수가 유지·향상되는지 비교한다."
+        ]
+      },
+      {
+        "title": "Lab 4. 날짜·수치·텍스트에서 파생 피처 만들기",
+        "steps": [
+          "날짜 열을 pd.to_datetime 으로 변환한 뒤 .dt.month·.dt.dayofweek 로 월·요일을 뽑는다.",
+          "요일이 5 이상이면 1이 되는 '주말가입' 파생 피처를 (조건 >= 5).astype(int) 로 만든다.",
+          "두 수치 열을 나눠 '방문당 구매액' 같은 비율 피처를 만들어 소비 밀도를 표현한다.",
+          "pd.cut(연속값, bins=..., labels=['소액','중간','고액']) 으로 금액을 구간 범주로 묶는다.",
+          "텍스트 열에서 .str.len()·.str.split().str.len() 으로 글자수·단어수를, .str.contains('키워드').astype(int) 로 키워드 포함 여부를 만든다.",
+          "만든 파생 피처마다 '왜 도움이 될지'를 한 줄씩 메모하고 df.head() 로 결과를 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 5. 피처 엔지니어링 전·후 성능 비교하기",
+        "steps": [
+          "원본 숫자 피처만으로 X_before 를 구성하고, RandomForestClassifier 를 cross_val_score(cv=5) 로 평가해 평균 점수를 기록한다.",
+          "Lab 4 에서 만든 파생 피처와 성별 인코딩을 더해 X_after 를 만든다.",
+          "모델과 교차검증 설정을 똑같이 두고 X_after 의 평균 점수를 구한다(모델이 아니라 피처만 바뀌었음을 확실히 한다).",
+          "두 평균 점수를 함께 출력하고 향상폭(after - before)을 계산해 얼마나 올랐는지 확인한다.",
+          "모델을 한 번 fit 한 뒤 feature_importances_ 로 어떤 피처가 기여했는지 상위 순으로 확인한다.",
+          "'가장 크게 기여한 파생 피처 1개가 왜 도움이 되었는지'를 한 줄로 해석해 노트북에 적는다."
         ]
       }
     ],
@@ -1754,6 +2032,16 @@ export const details = {
           "VotingClassifier 앙상블 점수를 구한다.",
           "세 점수를 print 로 나란히 출력해 가장 좋은 것을 고른다."
         ]
+      },
+      {
+        "title": "Lab4. 배깅·부스팅·스태킹 성능 겨루기",
+        "steps": [
+          "load_breast_cancer 로 데이터를 불러온다.",
+          "RandomForestClassifier(배깅)와 GradientBoostingClassifier(부스팅)의 cross_val_score(cv=5) 평균을 각각 구해 출력한다.",
+          "StackingClassifier 로 두 모델을 묶고(final_estimator=LogisticRegression) 같은 방식으로 점수를 구한다.",
+          "세 점수를 나란히 print 하고, 이 데이터에서는 배깅·부스팅·스태킹 중 무엇이 가장 좋았는지 한 줄로 정리한다.",
+          "(여유가 되면) RandomForest 의 n_estimators 를 100→300 으로 바꿔 점수와 학습 시간이 어떻게 달라지는지 메모한다."
+        ]
       }
     ],
     "homework": [
@@ -1808,6 +2096,16 @@ export const details = {
           "chunk_size 를 100에서 300으로 바꿔 실행하고 조각 수가 줄어드는지 확인한다.",
           "chunk_overlap 을 0으로 바꿔 실행하고 조각 경계의 문맥이 어떻게 끊기는지 첫 두 조각을 비교한다.",
           "어떤 설정이 우리 문서에 적당한지 한 줄 메모로 남긴다."
+        ]
+      },
+      {
+        "title": "Lab 1-B — 첫 PDF를 실제로 로딩해 보기 (3교시 후반)",
+        "steps": [
+          "작업 폴더에 'docs' 폴더를 만들고 검색 대상 PDF 1개(예: 회사 규정집, 논문)를 그 안에 복사한다.",
+          "터미널에서 'export OPENAI_API_KEY=sk-...'(윈도우는 set)로 API 키를 환경변수에 넣는다.",
+          "PyPDFLoader('docs/파일명.pdf')로 로더를 만들고 .load()로 페이지 리스트를 받는다.",
+          "'print(len(pages))'로 전체 페이지 수를, 'print(pages[0].page_content[:200])'로 첫 페이지 앞부분을 출력해 실제 텍스트가 잘 읽혔는지 눈으로 확인한다.",
+          "pages[0].metadata를 출력해 source(파일명)와 page(쪽번호)가 자동으로 붙어 있는지 확인한다 — 이 메타데이터가 나중에 출처 인용의 재료가 된다."
         ]
       }
     ],
@@ -2078,6 +2376,17 @@ export const details = {
           "RunnableBranch로 감정이 negative일 때만 '사과+담당자 이관' 답변을, 그 외엔 '감사 답변'을 생성한다.",
           "긍정 댓글 1개·부정 댓글 1개를 넣어 분기가 실제로 갈리는지 확인한다."
         ]
+      },
+      {
+        "title": "Lab. bind_tools로 모델에 계산기 손발 달기",
+        "steps": [
+          "langchain_core.tools의 @tool 데코레이터로 multiply(a: int, b: int) 함수를 만들고, 독스트링에 '두 정수를 곱한다'라고 또렷이 적는다(이 설명이 모델의 선택 근거가 된다).",
+          "ChatAnthropic(model='claude-opus-4-8').bind_tools([multiply]) 로 모델에 도구를 묶는다.",
+          "model.invoke('1234 곱하기 5678은 얼마야?') 를 실행하고 결과의 .tool_calls 를 출력한다.",
+          "모델이 직접 답을 지어내지 않고 {'name':'multiply','args':{'a':1234,'b':5678}} 형태의 '주문서'만 돌려주는지 확인한다.",
+          "그 주문서의 args를 꺼내 실제 multiply(**args)를 파이썬으로 호출해 정답 7006652를 구한다(판단은 모델, 실행은 나).",
+          "마지막으로 '안녕, 반가워' 같은 인사말을 보내면 tool_calls가 비어 있는지 비교해, 모델이 '필요할 때만' 도구를 부른다는 것을 눈으로 확인한다."
+        ]
       }
     ],
     "homework": [
@@ -2146,6 +2455,28 @@ export const details = {
           "set_llm_cache(InMemoryCache())로 캐시를 켠다.",
           "'uvicorn app:app --reload'로 서버를 띄운다.",
           "/docs에서 질문을 넣어 답을 받고, 같은 질문 두 번으로 캐시 효과를 확인한다."
+        ]
+      },
+      {
+        "title": "Lab. LangSmith로 체인 속 들여다보기",
+        "steps": [
+          "smith.langchain.com에 가입해 API 키를 발급받는다.",
+          "터미널에 환경변수 세 줄을 등록한다: export LANGCHAIN_TRACING_V2=true / export LANGCHAIN_API_KEY=... / export LANGCHAIN_PROJECT=skala-langchain.",
+          "코드는 한 줄도 고치지 않고, 1일차에 만든 요약·번역 체인을 서로 다른 입력으로 3번 invoke한다(환경변수만으로 추적이 자동으로 켜진다).",
+          "LangSmith 대시보드의 skala-langchain 프로젝트에 실행 기록(트레이스)이 쌓이는지 확인한다.",
+          "트레이스 하나를 열어 '프롬프트에 실제로 들어간 입력 → 모델이 준 답 → 각 단계 소요 시간 → 사용한 토큰 수'가 단계별로 보이는지 확인한다.",
+          "세 번 실행 중 가장 오래 걸린 단계와 토큰을 가장 많이 쓴 단계를 찾아 한 줄로 적는다(어디를 최적화해야 할지 근거가 된다)."
+        ]
+      },
+      {
+        "title": "Lab. 캐싱·재시도·예외처리 붙여 서비스처럼 만들기",
+        "steps": [
+          "set_llm_cache(InMemoryCache())로 캐시를 켠다.",
+          "똑같은 질문을 두 번 invoke하고 time으로 1차·2차 응답 시간을 재, 2차가 사실상 0초(캐시에서 꺼냄)인지 확인한다.",
+          "모델에 .with_retry(stop_after_attempt=3)를 붙여 일시적 오류에 자동 재시도가 되게 만든다.",
+          "체인 호출을 try/except로 감싸, 실패하면 '잠시 후 다시 시도해 주세요'를 돌려주게 한다.",
+          "일부러 잘못된 API 키(예: 끝 글자 하나 바꾸기)로 실행해, 프로그램이 빨간 에러로 죽는 대신 친절한 대체 메시지가 나오는지 확인한다.",
+          "다시 올바른 키로 되돌려 정상 동작을 확인하고, '캐싱=비용/속도, 재시도+예외=안정성'이라는 역할 구분을 한 줄로 정리한다."
         ]
       }
     ],
@@ -2524,6 +2855,17 @@ export const details = {
           "app.invoke(None, config) 로 이어서 실행한다.",
           "최종 출력이 5줄 요약으로 바뀌었는지 확인한다(사람이 흐름에 개입해 결과를 바꾼 사례)."
         ]
+      },
+      {
+        "title": "Lab 3. Fan-out으로 소주제 3개를 동시에 조사하기",
+        "steps": [
+          "multiagent.py 옆에 fanout.py 파일을 새로 만들고, langgraph.types에서 Send를, typing에서 Annotated를, 표준 라이브러리 operator를 import 한다.",
+          "상태 State에 subtopics(조사할 소주제 리스트)와 results를 두되, results는 Annotated[list, operator.add]로 선언해 병렬 결과가 '합쳐지도록' 만든다(덮어쓰기 방지).",
+          "소주제 하나를 받아 조사 결과 문자열을 리스트로 반환하는 research_one 노드와, 결과 개수를 출력하는 gather 노드를 만든다.",
+          "fan_out 함수에서 소주제마다 Send(\"research_one\", {\"topic\": t})를 리스트로 반환해, START에서 add_conditional_edges(START, fan_out, [\"research_one\"])로 여러 갈래를 동시에 펼친다.",
+          "research_one→gather, gather→END 엣지를 연결하고 compile 한 뒤, subtopics=[\"배터리\",\"충전인프라\",\"정책보조금\"]으로 실행해 results에 3개가 모두 모이는지 확인한다(기대: '모인 결과 수: 3').",
+          "research_one 안에 import time; time.sleep(2)를 넣고, 순차 실행이라면 6초가 걸릴 일이 병렬이라 2초 안팎에 끝나는지 체감해 본다(Fan-out의 이득 확인)."
+        ]
       }
     ],
     "homework": [
@@ -2605,6 +2947,28 @@ export const details = {
           "`query(query_texts=['동물'], where={'cat':'pet'}, n_results=2)` 로 pet 카테고리 안에서만 검색한다.",
           "필터를 뺐을 때와 결과가 어떻게 달라지는지 두 경우를 출력해 비교한다."
         ]
+      },
+      {
+        "title": "Lab 4 — FAISS에서 Qdrant로 옮겨 같은 결과 확인하기 (5교시)",
+        "steps": [
+          "`pip install qdrant-client` 로 설치한다.",
+          "오전에 만든 문장 6~8개와 그 임베딩(384차원)을 그대로 재사용한다.",
+          "`QdrantClient(':memory:')` 로 로컬 Qdrant를 띄우고 `create_collection('docs', VectorParams(size=384, distance=Distance.COSINE))` 으로 컬렉션을 만든다.",
+          "각 문장을 `PointStruct(id, vector, payload={'text': 원문})` 로 `upsert` 한다.",
+          "같은 질문으로 `query_points(..., limit=3)` 검색해, FAISS 때와 상위 3개 문서가 같은지 표로 비교한다(기대: 거의 동일).",
+          "payload에 주제 태그(예: `{'cat': 'pet'}`)를 넣고 필터 검색(`query_filter`)으로 특정 주제 안에서만 검색되는지 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 5 — 하이브리드 + 재순위로 상위 문서 바로잡기 (7교시)",
+        "steps": [
+          "`pip install rank-bm25` 로 BM25 라이브러리를 설치한다.",
+          "고유명사·숫자가 섞인 문장 6~8개를 준비한다(예: 모델명 'GPT-4o', 환불 규정 '7일' 등).",
+          "BM25로 키워드 순위를, 임베딩 코사인으로 벡터 순위를 각각 구한다.",
+          "두 순위를 RRF(`1/(k+순위)`, k=60)로 합쳐 하이브리드 순위를 만든다.",
+          "`CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')` 로 하이브리드 상위 후보를 재채점해 재순위한다.",
+          "'벡터만' vs '하이브리드' vs '하이브리드+재순위' 세 경우의 top-3를 나란히 출력해, 어느 방법이 정답 문서를 가장 위로 올렸는지 한 줄로 메모한다."
+        ]
       }
     ],
     "homework": [
@@ -2669,6 +3033,27 @@ export const details = {
           "같은 thread_id='alice'로 '내 이름이 뭐였지?'를 물어 '앨리스'라고 답하는지 확인한다.",
           "thread_id='bob'으로 같은 질문을 던져 이름을 모른다고 답하는지 확인해 세션이 실제로 분리됨을 검증한다."
         ]
+      },
+      {
+        "title": "Lab 0. 아키텍처 경계 그리기 워크숍(5교시)",
+        "steps": [
+          "화이트보드나 종이에 네 박스를 그린다: Frontend · FastAPI(Backend) · VectorDB(RAG) · AI Agent(+MCP 서버).",
+          "박스 사이에 화살표를 그리고 '무엇이 오가는지'를 적는다(예: Frontend→FastAPI = 질문 텍스트+thread_id, Agent→MCP = 도구 호출, RAG→Agent = 검색된 근거 조각).",
+          "각 박스에 담당 팀원 이름을 적어 병렬 개발이 가능하도록 소유권을 나눈다.",
+          "박스 사이 '계약'을 한 줄씩 정한다(예: /chat 은 {question, thread_id}를 받아 {answer}를 돌려준다). 이 계약만 지키면 안쪽 구현은 각자 자유롭게 진행한다.",
+          "그림을 사진으로 찍어 팀 README.md 에 붙인다 — 이후 3일간 이 그림이 기준선이 된다."
+        ]
+      },
+      {
+        "title": "Lab 4. 통합 스모크 테스트 체크리스트로 Day1 마감(8교시)",
+        "steps": [
+          "server.py(MCP)와 main.py(FastAPI)를 각각 실행해 둘 다 에러 없이 뜨는지 확인한다.",
+          "curl -X POST http://localhost:8000/chat -H 'Content-Type: application/json' -d '{\"question\":\"우리 문서에서 환불 규정 알려줘\",\"thread_id\":\"smoke\"}' 로 200 응답과 answer 필드가 오는지 본다.",
+          "로그에서 실제로 MCP 도구(search_docs 등)가 호출됐는지 확인한다 — 도구를 안 거치고 모델이 지어냈다면 통합이 덜 된 것이다.",
+          "같은 thread_id='smoke'로 후속 질문을 던져 앞 대화 맥락이 이어지는지 확인한다.",
+          "일부러 빈 question이나 이상한 값을 보내 서버가 500으로 죽지 않고 방어하는지 본다(안 되면 오늘 표시만 해 두고 Day3에서 보강).",
+          "5개 항목의 통과/실패를 표로 남겨 팀 채널에 공유한다. 실패한 경계가 내일 아침 첫 수정 대상이다."
+        ]
       }
     ],
     "homework": [
@@ -2723,6 +3108,26 @@ export const details = {
           "기존 체인/에이전트를 그대로 한 번 실행한다.",
           "smith.langchain.com 대시보드에서 방금 실행의 trace(단계별 흐름)를 연다.",
           "가장 오래 걸린 단계와 토큰을 가장 많이 쓴 단계를 찾아 메모한다."
+        ]
+      },
+      {
+        "title": "Lab 3. 프론트에서 토큰이 흐르게 렌더링하기(5교시)",
+        "steps": [
+          "Next.js 앱을 준비하고 'npm install ai' 로 Vercel AI SDK를 설치한다.",
+          "app/api/chat/route.ts 에 realCode의 프록시 라우트를 붙여넣어 FastAPI의 /stream 을 연결한다.",
+          "Chat.tsx 컴포넌트에 useChat 예제를 붙여 messages를 화면에 렌더한다.",
+          "'npm run dev' 후 질문을 보내, 답이 한꺼번에 뜨지 않고 글자가 타이핑되듯 흘러나오는지 확인한다.",
+          "네트워크 탭에서 응답 Content-Type이 text/event-stream 이고 조각이 나눠 도착하는지 확인한다. 한꺼번에 오면 어딘가에서 버퍼링되는 것이니 no-cache·프록시 설정을 점검한다."
+        ]
+      },
+      {
+        "title": "Lab 4. Multi-Agent 진행을 에이전트별로 나눠 스트리밍(6교시)",
+        "steps": [
+          "realCode의 multi_stream 예제를 참고해 '검색요원→작성요원' 두 단계를 event 태그로 구분해 흘려보내는 /multi 엔드포인트를 만든다.",
+          "각 조각을 'event: {에이전트이름}\\ndata: {내용}\\n\\n' 형식으로 보내 발신자를 태깅한다.",
+          "프론트에서는 브라우저 EventSource로 /multi 를 구독하고, event 이름별로 다른 말풍선(다른 색·다른 열)에 조각을 이어붙인다.",
+          "질문을 던져 '검색요원'의 진행과 '작성요원'의 진행이 각각 별도 영역에서 동시에 흐르는지 확인한다.",
+          "작성요원이 검색요원의 결과를 기다려야 한다면, 검색요원 스트림이 끝나는 신호(예: event: 검색요원 data: [DONE])를 프론트가 받고 작성요원 영역을 활성화하도록 순서를 표시한다."
         ]
       }
     ],
@@ -2779,6 +3184,37 @@ export const details = {
           "메인 에이전트 뒤에 검증 노드를 두고, 실패면 재생성하도록 분기(Conditional Edge)한다.",
           "일부러 근거 없는 답을 만들어 넣어 검증에서 걸러지는지 테스트한다.",
           "통과/실패 로그를 남겨 검증이 실제로 동작함을 확인한다."
+        ]
+      },
+      {
+        "title": "Lab 3. 세션을 Redis로 옮겨 Stateless로 만들기(4교시)",
+        "steps": [
+          "로컬에 Redis를 띄운다: 'docker run -p 6379:6379 redis' (또는 이미 있는 Redis 사용).",
+          "'pip install langgraph-checkpoint-redis' 로 Redis 체크포인터를 설치한다.",
+          "Day1의 MemorySaver를 realCode의 RedisSaver로 교체한다(연결 문자열 redis://localhost:6379).",
+          "thread_id='user-1'로 이름을 알려 준 뒤, 파이썬 프로세스를 완전히 껐다 다시 켠다.",
+          "다시 thread_id='user-1'로 '내 이름이 뭐였지?'를 물어, 재시작 후에도 Redis에서 대화가 복원돼 이름을 기억하는지 확인한다 — 이것이 수평 확장의 전제다."
+        ]
+      },
+      {
+        "title": "Lab 4. Query Routing 붙여 질문 종류별로 경로 나누기(5교시)",
+        "steps": [
+          "realCode의 router.py 를 만들어 질문을 [검색·계산·잡담]으로 분류하는 classify 함수를 확인한다.",
+          "각 종류를 실제 경로에 연결한다: 검색→RAG 파이프라인, 계산→계산 도구, 잡담→일반 LLM 응답.",
+          "세 종류의 질문을 각각 던져 서로 다른 경로로 가는지, 로그로 분기를 확인한다.",
+          "분류가 틀리기 쉬운 경계 질문(예: '매출 자료 찾아서 증감률 계산해줘')을 넣어 보고, 이런 복합 질문은 어떻게 처리할지(둘 다 태우기·재분류) 팀에서 토론한다.",
+          "여유가 되면 LangGraph의 Conditional Edge로 옮겨, classify 결과에 따라 노드가 분기하도록 그래프로 만든다."
+        ]
+      },
+      {
+        "title": "Lab 5. 발표 준비 · KPT 회고 · Wrap-up 퀴즈(7~8교시)",
+        "steps": [
+          "발표 5장(문제정의·아키텍처·라이브데모·운영·개선방향)을 팀당 한 벌 만든다.",
+          "라이브 데모를 최소 1회 리허설하고, 네트워크가 끊길 때를 대비해 화면 녹화본을 백업해 둔다.",
+          "데모 시나리오를 둘 준비한다: ①정상 흐름 1개 ②일부러 오류를 내고 대체 응답이 나오는 견고함 시연 1개.",
+          "발표 후 KPT 포스트잇을 각자 세 칸(Keep·Problem·Try) 작성해 붙이고, 팀이 상위 3개를 골라 공유한다.",
+          "Wrap-up 퀴즈 6문항(MCP Tool/Resource 구분, SSE 방향, MemorySaver vs RedisSaver, Validator 역할, 지수 백오프 이점, 라우팅이 줄이는 것)을 서로 물어 맞혀 본다.",
+          "마지막으로 'Day1 조립 → Day2 품질 → Day3 운영'의 3일 흐름을 한 줄로 정리해 개인 회고 노트에 남긴다."
         ]
       }
     ],
@@ -2838,6 +3274,17 @@ export const details = {
           "'## 아키텍처'에 입력→검색→생성→출력 흐름을 글이나 화살표로 적는다",
           "'## 역할 분담' 표를 만들어 팀원과 담당을 적는다",
           "'git add . && git commit -m \"기획 및 환경 셋업\"' 으로 첫 커밋을 남긴다"
+        ]
+      },
+      {
+        "title": "Lab 3. 프로젝트 뼈대 만들기 — 폴더 구조와 .env·.gitignore 연결 (7교시 실습)",
+        "steps": [
+          "프로젝트 루트에서 'mkdir -p src data' 로 폴더를 만든다(코드는 src, 문서는 data에 둔다)",
+          "config.py를 src에 두고, 프로젝트 루트에 .env 파일을 만들어 'OPENAI_API_KEY=강사가준키' 한 줄을 저장한다",
+          ".gitignore 파일을 만들어 첫 줄에 '.env', 둘째 줄에 '.venv/' 를 적는다(키와 가상환경을 깃 추적에서 제외)",
+          "'git status' 를 실행해 .env가 목록에 보이지 않는지 확인한다(보이면 .gitignore의 위치·철자를 점검)",
+          "data/ 안에 어제 모은 문서를 policy.txt로 저장해 둔다(내일 RAG의 재료)",
+          "최종 구조를 'ls -R' 또는 'tree -L 2' 로 확인하고, 그 결과를 README의 '## 폴더 구조'에 붙여 넣고 커밋한다"
         ]
       }
     ],
@@ -3021,6 +3468,16 @@ export const details = {
           "검색 결과 grading과 재검색 루프를 붙여 Agentic하게 개선한다",
           "샘플 QA셋 5~10개로 개선 전/후 점수를 각각 측정한다",
           "개선 전/후 점수 비교표를 만들어 무엇이 좋아졌는지 정리한다"
+        ]
+      },
+      {
+        "title": "Lab. 팀 상호 코드 리뷰 30분 (7교시 실습)",
+        "steps": [
+          "옆 팀과 저장소를 맞바꿔, 각자 5분간 README의 실행법 그대로 직접 돌려 본다(안 돌아가면 그 자체가 첫 피드백)",
+          "리뷰 관점 네 가지로 살핀다: ① 키가 코드에 노출되지 않았나(.env 분리) ② 빈 입력·오류에 안 죽나 ③ 함수 이름만 봐도 역할이 읽히나 ④ 답에 근거(출처)를 함께 보여 주나",
+          "좋은 점 1개와 고칠 점 1개를 상대 저장소의 이슈나 메모로 남긴다(말투는 제안형으로)",
+          "받은 피드백 중 5분 안에 고칠 수 있는 것 1개를 즉시 반영하고 커밋한다",
+          "무엇을 고쳤는지 한 줄로 README의 회고(KPT) 아래에 추가한다"
         ]
       }
     ],
