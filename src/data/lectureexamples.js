@@ -251,6 +251,18 @@ export const examples = {
       "lang": "vue",
       "code": "<script setup>\n// 장바구니 스토어를 가져온다\nimport { useCartStore } from '../stores/cart'\n// 스토어 인스턴스를 얻는다(전역 데이터 접근)\nconst cart = useCartStore()\n</script>\n\n<template>\n  <!-- 스토어의 count 게터로 담긴 개수를 헤더에 표시 -->\n  <header>장바구니: {{ cart.count }}개</header>\n</template>",
       "note": "어느 컴포넌트에서든 useCartStore 로 같은 데이터를 바로 읽을 수 있다."
+    },
+    {
+      "title": "Pinia 스토어 정의하기 (stores/cart.js)",
+      "lang": "javascript",
+      "code": "// src/stores/cart.js - 장바구니 전역 상태를 한 곳에서 관리한다\nimport { defineStore } from 'pinia'\n\n// useCartStore: 어느 컴포넌트에서든 불러 쓰는 전역 스토어\nexport const useCartStore = defineStore('cart', {\n  // state: 보관할 데이터(함수로 초기값을 돌려준다)\n  state: () => ({\n    items: [],  // 담은 상품 목록 [{ id, name, price }]\n  }),\n  // getters: state 를 가공해 읽는 계산값(원본이 바뀌면 자동 갱신)\n  getters: {\n    count: (state) => state.items.length,                          // 담은 개수\n    total: (state) => state.items.reduce((s, i) => s + i.price, 0), // 합계 금액\n  },\n  // actions: state 를 바꾸는 함수(메서드)\n  actions: {\n    add(product) { this.items.push(product) },                       // 상품 담기\n    remove(id) { this.items = this.items.filter(i => i.id !== id) },  // 상품 빼기\n  },\n})",
+      "note": "state(데이터)·getters(계산값)·actions(변경함수) 세 칸만 채우면 앱 어디서든 공유하는 전역 스토어가 완성된다."
+    },
+    {
+      "title": "Router 가드로 로그인 안 한 사용자 막기 (beforeEach)",
+      "lang": "javascript",
+      "code": "// src/router/index.js - 라우터에 문지기를 달아 접근을 통제한다\nimport { createRouter, createWebHashHistory } from 'vue-router'\nimport Home from '../views/Home.vue'\nimport MyPage from '../views/MyPage.vue'\nimport Login from '../views/Login.vue'\n\nconst routes = [\n  { path: '/', component: Home },\n  // meta.requiresAuth 로 '로그인 필요' 표시를 붙여 둔다\n  { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },\n  { path: '/login', component: Login },\n]\n\nconst router = createRouter({ history: createWebHashHistory(), routes })\n\n// beforeEach: 모든 이동 직전에 실행되는 전역 가드(문지기)\nrouter.beforeEach((to) => {\n  const isLoggedIn = !!localStorage.getItem('token')  // 로그인 여부(예시)\n  // 보호 페이지인데 로그인 안 했으면 로그인 화면으로 돌려보낸다\n  if (to.meta.requiresAuth && !isLoggedIn) {\n    return { path: '/login' }  // 이 객체를 return 하면 그 주소로 리다이렉트된다\n  }\n  // 아무것도 return 하지 않으면(또는 true) 원래 가려던 곳으로 통과한다\n})\n\nexport default router",
+      "note": "beforeEach 가드는 화면이 그려지기 전에 로그인·권한을 검사해 보호가 필요한 페이지를 지켜 준다."
     }
   ],
   "vue-4": [
@@ -371,6 +383,18 @@ export const examples = {
       "lang": "bash",
       "code": "# pgvector가 미리 깔린 PostgreSQL 이미지를 백그라운드로 실행한다\ndocker run -d \\\n  --name pgvector \\\n  -e POSTGRES_PASSWORD=pass \\\n  -p 5432:5432 \\\n  pgvector/pgvector:pg16\n# 위 옵션: --name 컨테이너 이름, -e 비밀번호, -p 포트연결(내PC:컨테이너)\n# 결과: docker ps 로 보면 pgvector 컨테이너가 Up 상태로 보인다",
       "note": "별도 설치 없이 한 줄로 벡터 검색용 DB를 띄울 수 있다."
+    },
+    {
+      "title": "QuestionAnswerAdvisor 로 RAG 답변 구성하기",
+      "lang": "java",
+      "code": 'package com.example.rag;\n\nimport org.springframework.ai.chat.client.ChatClient;\n// RAG 검색을 자동으로 끼워 주는 어드바이저 (Spring AI 1.0 GA 경로)\nimport org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;\nimport org.springframework.ai.vectorstore.VectorStore;\nimport org.springframework.web.bind.annotation.*;\n\n@RestController\n@RequestMapping("/api/rag")\npublic class RagController {\n\n    private final ChatClient chatClient;\n\n    // 앞서 pgvector 에 문서를 적재해 둔 VectorStore 를 주입받는다\n    public RagController(ChatClient.Builder builder, VectorStore vectorStore) {\n        this.chatClient = builder\n                // QuestionAnswerAdvisor: 질문이 오면 (1) VectorStore 에서 관련 문서를 검색해\n                // (2) 프롬프트에 근거로 붙인 뒤 (3) LLM 을 호출하는 RAG 흐름을 자동 처리한다\n                .defaultAdvisors(QuestionAnswerAdvisor.builder(vectorStore).build())\n                .build();\n    }\n\n    // GET /api/rag?question=... - 우리가 검색 코드를 짜지 않아도 근거 기반 답이 나온다\n    @GetMapping\n    public String ask(@RequestParam String question) {\n        return chatClient.prompt()\n                .user(question)   // 예: "연차 휴가는 며칠인가요?"\n                .call()           // 어드바이저가 검색->근거주입->호출을 대신 수행\n                .content();       // 문서 근거로 만든 답변만 추출\n    }\n}',
+      "note": "QuestionAnswerAdvisor 하나를 defaultAdvisors 로 등록하면 검색->근거 주입->LLM 호출의 RAG 3단계를 프레임워크가 대신 처리해, 컨트롤러에는 질문만 넘기면 된다."
+    },
+    {
+      "title": "ChatMemory Advisor 로 대화 기억 유지하기",
+      "lang": "java",
+      "code": 'package com.example.memory;\n\nimport org.springframework.ai.chat.client.ChatClient;\n// 이전 대화를 프롬프트에 자동으로 끼워 주는 메모리 어드바이저 (1.0 GA)\nimport org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;\nimport org.springframework.ai.chat.memory.ChatMemory;\nimport org.springframework.ai.chat.memory.MessageWindowChatMemory;\nimport org.springframework.web.bind.annotation.*;\n\n@RestController\n@RequestMapping("/api/chat")\npublic class MemoryController {\n\n    private final ChatClient chatClient;\n\n    public MemoryController(ChatClient.Builder builder) {\n        // 최근 메시지 N개만 기억하는 창(window) 방식 메모리 저장소\n        ChatMemory memory = MessageWindowChatMemory.builder().maxMessages(10).build();\n        this.chatClient = builder\n                // 매 호출 전에 그 대화의 이전 메시지를 자동으로 프롬프트에 넣어 준다\n                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())\n                .build();\n    }\n\n    // conversationId 로 대화를 구분한다(사용자/세션별로 기억이 분리됨)\n    @GetMapping\n    public String chat(@RequestParam String conversationId, @RequestParam String message) {\n        return chatClient.prompt()\n                .user(message)  // 예: 1) "내 이름은 철수야"  2) "내 이름 뭐라고 했지?"\n                // 이 대화의 기억 창을 conversationId 로 지정\n                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))\n                .call()\n                .content();     // 두 번째 질문에 "철수"라고 답하면 기억이 동작하는 것\n    }\n}',
+      "note": "MessageWindowChatMemory(기억 저장소) + MessageChatMemoryAdvisor(자동 주입)를 붙이면 CONVERSATION_ID 별로 이전 대화를 기억해 문맥이 이어지는 챗봇이 된다."
     }
   ],
   "spring-ai-3": [
@@ -613,6 +637,18 @@ export const examples = {
       "lang": "python",
       "code": "from langchain_text_splitters import RecursiveCharacterTextSplitter  # 분할기 불러오기\n\ntext = \"RAG는 검색과 생성을 합친 방법이다. \" * 20  # 같은 문장을 20번 이어 붙여 긴 글을 만든다\nsplitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=20)  # 100자씩, 20자 겹치게\nchunks = splitter.split_text(text)  # 긴 글을 조각 리스트로 자른다\n\nprint(f\"조각 수: {len(chunks)}\")  # 결과: 조각 수: 8 (글 길이에 따라 달라짐)\nprint(chunks[0])  # 결과: 첫 조각 내용이 100자 안쪽으로 출력됨",
       "note": "chunk_size 와 chunk_overlap 숫자를 바꾸면 조각 수가 달라지는 것을 체감하는 예제다."
+    },
+    {
+      "title": "청킹 전략 비교 — 조각 크기를 바꿔 개수·평균 길이 보기",
+      "lang": "python",
+      "code": 'from langchain_text_splitters import RecursiveCharacterTextSplitter  # 재귀 분할기\n\ntext = ("RAG는 검색과 생성을 결합한다. 먼저 문서를 조각으로 나눈다. "\n        "각 조각을 벡터로 만든다. 질문이 오면 가까운 조각을 찾는다. ") * 8  # 예시 긴 글\n\n# 같은 글을 서로 다른 chunk_size 로 잘라 결과를 비교한다\nfor size in (80, 200, 400):  # 조각 크기를 3가지로 바꿔 본다\n    splitter = RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=int(size * 0.1))  # 겹침은 10%\n    chunks = splitter.split_text(text)  # 긴 글을 조각으로 자른다\n    avg = sum(len(c) for c in chunks) / len(chunks)  # 조각 평균 길이 계산\n    print(f"size={size:>3} -> 조각 {len(chunks):>2}개, 평균 {avg:.0f}자")\n# 결과 예:\n# size= 80 -> 조각 16개, 평균 61자   (작게 자르면 조각이 많고 문맥이 짧다)\n# size=200 -> 조각  7개, 평균 148자\n# size=400 -> 조각  4개, 평균 250자   (크게 자르면 조각이 적고 불필요한 내용이 섞인다)',
+      "note": "작게 자르면 정확하지만 문맥이 끊기고, 크게 자르면 문맥은 풍부하나 잡음이 섞인다. 우리 문서에 맞는 크기를 실험으로 찾는 게 인덱싱의 첫 단추다."
+    },
+    {
+      "title": "자르기→임베딩→저장, 인덱싱 한 번에 완성하기 (Chroma)",
+      "lang": "python",
+      "code": 'from langchain_text_splitters import RecursiveCharacterTextSplitter  # 분할기\nfrom langchain_openai import OpenAIEmbeddings  # 임베딩 모델\nfrom langchain_chroma import Chroma  # 벡터 DB\nfrom langchain_core.documents import Document  # 문서 조각 객체\n\n# 1) 색인할 원문(실제로는 파일/DB 에서 읽어온다)\nraw = "연차 휴가는 입사 1년 후부터 15일이 부여된다. 재택근무는 팀장 승인 시 주 2회까지 가능하다. 경조사비는 결혼 시 30만원을 지급한다."\n\n# 2) 긴 글을 조각으로 자른다(검색의 최소 단위 만들기)\nsplitter = RecursiveCharacterTextSplitter(chunk_size=40, chunk_overlap=5)\nchunks = [Document(page_content=c) for c in splitter.split_text(raw)]\n\n# 3) 조각을 임베딩해 Chroma 에 저장한다 - 이 저장 과정이 바로 인덱싱\nembeddings = OpenAIEmbeddings(model="text-embedding-3-small")\nvectordb = Chroma.from_documents(chunks, embeddings, persist_directory="chroma_db")\nprint(f"{len(chunks)}개 조각을 색인해 chroma_db 폴더에 저장했다")\n\n# 4) 저장한 인덱스로 바로 유사도 검색을 해 본다(다음 실습에서 리트리버로 확장)\nhits = vectordb.similarity_search("재택근무 며칠까지 돼?", k=1)\nprint(hits[0].page_content)  # 결과: 재택근무 관련 조각이 검색된다',
+      "note": "자르기(split)->임베딩(embed)->저장(Chroma.from_documents)의 3단계가 인덱싱의 전부다. persist_directory 폴더에 저장해 두면 다음 실습(리트리버)에서 그대로 불러 쓴다."
     }
   ],
   "rag-2": [
@@ -771,6 +807,18 @@ export const examples = {
       "lang": "bash",
       "code": "# iris 컨테이너가 출력한 로그를 실시간으로 따라 본다\ndocker logs -f iris      # 요청이 들어올 때마다 접근 로그가 흐름\n# 다 봤으면 Ctrl+C 로 빠져나온 뒤 컨테이너를 멈추고 삭제한다\ndocker stop iris         # 컨테이너 정지\ndocker rm iris           # 정지된 컨테이너 삭제(정리)\n",
       "note": "문제가 생기면 가장 먼저 `docker logs` 로 컨테이너가 남긴 기록을 확인한다."
+    },
+    {
+      "title": "모델 서빙 Dockerfile 작성하기 (FastAPI)",
+      "lang": "dockerfile",
+      "code": '# 1) 가벼운 파이썬 공식 이미지에서 시작한다(slim = 용량 최소화)\nFROM python:3.12-slim\n\n# 2) 컨테이너 안 작업 폴더를 정한다(이후 명령의 기준 경로)\nWORKDIR /app\n\n# 3) 의존성 목록만 먼저 복사해 설치한다\n#    코드보다 먼저 복사해야, 코드만 바뀔 때 이 설치 층을 캐시로 재사용해 빌드가 빨라진다\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\n# 4) 나머지 앱 소스와 모델 파일을 복사한다\nCOPY . .\n\n# 5) 컨테이너가 쓰는 포트를 문서화한다(실제 연결은 docker run -p 로)\nEXPOSE 8000\n\n# 6) 컨테이너 시작 시 실행할 명령 - uvicorn 으로 FastAPI 앱을 띄운다\n#    host 는 반드시 0.0.0.0 이어야 컨테이너 바깥에서도 접속된다(127.0.0.1 이면 안에서만)\nCMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]',
+      "note": "requirements 를 코드보다 먼저 COPY 하는 순서가 핵심 - 코드만 바뀔 때 pip 설치 층이 캐시되어 재빌드가 빨라진다. host 는 반드시 0.0.0.0."
+    },
+    {
+      "title": "헬스체크 + Prometheus 메트릭 엔드포인트 노출하기",
+      "lang": "python",
+      "code": '# pip install fastapi uvicorn prometheus-client\nimport time\nfrom fastapi import FastAPI, Response\nfrom prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST\n\napp = FastAPI()\n\n# 1) 지표 정의 - 누적 개수(Counter)와 응답시간 분포(Histogram)\nREQS = Counter("predict_requests_total", "예측 요청 총 횟수")         # 계속 증가만 한다\nLATENCY = Histogram("predict_latency_seconds", "예측 처리 시간(초)")  # 구간별 분포\n\n@app.get("/health")   # 2) 헬스체크: 로드밸런서·쿠버네티스가 살아있는지 확인하는 용도\ndef health():\n    return {"status": "ok"}   # 200 이면 정상 - 죽으면 트래픽을 안 보낸다\n\n@app.post("/predict")\ndef predict(x: float):\n    REQS.inc()                      # 요청 수 +1\n    with LATENCY.time():            # 이 블록의 실행시간을 자동으로 히스토그램에 기록\n        time.sleep(0.02)            # 실제로는 여기서 모델 추론을 한다\n        result = x * 2\n    return {"prediction": result}\n\n@app.get("/metrics")  # 3) Prometheus 가 주기적으로 긁어가는(scrape) 엔드포인트\ndef metrics():\n    # 수집된 지표를 Prometheus 텍스트 형식으로 내보낸다\n    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)',
+      "note": "/health 는 생존 확인, /metrics 는 Prometheus 가 긁어갈 지표 노출구다. Counter(누적)와 Histogram(응답시간 분포)만 있어도 요청량·지연을 대시보드로 모니터링할 수 있다."
     }
   ],
   "serving-3": [
