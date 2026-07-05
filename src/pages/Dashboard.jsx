@@ -3,18 +3,29 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { isAdmin } from '../config/admin'
 import { useProgress } from '../hooks/useProgress'
-import { totalSessions, sortedSessions } from '../data/curriculum'
+import { totalSessions, sortedSessions, subjectById, dayOf } from '../data/curriculum'
+import { modeOf } from '../data/lecturemodes'
 import { listPosts, syncProgress, listAllProgress } from '../data/db'
 
 const fmt = (s) => new Date(s).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
+// 실라버스 방식 배지 색상 (이론/실습/종합실습)
+const modeClass = (tag) =>
+  tag === '종합실습' ? 'mode-full' : tag === '실습' ? 'mode-lab' : tag === '이론+실습' ? 'mode-mix' : 'mode-theory'
+const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 
 export default function Dashboard() {
   const { user } = useAuth()
   const admin = isAdmin(user)
   const done = useProgress()
   // 저장된 키가 아니라 실제 세션 기준 집계(stale 키로 100% 초과 방지)
-  const doneCount = sortedSessions().filter((s) => done[s.date]).length
+  const allSessions = sortedSessions()
+  const doneCount = allSessions.filter((s) => done[s.date]).length
   const pct = Math.round((doneCount / totalSessions) * 100)
+
+  // 다가오는 수업 (오늘 이후 6일) — 과정 종료 후엔 마지막 수업들 표시
+  const today = new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD (로컬)
+  const upcomingAll = allSessions.filter((s) => s.date >= today)
+  const upcoming = (upcomingAll.length ? upcomingAll : allSessions.slice(-6)).slice(0, 6)
 
   const [notices, setNotices] = useState([])
   const [allProgress, setAllProgress] = useState(null)
@@ -91,6 +102,34 @@ export default function Dashboard() {
                 게시판으로 →
               </Link>
             </div>
+          </div>
+
+          {/* 다가오는 수업 (방식 배지 포함) */}
+          <div className="card" style={{ marginBottom: 28 }}>
+            <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 12 }}>
+              🗓 {upcomingAll.length ? '다가오는 수업' : '최근 수업'}
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {upcoming.map((s) => {
+                const subj = subjectById(s.subjectId)
+                const d = dayOf(s)
+                const mode = modeOf(s.subjectId, s.day)
+                return (
+                  <Link key={s.date + s.klass} to={`/day/${s.date}`} className="session-row">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                      <span className="date">{s.date.slice(5)} ({s.weekday})</span>
+                      <span className={`chip chip-region ${regionClass(s.region, s.klass)}`}>{s.region} {s.klass}</span>
+                      {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
+                      <span className="title">{subj?.name} · {d?.title}</span>
+                    </span>
+                    <span style={{ color: 'var(--ink-soft)', fontSize: 13, flex: '0 0 auto' }}>Day {s.day} →</span>
+                  </Link>
+                )
+              })}
+            </div>
+            <Link to="/schedule" className="section-link" style={{ display: 'inline-block', marginTop: 12 }}>
+              전체 일정으로 →
+            </Link>
           </div>
 
           {/* 강사 관리 대시보드 */}
