@@ -1,6 +1,11 @@
 import { useParams, Link } from 'react-router-dom'
 import { sessionByDate, subjectById, dayOf, sortedSessions } from '../data/curriculum'
+import { modeOf } from '../data/lecturemodes'
 import { useProgress, setDone } from '../hooks/useProgress'
+
+// 실라버스 방식 배지 색상 (이론/실습/종합실습)
+const modeClass = (tag) =>
+  tag === '종합실습' ? 'mode-full' : tag === '실습' ? 'mode-lab' : tag === '이론+실습' ? 'mode-mix' : 'mode-theory'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 
@@ -40,6 +45,7 @@ export default function DayDetail() {
 
   const subj = subjectById(session.subjectId)
   const d = dayOf(session)
+  const mode = modeOf(session.subjectId, session.day)
   const all = sortedSessions()
   const idx = all.findIndex((s) => s.date === date)
   const prev = idx > 0 ? all[idx - 1] : null
@@ -58,12 +64,21 @@ export default function DayDetail() {
               {session.region} {session.klass}
             </span>
             <span className="chip chip-day">Day {session.day} / {subj?.days.length}</span>
+            {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
           </div>
 
           <h1>{d?.title}</h1>
           <p className="detail-sub">
             {subj?.name} · {session.date} ({session.weekday})
           </p>
+
+          {mode && (
+            <div className="mode-note">
+              <strong className={`mode-badge ${modeClass(mode.tag)}`}>{mode.tag}</strong>
+              <span className="mode-ratio">{mode.ratio}</span>
+              <span className="mode-desc">{mode.note}</span>
+            </div>
+          )}
 
           <Block title="학습 목표" items={d?.objectives} />
           <Block title="학습 내용" items={d?.contents} />

@@ -268,6 +268,25 @@ ul { list-style: none; }
 .region-dot.gwangju { background: var(--gwangju); }
 .region-dot.ulsan { background: var(--ulsan); }
 
+/* ── 실라버스 진행 방식 (이론/실습/종합실습) ── */
+.chip-mode { color: #fff; }
+.mode-theory { background: #64748B; }               /* 이론 */
+.mode-mix    { background: #7C5CFF; }               /* 이론+실습 */
+.mode-lab    { background: #0EA5A0; }               /* 실습 */
+.mode-full   { background: var(--gold); }           /* 종합실습 */
+
+.mode-note {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px;
+  padding: 10px 14px; border-radius: 12px;
+  background: var(--navy-100); border: 1px solid var(--line);
+}
+.mode-badge {
+  font-size: 12px; font-weight: 800; color: #fff;
+  padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+}
+.mode-ratio { font-size: 13px; font-weight: 700; color: var(--navy-700); white-space: nowrap; }
+.mode-desc  { font-size: 13px; color: var(--ink-soft); }
+
 /* ── Subject list ── */
 .subject {
   border: 1px solid var(--line); border-left: 4px solid var(--gold);

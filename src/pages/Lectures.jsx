@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } from '../data/curriculum'
 import { PERIOD_TIMES } from '../data/lectureperiods'
+import { modeOf } from '../data/lecturemodes'
 import CodeBlock from '../components/CodeBlock'
+
+// 실라버스 방식 배지 색상 (이론/실습/종합실습)
+const modeClass = (tag) =>
+  tag === '종합실습' ? 'mode-full' : tag === '실습' ? 'mode-lab' : tag === '이론+실습' ? 'mode-mix' : 'mode-theory'
 
 // 과목별 강의 데이터는 현재 과목만 동적 로드 → 초기 강의안 청크에서 미사용 과목 제외.
 // (src/data/lectures/<subjectId>.js 는 prebuild/predev 코드모드가 생성)
@@ -44,6 +49,7 @@ export default function Lectures() {
 
   const subj = subjectById(current.subjectId)
   const d = dayOf(current)
+  const mode = modeOf(current.subjectId, current.day)
 
   // 현재 과목 강의 데이터를 동적 로드. 같은 과목 내 일차 전환은 재로드 없이 즉시,
   // 과목이 바뀔 때만 짧게 로드. stale 가드로 늦게 도착한 이전 과목 데이터의 덮어쓰기 방지.
@@ -196,6 +202,7 @@ export default function Lectures() {
                 </span>
               )}
               <span className="chip chip-day">Day {current.day} / {subj?.days.length}</span>
+              {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
             </div>
 
             <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginTop: 8 }}>
@@ -207,6 +214,15 @@ export default function Lectures() {
                 ? '참고 강의안 (현재 강의 미배정)'
                 : `${current.date} (${current.weekday}) · 09:00~18:00 (8H)`}
             </p>
+
+            {/* 실라버스 기준 진행 방식 (이론/실습/종합실습) */}
+            {mode && (
+              <div className="mode-note" style={{ marginTop: 14 }}>
+                <strong className={`mode-badge ${modeClass(mode.tag)}`}>{mode.tag}</strong>
+                <span className="mode-ratio">{mode.ratio}</span>
+                <span className="mode-desc">{mode.note}</span>
+              </div>
+            )}
 
             {/* 학습 목표 */}
             {d?.objectives?.length > 0 && (

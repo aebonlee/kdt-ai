@@ -1,0 +1,89 @@
+// 날짜(과목-Day)별 수업 진행 방식 — SKALA 4기 실라버스(Syllabus PPTX) 원본 근거.
+//   key = `${subjectId}-${day}`  (curriculum.js sessions/day 와 동일 규칙)
+//   tag    : 그 날의 대표 방식 배지 — '이론' | '이론+실습' | '실습' | '종합실습'
+//   ratio  : 실라버스 '교육 방식'의 이론/실습 비율
+//   note   : 실라버스에 '실습' 또는 '종합실습'으로 명시된 구간 설명
+//
+// 출처: 0. Syllabus (4기) 34종 PPTX '기간·목차·주요 학습내용·시간·방식' 표의 '방식' 열.
+export const modes = {
+  // 1-1 Git 이해/활용 (강병호) — 이론 70% / 실습 30%
+  'git-1': { tag: '종합실습', ratio: '이론 70% · 실습 30%', note: '개발환경·Git 기초·GitHub 각 구간에 종합실습(실습) 포함' },
+
+  // 8-2 LLM과 Transformer 아키텍처 — 이론 75% / 실습 25%
+  'transformer-1': { tag: '이론', ratio: '이론 75% · 실습 25%', note: '이론 강의 중심 (AI 진화·LLM 탄생·Transformer 아키텍처)' },
+  'transformer-2': { tag: '종합실습', ratio: '이론 75% · 실습 25%', note: '이론 강의 후 종합실습: 간단한 언어모델 구현' },
+
+  // 7-1 데이터 분석을 위한 Python 이해 — 이론 50% / 실습 50%
+  'python-1': { tag: '이론+실습', ratio: '이론 50% · 실습 50%', note: '전 구간 이론+실습 병행 · 마무리 실습: 공공 API(JSON) 비동기 수집' },
+  'python-2': { tag: '이론+실습', ratio: '이론 50% · 실습 50%', note: '전 구간 이론+실습 병행 · 마무리 실습: 공개 데이터셋 EDA' },
+
+  // 8-1 Prompt 설계와 Context Engineering — 이론 80% / 실습 20%
+  'prompt-1': { tag: '종합실습', ratio: '이론 80% · 실습 20%', note: '이론 강의 후 종합실습 (프롬프트 실습)' },
+
+  // 2-1 Front-Framework: Vue.js — 이론 50% / 실습 50%
+  'vue-1': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '각 이론 뒤 종합실습 (Vue 시작하기·기본 문법)' },
+  'vue-2': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습 뒤 종합실습 (Composition API·컴포넌트)' },
+  'vue-3': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '각 이론 뒤 종합실습 (Router·Pinia·Axios)' },
+  'vue-4': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: 'UI·Vite 배포 실습 + Code Review 종합실습' },
+
+  // 2-2 [Mini-project ①] AI 웹 서비스 설계 — 이론 10% / 실습 80% / 발표 10%
+  'webproject-1': { tag: '실습', ratio: '이론 10% · 실습 80% · 발표 10%', note: '오리엔테이션(이론) 후 실습' },
+  'webproject-2': { tag: '실습', ratio: '이론 10% · 실습 80% · 발표 10%', note: '종일 실습 (구현)' },
+  'webproject-3': { tag: '실습', ratio: '이론 10% · 실습 80% · 발표 10%', note: '실습 후 발표' },
+
+  // 4-2 Spring AI — 이론 50% / 실습 50%
+  'spring-ai-1': { tag: '이론+실습', ratio: '이론 50% · 실습 50%', note: 'Spring AI 구성·ChatClient·프롬프트 이론+실습' },
+  'spring-ai-2': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: 'Advisor·RAG·Tool Calling 후 종합실습' },
+  'spring-ai-3': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: 'MCP·AI Agent 후 종합실습' },
+
+  // 8-3 sLLM 구현 및 Fine Tuning — 이론 50% / 실습 50%
+  'sllm-1': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습 후 종합실습 (PEFT 개념 실습)' },
+  'sllm-2': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습 후 종합실습 (sLLM 서비스 구현·서빙)' },
+
+  // 7-3 머신러닝 및 딥러닝 이해 — 이론 70% / 실습 30%
+  'ml-dl-1': { tag: '이론', ratio: '이론 70% · 실습 30%', note: 'M/L·D/L Overview·M/L 알고리즘 이론' },
+  'ml-dl-2': { tag: '이론', ratio: '이론 70% · 실습 30%', note: 'D/L 학습원리·최적화·아키텍처 이론' },
+  'ml-dl-3': { tag: '종합실습', ratio: '이론 70% · 실습 30%', note: 'M/L·D/L 통합 종합실습' },
+
+  // 7-2 실전 Feature Engineering — 이론 80% / 실습 20% (Hands-on 병행)
+  'feature-1': { tag: '실습', ratio: '이론 80% · 실습 20%', note: '이론 후 전처리 실습 · Hands-on 병행' },
+
+  // 7-4 모델 개발 및 최적화 — 이론 80% / 실습 20%
+  'modeldev-1': { tag: '이론', ratio: '이론 80% · 실습 20%', note: '모델 개발 프로세스·모델 성능 평가 이론' },
+  'modeldev-2': { tag: '실습', ratio: '이론 80% · 실습 20%', note: '이론 후 성능 최적화 실습' },
+
+  // 8-7 RAG Pipeline 설계 및 구축 — 이론 60% / 실습 40%
+  'rag-1': { tag: '실습', ratio: '이론 60% · 실습 40%', note: 'RAG 개요·A to Z 이론 + 실습' },
+  'rag-2': { tag: '종합실습', ratio: '이론 60% · 실습 40%', note: 'RAG 확장 전략 후 종합실습' },
+  'rag-3': { tag: '종합실습', ratio: '이론 60% · 실습 40%', note: 'RAG 구축 종합실습' },
+
+  // 8-6 생성형 AI 서비스 개발(LangChain) — 이론 50% / 실습 50%
+  'langchain-1': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습·개념실습 후 종합실습 (파이프라인 실습)' },
+  'langchain-2': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습·개념실습 후 종합실습 (댓글 분류·자동응답)' },
+  'langchain-3': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습 후 종합실습 (LangGraph 연동)' },
+
+  // 7-5 모델 서빙 및 AIOps 구성 — 이론 50% / 실습 50%
+  'serving-1': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습·개념실습 후 종합실습 (FastAPI 추론 API)' },
+  'serving-2': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '이론/실습 후 종합실습 (컨테이너화·모델 레지스트리)' },
+  'serving-3': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '개념실습 후 종합실습 (모니터링 지표 추가)' },
+
+  // 8-8 AI Agent 설계 및 구축 (LangGraph) — 이론 50% / 실습 50%
+  'agent-1': { tag: '실습', ratio: '이론 50% · 실습 50%', note: 'Agent 이해·Agentic Workflow·구현 이론+실습' },
+  'agent-2': { tag: '종합실습', ratio: '이론 50% · 실습 50%', note: '멀티 에이전트 이론+실습 후 종합실습' },
+
+  // 8-4 Vector DB — 이론 80% / 실습 20%
+  'vectordb-1': { tag: '실습', ratio: '이론 80% · 실습 20%', note: '이론 후 실습: FAISS→Qdrant RAG 구축 · Hybrid Search' },
+
+  // CAP AI Agent Capstone — 이론 26% / 실습 74%
+  'capstone-1': { tag: '이론+실습', ratio: '이론 26% · 실습 74%', note: 'MCP 설계·통합 아키텍처 이론+실습 (실습 중심)' },
+  'capstone-2': { tag: '이론+실습', ratio: '이론 26% · 실습 74%', note: '스트리밍·운영 이론+실습 (실습 중심)' },
+  'capstone-3': { tag: '실습', ratio: '이론 26% · 실습 74%', note: 'Agent 확장 실습 중심' },
+
+  // 8-10 [Mini-project ③] AI 서비스 개발 — 이론 20% / 실습 80%
+  'miniproject-1': { tag: '실습', ratio: '이론 20% · 실습 80%', note: 'Wrap-up(이론) 후 Self-Study 실습' },
+  'miniproject-2': { tag: '종합실습', ratio: '이론 20% · 실습 80%', note: 'Mini-Project 종합실습' },
+  'miniproject-3': { tag: '종합실습', ratio: '이론 20% · 실습 80%', note: '종합실습 + 발표(Wrap-up)' },
+}
+
+// 편의: session/day 로부터 방식 조회
+export const modeOf = (subjectId, day) => modes[`${subjectId}-${day}`] || null
