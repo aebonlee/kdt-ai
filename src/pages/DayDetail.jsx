@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { sessionByDate, subjectById, dayOf, sortedSessions } from '../data/curriculum'
-import { modeOf } from '../data/lecturemodes'
+import { modeOf, periodTagsOf } from '../data/lecturemodes'
+import { PERIOD_TIMES, periods } from '../data/lectureperiods'
 import { useProgress, setDone } from '../hooks/useProgress'
 
 // 실라버스 방식 배지 색상 (이론/실습/종합실습)
@@ -46,6 +47,9 @@ export default function DayDetail() {
   const subj = subjectById(session.subjectId)
   const d = dayOf(session)
   const mode = modeOf(session.subjectId, session.day)
+  const planKey = `${session.subjectId}-${session.day}`
+  const dayPeriods = periods[planKey] || null
+  const periodTags = periodTagsOf(session.subjectId, session.day)
   const all = sortedSessions()
   const idx = all.findIndex((s) => s.date === date)
   const prev = idx > 0 ? all[idx - 1] : null
@@ -82,6 +86,39 @@ export default function DayDetail() {
 
           <Block title="학습 목표" items={d?.objectives} />
           <Block title="학습 내용" items={d?.contents} />
+
+          {/* 진행 시간표 (교시별 방식 배지) */}
+          {dayPeriods && (
+            <div className="detail-block">
+              <h4>진행 시간표 <span style={{ fontWeight: 500, color: 'var(--ink-soft)', fontSize: 13 }}>(09:00~17:50 · 교시당 50분)</span></h4>
+              <div className="card" style={{ marginTop: 8 }}>
+                {PERIOD_TIMES.map((slot, j) => {
+                  if (slot.lunch) {
+                    return (
+                      <div key="lunch" className="plan-row">
+                        <div className="plan-time">{slot.time}</div>
+                        <div className="plan-lunch">점심 휴식</div>
+                      </div>
+                    )
+                  }
+                  const ci = j < 3 ? j : j - 1 // 점심 슬롯 건너뛰고 내용 매핑
+                  const ptag = periodTags?.[ci]
+                  return (
+                    <div key={slot.label} className="plan-row">
+                      <div className="plan-time">
+                        {slot.label}
+                        <span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>{slot.time}</span>
+                      </div>
+                      <div className="plan-topic plan-topic-row">
+                        <span>{dayPeriods[ci]}</span>
+                        {ptag && <span className={`period-tag ${modeClass(ptag)}`}>{ptag}</span>}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* 자가평가 (학습관리 진도율과 연동) */}
           <div className="detail-block" style={{ borderTop: '1px solid var(--line)', paddingTop: 'var(--s-5)' }}>
