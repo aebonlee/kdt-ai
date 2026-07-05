@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom'
 import { sessionsBySubject, dayOf, referenceSubjects } from '../data/curriculum'
+import { modeOf } from '../data/lecturemodes'
 import Sentences from '../components/Sentences'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
+// 실라버스 방식 배지 색상 (이론/실습/종합실습)
+const modeClass = (tag) =>
+  tag === '종합실습' ? 'mode-full' : tag === '실습' ? 'mode-lab' : tag === '이론+실습' ? 'mode-mix' : 'mode-theory'
 
 export default function Subjects() {
   const groups = sessionsBySubject()
@@ -34,6 +38,7 @@ export default function Subjects() {
               <div style={{ marginTop: 12 }}>
                 {items.map((s) => {
                   const d = dayOf(s)
+                  const mode = modeOf(s.subjectId, s.day)
                   return (
                     <Link key={s.date} to={`/day/${s.date}`} className="session-row">
                       <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -41,6 +46,7 @@ export default function Subjects() {
                         <span className={`chip chip-region ${regionClass(s.region, s.klass)}`}>
                           {s.region} {s.klass}
                         </span>
+                        {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
                         <span className="title">{d?.title}</span>
                       </span>
                       <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>Day {s.day} →</span>
@@ -68,15 +74,19 @@ export default function Subjects() {
                   <p className="subject-summary">{subject.summary}</p>
 
                   <div style={{ marginTop: 12 }}>
-                    {subject.days.map((dd, i) => (
+                    {subject.days.map((dd, i) => {
+                      const mode = modeOf(subject.id, i + 1)
+                      return (
                       <Link key={i} to={`/lectures/ref-${subject.id}-${i + 1}`} className="session-row">
                         <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                           <span className="chip chip-day">Day {i + 1}</span>
+                          {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
                           <span className="title">{dd.title}</span>
                         </span>
                         <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>강의안 →</span>
                       </Link>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               ))}
