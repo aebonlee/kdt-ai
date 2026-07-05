@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } from '../data/curriculum'
 import { PERIOD_TIMES } from '../data/lectureperiods'
-import { modeOf } from '../data/lecturemodes'
+import { modeOf, periodTagsOf } from '../data/lecturemodes'
 import CodeBlock from '../components/CodeBlock'
 
 // 실라버스 방식 배지 색상 (이론/실습/종합실습)
@@ -50,6 +50,7 @@ export default function Lectures() {
   const subj = subjectById(current.subjectId)
   const d = dayOf(current)
   const mode = modeOf(current.subjectId, current.day)
+  const periodTags = periodTagsOf(current.subjectId, current.day)
 
   // 현재 과목 강의 데이터를 동적 로드. 같은 과목 내 일차 전환은 재로드 없이 즉시,
   // 과목이 바뀔 때만 짧게 로드. stale 가드로 늦게 도착한 이전 과목 데이터의 덮어쓰기 방지.
@@ -328,13 +329,17 @@ export default function Lectures() {
                     )
                   }
                   const ci = j < 3 ? j : j - 1 // 점심 슬롯 건너뛰고 내용 매핑
+                  const ptag = periodTags?.[ci]
                   return (
                     <div key={slot.label} className="plan-row">
                       <div className="plan-time">
                         {slot.label}
                         <span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>{slot.time}</span>
                       </div>
-                      <div className="plan-topic">{dayPeriods[ci]}</div>
+                      <div className="plan-topic plan-topic-row">
+                        <span>{dayPeriods[ci]}</span>
+                        {ptag && <span className={`period-tag ${modeClass(ptag)}`}>{ptag}</span>}
+                      </div>
                     </div>
                   )
                 })}

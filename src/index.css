@@ -465,6 +465,18 @@ ul { list-style: none; }
 .plan-detail { color: var(--ink-soft); font-size: 13.5px; margin-top: 3px; }
 .plan-lunch { color: var(--ink-soft); font-style: italic; }
 
+/* 진행 시간표 교시별 방식(이론/실습/종합실습) 배지 */
+.plan-topic-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.period-tag {
+  flex-shrink: 0; align-self: flex-start;
+  font-size: 11px; font-weight: 800; color: #fff;
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap; margin-top: 1px;
+}
+.period-tag.mode-theory { background: #94A3B8; }   /* 이론 */
+.period-tag.mode-mix    { background: #7C5CFF; }
+.period-tag.mode-lab    { background: #0EA5A0; }   /* 실습 */
+.period-tag.mode-full   { background: var(--gold); } /* 종합실습 */
+
 @media (max-width: 900px) {
   .layout-side { grid-template-columns: 1fr; }
   .side-nav { position: static; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 6px; max-height: none; padding: 0 0 8px; }
