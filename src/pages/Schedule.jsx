@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { sessionsByMonth, subjectById, dayOf, sortedSessions } from '../data/curriculum'
+import { modeOf } from '../data/lecturemodes'
 import Sentences from '../components/Sentences'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
+// 실라버스 방식 배지 색상 (이론/실습/종합실습)
+const modeClass = (tag) =>
+  tag === '종합실습' ? 'mode-full' : tag === '실습' ? 'mode-lab' : tag === '이론+실습' ? 'mode-mix' : 'mode-theory'
 const monthLabel = (m) => `${m.slice(0, 4)}년 ${Number(m.slice(5))}월`
 
 const FILTERS = ['전체', '판교', '광주', '울산']
@@ -89,6 +93,7 @@ export default function Schedule() {
                     const s = byDate[cell.ds]
                     const sun = i % 7 === 0
                     const subj = s && subjectById(s.subjectId)
+                    const mode = s && modeOf(s.subjectId, s.day)
                     return (
                       <div key={cell.ds} className={`cal-cell${sun ? ' sun' : ''}`}>
                         <div className="cal-dnum">{cell.d}</div>
@@ -96,9 +101,10 @@ export default function Schedule() {
                           <Link
                             to={`/day/${s.date}`}
                             className={`cal-ev ${regionClass(s.region, s.klass)}`}
-                            title={`${subj?.name} · ${s.region} ${s.klass} · Day ${s.day}`}
+                            title={`${subj?.name} · ${s.region} ${s.klass} · Day ${s.day}${mode ? ` · ${mode.tag}` : ''}`}
                           >
-                            {subj?.name}
+                            <span className="cal-ev-name">{subj?.name}</span>
+                            {mode && <span className={`cal-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
                           </Link>
                         )}
                       </div>
@@ -120,12 +126,14 @@ export default function Schedule() {
                 {items.map((s) => {
                   const subj = subjectById(s.subjectId)
                   const d = dayOf(s)
+                  const mode = modeOf(s.subjectId, s.day)
                   return (
                     <Link key={s.date + s.klass} to={`/day/${s.date}`} className="card day-card">
                       <div className="meta">
                         <span className={`region-dot ${regionClass(s.region, s.klass)}`} />
                         <span className="chip chip-code" style={{ fontSize: 11 }}>{subj?.code}</span>
                         <span>{s.region} {s.klass}</span>
+                        {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`} style={{ marginLeft: 'auto' }}>{mode.tag}</span>}
                       </div>
                       <span className="date">{s.date.slice(5)} ({s.weekday}) · Day {s.day}</span>
                       <span className="topic">{subj?.name}</span>

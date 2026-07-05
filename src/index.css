@@ -316,8 +316,16 @@ ul { list-style: none; }
 .cal-ev {
   display: block; margin-top: 4px; padding: 3px 6px; border-radius: 5px; color: #fff;
   font-size: 11px; font-weight: 700; line-height: 1.35; text-decoration: none;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.cal-ev-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-mode {
+  display: inline-block; margin-top: 3px; font-size: 9px; font-weight: 800;
+  padding: 1px 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); line-height: 1.5;
+}
+.cal-mode.mode-theory { color: #475569; }
+.cal-mode.mode-mix { color: #7C5CFF; }
+.cal-mode.mode-lab { color: #0E8F8A; }
+.cal-mode.mode-full { color: var(--gold); }
 .cal-ev.pangyo { background: var(--pangyo); }
 .cal-ev.pangyo3 { background: var(--pangyo3); }
 .cal-ev.gwangju { background: var(--gwangju); }
