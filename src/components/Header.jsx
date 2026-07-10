@@ -1,4 +1,5 @@
-import { NavLink, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, Link, useLocation } from 'react-router-dom'
 import { course } from '../data/course'
 import ThemeToggle from './ThemeToggle'
 import AuthButtons from './AuthButtons'
@@ -23,6 +24,17 @@ const nav = [
 export default function Header() {
   const { user } = useAuth()
   const admin = isAdmin(user)
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+
+  // 라우트가 바뀌면 모바일 메뉴를 닫는다
+  useEffect(() => setOpen(false), [pathname])
+
+  // 메뉴가 열려 있을 때 뒤 배경 스크롤 잠금
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [open])
 
   return (
     <>
@@ -50,10 +62,31 @@ export default function Header() {
             <span className="brand-sub">{course.cohort} · {course.instructor} 강사</span>
           </Link>
 
-          <nav className="nav-menu">
+          {/* 모바일 햄버거 토글 */}
+          <button
+            type="button"
+            className={`nav-toggle${open ? ' is-open' : ''}`}
+            aria-label={open ? '메뉴 닫기' : '메뉴 열기'}
+            aria-expanded={open}
+            aria-controls="primary-nav"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span className="nav-toggle-bar" />
+            <span className="nav-toggle-bar" />
+            <span className="nav-toggle-bar" />
+          </button>
+
+          <nav id="primary-nav" className={`nav-menu${open ? ' is-open' : ''}`}>
             {nav.map((n) =>
               n.external ? (
-                <a key={n.href} href={n.href} target="_blank" rel="noreferrer" className="nav-link">
+                <a
+                  key={n.href}
+                  href={n.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="nav-link"
+                  onClick={() => setOpen(false)}
+                >
                   {n.label} ↗
                 </a>
               ) : (
@@ -62,12 +95,16 @@ export default function Header() {
                   to={n.to}
                   end={n.end}
                   className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+                  onClick={() => setOpen(false)}
                 >
                   {n.label}
                 </NavLink>
               ),
             )}
           </nav>
+
+          {/* 열린 메뉴 밖을 누르면 닫히는 오버레이 (모바일 전용) */}
+          {open && <button className="nav-overlay" aria-hidden="true" tabIndex={-1} onClick={() => setOpen(false)} />}
         </div>
       </header>
     </>
