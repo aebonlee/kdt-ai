@@ -70,7 +70,8 @@ function renderExamples(list, heading, icon) {
   let h = `<h4 class="sec">${icon} ${heading}</h4>`
   for (const ex of list) {
     h += `<div class="ex"><div class="ex-h">${esc(ex.title)} <span class="lang">(${esc(ex.lang)})</span></div>` +
-      `<pre class="code"><code>${esc(ex.code)}</code></pre>` +
+      `<div class="code-wrap"><button type="button" class="copy-btn" aria-label="코드 복사">복사</button>` +
+      `<pre class="code"><code>${esc(ex.code)}</code></pre></div>` +
       (ex.note ? `<p class="note">💡 ${escNl(ex.note)}</p>` : '') + `</div>`
   }
   return h
@@ -146,15 +147,15 @@ async function main() {
   const totalDays = ordered.reduce((a, s) => a + s.days.length, 0)
   body += `<section class="cover">
     <div class="cover-brand">SKALA · SK AI Leader Academy</div>
-    <h1>SKALA 4기 강의안 교재</h1>
-    <p class="cover-sub">이애본 강사 담당 전 과목 · 강의안 통합본</p>
+    <h1>SKALA 4기 실습 교재</h1>
+    <p class="cover-sub">이애본 강사 담당 ${ordered.length}과목 · 실습 교재</p>
     <div class="cover-meta">
       <div><b>과정</b> AI 캠퍼스 · K-뉴딜</div>
       <div><b>기간</b> 2026.07.14 ~ 10.28 (평일 09:00~18:00, 오프라인)</div>
       <div><b>지역</b> 울산 · 판교(4·5층) · 광주</div>
-      <div><b>수록</b> ${ordered.length}과목 · ${totalDays}일차</div>
+      <div><b>수록</b> 담당 ${ordered.length}과목</div>
     </div>
-    <p class="cover-note">본 교재의 코드·설명은 SKALA 4기 실라버스에 근거해 우리말로 재서술한 자립 학습용 자료입니다.</p>
+    <p class="cover-note">본 실습 교재의 코드·설명은 SKALA 4기 실라버스에 근거해 우리말로 재서술한 자립 학습용 자료입니다.</p>
   </section>`
 
   // 목차
@@ -191,13 +192,13 @@ async function main() {
         return `<a class="sl" href="#subj-${esc(s.id)}"><span class="sl-n">${esc(s.name)}</span><span class="sl-m">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a>`
       })
       .join('')
-    const frag = `<title>SKALA 4기 강의안 교재 — 이애본 강사</title>
+    const frag = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
 <style>${SCREEN_CSS}</style>
 <div class="tb">
   <aside class="tb-side">
     <div class="tb-brandbox">
-      <div class="tb-brand">SKALA <b>4기</b> 강의안</div>
-      <div class="tb-brand-sub">이애본 강사 · 전 과목 통합본</div>
+      <div class="tb-brand">SKALA <b>4기</b> 실습 교재</div>
+      <div class="tb-brand-sub">이애본 강사 · 담당 ${ordered.length}과목</div>
     </div>
     <nav class="tb-nav" aria-label="과목 목차">
       <a class="sl sl-top" href="#tb-top">↑ 표지 · 개요</a>
@@ -205,14 +206,15 @@ async function main() {
     </nav>
   </aside>
   <main class="tb-main" id="tb-top">${body}</main>
-</div>`
+</div>
+<script>${COPY_JS}</script>`
     writeFileSync(join(outDir, 'textbook-web.html'), frag)
     console.log(`생성: dist-textbook/textbook-web.html (${(frag.length / 1024).toFixed(0)}KB, ${ordered.length}과목 ${totalDays}일차)`)
     return
   }
 
   const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8">
-<title>SKALA 4기 강의안 교재 — 이애본 강사</title>
+<title>SKALA 4기 실습 교재 — 이애본 강사</title>
 <style>${CSS}</style></head><body>${body}</body></html>`
   writeFileSync(join(outDir, 'textbook.html'), html)
   console.log(`생성: dist-textbook/textbook.html (${(html.length / 1024).toFixed(0)}KB, ${ordered.length}과목 ${totalDays}일차)`)
@@ -285,6 +287,7 @@ td.pt{width:26mm;background:#f6f7fb;font-size:9pt;white-space:nowrap;}
 .ex{margin:10px 0;page-break-inside:avoid;}
 .ex-h{font-weight:800;color:var(--navy800);font-size:10pt;margin-bottom:5px;}
 .lang{font-weight:600;color:var(--soft);font-size:8.5pt;}
+.copy-btn{display:none;}
 pre.code{background:#0f1229;color:#e6e9f5;border-radius:8px;padding:12px 14px;overflow:visible;white-space:pre-wrap;word-break:break-word;font-family:'SFMono-Regular',Consolas,monospace;font-size:8.3pt;line-height:1.55;margin:0;}
 p.note{margin:6px 0 0;font-size:9pt;color:var(--soft);line-height:1.6;}
 `
@@ -357,13 +360,13 @@ const SCREEN_CSS = `
 .sh-cat{font-size:12.5px;font-weight:800;letter-spacing:.16em;color:var(--indigo);text-transform:uppercase;}
 .subject-head h2{font-size:clamp(26px,4vw,34px);font-weight:800;margin:8px 0 10px;text-wrap:balance;}
 .sh-sum{color:var(--ink-2);font-size:16px;}
-.sh-meta{margin-top:14px;display:flex;gap:7px;flex-wrap:wrap;}
+.sh-meta{margin-top:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 
 /* 일차 카드 */
 .day{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 30px;margin:22px 0;
   box-shadow:0 2px 10px rgba(14,17,82,.04);}
-.day-head{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
-.chip{font-size:11px;font-weight:700;padding:3px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap;}
+.day-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;line-height:1.4;font-size:11px;font-weight:700;padding:3px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap;}
 .chip.code{background:var(--navy900);color:#fff;border-color:var(--navy900);}
 .chip.cat{background:var(--indigo-soft);color:var(--indigo);border-color:transparent;}
 .chip.day{background:rgba(201,162,39,.14);color:var(--gold-soft);border-color:transparent;}
@@ -403,6 +406,13 @@ td.pt{width:150px;background:var(--surface-2);font-size:13px;white-space:nowrap;
 .ex{margin:14px 0;}
 .ex-h{font-weight:800;font-size:14.5px;margin-bottom:7px;}
 .lang{font-weight:600;color:var(--soft);font-size:12px;}
+.code-wrap{position:relative;}
+.copy-btn{position:absolute;top:9px;right:9px;z-index:2;font-family:inherit;font-size:11.5px;font-weight:700;
+  color:#cfd4f5;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:7px;
+  padding:4px 11px;cursor:pointer;transition:background .15s,color .15s;}
+.copy-btn:hover{background:rgba(255,255,255,.18);color:#fff;}
+.copy-btn:focus-visible{outline:2px solid var(--light-indigo);outline-offset:1px;}
+.copy-btn.done{background:var(--gold);color:#1c1400;border-color:var(--gold);}
 pre.code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:16px 18px;overflow-x:auto;
   white-space:pre;font-family:'SFMono-Regular',ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.62;margin:0;}
 p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-space:pre-line;}
@@ -417,6 +427,32 @@ p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-sp
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;}}
 html{scroll-behavior:smooth;}
+`
+
+// 코드 블록 복사 버튼 동작 (웹 뷰어 전용, 자체 포함 인라인 스크립트)
+const COPY_JS = `
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest('.copy-btn');
+  if (!btn) return;
+  var pre = btn.parentElement.querySelector('pre.code code') || btn.parentElement.querySelector('pre.code');
+  var text = pre ? pre.innerText : '';
+  var done = function () {
+    btn.classList.add('done');
+    var prev = btn.textContent;
+    btn.textContent = '복사됨 ✓';
+    setTimeout(function () { btn.classList.remove('done'); btn.textContent = '복사'; }, 1400);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(function () { fallback(text); done(); });
+  } else { fallback(text); done(); }
+  function fallback(t) {
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (err) {}
+    document.body.removeChild(ta);
+  }
+});
 `
 
 main()

@@ -3,7 +3,7 @@
 set -e
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 HTML="$DIR/dist-textbook/textbook.html"
-PDF="$DIR/dist-textbook/SKALA_4기_강의안_교재_이애본.pdf"
+PDF="$DIR/dist-textbook/SKALA_4기_실습교재_이애본.pdf"
 
 CHROME="$HOME/.cache/puppeteer/chrome/mac-148.0.7778.167/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
 [ -x "$CHROME" ] || CHROME="$(ls -d "$HOME"/.cache/puppeteer/chrome/*/chrome-mac*/Google\ Chrome\ for\ Testing.app/Contents/MacOS/Google\ Chrome\ for\ Testing 2>/dev/null | head -1)"
