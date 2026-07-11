@@ -234,20 +234,24 @@ async function main() {
     const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
 <style>${SCREEN_CSS}</style>`
     const content = `<div class="tb">
-  <aside class="tb-side">
+  <div class="tb-overlay" id="tb-overlay" aria-hidden="true"></div>
+  <aside class="tb-side" id="tb-side">
     <div class="tb-brandbox">
       <div class="tb-brand">SKALA <b>4기</b> 실습 교재</div>
       <div class="tb-brand-sub">이애본 강사 · 담당 ${ordered.length}과목</div>
     </div>
     <nav class="tb-nav" aria-label="과목 목차">
-      <a class="sl sl-top is-active" href="#tb-top" data-goto="home">📖 표지 · 목차</a>
+      <a class="sl sl-top is-active" href="#" data-goto="home">📖 표지 · 목차</a>
       ${sideItems}
     </nav>
   </aside>
   <main class="tb-main">
     <div class="tb-toolbar">
+      <button type="button" class="menu-btn" id="tb-menu" aria-label="과목 메뉴 열기" aria-expanded="false">
+        <span class="menu-ico"><i></i><i></i><i></i></span><span class="menu-txt">과목</span>
+      </button>
       <span class="tb-crumb" id="tb-crumb">표지 · 목차</span>
-      <button type="button" class="print-btn" id="tb-print">🖨 이 과목 인쇄</button>
+      <button type="button" class="print-btn" id="tb-print">🖨 <span class="pb-txt">인쇄</span></button>
     </div>
     <div class="tb-pages">${pages}</div>
   </main>
@@ -399,11 +403,23 @@ const SCREEN_CSS = `
 .tb-toolbar{position:sticky;top:0;z-index:15;max-width:900px;margin:0 auto 10px;
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:12px 0;background:var(--bg);border-bottom:1px solid var(--line);}
-.tb-crumb{font-weight:800;color:var(--ink);font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tb-crumb{flex:1;min-width:0;font-weight:800;color:var(--ink);font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .print-btn{flex:none;font-family:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--indigo);
   border:none;border-radius:8px;padding:8px 15px;cursor:pointer;transition:background .15s;}
 .print-btn:hover{background:var(--navy800);}
 .print-btn:focus-visible{outline:2px solid var(--light-indigo);outline-offset:2px;}
+/* 햄버거 버튼(모바일 전용) + 드로어 오버레이 */
+.menu-btn{display:none;flex:none;align-items:center;gap:8px;font-family:inherit;font-size:13px;font-weight:700;
+  color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:7px 12px;cursor:pointer;}
+.menu-btn:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;}
+.menu-ico{display:inline-flex;flex-direction:column;gap:3px;width:16px;}
+.menu-ico i{display:block;height:2px;border-radius:2px;background:var(--indigo);transition:transform .2s,opacity .2s;}
+.tb.drawer-open .menu-ico i:nth-child(1){transform:translateY(5px) rotate(45deg);}
+.tb.drawer-open .menu-ico i:nth-child(2){opacity:0;}
+.tb.drawer-open .menu-ico i:nth-child(3){transform:translateY(-5px) rotate(-45deg);}
+.tb-overlay{display:none;position:fixed;inset:0;z-index:390;background:rgba(14,17,82,.42);
+  opacity:0;pointer-events:none;transition:opacity .25s ease;}
+.tb.drawer-open .tb-overlay{opacity:1;pointer-events:auto;}
 /* 목차 링크 */
 .toc-row{display:block;text-decoration:none;color:inherit;}
 .toc-row:hover .toc-name{color:var(--indigo);text-decoration:underline;}
@@ -487,15 +503,23 @@ pre.code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;paddi
   white-space:pre;font-family:'SFMono-Regular',ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.62;margin:0;}
 p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-space:pre-line;}
 @media (max-width:820px){
-  .tb{grid-template-columns:minmax(0,1fr);}
-  .tb-side{position:sticky;top:0;z-index:20;height:auto;max-height:44vh;overflow-y:auto;
-    border-right:none;border-bottom:1px solid rgba(255,255,255,.14);
-    display:flex;flex-direction:column;padding:16px 14px 14px;}
-  .tb-nav{flex-direction:row;flex-wrap:wrap;gap:6px;}
-  .sl{border-left:none;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px;max-width:100%;}
-  .sl-n{white-space:normal;word-break:keep-all;}
-  .sl-m{display:none;}.sl-top{width:100%;text-align:center;}
-  .tb-main{padding:0 18px 100px;overflow-x:hidden;}
+  .tb{grid-template-columns:minmax(0,1fr);}          /* 단일 컬럼: 사이드바는 드로어로 분리 */
+  /* 사이드바 → 왼쪽에서 미끄러져 나오는 오프캔버스 드로어 */
+  .tb-side{position:fixed;top:0;left:0;bottom:0;z-index:400;width:min(84vw,320px);
+    max-height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:20px 14px 32px;border-right:1px solid rgba(255,255,255,.12);
+    box-shadow:6px 0 30px rgba(0,0,0,.28);
+    transform:translateX(-100%);transition:transform .26s ease;
+    display:flex;flex-direction:column;}
+  .tb.drawer-open .tb-side{transform:translateX(0);}
+  .tb-overlay{display:block;}
+  .menu-btn{display:inline-flex;}
+  /* 콘텐츠는 전체 폭 사용 */
+  .tb-main{padding:0 16px 96px;overflow-x:hidden;}
+  .tb-toolbar{padding:10px 0;gap:8px;}
+  .tb-crumb{font-size:15px;}
+  .print-btn{padding:7px 11px;}
+  /* 표지·본문 모바일 정리 */
   .cover{padding:40px 20px;}
   .cover-brand{letter-spacing:.12em;overflow-wrap:anywhere;}
   .cover h1{font-size:25px;}
@@ -504,10 +528,15 @@ p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-sp
   .cover-meta div{overflow-wrap:anywhere;}
   .cover-meta b{width:44px;}
   .concepts,.topics{grid-template-columns:1fr;}
-  .day{padding:20px 16px;}
-  .tb-toolbar{padding:10px 0;}
-  .tb-crumb{font-size:14px;}
-  .print-btn{padding:7px 12px;font-size:12px;}
+  .day{padding:20px 15px;}
+  /* 코드: 손가락 가로 스크롤을 부드럽게 + 글자 약간 축소로 스크롤 최소화 */
+  pre.code{font-size:11.5px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
+  .code-wrap::after{content:'← 좌우로 스크롤 →';position:absolute;right:10px;bottom:6px;
+    font-size:9.5px;color:rgba(255,255,255,.34);pointer-events:none;letter-spacing:.02em;}
+}
+@media (max-width:400px){
+  .menu-txt,.pb-txt{display:none;}   /* 아주 좁은 폭: 버튼은 아이콘만 */
+  .tb-main{padding:0 12px 90px;}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;}}
 html{scroll-behavior:smooth;}
@@ -580,11 +609,25 @@ const PAGE_JS = `
     window.scrollTo(0, 0);
     try { history.replaceState(null, '', id === 'home' ? '#tb-top' : '#subj-' + id); } catch (e) {}
   }
+  // 모바일 드로어 열고 닫기
+  var menuBtn = document.getElementById('tb-menu');
+  var overlay = document.getElementById('tb-overlay');
+  function setDrawer(open) {
+    root.classList.toggle('drawer-open', open);
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    // 드로어가 열렸을 때만 배경 스크롤을 잠근다(데스크톱에선 항상 닫힘 상태)
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  if (menuBtn) menuBtn.addEventListener('click', function () { setDrawer(!root.classList.contains('drawer-open')); });
+  if (overlay) overlay.addEventListener('click', function () { setDrawer(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setDrawer(false); });
+
   document.addEventListener('click', function (e) {
     var a = e.target.closest('[data-goto]');
     if (!a || !root.contains(a)) return;
     e.preventDefault();
     show(a.getAttribute('data-goto'));
+    setDrawer(false);   // 과목을 고르면 드로어를 닫아 콘텐츠를 바로 보여준다
   });
   var m = (location.hash || '').match(/^#subj-(.+)$/);
   show(m ? m[1] : 'home');
