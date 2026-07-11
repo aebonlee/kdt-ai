@@ -10,7 +10,8 @@
     "dev": "vite",
     "prebuild": "node scripts/split-lectures.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "textbook": "node scripts/split-lectures.mjs && bash scripts/make-textbook-pdf.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

@@ -11,3 +11,6 @@ yarn-error.log*
 
 # 강의 데이터 분할 생성물(prebuild/predev 로 자동 생성)
 src/data/lectures/
+
+# 배포용 강의안 교재(PDF/HTML) — npm run textbook 으로 재생성
+dist-textbook/
