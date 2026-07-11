@@ -343,7 +343,7 @@ const SCREEN_CSS = `
 .sl-top{font-size:12px;font-weight:700;color:var(--light-indigo);margin-bottom:8px;}
 
 /* 본문 */
-.tb-main{padding:0 clamp(20px,4vw,64px) 120px;}
+.tb-main{padding:0 clamp(20px,4vw,64px) 120px;min-width:0;}
 .tb-main>section{max-width:900px;margin:0 auto;}
 .cover{margin:32px auto 40px;text-align:center;background:linear-gradient(155deg,#0E1152,#3F51FF);color:#fff;
   border-radius:20px;padding:64px 40px;box-shadow:0 24px 60px rgba(14,17,82,.32);}
@@ -423,13 +423,24 @@ pre.code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;paddi
   white-space:pre;font-family:'SFMono-Regular',ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.62;margin:0;}
 p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-space:pre-line;}
 @media (max-width:820px){
-  .tb{grid-template-columns:1fr;}
-  .tb-side{position:static;height:auto;max-height:none;border-right:none;border-bottom:1px solid var(--line);
-    display:flex;flex-direction:column;}
-  .tb-nav{flex-direction:row;flex-wrap:wrap;gap:4px;}
-  .sl{border-left:none;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px;}
-  .sl-m{display:none;}.sl-top{width:100%;}
-  .cover{padding:44px 24px;}
+  .tb{grid-template-columns:minmax(0,1fr);}
+  .tb-side{position:sticky;top:0;z-index:20;height:auto;max-height:44vh;overflow-y:auto;
+    border-right:none;border-bottom:1px solid rgba(255,255,255,.14);
+    display:flex;flex-direction:column;padding:16px 14px 14px;}
+  .tb-nav{flex-direction:row;flex-wrap:wrap;gap:6px;}
+  .sl{border-left:none;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px;max-width:100%;}
+  .sl-n{white-space:normal;word-break:keep-all;}
+  .sl-m{display:none;}.sl-top{width:100%;text-align:center;}
+  .tb-main{padding:0 18px 100px;overflow-x:hidden;}
+  .cover{padding:40px 20px;}
+  .cover-brand{letter-spacing:.12em;overflow-wrap:anywhere;}
+  .cover h1{font-size:25px;}
+  .cover-sub{font-size:15px;}
+  .cover-meta{display:block;max-width:100%;padding:16px 18px;font-size:13px;}
+  .cover-meta div{overflow-wrap:anywhere;}
+  .cover-meta b{width:44px;}
+  .concepts,.topics{grid-template-columns:1fr;}
+  .day{padding:20px 16px;}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;}}
 html{scroll-behavior:smooth;}
