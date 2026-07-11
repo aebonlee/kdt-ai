@@ -707,4 +707,36 @@ export const refGroups = [
       { label: 'FAISS', url: 'https://faiss.ai/' },
     ],
   },
+  {
+    title: '웹 기초 · 선수',
+    tag: '선수과정',
+    note: '이 사이트는 이애본 강사 담당 과목 중심입니다. HTML·CSS·JavaScript는 Vue.js(프론트) 학습의 선수 기반으로, SKALA 4기에서는 별도 강사(강병호·정윤석 등)가 진행합니다. 아래 공식 문서로 기초를 다지세요.',
+    links: [
+      { label: 'MDN — HTML', url: 'https://developer.mozilla.org/ko/docs/Web/HTML' },
+      { label: 'MDN — CSS', url: 'https://developer.mozilla.org/ko/docs/Web/CSS' },
+      { label: 'MDN — JavaScript', url: 'https://developer.mozilla.org/ko/docs/Web/JavaScript' },
+      { label: '모던 JavaScript 튜토리얼', url: 'https://ko.javascript.info/' },
+    ],
+  },
+  {
+    title: '백엔드 · DB · 선수',
+    tag: '선수과정',
+    note: 'Java·SpringBoot·REST API와 DB·SQL(데이터 모델링)은 SKALA 4기의 백엔드/데이터 기반 과목으로 별도 강사가 진행합니다. 담당 과목(Spring AI·Vector DB·서빙) 이해에 도움이 되는 선수 참고자료입니다.',
+    links: [
+      { label: 'Spring Boot', url: 'https://spring.io/projects/spring-boot' },
+      { label: '점프 투 스프링부트', url: 'https://wikidocs.net/book/7601' },
+      { label: 'PostgreSQL 튜토리얼', url: 'https://www.postgresqltutorial.com/' },
+      { label: 'SQL 기초 (모드)', url: 'https://mode.com/sql-tutorial/' },
+    ],
+  },
+  {
+    title: 'Cloud · DevOps · 후속',
+    tag: '후속·심화',
+    note: '컨테이너(Docker)·쿠버네티스·DevOps·Agile/MSA는 배포·운영을 다루는 후속·병행 과목으로 별도 강사가 진행합니다. 담당 과목의 모델 서빙·MLOps를 실제 운영으로 확장할 때 참고하세요.',
+    links: [
+      { label: 'Docker 공식 문서', url: 'https://docs.docker.com/' },
+      { label: 'Kubernetes 문서(한글)', url: 'https://kubernetes.io/ko/docs/home/' },
+      { label: 'GitHub Actions (CI/CD)', url: 'https://docs.github.com/actions' },
+    ],
+  },
 ]

@@ -32,7 +32,13 @@ export default function References() {
           <div className="grid grid-3">
             {refGroups.map((g) => (
               <div key={g.title} className="card">
-                <h4 style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 12 }}>{g.title}</h4>
+                <h4 style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)', marginBottom: g.note ? 6 : 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  {g.title}
+                  {g.tag && <span className="ref-tag">{g.tag}</span>}
+                </h4>
+                {g.note && (
+                  <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 12px' }}>{g.note}</p>
+                )}
                 <ul style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {g.links.map((l) => (
                     <li key={l.url}>

@@ -367,6 +367,57 @@ ul { list-style: none; }
 
 /* ── Detail page ── */
 .detail-card { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: var(--s-7); }
+
+/* ── 로그인 페이지 ── */
+.login-section { display: flex; align-items: center; min-height: calc(100vh - var(--nav-height) - 120px); }
+.login-wrap { max-width: 440px; }
+.login-card {
+  position: relative; overflow: hidden; text-align: center;
+  background: var(--bg-white); border: 1px solid var(--line); border-radius: 18px;
+  padding: 44px 32px 30px; box-shadow: 0 16px 44px rgba(14,17,82,0.10);
+}
+.login-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+  background: linear-gradient(90deg, #6C4DFF, #3F51FF);
+}
+[data-theme="dark"] .login-card { background: var(--navy-100); box-shadow: 0 16px 44px rgba(0,0,0,0.4); }
+.login-logo {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--skala-indigo); padding: 13px 20px; border-radius: 13px; margin-bottom: 20px;
+}
+.login-logo img { height: 24px; width: auto; display: block; }
+.login-title { font-size: 24px; font-weight: 800; color: var(--navy-800); }
+.login-sub { color: var(--ink-soft); margin-top: 8px; font-size: 14px; }
+.login-warn {
+  margin-top: 18px; font-size: 13px; color: #b45309; line-height: 1.5;
+  background: rgba(251,146,60,0.12); border: 1px solid rgba(251,146,60,0.35);
+  border-radius: 9px; padding: 9px 12px;
+}
+.login-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 26px; }
+.login-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 14px; border-radius: 11px; font-size: 15px; font-weight: 700;
+  cursor: pointer; font-family: inherit; border: 1px solid transparent;
+  transition: filter 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+.login-btn:hover { box-shadow: 0 6px 18px rgba(14,17,82,0.12); }
+.login-btn:active { transform: translateY(1px); }
+.login-btn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.login-google { background: #fff; color: #1f1f1f; border-color: var(--line-strong); }
+.login-google .g-mark { font-weight: 900; color: #4285F4; font-size: 16px; }
+.login-kakao { background: #FEE500; color: #191600; }
+.login-consent { margin-top: 22px; font-size: 12px; color: var(--ink-soft); line-height: 1.65; }
+
+/* 참고자료 — 선수/후속 과정 배지 */
+.ref-tag {
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.02em;
+  color: var(--accent, #3F51FF); background: rgba(63,81,255,0.1);
+  border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .login-card { padding: 36px 22px 26px; border-radius: 16px; }
+  .login-section { min-height: auto; padding: 32px 0; }
+}
 .detail-meta { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; margin-bottom: var(--s-4); }
 .detail-card h1 { font-size: 26px; font-weight: 800; color: var(--navy-800); margin-bottom: 4px; }
 .detail-sub { color: var(--ink-soft); font-size: 14px; }
