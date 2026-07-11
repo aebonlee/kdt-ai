@@ -58,7 +58,7 @@
   --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 16px; overflow-x: clip; }
 
 body {
   font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
@@ -324,11 +324,11 @@ ul { list-style: none; }
 .session-row .title { font-weight: 600; }
 
 /* ── Calendar (schedule) ── */
-.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; margin-top: 10px; }
 .cal-head { text-align: center; font-size: 12px; font-weight: 800; color: var(--ink-soft); padding: 4px 0; }
 .cal-head.sun { color: #e0392f; }
 .cal-head.sat { color: var(--azure); }
-.cal-cell { min-height: 72px; border: 1px solid var(--line); border-radius: 8px; padding: 5px; background: var(--bg-white); }
+.cal-cell { min-width: 0; min-height: 72px; border: 1px solid var(--line); border-radius: 8px; padding: 5px; background: var(--bg-white); }
 .cal-cell.empty { border: none; background: transparent; min-height: 0; }
 .cal-dnum { font-size: 12px; font-weight: 700; color: var(--navy-600); }
 .cal-cell.sun .cal-dnum { color: #e0392f; }
@@ -580,8 +580,9 @@ ul { list-style: none; }
 .period-tag.mode-full   { background: var(--gold); } /* 종합실습 */
 
 @media (max-width: 900px) {
-  .layout-side { grid-template-columns: 1fr; }
-  .side-nav { position: static; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 6px; max-height: none; padding: 0 0 8px; }
+  .layout-side { grid-template-columns: minmax(0, 1fr); }
+  .layout-side > * { min-width: 0; }
+  .side-nav { position: static; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 6px; max-height: none; padding: 0 0 8px; -webkit-overflow-scrolling: touch; }
   .side-nav > div { display: flex; gap: 6px; }
   .side-nav-title { display: none; }
   .side-link { white-space: nowrap; width: auto; flex: 0 0 auto; }
