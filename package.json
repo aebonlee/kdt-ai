@@ -11,7 +11,8 @@
     "prebuild": "node scripts/split-lectures.mjs",
     "build": "vite build",
     "preview": "vite preview",
-    "textbook": "node scripts/split-lectures.mjs && bash scripts/make-textbook-pdf.sh"
+    "textbook": "node scripts/split-lectures.mjs && bash scripts/make-textbook-pdf.sh",
+    "textbook:web": "node scripts/split-lectures.mjs && node scripts/build-textbook.mjs --web"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
