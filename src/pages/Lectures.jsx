@@ -4,6 +4,7 @@ import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } 
 import { PERIOD_TIMES } from '../data/lectureperiods'
 import { modeOf, periodTagsOf } from '../data/lecturemodes'
 import CodeBlock from '../components/CodeBlock'
+import ExamQuiz from '../components/ExamQuiz'
 
 // 실라버스 방식 배지 색상 (이론/실습/종합실습)
 const modeClass = (tag) =>
@@ -472,6 +473,11 @@ export default function Lectures() {
                   </ol>
                 </div>
               </>
+            )}
+
+            {/* 종합실습 평가기준(첫날) · 복습 퀴즈(마지막날) */}
+            {!isRef && (
+              <ExamQuiz subjectId={current.subjectId} day={current.day} totalDays={subj?.days?.length || 1} />
             )}
           </div>
         </div>

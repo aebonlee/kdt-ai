@@ -7,6 +7,8 @@ import { dirname, join } from 'node:path'
 import { subjects, sessions } from '../src/data/curriculum.js'
 import { PERIOD_TIMES } from '../src/data/lectureperiods.js'
 import { modeOf, periodTagsOf } from '../src/data/lecturemodes.js'
+import { exams } from '../src/data/exams.js'
+import { quizzes } from '../src/data/quizzes.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -97,12 +99,58 @@ function sectionPeriods(dd, subjectId, day) {
   return ''
 }
 
+// 종합실습 평가기준·제출물 (과목 첫날에 노출)
+function renderExam(subjectId) {
+  const e = exams[subjectId]
+  if (!e) return ''
+  let h = `<h4 class="sec">📋 종합실습 평가기준 · 제출물</h4>`
+  if (e.purpose) h += `<div class="box tips"><div class="box-h">🎯 실습 목적</div><p style="margin:0;font-size:14px;color:var(--ink-2,#3a3f66)">${escNl(e.purpose)}</p></div>`
+  if (e.tasks?.length) {
+    h += `<div class="exam-sub">실습 구성</div><table class="plan"><tr><td class="pt"><b>실습명</b></td><td><b>주요 활동</b></td><td class="pt" style="width:60px"><b>시간</b></td></tr>` +
+      e.tasks.map((t) => `<tr><td class="pt">${esc(t.name)}</td><td>${escNl(t.activity)}</td><td class="pt">${esc(t.time || '')}</td></tr>`).join('') + `</table>`
+  }
+  if (e.criteria?.length) {
+    h += `<div class="exam-sub">평가 항목</div><table class="plan"><tr><td class="pt"><b>평가 항목</b></td><td><b>평가 내용</b></td>${e.criteria.some((c) => c.points) ? '<td class="pt" style="width:64px"><b>배점</b></td>' : ''}</tr>` +
+      e.criteria.map((c) => `<tr><td class="pt">${esc(c.item)}</td><td>${escNl(c.desc)}</td>${e.criteria.some((x) => x.points) ? `<td class="pt">${esc(c.points || '')}</td>` : ''}</tr>`).join('') + `</table>`
+  }
+  if (e.deliverables?.length) {
+    h += `<div class="box practice"><div class="box-h">📦 제출 · 필수 항목</div><ul>` +
+      e.deliverables.map((d) => `<li>${esc(d)}</li>`).join('') + `</ul></div>`
+  }
+  if (e.notes?.length) {
+    h += `<div class="exam-notes"><b>유의사항</b><ul>` + e.notes.map((n) => `<li>${esc(n)}</li>`).join('') + `</ul></div>`
+  }
+  return h
+}
+
+// 과목 복습 퀴즈 (과목 마지막날에 노출, details로 접었다 펴기)
+function renderQuiz(subjectId) {
+  const qs = quizzes[subjectId]
+  if (!qs?.length) return ''
+  const typeLabel = { ox: 'O/X', choice: '4지선다', short: '단답' }
+  let h = `<h4 class="sec">📝 복습 퀴즈 <span class="thin">(질문을 눌러 정답·해설 펼치기)</span></h4><div class="quiz">`
+  qs.forEach((q, i) => {
+    let inner = ''
+    if (q.type === 'choice' && q.choices?.length) {
+      inner += `<ol class="quiz-choices">` + q.choices.map((c) => `<li>${esc(c)}</li>`).join('') + `</ol>`
+      const ansText = q.choices[q.answer]
+      inner += `<div class="quiz-ans"><b>정답 ${Number(q.answer) + 1}.</b> ${esc(ansText || '')}</div>`
+    } else {
+      inner += `<div class="quiz-ans"><b>정답</b> ${esc(String(q.answer))}</div>`
+    }
+    if (q.explain) inner += `<p class="quiz-exp">${escNl(q.explain)}</p>`
+    h += `<details class="quiz-item"><summary><span class="quiz-tag">${typeLabel[q.type] || '퀴즈'}</span> Q${i + 1}. ${esc(q.q)}</summary>${inner}</details>`
+  })
+  return h + `</div>`
+}
+
 function renderExamples(list, heading, icon) {
   if (!list?.length) return ''
   let h = `<h4 class="sec">${icon} ${heading}</h4>`
   for (const ex of list) {
     h += `<div class="ex"><div class="ex-h">${esc(ex.title)} <span class="lang">(${esc(ex.lang)})</span></div>` +
-      `<div class="code-wrap"><button type="button" class="copy-btn" aria-label="코드 복사">복사</button>` +
+      `<div class="code-wrap"><button type="button" class="wrap-btn" aria-label="줄바꿈/가로 전환">↔ 가로</button>` +
+      `<button type="button" class="copy-btn" aria-label="코드 복사">복사</button>` +
       `<pre class="code"><code>${hlCode(ex.code, ex.lang)}</code></pre></div>` +
       (ex.note ? `<p class="note">💡 ${escNl(ex.note)}</p>` : '') + `</div>`
   }
@@ -169,6 +217,9 @@ async function renderDay(subj, dayIdx) {
     h += `<h4 class="sec">📝 과제</h4><div class="box practice"><ol>` +
       one.detail.homework.map((hw) => `<li>${esc(hw)}</li>`).join('') + `</ol></div>`
   }
+  // 종합실습 평가기준(과목 첫날) · 복습 퀴즈(과목 마지막날) — 과목 단위 정보
+  if (dnum === 1) h += renderExam(subj.id)
+  if (dnum === subj.days.length) h += renderQuiz(subj.id)
   h += `</section>`
   return h
 }
@@ -343,8 +394,17 @@ td.pt{width:26mm;background:#f6f7fb;font-size:9pt;white-space:nowrap;}
 .ex{margin:10px 0;page-break-inside:avoid;}
 .ex-h{font-weight:800;color:var(--navy800);font-size:10pt;margin-bottom:5px;}
 .lang{font-weight:600;color:var(--soft);font-size:8.5pt;}
-.copy-btn{display:none;}
+.copy-btn{display:none;}.wrap-btn{display:none;}
 .cmt{color:#4ade80;font-style:italic;}
+.exam-sub{font-weight:800;font-size:10.5pt;margin:10px 0 4px;color:var(--navy800);}
+.exam-notes{font-size:9pt;color:var(--soft);margin-top:8px;}.exam-notes ul{margin:4px 0;padding-left:18px;}
+.quiz-item{border:1px solid var(--line);border-radius:6px;margin:6px 0;padding:8px 12px;page-break-inside:avoid;}
+.quiz-item>*:not(summary){display:block;}
+.quiz-item summary{font-weight:700;font-size:10pt;list-style:none;}
+.quiz-tag{font-size:7.5pt;font-weight:700;color:var(--indigo);}
+.quiz-choices{margin:6px 0;padding-left:18px;font-size:9pt;}
+.quiz-ans{font-size:9.5pt;color:#1f7a4d;margin-top:4px;}
+.quiz-exp{font-size:9pt;color:var(--navy700);margin-top:4px;white-space:pre-line;}
 pre.code{background:#0f1229;color:#e6e9f5;border-radius:8px;padding:12px 14px;overflow:visible;white-space:pre-wrap;word-break:break-word;font-family:'SFMono-Regular',Consolas,monospace;font-size:8.3pt;line-height:1.55;margin:0;}
 p.note{margin:6px 0 0;font-size:9pt;color:var(--soft);line-height:1.6;}
 `
@@ -425,6 +485,24 @@ const SCREEN_CSS = `
 .toc-row:hover .toc-name{color:var(--indigo);text-decoration:underline;}
 /* 코드 주석(녹색) */
 .cmt{color:#4ade80;font-style:italic;}
+/* 평가기준 · 퀴즈 섹션 */
+.exam-sub{font-weight:800;color:var(--ink);font-size:14px;margin:16px 0 7px;}
+.exam-notes{font-size:13px;color:var(--soft);margin-top:12px;}
+.exam-notes ul{margin:5px 0;padding-left:20px;}
+.exam-notes li{margin:3px 0;}
+.quiz{display:flex;flex-direction:column;gap:9px;}
+.quiz-item{border:1px solid var(--line);border-radius:11px;background:var(--surface-2);overflow:hidden;}
+.quiz-item summary{cursor:pointer;padding:13px 16px;font-weight:700;font-size:14px;line-height:1.55;list-style:none;}
+.quiz-item summary::-webkit-details-marker{display:none;}
+.quiz-item summary::before{content:'▸ ';color:var(--indigo);font-weight:800;}
+.quiz-item[open] summary::before{content:'▾ ';}
+.quiz-item[open] summary{border-bottom:1px solid var(--line);}
+.quiz-tag{display:inline-block;font-size:10.5px;font-weight:800;color:var(--indigo);background:var(--indigo-soft);border-radius:999px;padding:1px 9px;margin-right:6px;}
+.quiz-choices{margin:11px 16px;padding-left:20px;}
+.quiz-choices li{margin:4px 0;font-size:13.5px;color:var(--ink-2);}
+.quiz-ans{margin:11px 16px 0;font-size:13.5px;}
+.quiz-ans b{color:#1f9d57;}
+.quiz-exp{margin:8px 16px 14px;font-size:13px;color:var(--ink-2);line-height:1.72;white-space:pre-line;}
 .cover{margin:32px auto 40px;text-align:center;background:linear-gradient(155deg,#0E1152,#3F51FF);color:#fff;
   border-radius:20px;padding:64px 40px;box-shadow:0 24px 60px rgba(14,17,82,.32);}
 .cover-brand{font-size:13px;letter-spacing:.24em;opacity:.85;margin-bottom:16px;text-transform:uppercase;}
@@ -493,6 +571,11 @@ td.pt{width:150px;background:var(--surface-2);font-size:13px;white-space:nowrap;
 .ex-h{font-weight:800;font-size:14.5px;margin-bottom:7px;}
 .lang{font-weight:600;color:var(--soft);font-size:12px;}
 .code-wrap{position:relative;}
+.wrap-btn{display:none;position:absolute;top:9px;right:66px;z-index:2;font-family:inherit;font-size:11.5px;font-weight:700;
+  color:#cfd4f5;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:7px;
+  padding:4px 10px;cursor:pointer;transition:background .15s;}
+.wrap-btn:hover{background:rgba(255,255,255,.18);color:#fff;}
+.wrap-btn:focus-visible{outline:2px solid var(--light-indigo);outline-offset:1px;}
 .copy-btn{position:absolute;top:9px;right:9px;z-index:2;font-family:inherit;font-size:11.5px;font-weight:700;
   color:#cfd4f5;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:7px;
   padding:4px 11px;cursor:pointer;transition:background .15s,color .15s;}
@@ -529,9 +612,13 @@ p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-sp
   .cover-meta b{width:44px;}
   .concepts,.topics{grid-template-columns:1fr;}
   .day{padding:20px 15px;}
-  /* 코드: 손가락 가로 스크롤을 부드럽게 + 글자 약간 축소로 스크롤 최소화 */
-  pre.code{font-size:11.5px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
-  .code-wrap::after{content:'← 좌우로 스크롤 →';position:absolute;right:10px;bottom:6px;
+  /* 코드: 모바일 기본 줄바꿈(세로 스크롤 자연스럽게, 제스처 불필요) + 폰트 축소 */
+  pre.code{font-size:11.5px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
+  /* 토글로 '가로' 선택 시(다이어그램 등): 줄바꿈 해제하고 가로 스크롤 */
+  .code-wrap.nowrap pre.code{white-space:pre;overflow-wrap:normal;word-break:normal;}
+  .wrap-btn{display:inline-flex;}
+  .code-wrap.nowrap::after{content:'← 좌우로 스크롤 →';position:absolute;right:10px;bottom:6px;
     font-size:9.5px;color:rgba(255,255,255,.34);pointer-events:none;letter-spacing:.02em;}
 }
 @media (max-width:400px){
@@ -558,6 +645,14 @@ pre.code{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 
 // 코드 블록 복사 버튼 동작 (웹 뷰어 전용, 자체 포함 인라인 스크립트)
 const COPY_JS = `
+// 코드 줄바꿈 ↔ 가로 스크롤 토글(모바일)
+document.addEventListener('click', function (e) {
+  var wb = e.target.closest('.wrap-btn');
+  if (!wb) return;
+  var cw = wb.closest('.code-wrap');
+  var nowrap = cw.classList.toggle('nowrap');
+  wb.textContent = nowrap ? '↩ 줄바꿈' : '↔ 가로';
+});
 document.addEventListener('click', function (e) {
   var btn = e.target.closest('.copy-btn');
   if (!btn) return;
