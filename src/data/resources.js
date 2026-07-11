@@ -647,6 +647,85 @@ print(resp.choices[0].message.content)`,
       { label: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/kr' },
     ],
   },
+  {
+    id: 'java-spring',
+    name: 'Java · SpringBoot',
+    tag: 'SKALA 연계',
+    desc: 'SKALA 4기의 Java·SpringBoot·REST API 과목은 별도 강사가 진행합니다. 담당 과목인 Spring AI·모델 서빙의 선수 기반이 되므로, 여기서는 핵심 흐름만 미리 익혀둡니다.',
+    sections: [
+      { h: 'Java 기본', items: ['클래스·객체·인터페이스', 'record 로 데이터 담기', '컬렉션(List/Map)·스트림', '예외 처리(try/catch)'] },
+      { h: 'SpringBoot 구조', items: ['@SpringBootApplication 진입점', '@RestController / @Service 계층', '의존성 주입(DI)·@Autowired 대신 생성자 주입', 'application.yml 설정'] },
+      { h: 'REST API', items: ['@GetMapping / @PostMapping', '@RequestBody 로 JSON 받기', 'ResponseEntity 로 상태코드 제어', 'Bean Validation(@Valid)'] },
+    ],
+    practice: [
+      'Spring Initializr 로 프로젝트 생성 → 실행 확인',
+      'GET /hello 컨트롤러 만들어 브라우저로 확인',
+      'POST /todos: JSON 을 record 로 받아 목록에 추가',
+      '@Valid 로 빈 제목 요청을 400 으로 거절',
+    ],
+    tips: [
+      'Spring Initializr(start.spring.io)에서 의존성 체크만으로 시작',
+      '필드 주입 대신 생성자 주입 → 테스트가 쉬워짐',
+      'record 는 DTO 정의를 한 줄로 끝내는 최신 문법',
+      'FastAPI의 @app.get ↔ Spring의 @GetMapping 은 같은 개념',
+    ],
+    snippet: {
+      lang: 'java',
+      code: `// 최소 REST 컨트롤러 — JSON 을 받아 JSON 으로 답한다
+@RestController
+public class TodoController {
+    record Todo(String title) {}                 // 요청 본문을 담는 DTO
+
+    @PostMapping("/todos")
+    public Map<String, Object> add(@RequestBody Todo todo) {
+        // 실제로는 DB 저장 — 여기선 받은 값을 그대로 확인
+        return Map.of("saved", todo.title(), "ok", true);
+    }
+}`,
+    },
+    links: [
+      { label: 'Spring Initializr', url: 'https://start.spring.io/' },
+      { label: 'Spring Boot 공식 가이드', url: 'https://spring.io/guides/gs/spring-boot' },
+      { label: '점프 투 스프링부트', url: 'https://wikidocs.net/book/7601' },
+    ],
+  },
+  {
+    id: 'kubernetes',
+    name: '쿠버네티스 · DevOps',
+    tag: 'SKALA 연계',
+    desc: 'SKALA 4기의 Cloud 과목(컨테이너·쿠버네티스·DevOps·Agile/MSA)은 별도 강사가 진행합니다. 담당 과목인 모델 서빙·AIOps 를 실제 운영으로 확장하는 후속 단계로, 큰 그림만 잡아둡니다.',
+    sections: [
+      { h: '왜 필요한가', items: ['컨테이너 여러 개를 사람이 직접 관리하기 어려움', '쿠버네티스 = 컨테이너 오케스트레이터(배치·복구·확장 자동화)', 'Docker 기초(선수) → 쿠버네티스(확장)'] },
+      { h: '핵심 오브젝트', items: ['Pod: 컨테이너 실행 최소 단위', 'Deployment: 원하는 개수(replicas) 유지·롤링업데이트', 'Service: 파드들 앞의 고정 주소(로드밸런싱)', 'ConfigMap/Secret: 설정·비밀값 분리'] },
+      { h: 'DevOps 연결', items: ['CI: 푸시 → 자동 빌드·테스트(GitHub Actions)', 'CD: 이미지 → 클러스터 자동 배포', '모니터링·롤백이 운영의 절반'] },
+    ],
+    practice: [
+      'kubectl 로 nginx Deployment 만들기 (replicas=2)',
+      'kubectl get pods 로 파드 상태 확인, 하나 지워보고 자동 복구 관찰',
+      'Service 로 노출해 브라우저 접속',
+      'replicas 를 3으로 늘려 확장 체감',
+    ],
+    tips: [
+      '로컬 실습은 Docker Desktop 의 Kubernetes 체크 또는 minikube 로 충분',
+      'kubectl get / describe / logs 세 가지면 상태 파악의 대부분이 됨',
+      '선언형: "이렇게 되어 있어야 한다"(YAML)를 주면 쿠버네티스가 맞춰줌',
+      '서빙 과목의 헬스체크(liveness/readiness)가 여기서 그대로 쓰임',
+    ],
+    snippet: {
+      lang: 'bash',
+      code: `# nginx 2개를 띄우고 자동 복구를 눈으로 확인
+kubectl create deployment web --image=nginx --replicas=2
+kubectl get pods                  # 파드 2개 Running 확인
+kubectl delete pod <파드이름>      # 하나를 일부러 삭제
+kubectl get pods                  # 곧바로 새 파드가 자동 생성됨(자기치유)
+kubectl expose deployment web --port=80 --type=NodePort   # 서비스로 노출`,
+    },
+    links: [
+      { label: 'Kubernetes 공식 문서(한글)', url: 'https://kubernetes.io/ko/docs/home/' },
+      { label: 'minikube 시작하기', url: 'https://minikube.sigs.k8s.io/docs/start/' },
+      { label: 'GitHub Actions (CI/CD)', url: 'https://docs.github.com/actions' },
+    ],
+  },
 ]
 
 export const prepById = (id) => prepTopics.find((t) => t.id === id)
