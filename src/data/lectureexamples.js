@@ -1090,8 +1090,9 @@ export const examples = {
 }
 
 import { examplesExtra } from './lectureexamples2.js'
+import { examplesExtra3 } from './lectureexamples3.js'
 
 export const examplesFor = (subjectId, day) => {
   const key = `${subjectId}-${day}`
-  return [...(examples[key] || []), ...(examplesExtra[key] || [])]
+  return [...(examples[key] || []), ...(examplesExtra[key] || []), ...(examplesExtra3[key] || [])]
 }

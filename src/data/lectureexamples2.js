@@ -220,6 +220,50 @@ const routes = [
       note: 'AI 기능도 API처럼 입력·출력·실패대응을 먼저 계약으로 못박는다. 프롬프트를 명세에 넣어 두면 구현·평가가 쉬워진다.',
     },
   ],
+  'webproject-2': [
+    {
+      title: '🚀 따라하기 프로젝트 — index.html 하나로 만드는 AI 한 줄 요약 서비스',
+      lang: 'html',
+      code: `<!-- STEP 1) 이 파일 하나(index.html)만 만들면 되는 최소 AI 웹서비스다 -->
+<!-- 브라우저에서 열고 리뷰를 붙여넣으면 한 줄 요약이 나온다 -->
+<!doctype html>
+<meta charset="utf-8">
+<textarea id="src" rows="4" placeholder="리뷰를 붙여넣으세요"></textarea>
+<button id="go">한 줄 요약</button>
+<p id="out"></p>
+
+<script>
+// STEP 2) 요약 요청 함수 — LLM 채팅 API에 POST 한다
+async function summarize(text) {
+  // 키는 코드에 직접 쓰지 말고 실제로는 서버(프록시)를 거쳐 부른다(여기선 학습용)
+  const res = await fetch('https://api.example-llm.com/v1/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: '다음 리뷰를 40자 이내 한 문장으로 요약: ' + text }]
+    })
+  })
+  const data = await res.json()           // 응답을 JSON으로 변환
+  return data.choices[0].message.content  // 요약 문장만 꺼낸다
+}
+
+// STEP 3) 버튼을 누르면 요약을 호출하고 화면에 표시한다
+document.getElementById('go').onclick = async function () {
+  const text = document.getElementById('src').value.trim()
+  const out = document.getElementById('out')
+  if (text.length < 10) { out.textContent = '리뷰를 조금 더 길게 입력하세요'; return } // 비용가드
+  out.textContent = '요약 중…'
+  try {
+    out.textContent = await summarize(text)   // 성공 → 요약 표시
+  } catch (e) {
+    out.textContent = text.slice(0, 40)       // 실패대응 → 원문 앞 40자
+  }
+}
+</script>`,
+      note: 'index.html 하나로 동작하는 최소 AI 웹서비스. STEP 1→3 순서대로 따라 만들면 "입력→AI 호출→표시" 한 사이클이 완성된다. 실서비스는 키를 서버 프록시로 숨긴다.',
+    },
+  ],
   'webproject-3': [
     {
       title: '환경변수 분리 + Vite base 설정(배포 404 예방)',
@@ -769,6 +813,41 @@ if __name__ == "__main__":
      └──▶ [MCP Server] 외부 도구 (날씨·검색·사내 API)
 # 경계가 흐리면 통합에서 무너진다 — 인터페이스(계약)를 먼저 고정`,
       note: '캡스톤 실패의 절반은 통합 단계에서 난다. 컴포넌트 경계와 인터페이스를 착수 때 그림으로 합의하면 마지막에 덜 터진다.',
+    },
+    {
+      title: '🚀 따라하기 프로젝트 — FastAPI 한 파일에 RAG+Agent+MCP 최소 통합',
+      lang: 'python',
+      code: `# STEP 1) 캡스톤의 뼈대 — 한 앱에 RAG·Agent·MCP를 얹는 최소 통합
+from fastapi import FastAPI
+from pydantic import BaseModel
+app = FastAPI()
+
+# STEP 2) RAG: 문서를 검색한다(지금은 흐름만 보는 더미)
+def retrieve(query):
+    # 실제로는 임베딩 → 벡터DB 검색. 여기선 개념만 확인
+    return ['관련 문서 조각 1', '관련 문서 조각 2']
+
+# STEP 3) MCP 도구: 에이전트가 부를 외부 기능
+def mcp_tool_weather(city):
+    return city + ': 맑음, 26도'   # 실제로는 MCP 서버를 호출
+
+# STEP 4) Agent: 검색 결과 + 도구를 합쳐 답을 만든다
+def agent(query):
+    docs = retrieve(query)                       # RAG 검색
+    context = ' / '.join(docs)                   # 검색 문맥 합치기
+    tool = mcp_tool_weather('서울') if '날씨' in query else ''  # 필요시 도구 호출
+    answer = 'Q: ' + query + ' | 근거: ' + context
+    return answer + (' | 도구: ' + tool if tool else '')
+
+# STEP 5) 엔드포인트로 노출 → POST /ask 로 물어본다
+class Ask(BaseModel):
+    query: str
+
+@app.post('/ask')
+def ask(req: Ask):
+    return {'answer': agent(req.query)}          # RAG+Agent+MCP 통합 응답
+# 실행: uvicorn main:app --reload → http://localhost:8000/docs 에서 테스트`,
+      note: '캡스톤 전체 구조를 한 파일로 압축했다. STEP 1→5를 순서대로 실행하면 "질문→검색→도구→응답" 통합 흐름을 눈으로 확인한다. 각 STEP의 더미를 실제 구현(벡터DB·MCP 서버)으로 바꿔 확장하면 완성작이 된다.',
     },
   ],
   'capstone-2': [
