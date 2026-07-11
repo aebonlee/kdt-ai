@@ -227,8 +227,10 @@ async function main() {
       })
       .join('')
     // 페이지: 개요(표지+목차) + 과목별
-    const pages = `<section class="page is-active" data-page="home" id="tb-top">${home}</section>` +
-      subjectBlocks.map((b) => `<section class="page" data-page="${esc(b.id)}" id="subj-${esc(b.id)}">${b.html}</section>`).join('')
+    // 주의: 페이지 섹션에는 id를 두지 않는다(해시 진입 시 네이티브 앵커 점프로 상단 빈공간이 생김).
+    // 내비게이션·초기 해시 처리는 모두 JS show()가 전담한다.
+    const pages = `<section class="page is-active" data-page="home">${home}</section>` +
+      subjectBlocks.map((b) => `<section class="page" data-page="${esc(b.id)}">${b.html}</section>`).join('')
     const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
 <style>${SCREEN_CSS}</style>`
     const content = `<div class="tb">
