@@ -4,6 +4,18 @@
 export const examplesExtra3 = {
   "git-1": [
     {
+      "title": "강사 제공 — 맥북 개발환경 일괄 설치 스크립트 사용법과 핵심 구조",
+      "lang": "bash",
+      "code": "# SKALA 첫날 배포되는 skala-config-setup.sh — 한 번 실행으로 과정 전체 환경을 구성한다\nchmod +x skala-config-setup.sh    # 실행 권한 부여(최초 1회)\n./skala-config-setup.sh           # 실행 — 관리자 비밀번호 1회 입력(입력해도 화면엔 안 보임, 정상)\n\n# ── 스크립트가 설치해 주는 것들 ─────────────────────────\n# Homebrew(맥 패키지 관리자) → 이후 모든 설치의 토대\n# git · wget · curl · tree · jq   ← 오늘(Git 수업)부터 바로 사용\n# Java(temurin 21)               ← Spring AI 과목 대비\n# Python 3.11                    ← 데이터분석·LLM 과목 대비\n# Node + yarn/pnpm/typescript    ← Vue.js 과목 대비\n# PostgreSQL 17 · Docker Desktop ← DB·서빙 과목 대비\n# VS Code + 확장 · iTerm2 · awscli · kubectl\n\n# ── 왕초보를 배려한 설계 3가지(스크립트를 읽어보면 보인다) ──\n# 1) 실패해도 멈추지 않는다: 실패 항목은 모아뒀다가 마지막에 한꺼번에 보고\n# 2) 여러 번 실행해도 안전(idempotent): 이미 설치된 항목은 알아서 건너뜀\n# 3) 마무리 안내까지 출력: 예) \"Docker Desktop은 한 번 실행해야 docker 명령이 동작\"\n\n# 설치가 끝나면 아래로 확인한다(버전이 나오면 성공)\ngit --version && node --version && python3.11 --version",
+      "note": "개발환경은 손으로 하나씩 깔면 사람마다 상태가 달라져 수업 내내 발목을 잡는다. 일괄 스크립트는 \"누가 실행해도 같은 환경\"을 보장하며, 실패 항목만 마지막 보고에서 확인해 개별 해결하면 된다. 스크립트 자체도 bash 학습 자료다 — try 함수(실패 기록 후 계속)와 중복 실행 안전 처리 패턴을 눈여겨보자."
+    },
+    {
+      "title": "IT 용어 한 장 — 화면 기획 용어(웹 프로젝트 전 과정에서 쓰임)",
+      "lang": "text",
+      "code": "# 화면을 만들 때 팀이 공통으로 쓰는 용어 — 순서대로 구체화된다\nWireframe   : 화면의 뼈대만 그린 설계도 (색·폰트·이미지 없이 배치만)\nMockup      : 와이어프레임에 실제 디자인(색·글꼴·아이콘)을 입힌 정적 시안\nPrototype   : 클릭하면 화면이 넘어가는 '동작하는' 시제품 (흐름 검증용)\nPersona     : 우리 서비스를 쓸 가상의 대표 사용자 모델\n\nUI  : 사용자가 보는 인터페이스 그 자체 (버튼·레이아웃·색·글꼴)\nUX  : 사용하며 느끼는 경험의 총합 (UI보다 큰 개념)\n\nGNB : Global Navigation Bar — 전체 서비스 공통 상단 메뉴\nLNB : Local Navigation Bar — 특정 영역 안의 세부 메뉴\nInformation Architecture : 메뉴·페이지·콘텐츠의 전체 구조 설계\nDesign System : 일관된 UI를 위한 설계 체계(색·컴포넌트 규칙)\n\n# 기억법: 뼈대(Wireframe) → 옷(Mockup) → 움직임(Prototype) 순서로 구체화",
+      "note": "이 용어들은 웹 서비스 mini-Project(설계·와이어프레임)와 캡스톤 발표에서 그대로 쓰인다. 특히 Wireframe→Mockup→Prototype의 구체화 단계와 GNB/LNB는 기획 회의에서 매일 나오는 말이므로 첫날에 정리해 두면 팀 소통이 빨라진다."
+    },
+    {
       "title": "맨 처음 한 번만 하는 Git 사용자 설정 (config)",
       "lang": "bash",
       "code": "# 1) 커밋에 남길 내 이름을 전역(--global)으로 등록한다(모든 저장소 공통)\ngit config --global user.name \"홍길동\"\n# 2) 이메일은 GitHub 계정 이메일과 똑같이 맞춘다(잔디·작성자 매칭)\ngit config --global user.email \"me@team.com\"\n# 3) 새 저장소의 기본 브랜치 이름을 master 대신 main 으로 지정\ngit config --global init.defaultBranch main\n# 4) 커밋 메시지 편집기로 VS Code 사용(--wait: 창 닫을 때까지 기다림)\ngit config --global core.editor \"code --wait\"\n# 5) 지금까지 설정한 값 전체를 확인\ngit config --list\n# 6) 값 하나만 콕 집어 확인\ngit config user.name       # 출력: 홍길동",
