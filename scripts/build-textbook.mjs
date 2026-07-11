@@ -192,9 +192,9 @@ async function main() {
         return `<a class="sl" href="#subj-${esc(s.id)}"><span class="sl-n">${esc(s.name)}</span><span class="sl-m">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a>`
       })
       .join('')
-    const frag = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
-<style>${SCREEN_CSS}</style>
-<div class="tb">
+    const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
+<style>${SCREEN_CSS}</style>`
+    const content = `<div class="tb">
   <aside class="tb-side">
     <div class="tb-brandbox">
       <div class="tb-brand">SKALA <b>4기</b> 실습 교재</div>
@@ -208,8 +208,14 @@ async function main() {
   <main class="tb-main" id="tb-top">${body}</main>
 </div>
 <script>${COPY_JS}</script>`
+    // (1) Artifact 발행용 조각(no html/head/body)
+    const frag = `${head}\n${content}`
     writeFileSync(join(outDir, 'textbook-web.html'), frag)
-    console.log(`생성: dist-textbook/textbook-web.html (${(frag.length / 1024).toFixed(0)}KB, ${ordered.length}과목 ${totalDays}일차)`)
+    // (2) 사이트 배포용 독립 HTML → public/practice-textbook.html ("실습교안" 메뉴가 링크)
+    const standalone = `<!doctype html><html lang="ko"><head><meta charset="utf-8">` +
+      `<meta name="viewport" content="width=device-width, initial-scale=1">${head}</head><body>${content}</body></html>`
+    writeFileSync(join(ROOT, 'public', 'practice-textbook.html'), standalone)
+    console.log(`생성: dist-textbook/textbook-web.html + public/practice-textbook.html (${(frag.length / 1024).toFixed(0)}KB, ${ordered.length}과목)`)
     return
   }
 

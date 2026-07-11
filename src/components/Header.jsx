@@ -12,12 +12,12 @@ const nav = [
   { to: '/schedule', label: '수업일정표' },
   { to: '/prep', label: '선수학습자료' },
   { to: '/subjects', label: '과목별 안내' },
-  { to: '/lectures', label: '강의안' },
+  { to: '/lectures', label: '학습강의안' },
+  { href: '/practice-textbook.html', label: '실습교안', external: true },
   { to: '/team', label: '팀 프로젝트' },
   { to: '/reference', label: '참고자료' },
   { to: '/progress', label: '학습관리' },
   { to: '/board', label: '게시판' },
-  { href: 'https://padlet.com/aebon/skala4', label: '학습자료실', external: true },
   { to: '/dashboard', label: '대시보드' },
 ]
 

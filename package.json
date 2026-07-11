@@ -6,9 +6,9 @@
   "description": "SKALA 4기 (이애본 강사) — 과목·일자별 학습 커리큘럼 뷰어 (React + Vite, Editorial Navy)",
   "scripts": {
     "split": "node scripts/split-lectures.mjs",
-    "predev": "node scripts/split-lectures.mjs",
+    "predev": "node scripts/split-lectures.mjs && node scripts/build-textbook.mjs --web",
     "dev": "vite",
-    "prebuild": "node scripts/split-lectures.mjs",
+    "prebuild": "node scripts/split-lectures.mjs && node scripts/build-textbook.mjs --web",
     "build": "vite build",
     "preview": "vite preview",
     "textbook": "node scripts/split-lectures.mjs && bash scripts/make-textbook-pdf.sh",

@@ -14,3 +14,6 @@ src/data/lectures/
 
 # 배포용 강의안 교재(PDF/HTML) — npm run textbook 으로 재생성
 dist-textbook/
+
+# "실습교안" 정적 페이지 — prebuild/predev 가 자동 생성
+public/practice-textbook.html
