@@ -16,6 +16,38 @@ const esc = (s) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const escNl = (s) => esc(s).replace(/\n/g, '<br>')
 
+// 코드 주석 녹색 처리 — 사이트 CodeBlock.jsx 와 동일한 감지 로직 이식.
+const LINE_TOKEN = {
+  python: '#', py: '#', bash: '#', sh: '#', shell: '#', yaml: '#', yml: '#',
+  docker: '#', dockerfile: '#', ruby: '#', r: '#', toml: '#', ini: '#', text: '#',
+  javascript: '//', js: '//', jsx: '//', ts: '//', typescript: '//', java: '//',
+  c: '//', cpp: '//', go: '//', kotlin: '//', swift: '//', sql: '--',
+}
+function codeSegs(line, lang) {
+  if (lang === 'html' || lang === 'vue' || lang === 'xml' || lang === 'svg') {
+    const a = line.indexOf('<!--')
+    if (a !== -1) return [{ t: line.slice(0, a) }, { t: line.slice(a), c: true }]
+  }
+  const tok = LINE_TOKEN[lang]
+  if (tok) {
+    for (let i = 0; i < line.length; i++) {
+      if (line.startsWith(tok, i)) {
+        const before = i === 0 ? '' : line[i - 1]
+        if (i === 0 || before === ' ' || before === '\t') {
+          return [{ t: line.slice(0, i) }, { t: line.slice(i), c: true }]
+        }
+      }
+    }
+  }
+  return [{ t: line }]
+}
+// 언어별 라인 주석을 녹색(.cmt)으로 감싸며 HTML 이스케이프
+const hlCode = (code, lang) =>
+  String(code).split('\n')
+    .map((ln) => codeSegs(ln, (lang || '').toLowerCase())
+      .map((s) => (s.c ? `<span class="cmt">${esc(s.t)}</span>` : esc(s.t))).join(''))
+    .join('\n')
+
 // 분반 반복 여부 (표지·과목 헤더 표기용)
 const bySub = {}
 for (const s of sessions) (bySub[s.subjectId] = bySub[s.subjectId] || []).push(`${s.region}${s.klass}`)
@@ -71,7 +103,7 @@ function renderExamples(list, heading, icon) {
   for (const ex of list) {
     h += `<div class="ex"><div class="ex-h">${esc(ex.title)} <span class="lang">(${esc(ex.lang)})</span></div>` +
       `<div class="code-wrap"><button type="button" class="copy-btn" aria-label="코드 복사">복사</button>` +
-      `<pre class="code"><code>${esc(ex.code)}</code></pre></div>` +
+      `<pre class="code"><code>${hlCode(ex.code, ex.lang)}</code></pre></div>` +
       (ex.note ? `<p class="note">💡 ${escNl(ex.note)}</p>` : '') + `</div>`
   }
   return h
@@ -142,10 +174,10 @@ async function renderDay(subj, dayIdx) {
 }
 
 async function main() {
-  let body = ''
-  // 표지
   const totalDays = ordered.reduce((a, s) => a + s.days.length, 0)
-  body += `<section class="cover">
+
+  // 표지 + 목차 (개요 페이지)
+  const cover = `<section class="cover">
     <div class="cover-brand">SKALA · SK AI Leader Academy</div>
     <h1>SKALA 4기 실습 교재</h1>
     <p class="cover-sub">이애본 강사 담당 ${ordered.length}과목 · 실습 교재</p>
@@ -155,43 +187,48 @@ async function main() {
       <div><b>지역</b> 울산 · 판교(4·5층) · 광주</div>
       <div><b>수록</b> 담당 ${ordered.length}과목</div>
     </div>
-    <p class="cover-note">본 실습 교재의 코드·설명은 SKALA 4기 실라버스에 근거해 우리말로 재서술한 자립 학습용 자료입니다.</p>
+    <p class="cover-note">본 실습 교재의 코드·설명은 SKALA 4기 실라버스에 근거해 우리말로 재서술한 자립 학습용 자료입니다. 각 소스의 <span class="cmt">녹색 주석</span>을 따라 실습하세요.</p>
   </section>`
+  const tocRows = ordered.map((s) => {
+    const tag = bySub[s.id] ? classesOf(s.id).join(', ') : '참고(미배정)'
+    return `<li><a class="toc-row" href="#subj-${esc(s.id)}" data-goto="${esc(s.id)}"><span class="toc-name">${esc(s.name)}</span><span class="toc-meta">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a></li>`
+  }).join('')
+  const toc = `<section class="toc"><h2>목차 <span class="thin">(과목을 누르면 해당 과목만 펼쳐집니다)</span></h2><ol>${tocRows}</ol></section>`
+  const home = cover + toc
 
-  // 목차
-  body += `<section class="toc"><h2>목차</h2><ol>`
-  ordered.forEach((s, i) => {
-    const cls = classesOf(s.id)
-    const tag = bySub[s.id] ? cls.join(', ') : '참고(미배정)'
-    body += `<li><span class="toc-name">${esc(s.name)}</span><span class="toc-meta">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></li>`
-  })
-  body += `</ol></section>`
-
-  // 과목별
+  // 과목별 블록 (페이지 단위 구성용)
+  const subjectBlocks = []
   for (const subj of ordered) {
     const cls = classesOf(subj.id)
-    body += `<section class="subject-head" id="subj-${esc(subj.id)}">
+    let sh = `<div class="subject-head">
       <div class="sh-cat">${esc(subj.category)}</div>
       <h2>${esc(subj.name)}</h2>
       <p class="sh-sum">${esc(subj.summary)}</p>
       <div class="sh-meta"><span class="chip code">${esc(subj.code)}</span>
         <span class="chip day">${subj.days.length}일차</span>
         <span class="chip ${bySub[subj.id] ? 'cat' : 'm-theory'}">${bySub[subj.id] ? esc(cls.join(', ')) : '참고 · 미배정'}</span></div>
-    </section>`
-    for (let i = 0; i < subj.days.length; i++) body += await renderDay(subj, i)
+    </div>`
+    for (let i = 0; i < subj.days.length; i++) sh += await renderDay(subj, i)
+    subjectBlocks.push({ id: subj.id, name: subj.name, html: sh })
   }
+
+  // 인쇄본(PDF)·no-JS 폴백용 연속 본문
+  const body = home + subjectBlocks.map((b) => b.html).join('')
 
   const outDir = join(ROOT, 'dist-textbook')
   mkdirSync(outDir, { recursive: true })
 
   if (WEB) {
-    // 웹 뷰어(Artifact 발행용): 좌측 과목 목차(앵커) + 본문. style + 콘텐츠 조각만.
+    // 웹 뷰어: 좌측 메뉴(과목) 클릭 → 해당 과목만 페이지 단위로 표시. + 인쇄 버튼.
     const sideItems = ordered
       .map((s) => {
         const tag = bySub[s.id] ? classesOf(s.id).join(', ') : '참고'
-        return `<a class="sl" href="#subj-${esc(s.id)}"><span class="sl-n">${esc(s.name)}</span><span class="sl-m">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a>`
+        return `<a class="sl" href="#subj-${esc(s.id)}" data-goto="${esc(s.id)}"><span class="sl-n">${esc(s.name)}</span><span class="sl-m">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a>`
       })
       .join('')
+    // 페이지: 개요(표지+목차) + 과목별
+    const pages = `<section class="page is-active" data-page="home" id="tb-top">${home}</section>` +
+      subjectBlocks.map((b) => `<section class="page" data-page="${esc(b.id)}" id="subj-${esc(b.id)}">${b.html}</section>`).join('')
     const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
 <style>${SCREEN_CSS}</style>`
     const content = `<div class="tb">
@@ -201,13 +238,20 @@ async function main() {
       <div class="tb-brand-sub">이애본 강사 · 담당 ${ordered.length}과목</div>
     </div>
     <nav class="tb-nav" aria-label="과목 목차">
-      <a class="sl sl-top" href="#tb-top">↑ 표지 · 개요</a>
+      <a class="sl sl-top is-active" href="#tb-top" data-goto="home">📖 표지 · 목차</a>
       ${sideItems}
     </nav>
   </aside>
-  <main class="tb-main" id="tb-top">${body}</main>
+  <main class="tb-main">
+    <div class="tb-toolbar">
+      <span class="tb-crumb" id="tb-crumb">표지 · 목차</span>
+      <button type="button" class="print-btn" id="tb-print">🖨 이 과목 인쇄</button>
+    </div>
+    <div class="tb-pages">${pages}</div>
+  </main>
 </div>
-<script>${COPY_JS}</script>`
+<script>${COPY_JS}
+${PAGE_JS}</script>`
     // (1) Artifact 발행용 조각(no html/head/body)
     const frag = `${head}\n${content}`
     writeFileSync(join(outDir, 'textbook-web.html'), frag)
@@ -294,6 +338,7 @@ td.pt{width:26mm;background:#f6f7fb;font-size:9pt;white-space:nowrap;}
 .ex-h{font-weight:800;color:var(--navy800);font-size:10pt;margin-bottom:5px;}
 .lang{font-weight:600;color:var(--soft);font-size:8.5pt;}
 .copy-btn{display:none;}
+.cmt{color:#4ade80;font-style:italic;}
 pre.code{background:#0f1229;color:#e6e9f5;border-radius:8px;padding:12px 14px;overflow:visible;white-space:pre-wrap;word-break:break-word;font-family:'SFMono-Regular',Consolas,monospace;font-size:8.3pt;line-height:1.55;margin:0;}
 p.note{margin:6px 0 0;font-size:9pt;color:var(--soft);line-height:1.6;}
 `
@@ -344,7 +389,24 @@ const SCREEN_CSS = `
 
 /* 본문 */
 .tb-main{padding:0 clamp(20px,4vw,64px) 120px;min-width:0;}
-.tb-main>section{max-width:900px;margin:0 auto;}
+.page{max-width:900px;margin:0 auto;}
+/* 페이징: JS 있으면 활성 페이지만, 없으면 전체 스크롤 폴백 */
+.js-paged .page{display:none;}
+.js-paged .page.is-active{display:block;}
+/* 상단 툴바(빵부스러기 + 인쇄) */
+.tb-toolbar{position:sticky;top:0;z-index:15;max-width:900px;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 0;background:var(--bg);border-bottom:1px solid var(--line);}
+.tb-crumb{font-weight:800;color:var(--ink);font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.print-btn{flex:none;font-family:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--indigo);
+  border:none;border-radius:8px;padding:8px 15px;cursor:pointer;transition:background .15s;}
+.print-btn:hover{background:var(--navy800);}
+.print-btn:focus-visible{outline:2px solid var(--light-indigo);outline-offset:2px;}
+/* 목차 링크 */
+.toc-row{display:block;text-decoration:none;color:inherit;}
+.toc-row:hover .toc-name{color:var(--indigo);text-decoration:underline;}
+/* 코드 주석(녹색) */
+.cmt{color:#4ade80;font-style:italic;}
 .cover{margin:32px auto 40px;text-align:center;background:linear-gradient(155deg,#0E1152,#3F51FF);color:#fff;
   border-radius:20px;padding:64px 40px;box-shadow:0 24px 60px rgba(14,17,82,.32);}
 .cover-brand{font-size:13px;letter-spacing:.24em;opacity:.85;margin-bottom:16px;text-transform:uppercase;}
@@ -441,9 +503,26 @@ p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-sp
   .cover-meta b{width:44px;}
   .concepts,.topics{grid-template-columns:1fr;}
   .day{padding:20px 16px;}
+  .tb-toolbar{padding:10px 0;}
+  .tb-crumb{font-size:14px;}
+  .print-btn{padding:7px 12px;font-size:12px;}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;}}
 html{scroll-behavior:smooth;}
+pre.code{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+/* 인쇄: 현재 보고 있는 과목만 출력 */
+@media print{
+  .tb-side,.tb-toolbar,.copy-btn{display:none!important;}
+  .tb{display:block;background:#fff;}
+  .tb-main{padding:0;overflow:visible;}
+  .js-paged .page{display:none!important;}
+  .js-paged .page.is-active{display:block!important;max-width:none;}
+  .day{break-inside:auto;border:none;box-shadow:none;padding:0;margin:0 0 14px;}
+  .subject-head{page-break-after:avoid;}
+  .ex,.concept,.card,.box,table.plan{break-inside:avoid;}
+  .cover{box-shadow:none;}
+  a[data-goto]{color:inherit;text-decoration:none;}
+}
 `
 
 // 코드 블록 복사 버튼 동작 (웹 뷰어 전용, 자체 포함 인라인 스크립트)
@@ -470,6 +549,46 @@ document.addEventListener('click', function (e) {
     document.body.removeChild(ta);
   }
 });
+`
+
+// 페이지 단위 전환(좌측 메뉴=과목 페이지) + 인쇄 (웹 뷰어 전용)
+const PAGE_JS = `
+(function () {
+  var root = document.querySelector('.tb');
+  if (!root) return;
+  root.classList.add('js-paged');           // 페이징 CSS 활성화(무JS면 전체 스크롤 폴백)
+  var pages = root.querySelectorAll('.page');
+  var crumb = document.getElementById('tb-crumb');
+  var side = root.querySelector('.tb-side');
+  function labelOf(id) {
+    if (id === 'home') return '표지 · 목차';
+    var n = root.querySelector('.sl[data-goto="' + id + '"] .sl-n');
+    return n ? n.textContent : id;
+  }
+  function show(id) {
+    var found = false;
+    pages.forEach(function (p) {
+      var on = p.getAttribute('data-page') === id;
+      p.classList.toggle('is-active', on);
+      if (on) found = true;
+    });
+    if (!found) { id = 'home'; pages.forEach(function (p) { p.classList.toggle('is-active', p.getAttribute('data-page') === 'home'); }); }
+    root.querySelectorAll('.sl').forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('data-goto') === id); });
+    if (crumb) crumb.textContent = labelOf(id);
+    window.scrollTo(0, 0);
+    try { history.replaceState(null, '', id === 'home' ? '#tb-top' : '#subj-' + id); } catch (e) {}
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-goto]');
+    if (!a || !root.contains(a)) return;
+    e.preventDefault();
+    show(a.getAttribute('data-goto'));
+  });
+  var m = (location.hash || '').match(/^#subj-(.+)$/);
+  show(m ? m[1] : 'home');
+  var pb = document.getElementById('tb-print');
+  if (pb) pb.addEventListener('click', function () { window.print(); });
+})();
 `
 
 main()
