@@ -2,12 +2,15 @@
 // 학생이 담당 강의 앞뒤 과목을 예습·복습할 수 있게 안내한다.
 import { Link } from 'react-router-dom'
 import { otherCourses } from '../data/othercontent'
+import { otherDeep } from '../data/otherdeep'
 import { otherSessions, TRACKS } from '../data/othersessions'
+import CodeBlock from './CodeBlock'
 
 const fmt = (d) => `${d.slice(5, 7)}-${d.slice(8, 10)}`
 
 export default function EtcCourse({ courseId }) {
   const c = otherCourses[courseId]
+  const deep = otherDeep[courseId] || {}
   if (!c) {
     return (
       <div>
@@ -52,6 +55,39 @@ export default function EtcCourse({ courseId }) {
             <ul className="dot-list">
               {c.topics.map((t, i) => <li key={i}>{t}</li>)}
             </ul>
+          </div>
+        </>
+      )}
+
+      {deep.concepts?.length > 0 && (
+        <>
+          <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>📚 핵심 개념</h3>
+          <div className="grid grid-2" style={{ marginTop: 12 }}>
+            {deep.concepts.map((k, i) => (
+              <dl key={i} className="concept">
+                <dt>{k.term}</dt>
+                <dd style={{ whiteSpace: 'pre-line' }}>{k.desc}</dd>
+              </dl>
+            ))}
+          </div>
+        </>
+      )}
+
+      {deep.examples?.length > 0 && (
+        <>
+          <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>💻 따라하기 실습</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
+            {deep.examples.map((ex, i) => (
+              <div key={i}>
+                <div className="box-h" style={{ marginBottom: 8 }}>
+                  {ex.title} <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({ex.lang})</span>
+                </div>
+                <CodeBlock code={ex.code} lang={ex.lang} />
+                {ex.note && (
+                  <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>💡 {ex.note}</p>
+                )}
+              </div>
+            ))}
           </div>
         </>
       )}

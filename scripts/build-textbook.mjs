@@ -10,6 +10,7 @@ import { modeOf, periodTagsOf } from '../src/data/lecturemodes.js'
 import { exams } from '../src/data/exams.js'
 import { quizzes } from '../src/data/quizzes.js'
 import { otherCourses } from '../src/data/othercontent.js'
+import { otherDeep } from '../src/data/otherdeep.js'
 import { otherSessions, otherPeriods, TRACKS, EVENT_LABELS } from '../src/data/othersessions.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -242,9 +243,15 @@ function renderEtcPage() {
   // 과목별 학습내용 카드
   h += `<h4 class="sec">📖 과목별 학습내용</h4>`
   for (const [id, c] of Object.entries(otherCourses)) {
+    const deep = otherDeep[id] || {}
     h += `<div class="card"><h5>${esc(c.name)} <span class="thin">· ${esc(c.category)} · ${c.hours}시간</span></h5>` +
       `<p style="margin:4px 0 8px">${esc(c.summary)}</p>` +
       `<ul class="dot">${(c.topics || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` +
+      (deep.concepts?.length
+        ? `<div class="exam-sub">핵심 개념</div><div class="concepts">` +
+          deep.concepts.map((k) => `<dl class="concept"><dt>${esc(k.term)}</dt><dd>${escNl(k.desc)}</dd></dl>`).join('') + `</div>`
+        : '') +
+      (deep.examples?.length ? renderExamples(deep.examples, '따라하기 실습', '💻') : '') +
       (c.tip ? `<p class="note">🔗 ${escNl(c.tip)}</p>` : '') + `</div>`
   }
 
