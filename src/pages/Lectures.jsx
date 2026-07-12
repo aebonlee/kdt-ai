@@ -5,6 +5,9 @@ import { PERIOD_TIMES } from '../data/lectureperiods'
 import { modeOf, periodTagsOf } from '../data/lecturemodes'
 import CodeBlock from '../components/CodeBlock'
 import ExamQuiz from '../components/ExamQuiz'
+import EtcCourse from '../components/EtcCourse'
+import { otherCourses } from '../data/othercontent'
+import { otherByMonth, otherPeriods, TRACKS, EVENT_LABELS } from '../data/othersessions'
 
 // 실라버스 방식 배지 색상 (이론/실습/종합실습)
 const modeClass = (tag) =>
@@ -25,13 +28,25 @@ function parseRef(param) {
   return { subjectId: m[1], day: Number(m[2]), isRef: true }
 }
 
+// 기타(타 강사) 과목 키 파싱: "etc-<courseId>"
+function parseEtc(param) {
+  if (!param || !param.startsWith('etc-')) return null
+  return { courseId: param.slice(4) }
+}
+
+// 기타 셀의 표시 이름: 기타 과목 → 담당 과목(타 반 진행) → 특강/행사 순으로 해석
+function etcName(c) {
+  return otherCourses[c]?.name || subjectById(c)?.name || EVENT_LABELS[c] || c
+}
+
 export default function Lectures() {
   const { date } = useParams()
   const navigate = useNavigate()
   const all = sortedSessions()
 
-  const ref = parseRef(date)
-  const session = !ref ? sessionByDate(date) : null
+  const etc = parseEtc(date)
+  const ref = !etc ? parseRef(date) : null
+  const session = !ref && !etc ? sessionByDate(date) : null
   const current = session || ref || all[0]
   const isRef = !!current.isRef
   const activeKey = isRef ? `ref-${current.subjectId}-${current.day}` : current.date
@@ -189,9 +204,57 @@ export default function Lectures() {
                     </button>
                   )
                 })}
+
+            {/* 기타(타 강사 과목) — 담당 강의 앞뒤에 배우는 내용, 월별·일자별 */}
+            <details className="etc-nav" open={!!etc}>
+              <summary>📚 기타 · 타 강사 과목 (앞뒤 학습)</summary>
+              <p className="etc-nav-note">담당 강의 전후로 각 분반에서 배우는 과목입니다. 과목을 누르면 학습내용을 볼 수 있습니다.</p>
+              {otherByMonth().map((g) => (
+                <div key={g.month}>
+                  <div className="side-nav-title etc-month">{Number(g.month.slice(5))}월</div>
+                  {g.items.map((s) => {
+                    // 같은 날 같은 과목이 여러 분반이면 묶어 한 줄로
+                    const cells = TRACKS.filter((t) => s[t.key]).map((t) => ({ ...s[t.key], track: t.label }))
+                    const byCourse = new Map()
+                    for (const c of cells) {
+                      if (!byCourse.has(c.c)) byCourse.set(c.c, [])
+                      byCourse.get(c.c).push(c.track)
+                    }
+                    return [...byCourse.entries()].map(([cid, tracks]) => {
+                      const clickable = !!otherCourses[cid]
+                      const label = `${s.date.slice(5, 7)}-${s.date.slice(8, 10)} · ${etcName(cid)}`
+                      const active = etc?.courseId === cid
+                      return (
+                        <button
+                          key={`${s.date}-${cid}`}
+                          className={`side-link etc-link${active ? ' active' : ''}${clickable ? '' : ' etc-plain'}`}
+                          onClick={() => clickable && navigate(`/lectures/etc-${cid}`)}
+                          disabled={!clickable}
+                        >
+                          {label}
+                          <span className="sl-sub">{tracks.join(' · ')}</span>
+                        </button>
+                      )
+                    })
+                  })}
+                </div>
+              ))}
+              <div className="side-nav-title etc-month">11월 이후</div>
+              {otherPeriods.map((p) => (
+                <div key={p.range} className="etc-period">
+                  <b>{p.label}</b>
+                  <span>{p.range}</span>
+                  <span>{p.note}</span>
+                </div>
+              ))}
+              <p className="etc-nav-note">※ 10/5~10/23 구간은 배정표 확인 중 · 일정은 변동될 수 있습니다.</p>
+            </details>
           </nav>
 
-          {/* 본문 — 강의안 */}
+          {/* 본문 — 강의안 (기타 과목이면 학습내용 패널) */}
+          {etc ? (
+            <EtcCourse courseId={etc.courseId} />
+          ) : (
           <div>
             <div className="detail-meta">
               <span className="chip chip-code">{subj?.code}</span>
@@ -480,6 +543,7 @@ export default function Lectures() {
               <ExamQuiz subjectId={current.subjectId} day={current.day} totalDays={subj?.days?.length || 1} />
             )}
           </div>
+          )}
         </div>
       </section>
     </div>

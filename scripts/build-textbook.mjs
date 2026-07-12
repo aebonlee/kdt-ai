@@ -9,6 +9,8 @@ import { PERIOD_TIMES } from '../src/data/lectureperiods.js'
 import { modeOf, periodTagsOf } from '../src/data/lecturemodes.js'
 import { exams } from '../src/data/exams.js'
 import { quizzes } from '../src/data/quizzes.js'
+import { otherCourses } from '../src/data/othercontent.js'
+import { otherSessions, otherPeriods, TRACKS, EVENT_LABELS } from '../src/data/othersessions.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -224,6 +226,56 @@ async function renderDay(subj, dayIdx) {
   return h
 }
 
+// ── 기타(타 강사 진행) 과정 페이지 — 앞뒤 학습 안내 ──
+function renderEtcPage() {
+  const subjName = (id) => subjects.find((s) => s.id === id)?.name
+  const nameOf = (c) => otherCourses[c]?.name || subjName(c) || EVENT_LABELS[c] || c
+  const trackOf = (s) => (s.region === '광주' ? 'gj' : s.region === '울산' ? 'us' : s.klass === '4층' ? 'p4' : 'p5')
+
+  let h = `<div class="subject-head">
+    <div class="sh-cat">기타 · 타 강사 진행</div>
+    <h2>기타 과정 (앞뒤 학습)</h2>
+    <p class="sh-sum">이애본 강사 담당 강의의 앞뒤에 각 분반에서 배우는 과목입니다. 과정 전체 흐름을 잇는 예습·복습 자료로 활용하세요.</p>
+    <div class="sh-meta"><span class="chip code">참고</span><span class="chip cat">${Object.keys(otherCourses).length}과목</span><span class="chip day">실시간 배정표 기준 · 변동 가능</span></div>
+  </div>`
+
+  // 과목별 학습내용 카드
+  h += `<h4 class="sec">📖 과목별 학습내용</h4>`
+  for (const [id, c] of Object.entries(otherCourses)) {
+    h += `<div class="card"><h5>${esc(c.name)} <span class="thin">· ${esc(c.category)} · ${c.hours}시간</span></h5>` +
+      `<p style="margin:4px 0 8px">${esc(c.summary)}</p>` +
+      `<ul class="dot">${(c.topics || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` +
+      (c.tip ? `<p class="note">🔗 ${escNl(c.tip)}</p>` : '') + `</div>`
+  }
+
+  // 분반별 일정표 (담당 강의는 ★로 병합 표시)
+  const taughtMap = new Map()
+  for (const s of sessions) taughtMap.set(`${s.date}|${trackOf(s)}`, s.subjectId)
+  const allDates = [...new Set([...otherSessions.map((s) => s.date), ...sessions.map((s) => s.date)])].sort()
+  h += `<h4 class="sec">📅 분반별 일정 <span class="thin">(★ = 이애본 강사 담당 — 좌측 과목 페이지 참조)</span></h4>`
+  h += `<table class="plan"><tr><td class="pt"><b>날짜</b></td>${TRACKS.map((t) => `<td><b>${esc(t.label)}</b></td>`).join('')}</tr>`
+  for (const date of allDates) {
+    const os = otherSessions.find((s) => s.date === date) || {}
+    const cells = TRACKS.map((t) => {
+      const taught = taughtMap.get(`${date}|${t.key}`)
+      if (taught) return `<td><b>★ ${esc(subjName(taught))}</b></td>`
+      const cell = os[t.key]
+      if (!cell) return `<td></td>`
+      return `<td>${esc(nameOf(cell.c))}${cell.by ? ` <span class="pd">${esc(cell.by)}</span>` : ''}</td>`
+    })
+    h += `<tr><td class="pt">${esc(date.slice(5))}</td>${cells.join('')}</tr>`
+  }
+  h += `</table>`
+  h += `<p class="note">※ 10/5~10/23 구간의 타 분반 배정은 확인 중입니다(담당 광주 일정만 표시).</p>`
+
+  // 11월 이후 요약
+  h += `<h4 class="sec">🗓 11월 이후</h4>`
+  for (const p of otherPeriods) {
+    h += `<div class="card"><h5>${esc(p.label)}</h5><p>${esc(p.range)} — ${esc(p.note)}</p></div>`
+  }
+  return h
+}
+
 async function main() {
   const totalDays = ordered.reduce((a, s) => a + s.days.length, 0)
 
@@ -263,8 +315,9 @@ async function main() {
     subjectBlocks.push({ id: subj.id, name: subj.name, html: sh })
   }
 
-  // 인쇄본(PDF)·no-JS 폴백용 연속 본문
-  const body = home + subjectBlocks.map((b) => b.html).join('')
+  // 인쇄본(PDF)·no-JS 폴백용 연속 본문 (기타 과정은 부록으로)
+  const etcPage = renderEtcPage()
+  const body = home + subjectBlocks.map((b) => b.html).join('') + etcPage
 
   const outDir = join(ROOT, 'dist-textbook')
   mkdirSync(outDir, { recursive: true })
@@ -281,7 +334,8 @@ async function main() {
     // 주의: 페이지 섹션에는 id를 두지 않는다(해시 진입 시 네이티브 앵커 점프로 상단 빈공간이 생김).
     // 내비게이션·초기 해시 처리는 모두 JS show()가 전담한다.
     const pages = `<section class="page is-active" data-page="home">${home}</section>` +
-      subjectBlocks.map((b) => `<section class="page" data-page="${esc(b.id)}">${b.html}</section>`).join('')
+      subjectBlocks.map((b) => `<section class="page" data-page="${esc(b.id)}">${b.html}</section>`).join('') +
+      `<section class="page" data-page="etc">${etcPage}</section>`
     const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
 <style>${SCREEN_CSS}</style>`
     const content = `<div class="tb">
@@ -294,6 +348,7 @@ async function main() {
     <nav class="tb-nav" aria-label="과목 목차">
       <a class="sl sl-top is-active" href="#" data-goto="home">📖 표지 · 목차</a>
       ${sideItems}
+      <a class="sl" href="#" data-goto="etc"><span class="sl-n">📚 기타 과정 (앞뒤 학습)</span><span class="sl-m">타 강사 과목 · 분반별 일정</span></a>
     </nav>
   </aside>
   <main class="tb-main">

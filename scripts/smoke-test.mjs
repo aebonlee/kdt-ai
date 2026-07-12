@@ -86,7 +86,7 @@ if (existsSync(join(dist, 'practice-textbook.html'))) {
   const pages = (pt.match(/class="page[ "]/g) || []).length
   const quizSecs = (pt.match(/📝 복습 퀴즈/g) || []).length
   const examSecs = (pt.match(/📋 종합실습 평가기준/g) || []).length
-  assert(pages === subjects.length + 1, `실습교안 페이지 ${pages} = 개요+${subjects.length}과목`)
+  assert(pages === subjects.length + 2, `실습교안 페이지 ${pages} = 개요+${subjects.length}과목+기타`)
   assert(quizSecs === Object.keys(quizzes).length, `실습교안 퀴즈 섹션 ${quizSecs}`)
   assert(examSecs === Object.keys(exams).length, `실습교안 평가기준 섹션 ${examSecs}`)
   assert(!pt.includes('&amp;lt;') && !pt.includes('&amp;gt;'), '이중 이스케이프 없음')

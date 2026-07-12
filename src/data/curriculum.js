@@ -845,11 +845,11 @@ export const sessions = [
   { date: '2026-07-14', weekday: '화', region: '판교', klass: '5층', subjectId: 'git', day: 1 },
   { date: '2026-07-15', weekday: '수', region: '울산', klass: '', subjectId: 'python', day: 1 },
   { date: '2026-07-16', weekday: '목', region: '울산', klass: '', subjectId: 'python', day: 2 },
-  // LLM과 Transformer 아키텍처 — 판교 두 분반(4층·5층)
-  { date: '2026-07-21', weekday: '화', region: '판교', klass: '4층', subjectId: 'transformer', day: 1 },
-  { date: '2026-07-22', weekday: '수', region: '판교', klass: '4층', subjectId: 'transformer', day: 2 },
-  { date: '2026-07-23', weekday: '목', region: '판교', klass: '5층', subjectId: 'transformer', day: 1 },
-  { date: '2026-07-24', weekday: '금', region: '판교', klass: '5층', subjectId: 'transformer', day: 2 },
+  // LLM과 Transformer 아키텍처 — 판교 두 분반(5층 먼저, 4층 다음 — 실시간 배정표 2026-07-12 기준)
+  { date: '2026-07-21', weekday: '화', region: '판교', klass: '5층', subjectId: 'transformer', day: 1 },
+  { date: '2026-07-22', weekday: '수', region: '판교', klass: '5층', subjectId: 'transformer', day: 2 },
+  { date: '2026-07-23', weekday: '목', region: '판교', klass: '4층', subjectId: 'transformer', day: 1 },
+  { date: '2026-07-24', weekday: '금', region: '판교', klass: '4층', subjectId: 'transformer', day: 2 },
   { date: '2026-07-31', weekday: '금', region: '판교', klass: '5층', subjectId: 'vue', day: 1 },
 
   // ── 8월 (9일) ──
