@@ -57,7 +57,7 @@ const bySub = {}
 for (const s of sessions) (bySub[s.subjectId] = bySub[s.subjectId] || []).push(`${s.region}${s.klass}`)
 const classesOf = (id) => [...new Set(bySub[id] || [])]
 
-// 담당 세션이 있는 과목 순서(첫 강의일) + 참고(미배정) 과목은 뒤에
+// 담당 세션이 있는 과목 순서(첫 강의일) + 참고자료 과목은 뒤에
 const firstDate = (id) => (bySub[id] ? [...bySub[id]] && sessions.filter((s) => s.subjectId === id).map((s) => s.date).sort()[0] : null)
 const taught = subjects.filter((s) => bySub[s.id]).sort((a, b) => firstDate(a.id).localeCompare(firstDate(b.id)))
 const refs = subjects.filter((s) => !bySub[s.id])
@@ -233,8 +233,8 @@ function renderEtcPage() {
   const trackOf = (s) => (s.region === '광주' ? 'gj' : s.region === '울산' ? 'us' : s.klass === '4층' ? 'p4' : 'p5')
 
   let h = `<div class="subject-head">
-    <div class="sh-cat">기타 · 타 강사 진행</div>
-    <h2>기타 과정 (앞뒤 학습)</h2>
+    <div class="sh-cat">담당일정 외 · 타 강사 진행</div>
+    <h2>담당일정 외 강의내용 학습 자료</h2>
     <p class="sh-sum">이애본 강사 담당 강의의 앞뒤에 각 분반에서 배우는 과목입니다. 과정 전체 흐름을 잇는 예습·복습 자료로 활용하세요.</p>
     <div class="sh-meta"><span class="chip code">참고</span><span class="chip cat">${Object.keys(otherCourses).length}과목</span><span class="chip day">실시간 배정표 기준 · 변동 가능</span></div>
   </div>`
@@ -293,7 +293,7 @@ async function main() {
     <p class="cover-note">본 실습 교재의 코드·설명은 SKALA 4기 실라버스에 근거해 우리말로 재서술한 자립 학습용 자료입니다. 각 소스의 <span class="cmt">녹색 주석</span>을 따라 실습하세요.</p>
   </section>`
   const tocRows = ordered.map((s) => {
-    const tag = bySub[s.id] ? classesOf(s.id).join(', ') : '참고(미배정)'
+    const tag = bySub[s.id] ? classesOf(s.id).join(', ') : '참고자료'
     return `<li><a class="toc-row" href="#subj-${esc(s.id)}" data-goto="${esc(s.id)}"><span class="toc-name">${esc(s.name)}</span><span class="toc-meta">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a></li>`
   }).join('')
   const toc = `<section class="toc"><h2>목차 <span class="thin">(과목을 누르면 해당 과목만 펼쳐집니다)</span></h2><ol>${tocRows}</ol></section>`
@@ -309,7 +309,7 @@ async function main() {
       <p class="sh-sum">${esc(subj.summary)}</p>
       <div class="sh-meta"><span class="chip code">${esc(subj.code)}</span>
         <span class="chip day">${subj.days.length}일차</span>
-        <span class="chip ${bySub[subj.id] ? 'cat' : 'm-theory'}">${bySub[subj.id] ? esc(cls.join(', ')) : '참고 · 미배정'}</span></div>
+        <span class="chip ${bySub[subj.id] ? 'cat' : 'm-theory'}">${bySub[subj.id] ? esc(cls.join(', ')) : '참고자료'}</span></div>
     </div>`
     for (let i = 0; i < subj.days.length; i++) sh += await renderDay(subj, i)
     subjectBlocks.push({ id: subj.id, name: subj.name, html: sh })
@@ -348,7 +348,7 @@ async function main() {
     <nav class="tb-nav" aria-label="과목 목차">
       <a class="sl sl-top is-active" href="#" data-goto="home">📖 표지 · 목차</a>
       ${sideItems}
-      <a class="sl" href="#" data-goto="etc"><span class="sl-n">📚 기타 과정 (앞뒤 학습)</span><span class="sl-m">타 강사 과목 · 분반별 일정</span></a>
+      <a class="sl" href="#" data-goto="etc"><span class="sl-n">📚 담당일정 외 강의내용 학습</span><span class="sl-m">타 강사 과목 · 분반별 일정</span></a>
     </nav>
   </aside>
   <main class="tb-main">

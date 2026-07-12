@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { sessionsBySubject, dayOf, referenceSubjects } from '../data/curriculum'
 import { modeOf } from '../data/lecturemodes'
+import { otherCourses } from '../data/othercontent'
+import { etcMonthlyDigest, otherPeriods } from '../data/othersessions'
 import Sentences from '../components/Sentences'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
@@ -57,12 +59,15 @@ export default function Subjects() {
             </div>
           ))}
 
-          {/* 참고 (미배정) 과목 */}
+          {/* 참고자료 과목 */}
           {referenceSubjects.length > 0 && (
             <>
-              <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '32px 0 12px' }}>
-                참고 (미배정)
+              <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '32px 0 4px' }}>
+                참고자료
               </h2>
+              <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', margin: '0 0 12px' }}>
+                과정 이해를 돕는 참고용 강의안입니다.
+              </p>
               {referenceSubjects.map((subject) => (
                 <div key={subject.id} className="subject" style={{ borderLeftColor: 'var(--gwangju)' }}>
                   <div className="subject-head">
@@ -92,6 +97,49 @@ export default function Subjects() {
               ))}
             </>
           )}
+
+          {/* 담당일정 외 강의내용 학습 자료 — 월별 */}
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '32px 0 4px' }}>
+            담당일정 외 강의내용 학습 자료
+          </h2>
+          <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', margin: '0 0 12px' }}>
+            담당 강의 전후로 각 분반에서 별도 강사가 진행하는 과목입니다. 과목을 누르면 학습내용과 분반별 진행 시기를 볼 수 있습니다.
+          </p>
+          {etcMonthlyDigest().map((g) => (
+            <div key={g.month} style={{ marginBottom: 18 }}>
+              <span className="month-label">{Number(g.month.slice(5))}월</span>
+              <div className="grid grid-2" style={{ marginTop: 10 }}>
+                {g.items.filter((it) => otherCourses[it.c]).map((it) => {
+                  const c = otherCourses[it.c]
+                  const range = it.from === it.to ? it.from.slice(5) : `${it.from.slice(5)} ~ ${it.to.slice(5)}`
+                  return (
+                    <Link key={`${g.month}-${it.c}`} to={`/lectures/etc-${it.c}`} className="card etc-card">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                        <h3 style={{ fontSize: 15.5, fontWeight: 800, color: 'var(--navy-800)', margin: 0 }}>{c.name}</h3>
+                        <span className="chip chip-day">{range}</span>
+                      </div>
+                      <p style={{ fontSize: 13, color: 'var(--ink-soft)', margin: 0 }}>
+                        {it.tracks.join(' · ')}{it.by.length ? ` · ${it.by.join('·')} 강사` : ''}
+                      </p>
+                      <span style={{ display: 'block', marginTop: 8, color: 'var(--gold)', fontSize: 13, fontWeight: 700 }}>학습내용 보기 →</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+          <div style={{ marginBottom: 18 }}>
+            <span className="month-label">11월 이후</span>
+            <div className="grid grid-2" style={{ marginTop: 10 }}>
+              {otherPeriods.map((p) => (
+                <div key={p.range} className="card">
+                  <h3 style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)', margin: '0 0 6px' }}>{p.label}</h3>
+                  <p style={{ fontSize: 13, color: 'var(--ink-soft)', margin: 0 }}>{p.range}</p>
+                  <p style={{ fontSize: 13, color: 'var(--ink-soft)', margin: '4px 0 0' }}>{p.note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </div>

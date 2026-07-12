@@ -7,7 +7,7 @@ import CodeBlock from '../components/CodeBlock'
 import ExamQuiz from '../components/ExamQuiz'
 import EtcCourse from '../components/EtcCourse'
 import { otherCourses } from '../data/othercontent'
-import { otherByMonth, otherPeriods, TRACKS, EVENT_LABELS } from '../data/othersessions'
+import { etcMonthlyDigest, otherPeriods, EVENT_LABELS } from '../data/othersessions'
 
 // 실라버스 방식 배지 색상 (이론/실습/종합실습)
 const modeClass = (tag) =>
@@ -148,7 +148,7 @@ export default function Lectures() {
           <h1>강의안</h1>
           <p>
             <span style={{ display: 'block' }}>날짜별 8시간(09:00~18:00) 상세 강의안입니다.</span>
-            <span style={{ display: 'block' }}>좌측에서 날짜를 선택하면 시간표와 실습을 볼 수 있습니다. (하단 "참고"는 미배정 과목)</span>
+            <span style={{ display: 'block' }}>좌측에서 날짜를 선택하면 시간표와 실습을 볼 수 있습니다. (하단 "참고"는 참고자료 과목)</span>
           </p>
         </div>
       </div>
@@ -205,37 +205,28 @@ export default function Lectures() {
                   )
                 })}
 
-            {/* 기타(타 강사 과목) — 담당 강의 앞뒤에 배우는 내용, 월별·일자별 */}
+            {/* 담당일정 외 강의내용 학습 자료 — 월별·과목별 */}
             <details className="etc-nav" open={!!etc}>
-              <summary>📚 기타 · 타 강사 과목 (앞뒤 학습)</summary>
+              <summary>📚 담당일정 외 강의내용 학습 자료</summary>
               <p className="etc-nav-note">담당 강의 전후로 각 분반에서 배우는 과목입니다. 과목을 누르면 학습내용을 볼 수 있습니다.</p>
-              {otherByMonth().map((g) => (
+              {etcMonthlyDigest().map((g) => (
                 <div key={g.month}>
                   <div className="side-nav-title etc-month">{Number(g.month.slice(5))}월</div>
-                  {g.items.map((s) => {
-                    // 같은 날 같은 과목이 여러 분반이면 묶어 한 줄로
-                    const cells = TRACKS.filter((t) => s[t.key]).map((t) => ({ ...s[t.key], track: t.label }))
-                    const byCourse = new Map()
-                    for (const c of cells) {
-                      if (!byCourse.has(c.c)) byCourse.set(c.c, [])
-                      byCourse.get(c.c).push(c.track)
-                    }
-                    return [...byCourse.entries()].map(([cid, tracks]) => {
-                      const clickable = !!otherCourses[cid]
-                      const label = `${s.date.slice(5, 7)}-${s.date.slice(8, 10)} · ${etcName(cid)}`
-                      const active = etc?.courseId === cid
-                      return (
-                        <button
-                          key={`${s.date}-${cid}`}
-                          className={`side-link etc-link${active ? ' active' : ''}${clickable ? '' : ' etc-plain'}`}
-                          onClick={() => clickable && navigate(`/lectures/etc-${cid}`)}
-                          disabled={!clickable}
-                        >
-                          {label}
-                          <span className="sl-sub">{tracks.join(' · ')}</span>
-                        </button>
-                      )
-                    })
+                  {g.items.map((it) => {
+                    const clickable = !!otherCourses[it.c]
+                    const range = it.from === it.to ? it.from.slice(5) : `${it.from.slice(5)}~${it.to.slice(8)}`
+                    const active = etc?.courseId === it.c
+                    return (
+                      <button
+                        key={`${g.month}-${it.c}`}
+                        className={`side-link etc-link${active ? ' active' : ''}${clickable ? '' : ' etc-plain'}`}
+                        onClick={() => clickable && navigate(`/lectures/etc-${it.c}`)}
+                        disabled={!clickable}
+                      >
+                        {etcName(it.c)}
+                        <span className="sl-sub">{range} · {it.tracks.join(' · ')}</span>
+                      </button>
+                    )
                   })}
                 </div>
               ))}
@@ -260,7 +251,7 @@ export default function Lectures() {
               <span className="chip chip-code">{subj?.code}</span>
               <span className="chip chip-cat">{subj?.category}</span>
               {isRef ? (
-                <span className="chip chip-region gwangju">참고 · 미배정</span>
+                <span className="chip chip-region gwangju">참고자료</span>
               ) : (
                 <span className={`chip chip-region ${regionClass(current.region, current.klass)}`}>
                   {current.region} {current.klass}
@@ -276,7 +267,7 @@ export default function Lectures() {
             <p style={{ color: 'var(--ink-soft)', marginTop: 4 }}>
               {subj?.name} ·{' '}
               {isRef
-                ? '참고 강의안 (현재 강의 미배정)'
+                ? '참고자료 강의안'
                 : `${current.date} (${current.weekday}) · 09:00~18:00 (8H)`}
             </p>
 

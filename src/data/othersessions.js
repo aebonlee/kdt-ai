@@ -117,3 +117,33 @@ export const otherByMonth = () => {
   }
   return [...map.entries()].map(([month, items]) => ({ month, items }))
 }
+
+// 월별 과목 요약 — 같은 과목의 날짜·분반을 월 단위로 묶는다
+// [{ month:'2026-07', items:[{ c, from, to, tracks:['광주',...], by:[강사들] }] }]
+export const etcMonthlyDigest = () => {
+  const months = new Map()
+  for (const s of otherSessions) {
+    const m = s.date.slice(0, 7)
+    if (!months.has(m)) months.set(m, new Map())
+    const byCourse = months.get(m)
+    for (const t of TRACKS) {
+      const cell = s[t.key]
+      if (!cell) continue
+      if (!byCourse.has(cell.c)) byCourse.set(cell.c, { c: cell.c, dates: [], tracks: new Set(), by: new Set() })
+      const e = byCourse.get(cell.c)
+      e.dates.push(s.date)
+      e.tracks.add(t.label)
+      if (cell.by) e.by.add(cell.by)
+    }
+  }
+  return [...months.entries()].map(([month, byCourse]) => ({
+    month,
+    items: [...byCourse.values()].map((e) => ({
+      c: e.c,
+      from: e.dates[0],
+      to: e.dates[e.dates.length - 1],
+      tracks: [...e.tracks],
+      by: [...e.by],
+    })).sort((a, b) => a.from.localeCompare(b.from)),
+  }))
+}
