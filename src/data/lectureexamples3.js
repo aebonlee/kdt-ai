@@ -32,6 +32,18 @@ export const examplesExtra3 = {
       "lang": "bash",
       "code": "# 아래 내용을 프로젝트 루트에 '.gitignore' 파일로 저장한다\n\n# node_modules : npm install 로 언제든 다시 받는 외부 라이브러리 → 올리지 않음\nnode_modules\n# dist         : 빌드 결과물(npm run build 산출물) → 소스만 관리하면 됨\ndist\n# .env         : API 키·비밀번호가 든 파일 → 절대 업로드 금지(보안)\n.env\n*.local\n# .DS_Store    : macOS 가 자동으로 만드는 잡파일\n.DS_Store\n# 편집기 개인 설정은 무시하되, 공유용 확장 목록만 예외로 남긴다\n.vscode/*\n!.vscode/extensions.json",
       "note": "비밀키·빌드결과·라이브러리 폴더는 커밋하지 않는 것이 원칙이다. 단, 이미 커밋된 파일은 .gitignore 만으로 빠지지 않으니 git rm --cached <파일> 로 추적을 먼저 끊어야 한다."
+    },
+    {
+      "title": "커밋 전 실수 구조대 — stash 임시보관과 --amend 고쳐쓰기",
+      "lang": "bash",
+      "code": "# 상황 1: 커밋을 안 했는데 다른 브랜치로 가야 할 때 — stash(임시 서랍)\ngit stash                          # 작업 중 변경을 임시 서랍에 넣고 폴더를 깨끗하게\ngit stash list                     # 서랍 목록 확인 (stash@{0} 이 방금 넣은 것)\ngit switch main                    # 이제 변경 없이 자유롭게 브랜치 이동 가능\ngit switch feature-greeting        # 원래 작업하던 브랜치로 복귀\ngit stash pop                      # 서랍에서 꺼내 이어서 작업 (목록에서도 제거)\n\n# 상황 2: 방금 커밋 메시지에 오타 — amend(마지막 커밋 고쳐쓰기)\ngit commit -m \"로긴 버튼 색상 변경\"              # 앗, '로긴' 오타!\ngit commit --amend -m \"로그인 버튼 색상 변경\"    # 마지막 커밋을 새 메시지로 교체\ngit log --oneline -1               # 메시지가 바뀌었는지 확인\n\n# 상황 3: add 를 빠뜨리고 커밋했을 때 — 파일까지 함께 amend\necho \"빠뜨린 내용\" >> hello.txt     # 커밋에 안 들어간 수정이 남아 있다\ngit add hello.txt                  # 빠뜨린 파일을 스테이징하고\ngit commit --amend --no-edit       # 메시지는 그대로, 파일만 마지막 커밋에 합치기\n\n# 주의: --amend 는 이미 push 한 커밋에는 금지 (기록이 바뀌어 팀원과 어긋난다)",
+      "note": "김성영 실습교수의 Git 종합실습 가이드 중 \"자주 하는 실수 & 해결법\" 코너를 손으로 따라 하는 실습으로 옮겼다. 커밋 안 하고 브랜치를 옮기려다 막히거나, 메시지 오타·add 누락을 발견하는 왕초보의 3대 사고를 stash 와 --amend 두 도구로 수습하는 법을 익힌다. push 이후에는 amend 를 쓰면 안 된다는 안전수칙까지가 한 세트다."
+    },
+    {
+      "title": "완성 프로젝트를 새 브랜치로 GitHub에 올리기 + push 오류 처방전",
+      "lang": "bash",
+      "code": "# 완성한 프로젝트 폴더를 통째로 '새 브랜치'에 담아 원격에 올리는 8단계\ncd ~/Desktop/my-project            # 1) 프로젝트 폴더로 이동\ngit status                         # 2) 상태 확인 (\"not a git repository\" 면 git init 먼저)\ngit switch -c html_js_css          # 3) 새 브랜치 생성과 동시에 이동 (-c = create)\ngit add .                          # 4) 프로젝트 전체를 스테이징\ngit commit -m \"Complete HTML JS CSS project\"   # 5) 커밋 생성\ngit remote -v                      # 6) 원격 연결 확인 (아무것도 안 나오면 아래로)\ngit remote add origin https://github.com/내계정/data.git   # 7) 원격 최초 연결\n\n# \"remote origin already exists\" 오류가 나면 add 대신 주소만 교체\ngit remote set-url origin https://github.com/내계정/data.git\n\ngit push -u origin html_js_css     # 8) 새 브랜치를 원격에 업로드 (-u: 다음부턴 git push 만)\n# 성공 메시지: * [new branch] html_js_css -> html_js_css\n\n# 자주 만나는 push 오류 처방전\n# \"Authentication failed\"        → 비밀번호 대신 Personal Access Token(PAT) 입력\n# \"failed to push some refs\"     → git pull --rebase origin html_js_css 후 다시 push\n# \"src refspec ... not match\"    → 커밋이 아직 없다는 뜻, add · commit 먼저\n# GitHub 웹에서 브랜치 메뉴 → html_js_css 선택 → 파일이 보이면 최종 성공",
+      "note": "김성영 실습교수 가이드의 \"종합실습 2 — 완성 프로젝트를 새 브랜치로 GitHub에 올리기\" 8단계 시나리오를 재구성했다. main 이 아닌 작업 브랜치를 push -u 로 올리는 흐름과, 초보가 반드시 한 번은 만나는 push 오류 4종의 원인별 해결 명령을 처방전 형식으로 붙였다. 오류 메시지를 보고 겁먹지 않고 대응하는 것이 이 실습의 진짜 목표다."
     }
   ],
   "vue-1": [
@@ -154,6 +166,120 @@ export const examplesExtra3 = {
       "lang": "javascript",
       "code": "// 발표 전 자가점검: 산출물·납기·'일관성'을 코드로 훑는다\nconst submit = {\n  pdf: true,   // {반_이름_프로젝트명}-개요.pdf (UI 흐름도 포함)\n  dbml: true,  // {반_이름_프로젝트명}-DB.dbml\n  yml: true,   // {반_이름_프로젝트명}-API.yml\n}\n\n// 1) 3종 산출물이 모두 준비됐는지(하나라도 없으면 감점)\nconst missing = Object.entries(submit).filter(([, v]) => !v).map(([k]) => k)\nconsole.log(missing.length ? '누락: ' + missing : '산출물 3종 완비')\n\n// 2) 가장 자주 깎이는 '일관성' 3가지를 직접 확인한다\nconst consistency = [\n  'UI에서 쓰는 모든 데이터 필드가 ERD(DB)에 있는가',   // UI <-> ERD\n  '화면마다 필요한 API가 모두 정의됐는가',              // UI <-> API\n  'API의 요청/응답이 ERD 구조와 일치하는가',           // API <-> ERD\n]\nconsistency.forEach((c, i) => console.log((i + 1) + '. ' + c))\n// 세 축(UI·데이터·API)이 어긋나면 기능이 문제해결과 연결되지 않아 감점",
       "note": "세부 평가의 핵심은 UI↔ERD↔API 세 축의 일관성이다. 화면에 쓰는 데이터가 ERD 에 있고, 그 데이터를 나르는 API 가 정의돼 있어야 한다. 납기(3일차 오후 마감) 미준수는 0점이므로 시간 엄수가 최우선이다."
+    }
+  ],
+  "python-1": [
+    {
+      "title": "Parquet으로 저장하고 필요한 열만 골라 읽기 (예외처리 포함)",
+      "lang": "python",
+      "code": "import pandas as pd                    # 표(DataFrame) 처리 라이브러리\n\n# 도시별 날씨 수집이 끝났다고 가정한 표\ndf = pd.DataFrame({\n    \"도시\": [\"서울\", \"도쿄\", \"뉴욕\", \"런던\"],            # 도시 이름\n    \"기온\": [25.7, 28.1, 23.0, 24.3],                  # 현재 기온(도)\n    \"현지시각\": [\"16:46\", \"16:46\", \"03:46\", \"08:46\"],   # 각 도시의 현지 시각\n})\n\ndf.to_parquet(\"weather.parquet\")       # parquet(열 단위 압축 형식) 파일로 저장\n\ntry:                                   # 파일이 없을 수도 있으니 예외 대비\n    slim = pd.read_parquet(\"weather.parquet\", columns=[\"도시\", \"기온\"])  # 필요한 열만 읽기\n    print(slim)                        # 현지시각 없이 도시·기온 2개 열만 나온다\nexcept FileNotFoundError:              # 파일이 없으면 이 블록으로\n    print(\"weather.parquet 이 없습니다. 저장 단계를 먼저 실행하세요.\")\n\n# CSV 는 행 단위, parquet 은 열 단위 저장 — 그래서 '필요한 열만' 골라 읽을 수 있다\n# 데이터가 커질수록 읽기 속도와 파일 용량 모두 parquet 이 유리하다",
+      "note": "윤선영 실습교수의 데이터분석 Python 종합실습1 3~4번(Weather 객체를 csv·parquet 으로 저장하고 도시·기온만 읽어오기, 파일 없으면 예외처리)을 왕초보용으로 줄였다. CSV 와 달리 parquet 은 columns 인자로 필요한 열만 읽을 수 있다는 점과 FileNotFoundError 대비가 핵심이다."
+    },
+    {
+      "title": "수집→검증→저장을 한 스크립트로 — 미니 데이터 파이프라인",
+      "lang": "python",
+      "code": "import httpx                              # HTTP 요청 라이브러리\nimport pandas as pd                       # 표 처리\nfrom pydantic import BaseModel, ValidationError   # 데이터 검증 도구\n\nclass Product(BaseModel):                 # 상품 1건이 갖춰야 할 형태 선언\n    id: int                               # 상품 번호는 정수\n    title: str                            # 상품명은 문자열\n    price: float                          # 가격은 실수\n\nrows = []                                 # 검증을 통과한 데이터만 담을 목록\nfor i in range(1, 4):                     # 상품 1~3번을 차례로 수집\n    r = httpx.get(f\"https://fakestoreapi.com/products/{i}\", timeout=10)  # API 호출\n    try:                                  # 받은 데이터가 형태에 맞는지 검사\n        p = Product(**r.json())           # JSON 을 스키마에 통과시켜 검증\n        rows.append({\"번호\": p.id, \"제품명\": p.title, \"가격\": p.price})   # 통과분만 적재\n    except ValidationError:               # 형태가 어긋난 데이터는\n        print(i, \"번 상품 검증 실패 — 건너뜀\")   # 프로그램을 멈추지 말고 기록만 남긴다\n\ndf = pd.DataFrame(rows)                   # 검증 통과분으로 표 생성\ndf.to_csv(\"products.csv\", index=False)    # 사람이 열어 보기 좋은 CSV 로 저장\ndf.to_parquet(\"products.parquet\")         # 분석용으로 빠른 parquet 으로도 저장\nprint(\"수집→검증→저장 완료:\", len(df), \"건\")   # 파이프라인 결과 한 줄 요약",
+      "note": "윤선영 실습교수 가이드의 평가 과제(fakestoreapi 데이터 수집 → Pydantic 스키마 검증+예외처리 → CSV·Parquet 저장을 하나의 자동화 스크립트로, 배점 40점)를 축소 재현했다. 지금까지 따로 배운 httpx·Pydantic·파일 저장을 처음으로 한 흐름에 이어 붙이는 것이 포인트다. 불량 데이터 1건 때문에 전체가 죽지 않도록 건너뛰고 기록하는 습관도 함께 익힌다."
+    },
+    {
+      "title": "실습1: 매출 레코드 집계 — Counter·defaultdict·컴프리헨션 (Practice 1)",
+      "lang": "python",
+      "code": "# 실습1(Practice 1): 매출 레코드를 자료구조로 집계하기\nfrom collections import Counter, defaultdict  # 빈도 집계·그룹핑 전용 자료구조\n\n# Python_Practice1_Data.json 을 흉내 낸 Sales 레코드(행: 날짜·지역·금액·품목)\nsales = [\n    {'date': '2026-01', 'region': '서울', 'amount': 1500, 'category': '가전'},\n    {'date': '2026-01', 'region': '부산', 'amount': 800,  'category': '의류'},\n    {'date': '2026-02', 'region': '서울', 'amount': 1200, 'category': '가전'},\n    {'date': '2026-02', 'region': '서울', 'amount': 300,  'category': '식품'},\n    {'date': '2026-02', 'region': '부산', 'amount': 2000, 'category': '가전'},\n]\n\n# 1) amount >= 1000 인 거래만 남긴다(리스트 컴프리헨션 = 필터+수집 한 줄)\nbig = [r for r in sales if r['amount'] >= 1000]\n\n# 2) Counter 로 '지역별 거래 건수'를 센다(직접 루프 대신 - 감점 회피)\nregion_count = Counter(r['region'] for r in big)\nprint('지역별 건수:', region_count.most_common())  # 많은 순으로 정렬 보장\n\n# 3) defaultdict 로 '카테고리별 금액 리스트'를 모은다(키 없으면 빈 리스트 자동 생성)\nby_cat = defaultdict(list)\nfor r in big:\n    by_cat[r['category']].append(r['amount'])\n\n# 4) 딕셔너리 컴프리헨션으로 '지역별 총매출' dict 를 만든다\nregion_total = {reg: sum(r['amount'] for r in big if r['region'] == reg)\n                for reg in region_count}\nprint('지역별 총매출:', region_total)   # {'서울': 2700, '부산': 2000}\n\n# 5) 금액 상위 3건을 내림차순 정렬(정렬 기준 key=금액, reverse)\ntop3 = sorted(big, key=lambda r: r['amount'], reverse=True)[:3]\nassert region_total['서울'] == 2700  # 체크포인트: 값이 맞는지 assert 로 자가검증",
+      "note": "Practice 1의 정석 흐름: for 루프 대신 컴프리헨션, 직접 카운팅 대신 Counter, if-키확인 대신 defaultdict를 쓰는 것이 채점 감점 회피 포인트다. assert로 집계 결과를 스스로 검증한다."
+    },
+    {
+      "title": "실습1: 리스트 vs 제너레이터 메모리 비교 (Practice 1 체크포인트)",
+      "lang": "python",
+      "code": "# 실습1: 같은 결과, 다른 메모리 — 제너레이터가 왜 대용량에 강한가\nimport sys  # 객체가 차지하는 바이트를 재는 표준 모듈\n\n# 1) 리스트: 1000만 개 제곱값을 '한꺼번에' 메모리에 올린다\nsquares_list = [x * x for x in range(10_000_000)]\n\n# 2) 제너레이터: 같은 계산을 '필요할 때 하나씩' 만든다(괄호가 () 이면 제너레이터)\nsquares_gen = (x * x for x in range(10_000_000))\n\n# 3) 두 객체의 메모리 크기를 비교한다\nprint('리스트   :', sys.getsizeof(squares_list), 'bytes')  # 수천만 bytes\nprint('제너레이터:', sys.getsizeof(squares_gen), 'bytes')   # 100 bytes 대\n\n# 4) 체크포인트: 제너레이터가 리스트보다 훨씬 작아야 한다\nassert sys.getsizeof(squares_gen) < sys.getsizeof(squares_list)\n\n# 5) 단, 제너레이터는 '한 번만' 흐른다 — 합을 구하면 소진된다\ntotal = sum(squares_gen)  # 하나씩 꺼내 더함(전부 메모리에 올리지 않음)\nprint('합계:', total, '/ 다시 세면:', sum(squares_gen))  # 두 번째는 0(이미 소진)",
+      "note": "Checkpoint는 sys.getsizeof(generator) < list 확인을 요구한다. 이때 제너레이터를 list()로 바꿔 비교하면 메모리 차이가 사라져 감점되므로, 변환하지 말고 그대로 크기를 재는 것이 핵심이다."
+    },
+    {
+      "title": "실행 구조 눈으로 보기 — dis로 바이트코드 확인 (1장)",
+      "lang": "python",
+      "code": "# 소스 -> AST -> 바이트코드 -> PVM: 파이썬이 코드를 실행하는 진짜 순서\nimport dis  # 함수가 어떤 바이트코드로 컴파일되는지 보여주는 표준 모듈\n\n# 아주 단순한 덧셈 함수 하나를 정의한다\ndef add(x, y):\n    return x + y  # 이 한 줄이 실제로 어떤 명령들로 쪼개지는지 확인\n\n# dis 로 내부 바이트코드 명령을 출력한다\ndis.dis(add)\n# 출력(요지):\n#   LOAD_FAST   x    <- 지역변수 x 를 스택에 올림\n#   LOAD_FAST   y    <- 지역변수 y 를 스택에 올림\n#   BINARY_OP   +    <- 스택 위 두 값을 더함\n#   RETURN_VALUE     <- 결과를 반환\n\n# CPython 은 소스를 기계어가 아니라 '바이트코드'로 바꿔 PVM 이 한 줄씩 실행한다.\n# 이 구조를 알면 __pycache__(.pyc)가 왜 생기는지, 그리고 컴프리헨션이\n# for 루프보다 빠른 이유(생성되는 바이트코드 수가 더 적음)를 납득할 수 있다.",
+      "note": "교재 1장의 dis·LOAD_FAST·BINARY_OP·RETURN_VALUE 설명을 그대로 실습으로. \"왜 컴프리헨션이 빠른가\"를 느낌이 아니라 바이트코드 개수로 이해하게 하는 개념 데모다."
+    }
+  ],
+  "python-2": [
+    {
+      "title": "업종별 매출 합계 상위 뽑고 막대그래프를 파일로 저장하기",
+      "lang": "python",
+      "code": "import pandas as pd                       # 표 처리\nimport matplotlib.pyplot as plt          # 그래프 그리기\n\n# 서울시 상권 추정매출을 흉내 낸 작은 표 (실전은 공공데이터 CSV 사용)\ndf = pd.DataFrame({\n    \"서비스_업종\": [\"한식\", \"카페\", \"한식\", \"편의점\", \"카페\", \"미용실\"],\n    \"당월_매출\": [820, 310, 640, 450, 280, 190],       # 단위: 만원\n    \"연령대_10\": [20, 60, 15, 90, 70, 10],             # 10대 매출\n    \"연령대_20\": [180, 140, 150, 160, 120, 60],        # 20대 매출\n    \"연령대_30\": [260, 80, 210, 120, 70, 80],          # 30대 매출\n})\n\n# 업종별로 묶어 합계 → 내림차순 정렬 → 상위 3개만 (실전은 상위 10개)\ntop = df.groupby(\"서비스_업종\")[\"당월_매출\"].sum().sort_values(ascending=False).head(3)\nprint(top)                                # 한식 1460, 카페 590, 편의점 450 순서\n\n# 연령대 3개 열의 열별 합계로 막대그래프를 그려 '파일로' 저장\nages = df[[\"연령대_10\", \"연령대_20\", \"연령대_30\"]].sum()   # 열마다 합계 1개씩\nages.plot(kind=\"bar\", title=\"age sales\")   # 합계 3개를 막대그래프로\nplt.tight_layout()                        # 글자가 잘리지 않게 여백 자동 조정\nplt.savefig(\"age_sales.png\")              # 화면 표시 대신 PNG 파일로 저장\nprint(\"age_sales.png 저장 완료\")           # 보고서에 바로 붙일 이미지 완성",
+      "note": "윤선영 실습교수의 종합실습2 3~4번(서비스 업종별 당월 매출 합계를 내림차순 상위 10개로 뽑고, 연령대 3개 칼럼 합계로 bar 그래프를 그려 파일 저장)을 축소한 것이다. groupby 뒤에 sort_values 와 head 를 이어 붙여 상위 N 개를 뽑는 체인과, plt.show 대신 savefig 로 결과를 이미지 파일로 남기는 습관이 핵심이다."
+    },
+    {
+      "title": "ColumnTransformer — 숫자 열과 글자 열을 각각 다르게 전처리해 결합",
+      "lang": "python",
+      "code": "import pandas as pd                                    # 표 처리\nfrom sklearn.pipeline import Pipeline                  # 처리 단계 묶기\nfrom sklearn.compose import ColumnTransformer          # 열 종류별로 다른 처리 적용\nfrom sklearn.impute import SimpleImputer               # 결측치(빈칸) 채우기\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder  # 표준화·원핫\nfrom sklearn.linear_model import LinearRegression      # 회귀 모델\n\n# 수치형 열 전용: 빈칸은 중앙값으로 채우고 → 크기를 표준화\nnum_pipe = Pipeline([(\"결측\", SimpleImputer(strategy=\"median\")),\n                     (\"스케일\", StandardScaler())])\n# 범주형 열 전용: 빈칸은 \"missing\" 글자로 채우고 → 원핫인코딩(0/1 표로 변환)\ncat_pipe = Pipeline([(\"결측\", SimpleImputer(strategy=\"constant\", fill_value=\"missing\")),\n                     (\"원핫\", OneHotEncoder(handle_unknown=\"ignore\"))])\n\n# 두 파이프라인을 '열 이름 기준'으로 하나로 결합\npre = ColumnTransformer([\n    (\"수치\", num_pipe, [\"연령대_10\", \"연령대_20\", \"연령대_30\"]),   # 숫자 열 3개는 이쪽\n    (\"범주\", cat_pipe, [\"상권_구분\"]),                             # 글자 열 1개는 저쪽\n])\n\nmodel = Pipeline([(\"전처리\", pre), (\"회귀\", LinearRegression())])   # 전처리+모델 완성\nX = pd.DataFrame({\"연령대_10\": [20, None, 15], \"연령대_20\": [180, 140, 150],\n                  \"연령대_30\": [260, 80, None], \"상권_구분\": [\"골목\", None, \"발달\"]})\ny = [820, 310, 640]                                    # 정답: 당월 매출(만원)\nmodel.fit(X, y)                                        # 빈칸이 있어도 그대로 학습된다\nprint(\"예측:\", model.predict(X).round(1))               # 학습 데이터로 예측 확인",
+      "note": "윤선영 실습교수의 종합실습2 5~6번(수치형 파이프라인 + 범주형 파이프라인을 하나로 결합해 최종 모델 파이프라인 완성, 연령대 매출로 당월 매출 예측)을 재구성했다. 기존 예제의 Pipeline 이 한 종류 전처리만 다뤘다면, 여기서는 ColumnTransformer 로 숫자 열과 글자 열에 서로 다른 전처리를 동시에 적용하는 실무 표준 패턴을 배운다. 결측치가 섞인 원본을 손대지 않고 fit 한 번으로 끝나는 것이 매력이다."
+    },
+    {
+      "title": "실습3: IQR 이상치 제거 후 named aggregation 집계 (Practice 3)",
+      "lang": "python",
+      "code": "# 실습3(Practice 3): sales_100k.csv 흐름 — EDA -> IQR 이상치 제거 -> 집계\nimport pandas as pd  # 표 데이터 처리\n\n# 실제 실습은 10만 행 CSV. 여기선 작은 표로 흐름만 재현(999999 는 이상치)\ndf = pd.DataFrame({\n    'region':   ['서울', '서울', '부산', '부산', '서울', '부산'],\n    'category': ['가전', '식품', '가전', '식품', '가전', '식품'],\n    'amount':   [1200, 300, 2000, 500, 999999, 700],\n})\nprint(df.info())          # 컬럼·타입·결측치 한눈에(EDA 첫걸음)\nprint(df.isnull().sum())  # 컬럼별 결측치 개수\n\n# 1) IQR(사분위 범위)로 정상 범위를 계산한다\nQ1 = df['amount'].quantile(0.25)  # 하위 25% 값\nQ3 = df['amount'].quantile(0.75)  # 상위 25% 값\nIQR = Q3 - Q1                      # 사분위 범위\nlow, high = Q1 - 1.5 * IQR, Q3 + 1.5 * IQR  # 정상으로 볼 하한·상한\n\nbefore = len(df)                            # 제거 전 행수\nclean = df[df['amount'].between(low, high)]  # 정상 범위 안만 남김\nprint('제거 전:', before, '-> 제거 후:', len(clean))  # 이상치 빠짐 확인\n\n# 2) named aggregation: 결과 컬럼명을 직접 지정해 지역·품목별 집계\nresult = (clean.groupby(['region', 'category'])\n          .agg(total=('amount', 'sum'),   # 총매출\n               mean=('amount', 'mean'),   # 평균\n               cnt=('amount', 'count'))   # 건수\n          .sort_values('total', ascending=False))  # 총매출 내림차순\nprint(result)",
+      "note": "Checkpoint 그대로: between(Q1-1.5*IQR, Q3+1.5*IQR)로 IQR 범위를 잡고 제거 전·후 행수를 출력, groupby는 total=(\"amount\",\"sum\") 형태의 named aggregation으로 컬럼명을 지정해야 감점(-20)을 피한다."
+    },
+    {
+      "title": "실습3: DuckDB로 DataFrame에 바로 SQL 집계 (Practice 3)",
+      "lang": "python",
+      "code": "# 실습3(Practice 3): 같은 집계를 SQL 로 — Pandas/Polars/DuckDB 3종 비교의 한 축\nimport duckdb   # pip install duckdb, CSV/DataFrame 에 직접 SQL 을 실행\nimport pandas as pd\n\ndf = pd.DataFrame({\n    'region':   ['서울', '서울', '부산', '부산'],\n    'category': ['가전', '식품', '가전', '식품'],\n    'amount':   [1200, 300, 2000, 500],\n})\n\n# 파이썬 변수 df 를 그대로 테이블처럼 쓴다(별도 적재 없이 FROM df)\nsql = '''\n    SELECT region, category,\n           SUM(amount) AS total,   -- 총매출\n           COUNT(*)    AS cnt       -- 건수\n    FROM df\n    GROUP BY region, category\n    ORDER BY total DESC             -- 총매출 내림차순\n'''\nresult = duckdb.query(sql).to_df()  # 결과를 다시 DataFrame 으로 받는다\nprint(result)\n\n# Practice 3 핵심: 같은 집계를 Pandas groupby / Polars Lazy / DuckDB SQL 로 짜고\n# timeit 으로 '동일 반복 횟수'를 맞춰 실행 시간을 공정 비교하는 것.",
+      "note": "DuckDB는 커리큘럼(Polars+DuckDB) 필수인데 사이트에 예제가 없었다. timeit 비교 시 세 도구의 number(반복 횟수)를 통일하지 않으면 공정 비교가 아니라 감점 대상이라는 점을 note로 강조한다."
+    },
+    {
+      "title": "실습4: 카이제곱 검정 — 두 범주형 변수의 독립성 (Practice 4)",
+      "lang": "python",
+      "code": "# 실습4(Practice 4): 지역과 결제수단이 서로 관련 있는가(범주형 vs 범주형)\nimport pandas as pd\nfrom scipy.stats import chi2_contingency  # 카이제곱 독립성 검정 함수\n\ndf = pd.DataFrame({\n    'region': ['서울', '서울', '부산', '부산', '서울', '부산', '서울', '부산'],\n    'pay':    ['카드', '현금', '카드', '카드', '현금', '현금', '카드', '현금'],\n})\n\n# 1) 두 범주형 변수로 분할표(교차표)를 만든다\ntable = pd.crosstab(df['region'], df['pay'])\nprint(table)\n\n# 2) 카이제곱 검정: 지역과 결제수단이 독립인지 검정\nchi2, p, dof, expected = chi2_contingency(table)\nprint('카이제곱:', round(chi2, 3), 'p-value:', round(p, 3))\n\n# 3) 해석은 반드시 코드/주석으로 남긴다(수치만 출력하면 감점)\nif p < 0.05:\n    print('=> p<0.05: 지역과 결제수단은 독립이 아니다(관련 있음)')\nelse:\n    print('=> p>=0.05: 독립이 아니라고 볼 근거가 부족하다')",
+      "note": "Practice 4는 t-test 외에 chi2_contingency로 범주형 독립성까지 요구한다. Checkpoint가 \"p<0.05 유의미 여부 판단을 코드/주석으로 남기지 않으면 -20\"이라, 판정 분기를 반드시 넣는 습관을 보여준다."
+    }
+  ],
+  "prompt-1": [
+    {
+      "title": "자료를 주고 \"없으면 확인 필요\" — 지어내기(할루시네이션) 차단 실험",
+      "lang": "python",
+      "code": "from openai import OpenAI                     # OpenAI 클라이언트\nclient = OpenAI(api_key=\"sk-본인키\")           # 키는 본인 것으로 교체\n\n# 자료 없이 물으면 모델이 그럴듯하게 '지어낼' 위험이 있다\nbad = \"우리 회사 AI 특강 신청 방법을 안내문으로 써 줘.\"\n\n# 자료를 주고 '자료에 없으면 확인 필요라고 써라' 규칙을 걸면 지어내기가 차단된다\ngood = (\n    \"아래 자료만 사용해서 AI 특강 안내문을 작성해 줘.\\n\"\n    \"자료에 없는 내용은 지어내지 말고 '확인 필요'라고 표시해 줘.\\n\"\n    \"[자료 시작]\\n\"\n    \"행사명: 생성형 AI 특강 / 일시: 7월 15일 14시\\n\"\n    \"장소: 판교 캠퍼스 4층 / 신청: 사내 포털, 7월 10일 마감\\n\"\n    \"[자료 끝]\\n\"\n    \"출력 형식: 1.제목 2.핵심 안내 3.신청 방법 4.확인 필요 사항\"\n)\n\nfor q in [bad, good]:                          # 두 프롬프트를 같은 모델에 보내 비교\n    res = client.chat.completions.create(\n        model=\"gpt-4o-mini\",                   # 사용할 모델\n        messages=[{\"role\": \"user\", \"content\": q}],   # 사용자 질문 1개\n    )\n    print(res.choices[0].message.content[:300])      # 답변 앞부분만 출력\n    print(\"-\" * 40)                            # 두 답변 사이 구분선\n\n# 자료 없는 쪽은 장소·시간을 창작하고, 자료 있는 쪽은 사실과 '확인 필요'를 구분한다",
+      "note": "임성열 실습교수의 Prompt 설계와 Context Engineering 실습지 중 \"기법 4. Context 제공 — 자료에 근거해 답하게 하기\"를 코드 실험으로 옮겼다. 같은 요청이라도 [자료 시작]~[자료 끝] 블록과 \"없으면 확인 필요\" 규칙을 넣으면 모델의 창작이 차단되는 것을 눈으로 비교하는 것이 목적이다. RAG 로 가기 전 가장 손쉬운 할루시네이션 제어법이다."
+    },
+    {
+      "title": "ReAct — 확인할 것 정리→검색→관찰→계산 순서로 움직이게 하기",
+      "lang": "text",
+      "code": "ReAct = Reason(추리) + Act(행동).\n답을 바로 말하게 하지 않고 \"무엇을 확인할지 → 확인 → 관찰 → 계산 → 최종 답\"\n순서로 움직이게 하는 프롬프트 패턴이다. (웹 검색이 되는 AI 도구에서 실행)\n\n[ReAct 프롬프트 — 그대로 붙여 쓰기]\n다음 순서로 답해 줘.\n주제:\n올해 대한민국 최저시급을 기준으로 주 40시간 근무 시 월급을 계산해야 한다.\n답변 순서:\n1. 확인할 정보: 무엇을 알아야 하는지 정리\n2. 검색 또는 확인: 올해 최저시급 정보를 확인\n3. 관찰: 확인한 정보와 출처 정리\n4. 계산: 주 40시간 기준 월급 계산 과정 제시\n5. 최종 답: 한 줄로 정리\n출처가 없거나 확실하지 않은 정보는 '확인 필요'라고 표시해 줘.\n\n[검색 기능이 없는 도구를 쓸 때]\n실제 검색 대신 \"어떤 정보를 어떤 출처(예: 고용노동부 최저임금 고시)에서\n찾아야 하는지\"를 설계하게 해도 같은 훈련 효과가 있다.\n\n[관찰 포인트]\n- 답만 요구할 때와 달리, 어떤 근거로 계산했는지가 단계별로 드러난다\n- 최신 정보가 필요한 질문에서 모델이 기억에 의존해 틀리는 것을 막아 준다",
+      "note": "임성열 실습교수 실습지의 \"선택 기법. ReAct — 확인할 정보와 검색 결과를 연결해 답하기\"를 옮긴 것이다. 최저시급처럼 시점에 따라 바뀌는 정보는 모델의 기억이 아니라 확인·관찰 단계를 거쳐 답하게 해야 안전하다는 것이 원 실습의 의도다. 검색 기능이 없는 환경을 위한 대안 설계까지 포함했다."
+    },
+    {
+      "title": "맨몸 질문→3대 한계 진단→5요소 재설계 — 프롬프트 개선 사이클",
+      "lang": "text",
+      "code": "프롬프트는 한 번에 완성하지 않는다. 일부러 대충 물어 보고(Baseline),\n답의 문제를 진단한 뒤, 요소를 갖춰 다시 쓰는 3단계 사이클을 돈다.\n\n[1단계 Baseline] 가이드 없이 떠오르는 대로 묻고, 답을 그대로 저장해 둔다\nK-뷰티 역직구(해외 직접판매) 시장에 대해 알려줘.\n\n[2단계 진단] 초기 답변을 3가지 관점으로 비판적으로 검증한다\n- 할루시네이션: 출처 불명의 통계·낡은 트렌드가 섞여 있는가?\n- 구조화 부족: 보고서 격식 없이 줄글만 나열되어 읽기 어려운가?\n- 모호성: \"리스크 관리를 잘해야 한다\"류의 뻔한 원론뿐인가?\n\n[3단계 재설계] 5가지 요소를 명확히 분리해 프롬프트를 다시 쓴다\nRole(역할): 10년차 글로벌 커머스 시장 전략 컨설턴트\nObjective(목적): 경영진 보고용 역직구 시장 분석 + 3대 리스크 대응 전략\nContext(맥락): 한국 기업의 동남아·북미 진출 시 물류/결제/규제 상황\nConstraints(제약): 확인 안 된 수치 창작 금지, 비즈니스 톤 유지\nFormat(형식): 대주제-소주제-불릿 구조, 핵심 지표는 표로 출력\n\n[4단계 비교 기록] 초기 답변과 개선 답변을 나란히 놓고\n무엇이 좋아졌는지(구조·근거·구체성) 한 줄씩 기록하면 실습 완성",
+      "note": "윤재성 실습교수의 Prompt 설계 종합실습(크로스보더 이커머스 보고서 시나리오)의 1~4단계 진행 방식을 일반화했다. 일부러 Baseline 부터 시작해 할루시네이션·구조화 부족·모호성 3대 한계를 진단하고, Role~Format 5요소로 재설계해 전후를 비교하는 것이 원 실습의 핵심 의도다. 기존 RICE 예제가 요소를 쌓는 법이라면, 이 실습은 나쁜 답을 진단해 고치는 순환 과정을 익힌다."
+    },
+    {
+      "title": "RICE 요소를 하나씩 쌓아 프롬프트 키우기 (v0→v5 실습)",
+      "lang": "text",
+      "code": "# 실습: 맨몸 프롬프트(v0)에서 시작해 RICE 요소를 한 번에 하나씩 누적한다\n# 시나리오: 오트밀 브랜드의 첫 오프라인 매장을 A/B/C 상권 중 한 곳에 낸다\n\n# [v0] 아무 요소도 없는 기본 프롬프트 — 답이 두루뭉술하고 근거가 없다\n우리 매장 어디에 내는 게 좋을까?\n\n# [v1] + R(Role): 역할을 주면 답의 관점이 전문가로 바뀐다\n너는 리테일 입지 분석 컨설턴트다.\n우리 매장 어디에 내는 게 좋을까?\n\n# [v2] + I(Instruction): 하나의 명확한 지시 + 수치/개수를 못박는다\n너는 리테일 입지 분석 컨설턴트다.\n후보지 A/B/C 중 1곳을 골라 근거 3가지로 정리해.\n\n# [v3] + C(Context): 판단 근거가 될 사실(팩트시트)을 넣는다\n[브랜드] 국산 귀리 100% 무설탕 오트밀 · 객단가 목표 9,000원 · 초기 자금 한정\n[후보지] A 대학가(유동 2.5만·경쟁 12곳) / B 오피스(유동 1.8만·경쟁 7곳) / C 신도시(유동 0.9만·경쟁 3곳)\n\n# [v4] + E(Examples): 원하는 결론 리포트 예시 1개로 톤과 형식을 고정한다\n(예) \"결론: B 추천 / 근거: 아침·점심 수요 강함, 경쟁 보통, 임대료 적정 / 리스크: 주말 한산\"\n\n# [v5] + Format: 출력 구조를 지정한다\n아래 형식으로만 답하라 -> 결론 / 근거 3가지 / 리스크 / 권고\n\n# 관찰 포인트: v0 응답과 v5 응답을 나란히 놓고, 응답을 가장 크게 바꾼 요소 2개를 찾는다",
+      "note": "한 번에 완성하지 말고 R→I→C→E→Format 순으로 하나씩 붙이며 매번 다시 생성해 본다. \"어느 곳을 골랐나\"가 아니라 \"요소를 어떻게 누적해 근거 기반 답으로 바뀌었나\"가 핵심이다."
+    },
+    {
+      "title": "Prompt Chaining — 근거 추출→답변 생성 2단계로 나누기",
+      "lang": "python",
+      "code": "from openai import OpenAI                       # OpenAI 라이브러리 불러오기\nclient = OpenAI(api_key=\"sk-본인키\")             # 클라이언트 생성 (키는 본인 것으로 교체)\n\n# 답을 찾을 원본 문서와 사용자 질문 (실제로는 긴 사내 규정 문서)\ndocument = \"연차 휴가는 입사 1년 후 15일 부여된다. 병가는 연 5일까지 유급이다.\"  # 원본 문서\nquestion = \"연차는 며칠 부여되나요?\"             # 사용자 질문\n\n# 체인 A: 문서에서 질문과 관련된 문장(인용문)만 그대로 뽑아내라고 지시\nprompt_a = f\"\"\"너는 문서 분석가다. 아래 문서에서 질문에 답할 수 있는 문장만 그대로 뽑아라.\n관련 문장이 없으면 '관련 없음'이라고만 답하라.\n문서: {document}\n질문: {question}\"\"\"                            # 역할·지시·문서·질문을 하나로 조립\n\nres_a = client.chat.completions.create(        # A단계 API 호출\n    model=\"gpt-4o-mini\",                       # 사용할 모델\n    messages=[{\"role\": \"user\", \"content\": prompt_a}],  # 사용자 메시지 1개\n)\nquotes = res_a.choices[0].message.content      # A의 출력 = 추출된 인용문(다음 단계 입력이 됨)\n\n# 체인 B: A가 뽑은 인용문에만 근거해 답하라고 지시(엉뚱한 상상=환각 억제)\nprompt_b = f\"\"\"아래 인용문에만 근거해 질문에 한 문장으로 답하라.\n인용문: {quotes}\n질문: {question}\"\"\"                            # A의 결과를 B의 입력으로 연결\n\nres_b = client.chat.completions.create(        # B단계 API 호출\n    model=\"gpt-4o-mini\",                       # 동일 모델\n    messages=[{\"role\": \"user\", \"content\": prompt_b}],  # 사용자 메시지 1개\n)\nprint(\"추출된 근거:\", quotes)                   # 중간 결과(A) 확인\nprint(\"최종 답변:\", res_b.choices[0].message.content)  # 최종 답(B) 출력",
+      "note": "복잡한 지시를 한 프롬프트에 몰아넣지 않고 \"찾기(A)→답하기(B)\"로 쪼갠다. A의 출력이 B의 입력이 되며, B가 인용문에만 근거하게 해 환각을 줄인다. 이 구조를 확장하면 조건 분기·도구 호출이 붙는 에이전트가 된다."
+    },
+    {
+      "title": "LLM-as-a-Judge로 결과물 4기준 채점하기",
+      "lang": "python",
+      "code": "from openai import OpenAI                       # OpenAI 라이브러리 불러오기\nimport json                                     # 채점 결과(JSON)를 파싱하기 위해\nclient = OpenAI(api_key=\"sk-본인키\")             # 클라이언트 생성 (키는 본인 것으로 교체)\n\n# 평가 대상: 어떤 프롬프트가 만들어 낸 광고 문구 결과\nprompt_text = \"Z세대를 겨냥한 에너지 음료 광고 문구 3개를 15자 이내로 만들어줘\"  # 원본 프롬프트\noutput_text = \"힘이 나는 음료 / 너의 하루 충전 / 지치지 마, 파워업\"           # LLM이 낸 결과\n\n# 심사위원 프롬프트: 4개 기준으로 0~5점 채점하고 JSON으로만 답하게 한다\njudge = (                                       # 채점 프롬프트 조립 시작\n    '너는 공정한 프롬프트 결과 평가자다.\\n'      # 심사위원 역할 부여\n    '결과를 목표부합·정확성·창의성·표현력 4개 기준으로 0~5점 채점하라.\\n'  # 평가 루브릭 4항목\n    '반드시 JSON으로만 답하라. 예: {\"창의성\": 2, \"총평\": \"문구가 평범함\"}\\n'  # 출력 형식 고정\n    '원본 프롬프트: ' + prompt_text + '\\n'       # 채점 맥락1: 원본 프롬프트\n    '생성 결과: ' + output_text                   # 채점 맥락2: LLM 결과\n)                                               # 조립 끝\n\nres = client.chat.completions.create(           # 채점 API 호출\n    model=\"gpt-4o-mini\",                        # 사용할 모델\n    messages=[{\"role\": \"user\", \"content\": judge}],  # 심사 프롬프트 전달\n    temperature=0,                              # 채점은 일관성이 중요 → 0으로 고정\n)\nscore = json.loads(res.choices[0].message.content)  # JSON 답변을 파이썬 딕셔너리로 변환\nprint(\"창의성 점수:\", score[\"창의성\"])            # 예: 2 (문구가 평범하면 낮게 나온다)\nprint(\"총평:\", score[\"총평\"])                     # 왜 그 점수인지 한 줄 근거",
+      "note": "사람 평가는 정확하지만 느리고 비싸다. 성능 좋은 모델을 심사위원으로 세우면 결과 품질을 빠르게 점수화할 수 있다. temperature=0으로 채점을 일관되게 하고, \"역할 지시·스타일 요구가 없어 창의성이 낮다\"처럼 구조 결함까지 근거로 받아 프롬프트를 고친다."
+    },
+    {
+      "title": "System Prompt 템플릿에 Placeholder 채워 재사용하기",
+      "lang": "python",
+      "code": "from openai import OpenAI                       # OpenAI 라이브러리 불러오기\nclient = OpenAI(api_key=\"sk-본인키\")             # 클라이언트 생성 (키는 본인 것으로 교체)\n\n# System Prompt 템플릿: {역할}·{분야}·{말투}를 나중에 채울 빈자리(Placeholder)로 둔다\nsystem_tpl = \"너는 {domain} 전문 {role}다. 답변은 항상 {tone} 말투로 한다.\"  # 재사용 가능한 틀\n\n# 상황이 바뀌어도 값만 갈아끼우면 같은 구조를 그대로 재활용할 수 있다\nsystem_msg = system_tpl.format(                # 빈자리에 실제 값을 채운다\n    role=\"상담사\",                              # {role} 자리 → 상담사\n    domain=\"반려동물 건강\",                     # {domain} 자리 → 반려동물 건강\n    tone=\"친근하고 쉬운\",                        # {tone} 자리 → 친근하고 쉬운\n)\nprint(\"완성된 시스템 프롬프트:\", system_msg)      # 채워진 결과를 눈으로 확인\n\n# 완성된 System(역할·규칙)과 User(질문)를 분리해 전달한다\nres = client.chat.completions.create(          # API 호출\n    model=\"gpt-4o-mini\",                       # 사용할 모델\n    messages=[\n        {\"role\": \"system\", \"content\": system_msg},           # 모델의 역할·말투 규칙\n        {\"role\": \"user\", \"content\": \"강아지가 사료를 안 먹어요\"},  # 사용자 질문\n    ],\n)\nprint(\"답변:\", res.choices[0].message.content)  # 템플릿이 정한 역할·말투대로 답한다",
+      "note": "System Prompt는 모델의 역할·동작 방식을, User Prompt는 이번 요청을 담당한다. 역할/분야/말투를 Placeholder로 비운 템플릿을 만들어 두면, 값만 바꿔 상담사·마케터·개발자용 봇을 같은 코드로 찍어낼 수 있다."
+    },
+    {
+      "title": "프롬프트 해부학 — 4요소로 나눠 쓰면 답이 또렷해진다",
+      "lang": "text",
+      "code": "# 좋은 프롬프트 = Instruction + Context + Input + Output 4요소\n# 같은 요청도 4요소로 쪼개 쓰면 답이 산만해지지 않는다\n\n# [나쁜 예] 문법은 맞지만 모호함 — 무엇을·어떤 기준으로·어떤 형식으로가 빠졌다\n구름의 색이 변하는 이유를 설명해줘.\n\n# [좋은 예] 4요소로 분해해 명확하게 지시한다\nInstruction: 구름 색이 달라지는 이유를 설명하라.       # 무엇을 할지(구체적 동사)\nContext: 빛의 산란·파장·태양 위치를 고려해 서술하라.    # 판단에 필요한 배경·조건\nInput: 해 뜰 무렵 붉게 보이는 구름이 왜 생기나요?        # 이번에 처리할 구체적 대상\nOutput: {reason}: {한 문장의 과학적 설명}               # 답을 담을 형식(빈칸 채우기 틀)\n\n# 감정 분류에 그대로 적용한 틀 — Output 형식을 고정하면 채점·자동화가 쉬워진다\nInstruction: 다음 리뷰의 감정을 판단하라(긍정/중립/부정 중 하나).\nContext: 감정 표현이 애매하면 중립으로 분류한다.\nInput: 그 분식집 김밥은 그저 그랬어.\nOutput: {sentiment}: 부정\n\n# 핵심: Output을 {sentiment} 같은 틀로 못박으면 결과가 제각각이지 않다",
+      "note": "Instruction만 있으면 모델이 과도하게 추론해 에세이처럼 흩어진다. Context(조건)·Input(대상)·Output(형식)을 함께 주면 답이 목적에 맞게 좁혀진다. 특히 Output 형식을 {sentiment} 같은 빈칸 틀로 고정하는 것이 결과 품질과 자동 처리의 핵심이다."
     }
   ],
   "transformer-1": [
@@ -434,78 +560,6 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 설치: pip install fastapi httpx pytest\nfrom fastapi.testclient import TestClient  # 서버를 실제로 안 띄우고 호출하는 테스트 도구\nfrom main import app, get_db               # 앞에서 만든 앱과 실제 DB 의존성\n\n# 테스트용 가짜 DB 세션 - 진짜 DB 대신 이걸 쓰게 만든다\ndef fake_get_db():\n    yield {'fake': True}                   # 실제 연결 없이 가짜 세션을 넘겨 준다\n\n# dependency_overrides로 get_db를 통째로 가짜 버전으로 교체(프로덕션 코드는 그대로)\napp.dependency_overrides[get_db] = fake_get_db\nclient = TestClient(app)                   # 앱을 감싼 테스트 클라이언트\n\ndef test_health():                         # test_로 시작하면 pytest가 자동 실행\n    res = client.get('/health')            # 실제 네트워크 없이 앱 함수를 직접 호출\n    assert res.status_code == 200          # 200이 아니면 테스트 실패\n    assert res.json() == {'status': 'ok'}  # 응답 본문까지 정확히 확인",
       "note": "DI(Depends) 덕분에 dependency_overrides 한 줄로 실제 DB를 가짜로 교체할 수 있어, DB 없이도 API 로직을 재현 가능하게 테스트한다. TestClient는 서버를 띄우지 않고 앱을 직접 호출해 CI에서 빠르게 돌아간다."
-    }
-  ],
-  "prompt-1": [
-    {
-      "title": "RICE 요소를 하나씩 쌓아 프롬프트 키우기 (v0→v5 실습)",
-      "lang": "text",
-      "code": "# 실습: 맨몸 프롬프트(v0)에서 시작해 RICE 요소를 한 번에 하나씩 누적한다\n# 시나리오: 오트밀 브랜드의 첫 오프라인 매장을 A/B/C 상권 중 한 곳에 낸다\n\n# [v0] 아무 요소도 없는 기본 프롬프트 — 답이 두루뭉술하고 근거가 없다\n우리 매장 어디에 내는 게 좋을까?\n\n# [v1] + R(Role): 역할을 주면 답의 관점이 전문가로 바뀐다\n너는 리테일 입지 분석 컨설턴트다.\n우리 매장 어디에 내는 게 좋을까?\n\n# [v2] + I(Instruction): 하나의 명확한 지시 + 수치/개수를 못박는다\n너는 리테일 입지 분석 컨설턴트다.\n후보지 A/B/C 중 1곳을 골라 근거 3가지로 정리해.\n\n# [v3] + C(Context): 판단 근거가 될 사실(팩트시트)을 넣는다\n[브랜드] 국산 귀리 100% 무설탕 오트밀 · 객단가 목표 9,000원 · 초기 자금 한정\n[후보지] A 대학가(유동 2.5만·경쟁 12곳) / B 오피스(유동 1.8만·경쟁 7곳) / C 신도시(유동 0.9만·경쟁 3곳)\n\n# [v4] + E(Examples): 원하는 결론 리포트 예시 1개로 톤과 형식을 고정한다\n(예) \"결론: B 추천 / 근거: 아침·점심 수요 강함, 경쟁 보통, 임대료 적정 / 리스크: 주말 한산\"\n\n# [v5] + Format: 출력 구조를 지정한다\n아래 형식으로만 답하라 -> 결론 / 근거 3가지 / 리스크 / 권고\n\n# 관찰 포인트: v0 응답과 v5 응답을 나란히 놓고, 응답을 가장 크게 바꾼 요소 2개를 찾는다",
-      "note": "한 번에 완성하지 말고 R→I→C→E→Format 순으로 하나씩 붙이며 매번 다시 생성해 본다. \"어느 곳을 골랐나\"가 아니라 \"요소를 어떻게 누적해 근거 기반 답으로 바뀌었나\"가 핵심이다."
-    },
-    {
-      "title": "Prompt Chaining — 근거 추출→답변 생성 2단계로 나누기",
-      "lang": "python",
-      "code": "from openai import OpenAI                       # OpenAI 라이브러리 불러오기\nclient = OpenAI(api_key=\"sk-본인키\")             # 클라이언트 생성 (키는 본인 것으로 교체)\n\n# 답을 찾을 원본 문서와 사용자 질문 (실제로는 긴 사내 규정 문서)\ndocument = \"연차 휴가는 입사 1년 후 15일 부여된다. 병가는 연 5일까지 유급이다.\"  # 원본 문서\nquestion = \"연차는 며칠 부여되나요?\"             # 사용자 질문\n\n# 체인 A: 문서에서 질문과 관련된 문장(인용문)만 그대로 뽑아내라고 지시\nprompt_a = f\"\"\"너는 문서 분석가다. 아래 문서에서 질문에 답할 수 있는 문장만 그대로 뽑아라.\n관련 문장이 없으면 '관련 없음'이라고만 답하라.\n문서: {document}\n질문: {question}\"\"\"                            # 역할·지시·문서·질문을 하나로 조립\n\nres_a = client.chat.completions.create(        # A단계 API 호출\n    model=\"gpt-4o-mini\",                       # 사용할 모델\n    messages=[{\"role\": \"user\", \"content\": prompt_a}],  # 사용자 메시지 1개\n)\nquotes = res_a.choices[0].message.content      # A의 출력 = 추출된 인용문(다음 단계 입력이 됨)\n\n# 체인 B: A가 뽑은 인용문에만 근거해 답하라고 지시(엉뚱한 상상=환각 억제)\nprompt_b = f\"\"\"아래 인용문에만 근거해 질문에 한 문장으로 답하라.\n인용문: {quotes}\n질문: {question}\"\"\"                            # A의 결과를 B의 입력으로 연결\n\nres_b = client.chat.completions.create(        # B단계 API 호출\n    model=\"gpt-4o-mini\",                       # 동일 모델\n    messages=[{\"role\": \"user\", \"content\": prompt_b}],  # 사용자 메시지 1개\n)\nprint(\"추출된 근거:\", quotes)                   # 중간 결과(A) 확인\nprint(\"최종 답변:\", res_b.choices[0].message.content)  # 최종 답(B) 출력",
-      "note": "복잡한 지시를 한 프롬프트에 몰아넣지 않고 \"찾기(A)→답하기(B)\"로 쪼갠다. A의 출력이 B의 입력이 되며, B가 인용문에만 근거하게 해 환각을 줄인다. 이 구조를 확장하면 조건 분기·도구 호출이 붙는 에이전트가 된다."
-    },
-    {
-      "title": "LLM-as-a-Judge로 결과물 4기준 채점하기",
-      "lang": "python",
-      "code": "from openai import OpenAI                       # OpenAI 라이브러리 불러오기\nimport json                                     # 채점 결과(JSON)를 파싱하기 위해\nclient = OpenAI(api_key=\"sk-본인키\")             # 클라이언트 생성 (키는 본인 것으로 교체)\n\n# 평가 대상: 어떤 프롬프트가 만들어 낸 광고 문구 결과\nprompt_text = \"Z세대를 겨냥한 에너지 음료 광고 문구 3개를 15자 이내로 만들어줘\"  # 원본 프롬프트\noutput_text = \"힘이 나는 음료 / 너의 하루 충전 / 지치지 마, 파워업\"           # LLM이 낸 결과\n\n# 심사위원 프롬프트: 4개 기준으로 0~5점 채점하고 JSON으로만 답하게 한다\njudge = (                                       # 채점 프롬프트 조립 시작\n    '너는 공정한 프롬프트 결과 평가자다.\\n'      # 심사위원 역할 부여\n    '결과를 목표부합·정확성·창의성·표현력 4개 기준으로 0~5점 채점하라.\\n'  # 평가 루브릭 4항목\n    '반드시 JSON으로만 답하라. 예: {\"창의성\": 2, \"총평\": \"문구가 평범함\"}\\n'  # 출력 형식 고정\n    '원본 프롬프트: ' + prompt_text + '\\n'       # 채점 맥락1: 원본 프롬프트\n    '생성 결과: ' + output_text                   # 채점 맥락2: LLM 결과\n)                                               # 조립 끝\n\nres = client.chat.completions.create(           # 채점 API 호출\n    model=\"gpt-4o-mini\",                        # 사용할 모델\n    messages=[{\"role\": \"user\", \"content\": judge}],  # 심사 프롬프트 전달\n    temperature=0,                              # 채점은 일관성이 중요 → 0으로 고정\n)\nscore = json.loads(res.choices[0].message.content)  # JSON 답변을 파이썬 딕셔너리로 변환\nprint(\"창의성 점수:\", score[\"창의성\"])            # 예: 2 (문구가 평범하면 낮게 나온다)\nprint(\"총평:\", score[\"총평\"])                     # 왜 그 점수인지 한 줄 근거",
-      "note": "사람 평가는 정확하지만 느리고 비싸다. 성능 좋은 모델을 심사위원으로 세우면 결과 품질을 빠르게 점수화할 수 있다. temperature=0으로 채점을 일관되게 하고, \"역할 지시·스타일 요구가 없어 창의성이 낮다\"처럼 구조 결함까지 근거로 받아 프롬프트를 고친다."
-    },
-    {
-      "title": "System Prompt 템플릿에 Placeholder 채워 재사용하기",
-      "lang": "python",
-      "code": "from openai import OpenAI                       # OpenAI 라이브러리 불러오기\nclient = OpenAI(api_key=\"sk-본인키\")             # 클라이언트 생성 (키는 본인 것으로 교체)\n\n# System Prompt 템플릿: {역할}·{분야}·{말투}를 나중에 채울 빈자리(Placeholder)로 둔다\nsystem_tpl = \"너는 {domain} 전문 {role}다. 답변은 항상 {tone} 말투로 한다.\"  # 재사용 가능한 틀\n\n# 상황이 바뀌어도 값만 갈아끼우면 같은 구조를 그대로 재활용할 수 있다\nsystem_msg = system_tpl.format(                # 빈자리에 실제 값을 채운다\n    role=\"상담사\",                              # {role} 자리 → 상담사\n    domain=\"반려동물 건강\",                     # {domain} 자리 → 반려동물 건강\n    tone=\"친근하고 쉬운\",                        # {tone} 자리 → 친근하고 쉬운\n)\nprint(\"완성된 시스템 프롬프트:\", system_msg)      # 채워진 결과를 눈으로 확인\n\n# 완성된 System(역할·규칙)과 User(질문)를 분리해 전달한다\nres = client.chat.completions.create(          # API 호출\n    model=\"gpt-4o-mini\",                       # 사용할 모델\n    messages=[\n        {\"role\": \"system\", \"content\": system_msg},           # 모델의 역할·말투 규칙\n        {\"role\": \"user\", \"content\": \"강아지가 사료를 안 먹어요\"},  # 사용자 질문\n    ],\n)\nprint(\"답변:\", res.choices[0].message.content)  # 템플릿이 정한 역할·말투대로 답한다",
-      "note": "System Prompt는 모델의 역할·동작 방식을, User Prompt는 이번 요청을 담당한다. 역할/분야/말투를 Placeholder로 비운 템플릿을 만들어 두면, 값만 바꿔 상담사·마케터·개발자용 봇을 같은 코드로 찍어낼 수 있다."
-    },
-    {
-      "title": "프롬프트 해부학 — 4요소로 나눠 쓰면 답이 또렷해진다",
-      "lang": "text",
-      "code": "# 좋은 프롬프트 = Instruction + Context + Input + Output 4요소\n# 같은 요청도 4요소로 쪼개 쓰면 답이 산만해지지 않는다\n\n# [나쁜 예] 문법은 맞지만 모호함 — 무엇을·어떤 기준으로·어떤 형식으로가 빠졌다\n구름의 색이 변하는 이유를 설명해줘.\n\n# [좋은 예] 4요소로 분해해 명확하게 지시한다\nInstruction: 구름 색이 달라지는 이유를 설명하라.       # 무엇을 할지(구체적 동사)\nContext: 빛의 산란·파장·태양 위치를 고려해 서술하라.    # 판단에 필요한 배경·조건\nInput: 해 뜰 무렵 붉게 보이는 구름이 왜 생기나요?        # 이번에 처리할 구체적 대상\nOutput: {reason}: {한 문장의 과학적 설명}               # 답을 담을 형식(빈칸 채우기 틀)\n\n# 감정 분류에 그대로 적용한 틀 — Output 형식을 고정하면 채점·자동화가 쉬워진다\nInstruction: 다음 리뷰의 감정을 판단하라(긍정/중립/부정 중 하나).\nContext: 감정 표현이 애매하면 중립으로 분류한다.\nInput: 그 분식집 김밥은 그저 그랬어.\nOutput: {sentiment}: 부정\n\n# 핵심: Output을 {sentiment} 같은 틀로 못박으면 결과가 제각각이지 않다",
-      "note": "Instruction만 있으면 모델이 과도하게 추론해 에세이처럼 흩어진다. Context(조건)·Input(대상)·Output(형식)을 함께 주면 답이 목적에 맞게 좁혀진다. 특히 Output 형식을 {sentiment} 같은 빈칸 틀로 고정하는 것이 결과 품질과 자동 처리의 핵심이다."
-    }
-  ],
-  "python-1": [
-    {
-      "title": "실습1: 매출 레코드 집계 — Counter·defaultdict·컴프리헨션 (Practice 1)",
-      "lang": "python",
-      "code": "# 실습1(Practice 1): 매출 레코드를 자료구조로 집계하기\nfrom collections import Counter, defaultdict  # 빈도 집계·그룹핑 전용 자료구조\n\n# Python_Practice1_Data.json 을 흉내 낸 Sales 레코드(행: 날짜·지역·금액·품목)\nsales = [\n    {'date': '2026-01', 'region': '서울', 'amount': 1500, 'category': '가전'},\n    {'date': '2026-01', 'region': '부산', 'amount': 800,  'category': '의류'},\n    {'date': '2026-02', 'region': '서울', 'amount': 1200, 'category': '가전'},\n    {'date': '2026-02', 'region': '서울', 'amount': 300,  'category': '식품'},\n    {'date': '2026-02', 'region': '부산', 'amount': 2000, 'category': '가전'},\n]\n\n# 1) amount >= 1000 인 거래만 남긴다(리스트 컴프리헨션 = 필터+수집 한 줄)\nbig = [r for r in sales if r['amount'] >= 1000]\n\n# 2) Counter 로 '지역별 거래 건수'를 센다(직접 루프 대신 - 감점 회피)\nregion_count = Counter(r['region'] for r in big)\nprint('지역별 건수:', region_count.most_common())  # 많은 순으로 정렬 보장\n\n# 3) defaultdict 로 '카테고리별 금액 리스트'를 모은다(키 없으면 빈 리스트 자동 생성)\nby_cat = defaultdict(list)\nfor r in big:\n    by_cat[r['category']].append(r['amount'])\n\n# 4) 딕셔너리 컴프리헨션으로 '지역별 총매출' dict 를 만든다\nregion_total = {reg: sum(r['amount'] for r in big if r['region'] == reg)\n                for reg in region_count}\nprint('지역별 총매출:', region_total)   # {'서울': 2700, '부산': 2000}\n\n# 5) 금액 상위 3건을 내림차순 정렬(정렬 기준 key=금액, reverse)\ntop3 = sorted(big, key=lambda r: r['amount'], reverse=True)[:3]\nassert region_total['서울'] == 2700  # 체크포인트: 값이 맞는지 assert 로 자가검증",
-      "note": "Practice 1의 정석 흐름: for 루프 대신 컴프리헨션, 직접 카운팅 대신 Counter, if-키확인 대신 defaultdict를 쓰는 것이 채점 감점 회피 포인트다. assert로 집계 결과를 스스로 검증한다."
-    },
-    {
-      "title": "실습1: 리스트 vs 제너레이터 메모리 비교 (Practice 1 체크포인트)",
-      "lang": "python",
-      "code": "# 실습1: 같은 결과, 다른 메모리 — 제너레이터가 왜 대용량에 강한가\nimport sys  # 객체가 차지하는 바이트를 재는 표준 모듈\n\n# 1) 리스트: 1000만 개 제곱값을 '한꺼번에' 메모리에 올린다\nsquares_list = [x * x for x in range(10_000_000)]\n\n# 2) 제너레이터: 같은 계산을 '필요할 때 하나씩' 만든다(괄호가 () 이면 제너레이터)\nsquares_gen = (x * x for x in range(10_000_000))\n\n# 3) 두 객체의 메모리 크기를 비교한다\nprint('리스트   :', sys.getsizeof(squares_list), 'bytes')  # 수천만 bytes\nprint('제너레이터:', sys.getsizeof(squares_gen), 'bytes')   # 100 bytes 대\n\n# 4) 체크포인트: 제너레이터가 리스트보다 훨씬 작아야 한다\nassert sys.getsizeof(squares_gen) < sys.getsizeof(squares_list)\n\n# 5) 단, 제너레이터는 '한 번만' 흐른다 — 합을 구하면 소진된다\ntotal = sum(squares_gen)  # 하나씩 꺼내 더함(전부 메모리에 올리지 않음)\nprint('합계:', total, '/ 다시 세면:', sum(squares_gen))  # 두 번째는 0(이미 소진)",
-      "note": "Checkpoint는 sys.getsizeof(generator) < list 확인을 요구한다. 이때 제너레이터를 list()로 바꿔 비교하면 메모리 차이가 사라져 감점되므로, 변환하지 말고 그대로 크기를 재는 것이 핵심이다."
-    },
-    {
-      "title": "실행 구조 눈으로 보기 — dis로 바이트코드 확인 (1장)",
-      "lang": "python",
-      "code": "# 소스 -> AST -> 바이트코드 -> PVM: 파이썬이 코드를 실행하는 진짜 순서\nimport dis  # 함수가 어떤 바이트코드로 컴파일되는지 보여주는 표준 모듈\n\n# 아주 단순한 덧셈 함수 하나를 정의한다\ndef add(x, y):\n    return x + y  # 이 한 줄이 실제로 어떤 명령들로 쪼개지는지 확인\n\n# dis 로 내부 바이트코드 명령을 출력한다\ndis.dis(add)\n# 출력(요지):\n#   LOAD_FAST   x    <- 지역변수 x 를 스택에 올림\n#   LOAD_FAST   y    <- 지역변수 y 를 스택에 올림\n#   BINARY_OP   +    <- 스택 위 두 값을 더함\n#   RETURN_VALUE     <- 결과를 반환\n\n# CPython 은 소스를 기계어가 아니라 '바이트코드'로 바꿔 PVM 이 한 줄씩 실행한다.\n# 이 구조를 알면 __pycache__(.pyc)가 왜 생기는지, 그리고 컴프리헨션이\n# for 루프보다 빠른 이유(생성되는 바이트코드 수가 더 적음)를 납득할 수 있다.",
-      "note": "교재 1장의 dis·LOAD_FAST·BINARY_OP·RETURN_VALUE 설명을 그대로 실습으로. \"왜 컴프리헨션이 빠른가\"를 느낌이 아니라 바이트코드 개수로 이해하게 하는 개념 데모다."
-    }
-  ],
-  "python-2": [
-    {
-      "title": "실습3: IQR 이상치 제거 후 named aggregation 집계 (Practice 3)",
-      "lang": "python",
-      "code": "# 실습3(Practice 3): sales_100k.csv 흐름 — EDA -> IQR 이상치 제거 -> 집계\nimport pandas as pd  # 표 데이터 처리\n\n# 실제 실습은 10만 행 CSV. 여기선 작은 표로 흐름만 재현(999999 는 이상치)\ndf = pd.DataFrame({\n    'region':   ['서울', '서울', '부산', '부산', '서울', '부산'],\n    'category': ['가전', '식품', '가전', '식품', '가전', '식품'],\n    'amount':   [1200, 300, 2000, 500, 999999, 700],\n})\nprint(df.info())          # 컬럼·타입·결측치 한눈에(EDA 첫걸음)\nprint(df.isnull().sum())  # 컬럼별 결측치 개수\n\n# 1) IQR(사분위 범위)로 정상 범위를 계산한다\nQ1 = df['amount'].quantile(0.25)  # 하위 25% 값\nQ3 = df['amount'].quantile(0.75)  # 상위 25% 값\nIQR = Q3 - Q1                      # 사분위 범위\nlow, high = Q1 - 1.5 * IQR, Q3 + 1.5 * IQR  # 정상으로 볼 하한·상한\n\nbefore = len(df)                            # 제거 전 행수\nclean = df[df['amount'].between(low, high)]  # 정상 범위 안만 남김\nprint('제거 전:', before, '-> 제거 후:', len(clean))  # 이상치 빠짐 확인\n\n# 2) named aggregation: 결과 컬럼명을 직접 지정해 지역·품목별 집계\nresult = (clean.groupby(['region', 'category'])\n          .agg(total=('amount', 'sum'),   # 총매출\n               mean=('amount', 'mean'),   # 평균\n               cnt=('amount', 'count'))   # 건수\n          .sort_values('total', ascending=False))  # 총매출 내림차순\nprint(result)",
-      "note": "Checkpoint 그대로: between(Q1-1.5*IQR, Q3+1.5*IQR)로 IQR 범위를 잡고 제거 전·후 행수를 출력, groupby는 total=(\"amount\",\"sum\") 형태의 named aggregation으로 컬럼명을 지정해야 감점(-20)을 피한다."
-    },
-    {
-      "title": "실습3: DuckDB로 DataFrame에 바로 SQL 집계 (Practice 3)",
-      "lang": "python",
-      "code": "# 실습3(Practice 3): 같은 집계를 SQL 로 — Pandas/Polars/DuckDB 3종 비교의 한 축\nimport duckdb   # pip install duckdb, CSV/DataFrame 에 직접 SQL 을 실행\nimport pandas as pd\n\ndf = pd.DataFrame({\n    'region':   ['서울', '서울', '부산', '부산'],\n    'category': ['가전', '식품', '가전', '식품'],\n    'amount':   [1200, 300, 2000, 500],\n})\n\n# 파이썬 변수 df 를 그대로 테이블처럼 쓴다(별도 적재 없이 FROM df)\nsql = '''\n    SELECT region, category,\n           SUM(amount) AS total,   -- 총매출\n           COUNT(*)    AS cnt       -- 건수\n    FROM df\n    GROUP BY region, category\n    ORDER BY total DESC             -- 총매출 내림차순\n'''\nresult = duckdb.query(sql).to_df()  # 결과를 다시 DataFrame 으로 받는다\nprint(result)\n\n# Practice 3 핵심: 같은 집계를 Pandas groupby / Polars Lazy / DuckDB SQL 로 짜고\n# timeit 으로 '동일 반복 횟수'를 맞춰 실행 시간을 공정 비교하는 것.",
-      "note": "DuckDB는 커리큘럼(Polars+DuckDB) 필수인데 사이트에 예제가 없었다. timeit 비교 시 세 도구의 number(반복 횟수)를 통일하지 않으면 공정 비교가 아니라 감점 대상이라는 점을 note로 강조한다."
-    },
-    {
-      "title": "실습4: 카이제곱 검정 — 두 범주형 변수의 독립성 (Practice 4)",
-      "lang": "python",
-      "code": "# 실습4(Practice 4): 지역과 결제수단이 서로 관련 있는가(범주형 vs 범주형)\nimport pandas as pd\nfrom scipy.stats import chi2_contingency  # 카이제곱 독립성 검정 함수\n\ndf = pd.DataFrame({\n    'region': ['서울', '서울', '부산', '부산', '서울', '부산', '서울', '부산'],\n    'pay':    ['카드', '현금', '카드', '카드', '현금', '현금', '카드', '현금'],\n})\n\n# 1) 두 범주형 변수로 분할표(교차표)를 만든다\ntable = pd.crosstab(df['region'], df['pay'])\nprint(table)\n\n# 2) 카이제곱 검정: 지역과 결제수단이 독립인지 검정\nchi2, p, dof, expected = chi2_contingency(table)\nprint('카이제곱:', round(chi2, 3), 'p-value:', round(p, 3))\n\n# 3) 해석은 반드시 코드/주석으로 남긴다(수치만 출력하면 감점)\nif p < 0.05:\n    print('=> p<0.05: 지역과 결제수단은 독립이 아니다(관련 있음)')\nelse:\n    print('=> p>=0.05: 독립이 아니라고 볼 근거가 부족하다')",
-      "note": "Practice 4는 t-test 외에 chi2_contingency로 범주형 독립성까지 요구한다. Checkpoint가 \"p<0.05 유의미 여부 판단을 코드/주석으로 남기지 않으면 -20\"이라, 판정 분기를 반드시 넣는 습관을 보여준다."
     }
   ],
   "feature-1": [
