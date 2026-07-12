@@ -266,7 +266,7 @@ function renderEtcPage() {
     h += `<tr><td class="pt">${esc(date.slice(5))}</td>${cells.join('')}</tr>`
   }
   h += `</table>`
-  h += `<p class="note">※ 10/5~10/23 구간의 타 분반 배정은 확인 중입니다(담당 광주 일정만 표시).</p>`
+  h += `<p class="note">※ 실시간 배정표 기준(전 구간 반영) · 일정은 변동될 수 있습니다.</p>`
 
   // 11월 이후 요약
   h += `<h4 class="sec">🗓 11월 이후</h4>`

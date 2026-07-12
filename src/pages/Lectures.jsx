@@ -247,7 +247,7 @@ export default function Lectures() {
                   <span>{p.note}</span>
                 </div>
               ))}
-              <p className="etc-nav-note">※ 10/5~10/23 구간은 배정표 확인 중 · 일정은 변동될 수 있습니다.</p>
+              <p className="etc-nav-note">※ 실시간 배정표 기준 · 일정은 변동될 수 있습니다.</p>
             </details>
           </nav>
 

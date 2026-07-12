@@ -3,7 +3,7 @@
 // 트랙: gj=광주 · us=울산 · p4=판교(4층) · p5=판교(5층)
 // 셀 값: { c: 과목ID, by: '강사명' } — 과목ID는 othercontent(기타 신규) 또는 curriculum subjects(담당 과목의 타 반 진행)
 // ※ 담당(이애본) 세션은 curriculum.js sessions 가 원본 — UI에서 ★로 병합 표시한다.
-// ※ 10/5(월)~10/23(금) 구간은 배정표 스크린샷 미확보 — 확인 중(광주 담당 일정만 curriculum에 존재).
+// ※ 전 구간(7/14~12/18) 배정표 판독 완료(2026-07-12, 스크린샷 5장).
 
 export const TRACKS = [
   { key: 'gj', label: '광주' },
@@ -79,7 +79,20 @@ export const otherSessions = [
   { date: '2026-09-30', gj: { c: 'rag', by: '박병선' }, us: { c: 'rag', by: '배기주' }, p4: { c: 'rag', by: '권기창' } },
   { date: '2026-10-01', gj: { c: 'datamini', by: '박병선' }, us: { c: 'datamini', by: '배기주' }, p4: { c: 'rag', by: '권기창' } },
   { date: '2026-10-02', gj: { c: 'datamini', by: '박병선' }, us: { c: 'datamini', by: '배기주' }, p4: { c: 'rag', by: '권기창' } },
-  // ── 10/5(월)~10/23(금): 배정표 확인 중 (광주 담당 일정은 좌측 날짜 목록 참조) ──
+  // ── 10월 첫~셋째 주 (10/5 대체휴일·10/9 한글날 제외) ──
+  { date: '2026-10-06', us: { c: 'k8s-adv', by: '이용우' }, p4: { c: 'vectordb', by: '백정열' }, p5: { c: 'agent', by: '배기주' } },
+  { date: '2026-10-07', us: { c: 'k8s-adv', by: '이용우' }, p4: { c: 'k8s-adv', by: '정윤석' }, p5: { c: 'agent', by: '배기주' } },
+  { date: '2026-10-08', us: { c: 'k8s-adv', by: '이용우' }, p4: { c: 'k8s-adv', by: '정윤석' }, p5: { c: 'vectordb', by: '백정열' } },
+  { date: '2026-10-12', us: { c: 'agent', by: '배기주' }, p4: { c: 'k8s-adv', by: '정윤석' }, p5: { c: 'devops', by: '이용우' } },
+  { date: '2026-10-13', us: { c: 'agent', by: '배기주' }, p4: { c: 'datamini', by: '이은호' }, p5: { c: 'devops', by: '이용우' } },
+  { date: '2026-10-14', us: { c: 'capstone', by: '배기주' }, p4: { c: 'datamini', by: '이은호' }, p5: { c: 'k8s-adv', by: '이용우' } },
+  { date: '2026-10-15', us: { c: 'capstone', by: '배기주' }, p4: { c: 'agent', by: '이미애' }, p5: { c: 'k8s-adv', by: '이용우' } },
+  { date: '2026-10-16', us: { c: 'capstone', by: '배기주' }, p4: { c: 'agent', by: '이미애' }, p5: { c: 'k8s-adv', by: '이용우' } },
+  { date: '2026-10-19', us: { c: 'devops', by: '이용우' }, p4: { c: 'capstone', by: '정윤석' }, p5: { c: 'datamini', by: '박병선' } },
+  { date: '2026-10-20', us: { c: 'devops', by: '이용우' }, p4: { c: 'capstone', by: '정윤석' }, p5: { c: 'datamini', by: '박병선' } },
+  { date: '2026-10-21', us: { c: 'vectordb', by: '백정열' }, p4: { c: 'capstone', by: '정윤석' }, p5: { c: 'capstone', by: '배기주' } },
+  { date: '2026-10-22', us: { c: 'miniproject', by: '임성열' }, p4: { c: 'miniproject', by: '권기창' }, p5: { c: 'capstone', by: '배기주' } },
+  { date: '2026-10-23', gj: { c: 'devops', by: '정윤석' }, us: { c: 'miniproject', by: '임성열' }, p4: { c: 'miniproject', by: '권기창' }, p5: { c: 'capstone', by: '배기주' } },
   { date: '2026-10-26', gj: { c: 'devops', by: '정윤석' }, us: { c: 'miniproject', by: '임성열' }, p4: { c: 'miniproject', by: '권기창' } },
   { date: '2026-10-27', gj: { c: 'method', by: '백정열' }, us: { c: 'method', by: '최진철' }, p4: { c: 'devops', by: '이용우' } },
   { date: '2026-10-28', gj: { c: 'team' }, us: { c: 'team' }, p4: { c: 'devops', by: '이용우' } },
