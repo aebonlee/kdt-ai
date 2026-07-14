@@ -242,36 +242,23 @@ export default function AdminSchedule() {
           18개반 시간표 전체(광주 · 울산 · 판교 4/5층, 7/14~12/18) 기준 강사 {instructorDays.length}명의 강의 일수입니다.
           내 일수는 시간표 기재 기준({instructorDays.find((x) => x.name === '이애본')?.days}일 — 8/20 대타일 제외)이며, 'SK'는 특강 진행 주체 표기입니다.
         </p>
-        <div style={{ marginTop: 10, overflowX: 'auto', border: '1px solid var(--line)', borderRadius: 12 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 560 }}>
-            <thead>
-              <tr style={{ background: 'var(--navy-50)' }}>
-                {['순위', '강사', '강의 일수', '비중(전체 대비)'].map((h) => (
-                  <th key={h} style={{ textAlign: 'left', padding: '9px 12px', color: 'var(--navy-700)', fontWeight: 800, whiteSpace: 'nowrap', borderBottom: '1px solid var(--line)' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {instructorDays.map((p, i) => {
-                const max = instructorDays[0].days
-                const isMe = p.name === '이애본'
-                return (
-                  <tr key={p.name} style={{ borderBottom: '1px solid var(--line)', background: isMe ? 'var(--navy-50)' : 'transparent' }}>
-                    <td style={{ padding: '7px 12px', color: 'var(--ink-soft)', whiteSpace: 'nowrap' }}>{i + 1}</td>
-                    <td style={{ padding: '7px 12px', fontWeight: isMe ? 900 : 600, color: isMe ? 'var(--gold)' : 'var(--ink)', whiteSpace: 'nowrap' }}>
-                      {p.name}{isMe && ' ★'}
-                    </td>
-                    <td style={{ padding: '7px 12px', fontWeight: 800, whiteSpace: 'nowrap' }}>{p.days}일</td>
-                    <td style={{ padding: '7px 12px', minWidth: 200 }}>
-                      <div style={{ height: 8, borderRadius: 999, background: 'var(--navy-100)', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.round((p.days / max) * 100)}%`, height: '100%', borderRadius: 999, background: isMe ? 'var(--gold)' : 'var(--navy-600)' }} />
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+        <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {instructorDays.map((p) => {
+            const isMe = p.name === '이애본'
+            return (
+              <span
+                key={p.name}
+                style={{
+                  padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700,
+                  border: `1px solid ${isMe ? 'var(--gold)' : 'var(--line-strong)'}`,
+                  background: isMe ? 'var(--navy-50)' : 'var(--bg-white)',
+                  color: 'var(--navy-700)',
+                }}
+              >
+                {p.name} <b style={{ color: 'var(--gold)' }}>{p.days}일</b>
+              </span>
+            )
+          })}
         </div>
       </div>
     </section>

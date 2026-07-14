@@ -1,17 +1,13 @@
 import { Link } from 'react-router-dom'
 import { course } from '../data/course'
-import { sessionsBySubject, totalSessions, totalSubjects, sortedSessions } from '../data/curriculum'
+import { sessionsBySubject } from '../data/curriculum'
 import Sentences from '../components/Sentences'
+import HeroVisual from '../components/HeroVisual'
 
 const regionClass = (r) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : 'pangyo')
-const REGION_ORDER = ['판교', '광주', '울산']
 
 export default function Home() {
   const groups = sessionsBySubject()
-  const all = sortedSessions()
-  const first = all[0]?.date
-  const last = all[all.length - 1]?.date
-  const regions = REGION_ORDER.filter((r) => all.some((s) => s.region === r))
 
   return (
     <div>
@@ -35,28 +31,7 @@ export default function Home() {
           </div>
 
           <aside className="hero-side">
-            <div className="metric-stack">
-              <div className="metric">
-                <div className="metric-num">{totalSessions}<span className="unit">일</span></div>
-                <div className="metric-label">담당 강의일</div>
-              </div>
-              <div className="metric">
-                <div className="metric-num">{totalSubjects}<span className="unit">과목</span></div>
-                <div className="metric-label">담당 과목</div>
-              </div>
-              <div className="metric">
-                <div className="metric-num">{regions.length}<span className="unit">지역</span></div>
-                <div className="metric-label">{regions.join(' · ')}</div>
-              </div>
-              <div className="metric">
-                <div className="metric-num" style={{ fontSize: 22 }}>{first?.slice(5)}</div>
-                <div className="metric-label">첫 강의 ~ {last?.slice(5)}</div>
-              </div>
-            </div>
-            <p className="hero-side-note">
-              {course.overview.period} · {course.overview.time}<br />
-              {course.overview.format}
-            </p>
+            <HeroVisual />
           </aside>
         </div>
       </section>
