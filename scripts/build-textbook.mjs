@@ -766,6 +766,12 @@ document.addEventListener('click', function (e) {
 
 // 페이지 단위 전환(좌측 메뉴=과목 페이지) + 인쇄 (웹 뷰어 전용)
 const TAB_CSS = `
+/* 담당일정 외 모드 — 좌측 메뉴 컬러를 다크그린으로 전환(레이아웃·스타일 동일) */
+.tb.etc-mode .tb-side{background:#0B3B2E;}
+.tb.etc-mode .tb-brand b{color:#7FD8BE;}
+.tb.etc-mode .sl-top{color:#7FD8BE;}
+.tb.etc-mode .sl:focus-visible{outline-color:#7FD8BE;}
+.tb.etc-mode .tb-tab.is-active{background:#0E7A5F;border-color:#0E7A5F;}
 .tb-tabs{display:flex;gap:6px;padding:10px 12px 2px;}
 .tb-tab{flex:1;padding:9px 8px;font-weight:800;font-size:12.5px;border-radius:9px;border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.8);cursor:pointer;}
 .tb-tab.is-active{background:#3F51FF;border-color:#3F51FF;color:#fff;}
@@ -811,6 +817,7 @@ const PAGE_JS = `
   var tabBtns = root.querySelectorAll('.tb-tab');
   function setTab(t) {
     tabBtns.forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-tab') === t); });
+    root.classList.toggle('etc-mode', t === 'etc');
     var gm = document.getElementById('tb-group-mine');
     var ge = document.getElementById('tb-group-etc');
     if (gm) gm.hidden = t !== 'mine';
