@@ -252,7 +252,7 @@ function renderEtcPage() {
   h += `<h4 class="sec">📖 과목별 학습내용</h4>`
   for (const [id, c] of Object.entries(otherCourses)) {
     const deep = otherDeep[id] || {}
-    h += `<div class="card"><h5>${esc(c.name)} <span class="thin">· ${esc(c.category)} · ${c.hours}시간</span></h5>` +
+    h += `<div class="card etc-card" id="etccourse-${esc(id)}"><h5>${esc(c.name)} <span class="thin">· ${esc(c.category)} · ${c.hours}시간</span></h5>` +
       `<p style="margin:4px 0 8px">${esc(c.summary)}</p>` +
       `<ul class="dot">${(c.topics || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` +
       (deep.concepts?.length
@@ -348,6 +348,11 @@ async function main() {
         return `<a class="sl" href="#subj-${esc(s.id)}" data-goto="${esc(s.id)}"><span class="sl-n">${esc(s.name)}</span><span class="sl-m">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a>`
       })
       .join('')
+    // 담당일정 외(타 강사) 과목 사이드 메뉴 — 기타 페이지 내 과목 카드로 스크롤
+    const etcSideItems = Object.entries(otherCourses)
+      .map(([id, c]) =>
+        `<a class="sl sl-etc" href="#" data-goto="etc" data-anchor="etccourse-${esc(id)}"><span class="sl-n">${esc(c.name)}</span><span class="sl-m">${esc(c.category)} · ${c.hours}시간 · 타 강사</span></a>`)
+      .join('')
     // 페이지: 개요(표지+목차) + 과목별
     // 주의: 페이지 섹션에는 id를 두지 않는다(해시 진입 시 네이티브 앵커 점프로 상단 빈공간이 생김).
     // 내비게이션·초기 해시 처리는 모두 JS show()가 전담한다.
@@ -355,7 +360,7 @@ async function main() {
       subjectBlocks.map((b) => `<section class="page" data-page="${esc(b.id)}">${b.html}</section>`).join('') +
       `<section class="page" data-page="etc">${etcPage}</section>`
     const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
-<style>${SCREEN_CSS}</style>`
+<style>${SCREEN_CSS}${TAB_CSS}</style>`
     const content = `<div class="tb">
   <div class="tb-overlay" id="tb-overlay" aria-hidden="true"></div>
   <aside class="tb-side" id="tb-side">
@@ -363,10 +368,19 @@ async function main() {
       <div class="tb-brand">SKALA <b>4기</b> 실습 교재</div>
       <div class="tb-brand-sub">이애본 강사 · 담당 ${ordered.length}과목</div>
     </div>
+    <div class="tb-tabs" role="tablist" aria-label="교안 구분">
+      <button type="button" class="tb-tab is-active" data-tab="mine">담당 강의</button>
+      <button type="button" class="tb-tab tb-tab-etc" data-tab="etc">담당일정 외</button>
+    </div>
     <nav class="tb-nav" aria-label="과목 목차">
-      <a class="sl sl-top is-active" href="#" data-goto="home">📖 표지 · 목차</a>
-      ${sideItems}
-      <a class="sl" href="#" data-goto="etc"><span class="sl-n">📚 담당일정 외 강의내용 학습</span><span class="sl-m">타 강사 과목 · 분반별 일정</span></a>
+      <div class="tb-group" id="tb-group-mine">
+        <a class="sl sl-top is-active" href="#" data-goto="home">📖 표지 · 목차</a>
+        ${sideItems}
+      </div>
+      <div class="tb-group" id="tb-group-etc" hidden>
+        <a class="sl sl-top sl-etc" href="#" data-goto="etc">📚 담당일정 외 개요 · 분반별 일정</a>
+        ${etcSideItems}
+      </div>
     </nav>
   </aside>
   <main class="tb-main">
@@ -751,6 +765,21 @@ document.addEventListener('click', function (e) {
 `
 
 // 페이지 단위 전환(좌측 메뉴=과목 페이지) + 인쇄 (웹 뷰어 전용)
+const TAB_CSS = `
+.tb-tabs{display:flex;gap:6px;padding:10px 12px 2px;}
+.tb-tab{flex:1;padding:9px 8px;font-weight:800;font-size:12.5px;border-radius:9px;border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.8);cursor:pointer;}
+.tb-tab.is-active{background:#3F51FF;border-color:#3F51FF;color:#fff;}
+.tb-tab-etc.is-active{background:#0E7A5F;border-color:#0E7A5F;color:#fff;}
+.sl-etc{border-left:3px solid #0E7A5F;}
+.sl-etc.is-active,.sl-etc:hover{background:rgba(14,122,95,0.18);}
+.page[data-page="etc"] .subject-head h2{color:#0E7A5F;}
+.page[data-page="etc"] .subject-head{border-bottom-color:#0E7A5F;}
+.page[data-page="etc"] h4.sec{color:#0E7A5F;}
+.page[data-page="etc"] .chip.code{background:#0E7A5F;border-color:#0E7A5F;color:#fff;}
+.page[data-page="etc"] .etc-card h5{color:#0E7A5F;}
+.page[data-page="etc"] .box-h{color:#0E7A5F;}
+`
+
 const PAGE_JS = `
 (function () {
   var root = document.querySelector('.tb');
@@ -773,10 +802,27 @@ const PAGE_JS = `
     });
     if (!found) { id = 'home'; pages.forEach(function (p) { p.classList.toggle('is-active', p.getAttribute('data-page') === 'home'); }); }
     root.querySelectorAll('.sl').forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('data-goto') === id); });
+    setTab(id === 'etc' ? 'etc' : 'mine');
     if (crumb) crumb.textContent = labelOf(id);
     window.scrollTo(0, 0);
     try { history.replaceState(null, '', id === 'home' ? '#tb-top' : '#subj-' + id); } catch (e) {}
   }
+  // 담당 / 담당일정 외 탭
+  var tabBtns = root.querySelectorAll('.tb-tab');
+  function setTab(t) {
+    tabBtns.forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-tab') === t); });
+    var gm = document.getElementById('tb-group-mine');
+    var ge = document.getElementById('tb-group-etc');
+    if (gm) gm.hidden = t !== 'mine';
+    if (ge) ge.hidden = t !== 'etc';
+  }
+  tabBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-tab');
+      setTab(t);
+      show(t === 'etc' ? 'etc' : 'home');
+    });
+  });
   // 모바일 드로어 열고 닫기
   var menuBtn = document.getElementById('tb-menu');
   var overlay = document.getElementById('tb-overlay');
@@ -795,6 +841,11 @@ const PAGE_JS = `
     if (!a || !root.contains(a)) return;
     e.preventDefault();
     show(a.getAttribute('data-goto'));
+    var anchor = a.getAttribute('data-anchor');
+    if (anchor) {
+      var el = document.getElementById(anchor);
+      if (el) setTimeout(function () { el.scrollIntoView({ block: 'start' }); }, 30);
+    }
     setDrawer(false);   // 과목을 고르면 드로어를 닫아 콘텐츠를 바로 보여준다
   });
   var m = (location.hash || '').match(/^#subj-(.+)$/);

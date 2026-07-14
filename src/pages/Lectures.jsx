@@ -216,7 +216,9 @@ export default function Lectures() {
                     const isEtcCourse = !!otherCourses[it.c]
                     // 담당 과목의 타 반(타 강사) 진행 — 클릭하면 담당 강의안 첫날로 연결
                     const mySubjectDate = !isEtcCourse ? all.find((s) => s.subjectId === it.c)?.date : null
-                    const clickable = isEtcCourse || !!mySubjectDate
+                    // 세션 없는 담당 과목(prompt·rag·spring-ai 등 참고자료)은 참고자료 강의안 1일차로 연결
+                    const refSubject = !isEtcCourse && !mySubjectDate && subjectById(it.c)?.days?.length ? it.c : null
+                    const clickable = isEtcCourse || !!mySubjectDate || !!refSubject
                     const range = it.from === it.to ? it.from.slice(5) : `${it.from.slice(5)}~${it.to.slice(8)}`
                     const active = etc?.courseId === it.c
                     return (
@@ -226,13 +228,14 @@ export default function Lectures() {
                         onClick={() => {
                           if (isEtcCourse) navigate(`/lectures/etc-${it.c}`)
                           else if (mySubjectDate) navigate(`/lectures/${mySubjectDate}`)
+                          else if (refSubject) navigate(`/lectures/ref-${refSubject}-1`)
                         }}
                         disabled={!clickable}
                       >
                         {etcName(it.c)}
-                        {mySubjectDate ? <span style={{ marginLeft: 4, color: 'var(--gold)', fontWeight: 800 }}>★</span> : null}
+                        {(mySubjectDate || refSubject) ? <span style={{ marginLeft: 4, color: 'var(--gold)', fontWeight: 800 }}>★</span> : null}
                         <span className="sl-sub">
-                          {range} · {it.tracks.join(' · ')}{mySubjectDate ? ' · 담당 강의안 보기' : ''}
+                          {range} · {it.tracks.join(' · ')}{mySubjectDate ? ' · 담당 강의안 보기' : refSubject ? ' · 참고자료 강의안 보기' : ''}
                         </span>
                       </button>
                     )

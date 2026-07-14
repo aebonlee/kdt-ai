@@ -24,23 +24,41 @@ const fmtSize = (b) => {
   return `${Math.round(b / 1024)} KB`
 }
 
+// 구분(카테고리) 탭 — 그룹 id 를 성격별로 묶는다
+const TABS = [
+  { key: 'all', label: '전체', groups: null },
+  { key: 'tt', label: '시간표', groups: ['tt0714'] },
+  { key: 'syl', label: '실라버스', groups: ['syl0714', 'syllabus'] },
+  { key: 'eval', label: '평가', groups: ['eval0714', 'eval'] },
+  { key: 'tb', label: '교재', groups: ['tb0714', 'practice', 'gen3'] },
+  { key: 'ori', label: 'OT · 커리큘럼', groups: ['ori'] },
+]
+
 export default function Admin() {
   const { user } = useAuth()
   const [q, setQ] = useState('')
+  const [activeTab, setActiveTab] = useState('all')
   const [activeGroup, setActiveGroup] = useState('all')
   const [selected, setSelected] = useState(null) // { t, id, x, b, groupTitle }
 
-  // 검색 + 카테고리 필터
+  const tab = TABS.find((t) => t.key === activeTab) || TABS[0]
+  // 현재 탭에 속한 그룹들 (전체 탭이면 모든 그룹)
+  const tabGroups = useMemo(
+    () => (tab.groups ? docsGroups.filter((g) => tab.groups.includes(g.id)) : docsGroups),
+    [tab],
+  )
+
+  // 검색 + 탭 + 그룹 필터
   const filtered = useMemo(() => {
     const kw = q.trim().toLowerCase()
-    return docsGroups
+    return tabGroups
       .filter((g) => activeGroup === 'all' || g.id === activeGroup)
       .map((g) => ({
         ...g,
         files: g.files.filter((f) => !kw || f.t.toLowerCase().includes(kw)),
       }))
       .filter((g) => g.files.length > 0)
-  }, [q, activeGroup])
+  }, [q, activeGroup, tabGroups])
 
   const shownCount = filtered.reduce((n, g) => n + g.files.length, 0)
 
@@ -80,17 +98,44 @@ export default function Admin() {
           />
           <span style={{ fontSize: 13, color: 'var(--ink-soft)' }}>{shownCount}건 표시</span>
         </div>
-        <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          <GroupChip label={`전체 (${docsTotalCount})`} active={activeGroup === 'all'} onClick={() => setActiveGroup('all')} />
-          {docsGroups.map((g) => (
-            <GroupChip
-              key={g.id}
-              label={`${g.title.replace(/^\d+\.\s*/, '').replace(/^\[[^\]]+\]\s*/, '')} (${g.files.length})`}
-              active={activeGroup === g.id}
-              onClick={() => setActiveGroup(g.id)}
-            />
-          ))}
+        {/* 구분 탭 */}
+        <div style={{ marginTop: 16, display: 'flex', gap: 2, borderBottom: '2px solid var(--line)', overflowX: 'auto' }}>
+          {TABS.map((t) => {
+            const count = t.groups
+              ? docsGroups.filter((g) => t.groups.includes(g.id)).reduce((n, g) => n + g.files.length, 0)
+              : docsTotalCount
+            const active = activeTab === t.key
+            return (
+              <button
+                key={t.key}
+                onClick={() => { setActiveTab(t.key); setActiveGroup('all') }}
+                style={{
+                  padding: '10px 16px', fontSize: 13.5, fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap',
+                  background: 'transparent', border: 'none',
+                  color: active ? 'var(--gold)' : 'var(--navy-600)',
+                  borderBottom: active ? '2px solid var(--gold)' : '2px solid transparent',
+                  marginBottom: -2,
+                }}
+              >
+                {t.label} <span style={{ fontWeight: 600, fontSize: 12, color: active ? 'var(--gold)' : 'var(--ink-soft)' }}>{count}</span>
+              </button>
+            )
+          })}
         </div>
+        {/* 탭 내 그룹 칩 (그룹이 2개 이상일 때만) */}
+        {tabGroups.length > 1 && (
+          <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <GroupChip label="전체" active={activeGroup === 'all'} onClick={() => setActiveGroup('all')} />
+            {tabGroups.map((g) => (
+              <GroupChip
+                key={g.id}
+                label={`${g.title.replace(/^\d+\.\s*/, '').replace(/^\[[^\]]+\]\s*/, '')} (${g.files.length})`}
+                active={activeGroup === g.id}
+                onClick={() => setActiveGroup(g.id)}
+              />
+            ))}
+          </div>
+        )}
 
         {/* ── 본문: 목록 + 미리보기 ── */}
         <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.35fr)', gap: 20, alignItems: 'start' }} className="admin-grid">
