@@ -1,14 +1,9 @@
 import { Link } from 'react-router-dom'
 import { course } from '../data/course'
-import { sessionsBySubject } from '../data/curriculum'
 import Sentences from '../components/Sentences'
 import HeroVisual from '../components/HeroVisual'
 
-const regionClass = (r) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : 'pangyo')
-
 export default function Home() {
-  const groups = sessionsBySubject()
-
   return (
     <div>
       {/* Hero */}
@@ -95,42 +90,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 과목 목록 */}
-      <section className="section" style={{ background: 'var(--navy-50)' }}>
-        <div className="container">
-          <div className="section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <div>
-              <span className="eyebrow">Curriculum</span>
-              <h2>담당 과목</h2>
-              <p>각 과목을 클릭하면 일자별 학습 내용을 볼 수 있습니다.</p>
-            </div>
-          </div>
-
-          <div className="grid grid-3">
-            {groups.map(({ subject, items }) => {
-              const regions = [...new Set(items.map((i) => i.region))]
-              return (
-                <Link key={subject.id} to={`/lectures/${items[0].date}`} className="card">
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
-                    <span className="chip chip-code">{subject.code}</span>
-                    <span className="chip chip-cat">{subject.category}</span>
-                  </div>
-                  <h3 style={{ fontSize: 17, fontWeight: 800, color: 'var(--navy-800)', lineHeight: 1.35 }}>
-                    {subject.name}
-                  </h3>
-                  <p style={{ color: 'var(--ink-soft)', fontSize: 13.5, marginTop: 8 }}>{subject.summary}</p>
-                  <div style={{ display: 'flex', gap: 6, marginTop: 12, flexWrap: 'wrap' }}>
-                    <span className="chip chip-day">{items.length}일</span>
-                    {regions.map((r) => (
-                      <span key={r} className={`chip chip-region ${regionClass(r)}`}>{r}</span>
-                    ))}
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
