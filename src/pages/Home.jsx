@@ -33,7 +33,7 @@ export default function Home() {
               <Link to="/lectures" className="btn btn-cta">
                 학습강의안 보기 <span className="btn-arrow">→</span>
               </Link>
-              <Link to="/subjects" className="btn btn-ghost">과목별 보기</Link>
+              <a href="/practice-textbook.html" target="_blank" rel="noreferrer" className="btn btn-ghost">실습교안 보기 ↗</a>
             </div>
           </div>
 
@@ -50,7 +50,6 @@ export default function Home() {
             {[
               { to: '/about', t: 'About', d: '개발 취지 · 강사 소개' },
               { to: '/prep', t: '선수학습자료', d: '파이썬·Streamlit·Django·Supabase 등 기초' },
-              { to: '/subjects', t: '과목별 안내', d: '담당 과목의 일자별 학습 내용' },
               { to: '/lectures', t: '강의안', d: '날짜별 8시간 강의안 · 시간표·실습' },
               { to: '/team', t: '팀 프로젝트', d: '팀 프로젝트 수행 전 과정 가이드' },
               { to: '/reference', t: '참고자료', d: '과목별 공식 문서·자료 모음' },
@@ -105,14 +104,13 @@ export default function Home() {
               <h2>담당 과목</h2>
               <p>각 과목을 클릭하면 일자별 학습 내용을 볼 수 있습니다.</p>
             </div>
-            <Link to="/subjects" className="section-link">전체 보기 →</Link>
           </div>
 
           <div className="grid grid-3">
             {groups.map(({ subject, items }) => {
               const regions = [...new Set(items.map((i) => i.region))]
               return (
-                <Link key={subject.id} to="/subjects" className="card">
+                <Link key={subject.id} to={`/lectures/${items[0].date}`} className="card">
                   <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
                     <span className="chip chip-code">{subject.code}</span>
                     <span className="chip chip-cat">{subject.category}</span>

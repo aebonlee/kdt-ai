@@ -24,7 +24,7 @@ const PURPOSE = [
 const PLATFORM = [
   { num: '01', title: '학습강의안', desc: '날짜별 8시간 강의안 · 시간표 · 실습', link: '/lectures' },
   { num: '02', title: '실습교안', desc: '웹 · PDF 실습 교재 (인쇄 지원)', link: '/practice-textbook.html', external: true },
-  { num: '03', title: '과목별 안내', desc: '담당 과목의 일자별 학습 내용', link: '/subjects' },
+  { num: '03', title: '참고자료', desc: '과목별 공식 문서 · 자료 모음', link: '/reference' },
   { num: '04', title: '선수학습자료', desc: '파이썬 · Git · SQL 등 기초 19주제', link: '/prep' },
   { num: '05', title: '팀 프로젝트', desc: '팀 프로젝트 수행 전 과정 가이드', link: '/team' },
   { num: '06', title: '학습관리', desc: '이해도 자가평가로 진도율 체크', link: '/progress' },

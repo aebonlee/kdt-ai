@@ -10,7 +10,6 @@ import AdminMenu from './AdminMenu'
 const nav = [
   { to: '/about', label: 'About' },
   { to: '/prep', label: '선수학습자료' },
-  { to: '/subjects', label: '과목별 안내' },
   { to: '/lectures', label: '학습강의안' },
   { href: '/practice-textbook.html', label: '실습교안', external: true },
   { to: '/team', label: '팀 프로젝트' },

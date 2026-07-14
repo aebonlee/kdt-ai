@@ -55,7 +55,6 @@ export default function App() {
             <Route path="/lectures" element={<Lectures />} />
             <Route path="/lectures/:date" element={<Lectures />} />
             <Route path="/team" element={<TeamProject />} />
-            <Route path="/subjects" element={<Subjects />} />
             <Route path="/reference" element={<References />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/day/:date" element={<DayDetail />} />
@@ -68,6 +67,7 @@ export default function App() {
 
             {/* 관리자(강사) 전용 — 수업일정표(학생 비공개)·자료실·페어링 시간표 */}
             <Route path="/schedule" element={<RequireAdmin><Schedule /></RequireAdmin>} />
+            <Route path="/subjects" element={<RequireAdmin><Subjects /></RequireAdmin>} />
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
             <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
             <Route path="/admin/schedule" element={<RequireAdmin><AdminSchedule /></RequireAdmin>} />
