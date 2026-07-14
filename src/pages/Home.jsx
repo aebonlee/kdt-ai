@@ -19,8 +19,15 @@ export default function Home() {
             <h1 className="hero-title">
               SKALA <span className="accent">4기</span><br />담당 강의 커리큘럼
             </h1>
+            {/* SK 핵심가치 기반 응원 메시지 — 패기·실력·소통협력·SUPEX */}
             <p className="hero-lead">
-              <Sentences text={`${course.instructor} 강사가 울산 · 판교(4·5층) · 광주 각 캠퍼스 교실로 찾아가 진행하는 담당 강의 일정입니다. 여러분은 소속 반 교실에서 그대로 수강하면 됩니다. 과목별·일자별 학습 목표와 내용을 확인하세요.`} />
+              <b style={{ color: '#ACBEFF' }}>패기</b> — 우리는 스스로 동기를 부여하며 높은 목표에 도전합니다.
+              <br />
+              <b style={{ color: '#ACBEFF' }}>실력 · 전문성</b> — 하루하루의 실습이 전문가를 만듭니다.
+              <br />
+              <b style={{ color: '#ACBEFF' }}>소통 · 협력</b> — 소통은 신뢰를 만들고, 협력이 성과를 만듭니다.
+              <br />
+              자발적이고 의욕적인 <b style={{ color: '#ACBEFF' }}>SUPEX</b> 도전, SKALA 4기의 여정을 응원합니다!
             </p>
             <div className="hero-actions">
               <Link to="/lectures" className="btn btn-cta">
