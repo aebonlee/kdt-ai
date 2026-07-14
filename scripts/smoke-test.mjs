@@ -46,6 +46,7 @@ assert(missing.length === 0, `전 일차 실습·Lab·시간표·개념·예제(
 console.log('\n[2] 평가기준·퀴즈')
 const { exams } = await import(join(ROOT, 'src/data/exams.js'))
 const { otherExams } = await import(join(ROOT, 'src/data/otherexams.js'))
+const { otherCourses } = await import(join(ROOT, 'src/data/othercontent.js'))
 const { examsAlt } = await import(join(ROOT, 'src/data/exams.js')).then((m) => ({ examsAlt: m.examsAlt }))
 const { quizzes } = await import(join(ROOT, 'src/data/quizzes.js'))
 const subjectIds = new Set(subjects.map((s) => s.id))
@@ -88,7 +89,9 @@ if (existsSync(join(dist, 'practice-textbook.html'))) {
   const pages = (pt.match(/class="page[ "]/g) || []).length
   const quizSecs = (pt.match(/📝 복습 퀴즈/g) || []).length
   const examSecs = (pt.match(/📋 종합실습 평가기준/g) || []).length
-  assert(pages === subjects.length + 2, `실습교안 페이지 ${pages} = 개요+${subjects.length}과목+기타`)
+  // 개요 + 담당 과목 + 담당외 개요 + 담당외 과목별 개별 페이지
+  const expectedPages = subjects.length + 2 + Object.keys(otherCourses).length
+  assert(pages === expectedPages, `실습교안 페이지 ${pages} = 개요+${subjects.length}과목+기타개요+담당외 ${Object.keys(otherCourses).length}과목`)
   assert(quizSecs === Object.keys(quizzes).length, `실습교안 퀴즈 섹션 ${quizSecs}`)
   // 담당 과목 평가기준 + 담당일정 외 참고용 평가기준(otherexams)이 함께 수록된다
   assert(examSecs === Object.keys(exams).length + Object.keys(otherExams).length, `실습교안 평가기준 섹션 ${examSecs} = 담당 ${Object.keys(exams).length} + 참고 ${Object.keys(otherExams).length}`)

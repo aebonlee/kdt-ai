@@ -235,8 +235,30 @@ async function renderDay(subj, dayIdx) {
   return h
 }
 
-// ── 기타(타 강사 진행) 과정 페이지 — 앞뒤 학습 안내 ──
-function renderEtcPage() {
+// ── 기타(타 강사 진행) 과정 — 개요 페이지 + 과목별 개별 블록 ──
+// 과목별 학습내용 블록 (웹 뷰어에선 과목당 1페이지, 인쇄본에선 연속 수록)
+function renderEtcCourseBlock(id, c) {
+  const deep = otherDeep[id] || {}
+  return `<div class="subject-head">
+      <div class="sh-cat">담당일정 외 · 타 강사 진행</div>
+      <h2>${esc(c.name)}</h2>
+      <p class="sh-sum">${esc(c.summary)}</p>
+      <div class="sh-meta"><span class="chip code">참고</span><span class="chip cat">${esc(c.category)}</span><span class="chip day">${c.hours}시간</span></div>
+    </div>` +
+    `<h4 class="sec">📖 주요 학습내용</h4><div class="card etc-card"><ul class="dot">${(c.topics || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>` +
+    (deep.concepts?.length
+      ? `<h4 class="sec">📚 핵심 개념</h4><div class="concepts">` +
+        deep.concepts.map((k) => `<dl class="concept"><dt>${esc(k.term)}</dt><dd>${escNl(k.desc)}</dd></dl>`).join('') + `</div>`
+      : '') +
+    (deep.examples?.length ? renderExamples(deep.examples, '따라하기 실습', '💻') : '') +
+    (otherExams[id]
+      ? renderExam(id, otherExams[id]) + `<p class="note">※ 타 강사 진행 과목의 평가기준 — 평가 방향을 미리 파악하는 참고자료입니다.</p>`
+      : '') +
+    (c.tip ? `<p class="note">🔗 ${escNl(c.tip)}</p>` : '')
+}
+
+// 개요 페이지 — 안내 + 분반별 일정표 + 11월 이후
+function renderEtcOverview() {
   const subjName = (id) => subjects.find((s) => s.id === id)?.name
   const nameOf = (c) => otherCourses[c]?.name || subjName(c) || EVENT_LABELS[c] || c
   const trackOf = (s) => (s.region === '광주' ? 'gj' : s.region === '울산' ? 'us' : s.klass === '4층' ? 'p4' : 'p5')
@@ -244,33 +266,15 @@ function renderEtcPage() {
   let h = `<div class="subject-head">
     <div class="sh-cat">담당일정 외 · 타 강사 진행</div>
     <h2>담당일정 외 강의내용 학습 자료</h2>
-    <p class="sh-sum">이애본 강사 담당 강의의 앞뒤에 각 분반에서 배우는 과목입니다. 과정 전체 흐름을 잇는 예습·복습 자료로 활용하세요.</p>
+    <p class="sh-sum">이애본 강사 담당 강의의 앞뒤에 각 분반에서 배우는 과목입니다. 좌측 메뉴에서 과목을 선택하면 과목별 학습 자료 페이지로 이동합니다.</p>
     <div class="sh-meta"><span class="chip code">참고</span><span class="chip cat">${Object.keys(otherCourses).length}과목</span><span class="chip day">실시간 배정표 기준 · 변동 가능</span></div>
   </div>`
-
-  // 과목별 학습내용 카드
-  h += `<h4 class="sec">📖 과목별 학습내용</h4>`
-  for (const [id, c] of Object.entries(otherCourses)) {
-    const deep = otherDeep[id] || {}
-    h += `<div class="card etc-card" id="etccourse-${esc(id)}"><h5>${esc(c.name)} <span class="thin">· ${esc(c.category)} · ${c.hours}시간</span></h5>` +
-      `<p style="margin:4px 0 8px">${esc(c.summary)}</p>` +
-      `<ul class="dot">${(c.topics || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` +
-      (deep.concepts?.length
-        ? `<div class="exam-sub">핵심 개념</div><div class="concepts">` +
-          deep.concepts.map((k) => `<dl class="concept"><dt>${esc(k.term)}</dt><dd>${escNl(k.desc)}</dd></dl>`).join('') + `</div>`
-        : '') +
-      (deep.examples?.length ? renderExamples(deep.examples, '따라하기 실습', '💻') : '') +
-      (otherExams[id]
-        ? renderExam(id, otherExams[id]) + `<p class="note">※ 타 강사 진행 과목의 평가기준 — 평가 방향을 미리 파악하는 참고자료입니다.</p>`
-        : '') +
-      (c.tip ? `<p class="note">🔗 ${escNl(c.tip)}</p>` : '') + `</div>`
-  }
 
   // 분반별 일정표 (담당 강의는 ★로 병합 표시)
   const taughtMap = new Map()
   for (const s of sessions) taughtMap.set(`${s.date}|${trackOf(s)}`, s.subjectId)
   const allDates = [...new Set([...otherSessions.map((s) => s.date), ...sessions.map((s) => s.date)])].sort()
-  h += `<h4 class="sec">📅 분반별 일정 <span class="thin">(★ = 이애본 강사 담당 — 좌측 과목 페이지 참조)</span></h4>`
+  h += `<h4 class="sec">📅 분반별 일정 <span class="thin">(★ = 이애본 강사 담당 — 담당 강의 탭 참조)</span></h4>`
   h += `<table class="plan"><tr><td class="pt"><b>날짜</b></td>${TRACKS.map((t) => `<td><b>${esc(t.label)}</b></td>`).join('')}</tr>`
   for (const date of allDates) {
     const os = otherSessions.find((s) => s.date === date) || {}
@@ -292,6 +296,11 @@ function renderEtcPage() {
     h += `<div class="card"><h5>${esc(p.label)}</h5><p>${esc(p.range)} — ${esc(p.note)}</p></div>`
   }
   return h
+}
+
+// 인쇄본(PDF)·no-JS 폴백용 — 개요 + 전 과목 연속 수록
+function renderEtcPage() {
+  return renderEtcOverview() + Object.entries(otherCourses).map(([id, c]) => renderEtcCourseBlock(id, c)).join('')
 }
 
 async function main() {
@@ -348,17 +357,20 @@ async function main() {
         return `<a class="sl" href="#subj-${esc(s.id)}" data-goto="${esc(s.id)}"><span class="sl-n">${esc(s.name)}</span><span class="sl-m">${esc(s.code)} · ${s.days.length}일차 · ${esc(tag)}</span></a>`
       })
       .join('')
-    // 담당일정 외(타 강사) 과목 사이드 메뉴 — 기타 페이지 내 과목 카드로 스크롤
+    // 담당일정 외(타 강사) 과목 사이드 메뉴 — 과목별 개별 페이지로 이동
     const etcSideItems = Object.entries(otherCourses)
       .map(([id, c]) =>
-        `<a class="sl sl-etc" href="#" data-goto="etc" data-anchor="etccourse-${esc(id)}"><span class="sl-n">${esc(c.name)}</span><span class="sl-m">${esc(c.category)} · ${c.hours}시간 · 타 강사</span></a>`)
+        `<a class="sl sl-etc" href="#subj-etc-${esc(id)}" data-goto="etc-${esc(id)}"><span class="sl-n">${esc(c.name)}</span><span class="sl-m">${esc(c.category)} · ${c.hours}시간 · 타 강사</span></a>`)
       .join('')
     // 페이지: 개요(표지+목차) + 과목별
     // 주의: 페이지 섹션에는 id를 두지 않는다(해시 진입 시 네이티브 앵커 점프로 상단 빈공간이 생김).
     // 내비게이션·초기 해시 처리는 모두 JS show()가 전담한다.
     const pages = `<section class="page is-active" data-page="home">${home}</section>` +
       subjectBlocks.map((b) => `<section class="page" data-page="${esc(b.id)}">${b.html}</section>`).join('') +
-      `<section class="page" data-page="etc">${etcPage}</section>`
+      `<section class="page" data-page="etc">${renderEtcOverview()}</section>` +
+      Object.entries(otherCourses)
+        .map(([id, c]) => `<section class="page" data-page="etc-${esc(id)}">${renderEtcCourseBlock(id, c)}</section>`)
+        .join('')
     const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
 <style>${SCREEN_CSS}${TAB_CSS}</style>`
     const content = `<div class="tb">
@@ -776,14 +788,12 @@ const TAB_CSS = `
 .tb-tab{flex:1;padding:9px 8px;font-weight:800;font-size:12.5px;border-radius:9px;border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.8);cursor:pointer;}
 .tb-tab.is-active{background:#3F51FF;border-color:#3F51FF;color:#fff;}
 .tb-tab-etc.is-active{background:#0E7A5F;border-color:#0E7A5F;color:#fff;}
-.sl-etc{border-left:3px solid #0E7A5F;}
-.sl-etc.is-active,.sl-etc:hover{background:rgba(14,122,95,0.18);}
-.page[data-page="etc"] .subject-head h2{color:#0E7A5F;}
-.page[data-page="etc"] .subject-head{border-bottom-color:#0E7A5F;}
-.page[data-page="etc"] h4.sec{color:#0E7A5F;}
-.page[data-page="etc"] .chip.code{background:#0E7A5F;border-color:#0E7A5F;color:#fff;}
-.page[data-page="etc"] .etc-card h5{color:#0E7A5F;}
-.page[data-page="etc"] .box-h{color:#0E7A5F;}
+.page[data-page^="etc"] .subject-head h2{color:#0E7A5F;}
+.page[data-page^="etc"] .subject-head{border-bottom-color:#0E7A5F;}
+.page[data-page^="etc"] h4.sec{color:#0E7A5F;}
+.page[data-page^="etc"] .chip.code{background:#0E7A5F;border-color:#0E7A5F;color:#fff;}
+.page[data-page^="etc"] .etc-card h5{color:#0E7A5F;}
+.page[data-page^="etc"] .box-h{color:#0E7A5F;}
 `
 
 const PAGE_JS = `
@@ -808,7 +818,7 @@ const PAGE_JS = `
     });
     if (!found) { id = 'home'; pages.forEach(function (p) { p.classList.toggle('is-active', p.getAttribute('data-page') === 'home'); }); }
     root.querySelectorAll('.sl').forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('data-goto') === id); });
-    setTab(id === 'etc' ? 'etc' : 'mine');
+    setTab(id.indexOf('etc') === 0 ? 'etc' : 'mine');
     if (crumb) crumb.textContent = labelOf(id);
     window.scrollTo(0, 0);
     try { history.replaceState(null, '', id === 'home' ? '#tb-top' : '#subj-' + id); } catch (e) {}
