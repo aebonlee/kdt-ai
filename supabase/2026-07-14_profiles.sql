@@ -1,11 +1,11 @@
 -- ============================================================
 -- SKALA 4기 — 소속 분반 프로필 (2026-07-14 추가분)
--- Supabase 대시보드 → SQL Editor 에 이 파일 전체를 붙여넣고 실행하세요.
--- ⚠️ auth.users 트리거를 쓰지 않습니다(가입 마비 사고 예방) —
---    프로필 행은 로그인 후 클라이언트가 직접 upsert 합니다.
+-- ⚠️ 이 파일만 실행하세요 (schema.sql 전체 재실행 금지 — 기존 정책과 충돌).
+-- 멱등(idempotent): 여러 번 실행해도 안전합니다.
+-- auth.users 트리거를 쓰지 않습니다(가입 마비 사고 예방) —
+-- 프로필 행은 로그인 후 클라이언트가 직접 upsert 합니다.
 -- ============================================================
 
--- ── 소속 분반 프로필 ──
 create table if not exists public.skala_profiles (
   user_id     uuid primary key references auth.users(id) on delete cascade,
   email       text,
@@ -23,10 +23,15 @@ create table if not exists public.skala_profiles (
 
 alter table public.skala_profiles enable row level security;
 
--- 본인 행만 읽기/쓰기, 관리자(강사)는 전체 열람
+-- 본인 행만 읽기/쓰기, 관리자(강사)는 전체 열람 — 재실행 안전하게 drop 후 생성
+drop policy if exists "profiles_self_select" on public.skala_profiles;
 create policy "profiles_self_select" on public.skala_profiles
   for select using (auth.uid() = user_id or public.skala_is_admin());
+
+drop policy if exists "profiles_self_insert" on public.skala_profiles;
 create policy "profiles_self_insert" on public.skala_profiles
   for insert with check (auth.uid() = user_id);
+
+drop policy if exists "profiles_self_update" on public.skala_profiles;
 create policy "profiles_self_update" on public.skala_profiles
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
