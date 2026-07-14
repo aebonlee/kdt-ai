@@ -59,7 +59,7 @@ export default function Admin() {
             <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14, lineHeight: 1.6 }}>
               SKALA 4기 실습교수 강의자료 <b>{docsTotalCount}건</b>을 구글드라이브에서 바로 열람합니다.
               <br />
-              파일은 비공개 드라이브에 있으며, 구글 로그인 권한이 있어야 미리보기가 열립니다.
+              파일은 비공개 드라이브에 있으며, 구글 로그인 권한이 있어야 미리보기가 열립니다. 파일명 옆 날짜는 드라이브 파일의 버전 기준일입니다.
             </p>
           </div>
           <a href={DOCS_ROOT_FOLDER} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ whiteSpace: 'nowrap' }}>
@@ -123,7 +123,14 @@ export default function Admin() {
                         <span style={{ flex: '0 0 auto', fontSize: 11, fontWeight: 800, color: tm.color, background: tm.bg, padding: '3px 7px', borderRadius: 6 }}>
                           {tm.label}
                         </span>
-                        <span style={{ flex: 1, fontSize: 13.5, color: 'var(--ink)', lineHeight: 1.4 }}>{f.t}</span>
+                        <span style={{ flex: 1, fontSize: 13.5, color: 'var(--ink)', lineHeight: 1.4 }}>
+                          {f.t}
+                          {f.d && (
+                            <span style={{ marginLeft: 6, fontSize: 11, color: 'var(--ink-soft)', fontWeight: 600, whiteSpace: 'nowrap' }} title="드라이브 파일 버전 기준일">
+                              {f.d.slice(2)}
+                            </span>
+                          )}
+                        </span>
                         <span style={{ flex: '0 0 auto', fontSize: 11.5, color: 'var(--ink-soft)' }}>{fmtSize(f.b)}</span>
                       </button>
                     )
