@@ -8,7 +8,6 @@ import { isAdmin } from '../config/admin'
 import AdminMenu from './AdminMenu'
 
 const nav = [
-  { to: '/', label: '홈', end: true },
   { to: '/about', label: 'About' },
   { to: '/prep', label: '선수학습자료' },
   { to: '/subjects', label: '과목별 안내' },

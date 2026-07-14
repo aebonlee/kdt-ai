@@ -20,7 +20,7 @@ export default function Home() {
               SKALA <span className="accent">4기</span><br />담당 강의 커리큘럼
             </h1>
             <p className="hero-lead">
-              <Sentences text={`${course.instructor} 강사 담당 일정 기준입니다. 과목별·일자별 학습 목표와 내용을 확인하세요. (울산 · 판교 4·5층 · 광주 — 지역별 분반 진행)`} />
+              <Sentences text={`${course.instructor} 강사가 울산 · 판교(4·5층) · 광주 각 캠퍼스 교실로 찾아가 진행하는 담당 강의 일정입니다. 여러분은 소속 반 교실에서 그대로 수강하면 됩니다. 과목별·일자별 학습 목표와 내용을 확인하세요.`} />
             </p>
             <div className="hero-actions">
               <Link to="/lectures" className="btn btn-cta">
@@ -58,50 +58,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SKALA 학습 플랫폼 특징 — 핵심 수치 하이라이트 */}
-      <section className="section">
-        <div className="container">
-          <div
-            style={{
-              borderRadius: 'var(--radius)', padding: 'clamp(24px, 4vw, 44px)', color: '#fff',
-              background:
-                'radial-gradient(700px 360px at 90% 0%, rgba(108,77,255,0.4), transparent 60%), var(--skala-indigo)',
-            }}
-          >
-            <span className="eyebrow" style={{ color: '#ACBEFF' }}>Why this platform</span>
-            <h2 style={{ fontSize: 26, fontWeight: 900, marginTop: 6 }}>
-              하루 8시간 수업을 그대로 담은 학습 플랫폼
-            </h2>
-            <p style={{ marginTop: 8, fontSize: 14, color: 'rgba(221,227,255,0.8)', lineHeight: 1.7 }}>
-              강의안·실습·퀴즈·평가기준까지 — SK 공식 교재에 근거해 우리말로 다시 쓴 콘텐츠로,
-              수업 전 예습부터 수료 후 복습까지 이어집니다.
-            </p>
-            <div
-              style={{
-                marginTop: 24, display: 'grid', gap: 14,
-                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              }}
-            >
-              {[
-                ['18과목', '담당 강의 커리큘럼'],
-                ['48일', '일자별 8시간 강의안'],
-                ['380+', '전 라인 한글 주석 실습예제'],
-                ['148문항', '과목별 복습 퀴즈'],
-                ['18과목', '종합실습 평가기준(참고 포함)'],
-                ['웹 + PDF', '실습교안 2종 제공'],
-              ].map(([num, label]) => (
-                <div key={label} style={{ borderLeft: '2px solid rgba(172,190,255,0.4)', paddingLeft: 14 }}>
-                  <div style={{ fontSize: 26, fontWeight: 900, color: '#fff' }}>{num}</div>
-                  <div style={{ marginTop: 4, fontSize: 12.5, color: 'rgba(221,227,255,0.75)', lineHeight: 1.5 }}>{label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* SKALA 전체 커리큘럼 흐름도 */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container">
           <div className="section-head">
             <span className="eyebrow">Overview</span>
