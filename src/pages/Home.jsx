@@ -14,16 +14,20 @@ export default function Home() {
             <h1 className="hero-title">
               SKALA <span className="accent">4기</span>
             </h1>
-            {/* SK 핵심가치 기반 응원 메시지 — 대표 확정 문안(2026-07-14) */}
-            <p className="hero-lead">
-              <b style={{ color: '#ACBEFF' }}>패기</b> — 우리는 스스로 도전하고 두려움 없이 실행한다.
-              <br />
-              <b style={{ color: '#ACBEFF' }}>실력 · 전문성</b> — 우리는 AI로 기술에 신뢰를 더한다.
-              <br />
-              <b style={{ color: '#ACBEFF' }}>소통 · 협력</b> — 소통은 신뢰를 만들고, 협력이 성과를 만든다.
-              <br />
-              <b style={{ color: '#ACBEFF' }}>자발적 · 의욕적 SUPEX 추구</b> — 우리는 최고를 상상하고 AI와 함께 혁신한다.
-            </p>
+            {/* SK 핵심가치 응원 메시지(대표 확정 문안) — 키워드 강조 + 해설, 모바일은 자동 줄바꿈 */}
+            <div className="hero-values">
+              {[
+                { k: '패기', d: '우리는 스스로 도전하고 두려움 없이 실행한다.', c: '#7C8CFF' },
+                { k: '실력 · 전문성', d: '우리는 AI로 기술에 신뢰를 더한다.', c: '#4DD8C7' },
+                { k: '소통 · 협력', d: '소통은 신뢰를 만들고, 협력이 성과를 만든다.', c: '#FFB65C' },
+                { k: '자발적 · 의욕적 SUPEX 추구', d: '우리는 최고를 상상하고 AI와 함께 혁신한다.', c: '#B78CFF' },
+              ].map((v, i) => (
+                <div key={v.k} className="hero-value" style={{ '--hv-accent': v.c, animationDelay: `${0.15 + i * 0.13}s` }}>
+                  <span className="hv-key"><span className="hv-dot" />{v.k}</span>
+                  <span className="hv-desc">{v.d}</span>
+                </div>
+              ))}
+            </div>
             <div className="hero-actions">
               <Link to="/lectures" className="btn btn-cta">
                 학습강의안 보기 <span className="btn-arrow">→</span>

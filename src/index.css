@@ -241,6 +241,38 @@ ul { list-style: none; }
   filter: brightness(1.55);
 }
 .hero-lead { font-size: 17px; line-height: 1.7; color: rgba(221, 227, 255, 0.82); max-width: 520px; margin-bottom: var(--s-7); }
+
+/* 핵심가치 4행 — 키워드(강조) + 해설, 유리 카드·포인트 컬러·순차 등장 */
+.hero-values { display: flex; flex-direction: column; gap: 10px; max-width: 600px; margin-bottom: var(--s-7); }
+.hero-value {
+  display: flex; align-items: baseline; gap: 12px; padding: 11px 16px;
+  border-radius: 12px; border: 1px solid rgba(172, 190, 255, 0.16);
+  border-left: 3px solid var(--hv-accent, #7C8CFF);
+  background: linear-gradient(90deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+  opacity: 0; transform: translateY(10px);
+  animation: hvRise 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.hero-value:hover { background: linear-gradient(90deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04)); transform: translateX(4px); }
+.hv-key {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14.5px; font-weight: 900; letter-spacing: -0.01em; color: var(--hv-accent, #ACBEFF);
+  white-space: nowrap;
+}
+.hv-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--hv-accent, #7C8CFF);
+  box-shadow: 0 0 8px var(--hv-accent, #7C8CFF);
+}
+.hv-desc { font-size: 14px; color: rgba(221, 227, 255, 0.85); line-height: 1.65; }
+@keyframes hvRise { to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 640px) {
+  /* 모바일 — 키워드 한 줄, 해설 다음 줄 */
+  .hero-value { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 14px; }
+  .hv-key { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-value { animation: none; opacity: 1; transform: none; }
+}
 .hero-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
 .hero .btn-ghost { border-color: rgba(172, 190, 255, 0.55); color: #DDE3FF; }
 .hero .btn-ghost:hover { background: rgba(172, 190, 255, 0.15); color: #fff; }
