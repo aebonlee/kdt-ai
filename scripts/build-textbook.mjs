@@ -806,8 +806,10 @@ const PAGE_JS = `
   var side = root.querySelector('.tb-side');
   function labelOf(id) {
     if (id === 'home') return '표지 · 목차';
-    var n = root.querySelector('.sl[data-goto="' + id + '"] .sl-n');
-    return n ? n.textContent : id;
+    var a = root.querySelector('.sl[data-goto="' + id + '"]');
+    if (!a) return id;
+    var n = a.querySelector('.sl-n');
+    return (n || a).textContent.replace(/^[^가-힣A-Za-z0-9]+/, '').trim();
   }
   function show(id) {
     var found = false;

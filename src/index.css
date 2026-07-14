@@ -423,10 +423,10 @@ ul { list-style: none; }
 .login-consent { margin-top: 22px; font-size: 12px; color: var(--ink-soft); line-height: 1.65; }
 
 /* 기타(타 강사 과목) — 강의안 좌측 하단 */
-.etc-nav { margin-top: 18px; border-top: 2px solid var(--line); padding-top: 10px; }
+.etc-nav { margin-top: 18px; border-top: 2px solid var(--etc-green); padding-top: 10px; }
 .etc-nav > summary {
   cursor: pointer; list-style: none; font-size: 13px; font-weight: 800;
-  color: var(--navy-700); padding: 8px 12px; border-radius: 10px;
+  color: var(--etc-green); padding: 8px 12px; border-radius: 10px;
 }
 .etc-nav > summary::-webkit-details-marker { display: none; }
 .etc-nav > summary:hover { background: var(--navy-50); }
@@ -434,6 +434,14 @@ ul { list-style: none; }
 .etc-month { margin-top: 10px; }
 .etc-link { font-size: 12.5px; padding: 7px 12px; }
 .etc-link.etc-plain { cursor: default; color: var(--ink-soft); }
+
+/* 담당일정 외(타 강사) — 다크그린 구분. etc-detail 안에서는 인라인 var() 참조가 그린으로 해석된다 */
+:root { --etc-green: #0E7A5F; --etc-green-soft: #11745C; }
+[data-theme="dark"] { --etc-green: #2FA184; --etc-green-soft: #2FA184; }
+.etc-detail { --navy-800: var(--etc-green); --navy-700: var(--etc-green-soft); }
+.etc-detail .chip-code { background: var(--etc-green); }
+.etc-nav .etc-month { color: var(--etc-green); }
+.etc-nav .side-link.active { border-color: var(--etc-green); color: var(--etc-green); }
 .etc-period { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--navy-700); padding: 7px 12px; }
 .etc-period b { color: var(--navy-800); font-size: 12.5px; }
 .etc-period span { color: var(--ink-soft); font-size: 11.5px; }

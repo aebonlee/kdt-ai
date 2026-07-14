@@ -32,7 +32,7 @@ export default function EtcCourse({ courseId }) {
   }
 
   return (
-    <div>
+    <div className="etc-detail">
       <div className="detail-meta">
         <span className="chip chip-code">기타</span>
         <span className="chip chip-cat">{c.category}</span>
