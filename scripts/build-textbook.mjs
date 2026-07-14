@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path'
 import { subjects, sessions } from '../src/data/curriculum.js'
 import { PERIOD_TIMES } from '../src/data/lectureperiods.js'
 import { modeOf, periodTagsOf } from '../src/data/lecturemodes.js'
-import { exams } from '../src/data/exams.js'
+import { exams, examsAlt } from '../src/data/exams.js'
 import { quizzes } from '../src/data/quizzes.js'
 import { otherCourses } from '../src/data/othercontent.js'
 import { otherDeep } from '../src/data/otherdeep.js'
@@ -103,11 +103,12 @@ function sectionPeriods(dd, subjectId, day) {
   return ''
 }
 
-// 종합실습 평가기준·제출물 (과목 첫날에 노출) — 기타 과목(참고용)도 같은 렌더 사용
-function renderExam(subjectId, examData) {
+// 종합실습 평가기준·제출물 (과목 첫날에 노출) — 기타 과목(참고용)·타 강사판(examsAlt)도 같은 렌더 사용
+function renderExam(subjectId, examData, title) {
   const e = examData || exams[subjectId]
   if (!e) return ''
-  let h = `<h4 class="sec">📋 종합실습 평가기준 · 제출물</h4>`
+  const variantChip = e.variant ? ` <span class="thin">· ${esc(e.variant)}</span>` : ''
+  let h = `<h4 class="sec">${title || '📋 종합실습 평가기준 · 제출물'}${variantChip}</h4>`
   if (e.purpose) h += `<div class="box tips"><div class="box-h">🎯 실습 목적</div><p style="margin:0;font-size:14px;color:var(--ink-2,#3a3f66)">${escNl(e.purpose)}</p></div>`
   if (e.tasks?.length) {
     h += `<div class="exam-sub">실습 구성</div><table class="plan"><tr><td class="pt"><b>실습명</b></td><td><b>주요 활동</b></td><td class="pt" style="width:60px"><b>시간</b></td></tr>` +
@@ -222,7 +223,13 @@ async function renderDay(subj, dayIdx) {
       one.detail.homework.map((hw) => `<li>${esc(hw)}</li>`).join('') + `</ol></div>`
   }
   // 종합실습 평가기준(과목 첫날) · 복습 퀴즈(과목 마지막날) — 과목 단위 정보
-  if (dnum === 1) h += renderExam(subj.id)
+  if (dnum === 1) {
+    h += renderExam(subj.id)
+    if (examsAlt[subj.id]) {
+      h += renderExam(subj.id, examsAlt[subj.id], '📑 타 강사판 평가안 (참고)')
+      h += `<p class="note">※ 같은 과목이라도 담당교수에 따라 평가 체계가 다를 수 있습니다. 기본안과 함께 참고하세요.</p>`
+    }
+  }
   if (dnum === subj.days.length) h += renderQuiz(subj.id)
   h += `</section>`
   return h

@@ -1,16 +1,23 @@
 // 종합실습 평가기준(과목 첫날) + 복습 퀴즈(과목 마지막날) 섹션
-import { exams } from '../data/exams'
+import { exams, examsAlt } from '../data/exams'
 import { quizzes } from '../data/quizzes'
 
 const H = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 const TYPE = { ox: 'O/X', choice: '4지선다', short: '단답' }
 
-export function ExamBlock({ e }) {
+export function ExamBlock({ e, title = '📋 종합실습 평가기준 · 제출물' }) {
   if (!e) return null
   const hasPoints = e.criteria?.some((c) => c.points)
   return (
     <>
-      <h3 style={H}>📋 종합실습 평가기준 · 제출물</h3>
+      <h3 style={H}>
+        {title}
+        {e.variant && (
+          <span style={{ marginLeft: 8, padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, background: 'var(--navy-100)', color: 'var(--navy-700)', verticalAlign: 'middle' }}>
+            {e.variant}
+          </span>
+        )}
+      </h3>
       {e.purpose && (
         <div className="box box-tips" style={{ marginTop: 12 }}>
           <div className="box-h">🎯 실습 목적</div>
@@ -94,11 +101,20 @@ function QuizBlock({ qs }) {
 
 export default function ExamQuiz({ subjectId, day, totalDays }) {
   const e = day === 1 ? exams[subjectId] : null
+  const alt = day === 1 ? examsAlt[subjectId] : null
   const qs = day === totalDays ? quizzes[subjectId] : null
-  if (!e && !qs) return null
+  if (!e && !alt && !qs) return null
   return (
     <>
       <ExamBlock e={e} />
+      {alt && (
+        <>
+          <ExamBlock e={alt} title="📑 타 강사판 평가안 (참고)" />
+          <p style={{ marginTop: 8, fontSize: 12.5, color: 'var(--ink-soft)' }}>
+            ※ 같은 과목이라도 담당교수에 따라 평가 체계가 다를 수 있습니다. 위 기본안과 함께 평가 방향을 참고하세요.
+          </p>
+        </>
+      )}
       <QuizBlock qs={qs} />
     </>
   )
