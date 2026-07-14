@@ -17,17 +17,17 @@ export default function Home() {
           <div>
             <span className="eyebrow">{course.subtitle} · {course.cohort}</span>
             <h1 className="hero-title">
-              SKALA <span className="accent">4기</span><br />담당 강의 커리큘럼
+              SKALA <span className="accent">4기</span>
             </h1>
-            {/* SK 핵심가치 기반 응원 메시지 — 패기·실력·소통협력·SUPEX */}
+            {/* SK 핵심가치 기반 응원 메시지 — 대표 확정 문안(2026-07-14) */}
             <p className="hero-lead">
-              <b style={{ color: '#ACBEFF' }}>패기</b> — 우리는 스스로 동기를 부여하며 높은 목표에 도전합니다.
+              <b style={{ color: '#ACBEFF' }}>패기</b> — 우리는 스스로 도전하고 두려움 없이 실행한다.
               <br />
-              <b style={{ color: '#ACBEFF' }}>실력 · 전문성</b> — 하루하루의 실습이 전문가를 만듭니다.
+              <b style={{ color: '#ACBEFF' }}>실력 · 전문성</b> — 우리는 AI로 기술에 신뢰를 더한다.
               <br />
-              <b style={{ color: '#ACBEFF' }}>소통 · 협력</b> — 소통은 신뢰를 만들고, 협력이 성과를 만듭니다.
+              <b style={{ color: '#ACBEFF' }}>소통 · 협력</b> — 소통은 신뢰를 만들고, 협력이 성과를 만든다.
               <br />
-              자발적이고 의욕적인 <b style={{ color: '#ACBEFF' }}>SUPEX</b> 도전, SKALA 4기의 여정을 응원합니다!
+              <b style={{ color: '#ACBEFF' }}>자발적 · 의욕적 SUPEX 추구</b> — 우리는 최고를 상상하고 AI와 함께 혁신한다.
             </p>
             <div className="hero-actions">
               <Link to="/lectures" className="btn btn-cta">
