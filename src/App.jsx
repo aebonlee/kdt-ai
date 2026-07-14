@@ -6,12 +6,14 @@ import ScrollToTop from './components/ScrollToTop'
 import RequireAuth from './components/RequireAuth'
 import RequireAdmin from './components/RequireAdmin'
 import Home from './pages/Home' // 랜딩은 정적 import — entry→Home→curriculum 워터폴 제거(-1 RTT)
+import ClassOnboarding from './components/ClassOnboarding'
 
 // 라우트 단위 코드 스플리팅 — 각 페이지를 필요할 때만 내려받는다.
 // 특히 무거운 강의안 데이터(lecture*.js)는 Lectures 청크에만 포함되어 초기 번들에서 빠진다.
 const About = lazy(() => import('./pages/About'))
 const InstructorIntro = lazy(() => import('./pages/InstructorIntro'))
 const AboutGuide = lazy(() => import('./pages/AboutGuide'))
+const Textbook = lazy(() => import('./pages/Textbook'))
 const Subjects = lazy(() => import('./pages/Subjects'))
 const Schedule = lazy(() => import('./pages/Schedule'))
 const DayDetail = lazy(() => import('./pages/DayDetail'))
@@ -43,6 +45,7 @@ export default function App() {
     <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
       <ScrollToTop />
       <Header />
+      <ClassOnboarding />
       <main style={{ flex: 1 }}>
         <Suspense fallback={<PageFallback />}>
           <Routes>
@@ -52,12 +55,13 @@ export default function App() {
             <Route path="/about/instructor" element={<InstructorIntro />} />
             <Route path="/prep" element={<Prep />} />
             <Route path="/prep/:id" element={<PrepDetail />} />
-            <Route path="/lectures" element={<Lectures />} />
-            <Route path="/lectures/:date" element={<Lectures />} />
-            <Route path="/team" element={<TeamProject />} />
-            <Route path="/reference" element={<References />} />
-            <Route path="/progress" element={<Progress />} />
-            <Route path="/day/:date" element={<DayDetail />} />
+            <Route path="/lectures" element={<RequireAuth><Lectures /></RequireAuth>} />
+            <Route path="/lectures/:date" element={<RequireAuth><Lectures /></RequireAuth>} />
+            <Route path="/team" element={<RequireAuth><TeamProject /></RequireAuth>} />
+            <Route path="/reference" element={<RequireAuth><References /></RequireAuth>} />
+            <Route path="/progress" element={<RequireAuth><Progress /></RequireAuth>} />
+            <Route path="/day/:date" element={<RequireAuth><DayDetail /></RequireAuth>} />
+            <Route path="/textbook" element={<RequireAuth><Textbook /></RequireAuth>} />
 
             {/* 로그인 / 게시판 / 대시보드 */}
             <Route path="/login" element={<Login />} />

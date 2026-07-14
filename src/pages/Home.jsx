@@ -33,7 +33,7 @@ export default function Home() {
               <Link to="/lectures" className="btn btn-cta">
                 학습강의안 보기 <span className="btn-arrow">→</span>
               </Link>
-              <a href="/practice-textbook.html" target="_blank" rel="noreferrer" className="btn btn-ghost">실습교안 보기 ↗</a>
+              <Link to="/textbook" className="btn btn-ghost">실습교안 보기</Link>
             </div>
           </div>
 
