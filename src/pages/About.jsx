@@ -1,5 +1,7 @@
-// About — 개발 취지 페이지 (강사 소개는 /about/instructor 별도 페이지)
+// About — 2페이지 구성: 개발 취지(/about) · 강사 소개(/about/instructor)
 import { Link } from 'react-router-dom'
+import AboutTabs from '../components/AboutTabs'
+
 
 const PURPOSE = [
   {
@@ -36,6 +38,7 @@ export default function About() {
           <span className="eyebrow">About</span>
           <h1>개발 취지</h1>
           <p>수업이 끝나도 학습이 이어지도록 — 이 학습 플랫폼을 만든 이유입니다.</p>
+          <AboutTabs current="purpose" />
         </div>
       </section>
 

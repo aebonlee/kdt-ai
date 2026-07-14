@@ -1,5 +1,7 @@
-// 강사 소개 — hufs.dreamitbiz.com InstructorIntro 내역 기반 (About 하위 페이지)
+// 강사 소개 — hufs.dreamitbiz.com InstructorIntro 내역 기반 (About 2페이지 중 하나)
 import { Link } from 'react-router-dom'
+import AboutTabs from '../components/AboutTabs'
+
 
 const KEY_INFO = [
   ['직위', '드림아이티비즈 대표'],
@@ -34,6 +36,7 @@ export default function InstructorIntro() {
           <span className="eyebrow">Instructor</span>
           <h1>강사 소개</h1>
           <p>기업 AI 교육 전문 강사 프로필</p>
+          <AboutTabs current="instructor" />
         </div>
       </section>
 

@@ -1,0 +1,136 @@
+// 사용방법 안내 — 실습 절차와 사이트 자료 활용 가이드 (About 하위 페이지)
+import { Link } from 'react-router-dom'
+import AboutTabs from '../components/AboutTabs'
+
+// 실습을 원활히 진행하기 위한 5단계 절차
+const STEPS = [
+  {
+    step: 'STEP 1',
+    title: '수업 전 — 예습으로 출발선 맞추기',
+    items: [
+      '선수학습자료에서 오늘 과목과 관련된 기초 주제(파이썬·Git·SQL 등)를 훑어봅니다.',
+      '학습강의안에서 오늘 날짜를 열어 학습 목표와 교시별 시간표를 미리 확인합니다.',
+      '과목 첫날이라면 하단의 종합실습 평가기준·제출물을 먼저 읽어 두세요 — 무엇을 평가하는지 알고 시작하면 실습의 방향이 잡힙니다.',
+    ],
+  },
+  {
+    step: 'STEP 2',
+    title: '수업 중 — 강의안을 따라 함께 진행',
+    items: [
+      '강의안은 하루 8시간(8교시) 구성입니다. 교시별 시간표의 이론/실습/종합실습 배지로 지금 단계가 어디인지 확인하세요.',
+      '핵심 개념 → 심화 이론 → 상세 학습 순으로 읽으면 강의 흐름과 같습니다.',
+      '판서와 설명을 놓쳤어도 괜찮습니다 — 이 사이트의 내용만으로 그날 수업을 그대로 따라갈 수 있게 만들었습니다.',
+    ],
+  },
+  {
+    step: 'STEP 3',
+    title: '실습 — 예제 코드는 복사해서 직접 실행',
+    items: [
+      '실습 예제의 복사 버튼으로 코드를 그대로 가져가 실행하세요. 모든 코드 라인에 한글 주석(녹색)이 달려 있으니 줄 단위로 이해하며 진행합니다.',
+      '예제 아래 note에는 왜 이렇게 하는지, 어디서 자주 막히는지가 적혀 있습니다 — 막히면 note부터 다시 읽어보세요.',
+      '그래도 안 풀리면 게시판(Q&A)에 에러 메시지와 함께 질문을 남겨 주세요.',
+    ],
+  },
+  {
+    step: 'STEP 4',
+    title: '수업 후 — 복습으로 마무리',
+    items: [
+      '과목 마지막 날 강의안 하단의 복습 퀴즈(O/X·4지선다·단답)로 이해도를 확인합니다. 해설까지 꼭 읽어 주세요.',
+      '학습관리에서 "이해했어요"를 눌러 진도율을 기록하면, 복습이 필요한 날짜가 한눈에 보입니다.',
+      '실습교안(웹/PDF)은 과목 단위 인쇄를 지원합니다 — 종이로 복습하고 싶을 때 활용하세요.',
+    ],
+  },
+  {
+    step: 'STEP 5',
+    title: '종합실습·팀 프로젝트 — 평가 준비',
+    items: [
+      '종합실습은 과목별 평가기준(실습 구성·평가 항목·배점·제출물)을 기준으로 진행됩니다. 제출 마감 시간을 꼭 지켜 주세요.',
+      '타 강사 과목의 평가기준도 참고자료로 수록되어 있어 평가 방향을 미리 파악할 수 있습니다.',
+      '11월 팀 프로젝트는 팀 프로젝트 메뉴의 전 과정 가이드(기획→개발→발표)를 따라 준비하세요.',
+    ],
+  },
+]
+
+// 사이트에 올려 둔 자료를 어떻게 쓰면 되는지
+const RESOURCES = [
+  { t: '학습강의안', d: '날짜별 8시간 상세 강의안. 좌측에서 날짜를 이동하고, 하단 "담당일정 외 강의내용 학습 자료"에서 타 강사 과목의 학습내용·핵심개념·따라하기 실습까지 볼 수 있습니다.', to: '/lectures' },
+  { t: '실습교안 (웹·PDF)', d: '전 과목 실습 교재를 한 문서로 묶은 교안입니다. 좌측 과목 메뉴로 이동하고, 코드 복사·줄바꿈 전환·과목 단위 인쇄를 지원합니다.', href: '/practice-textbook.html' },
+  { t: '선수학습자료', d: '파이썬·Git·CLI·SQL·Docker 등 기초 19주제. 과정을 따라가기 벅찰 때 먼저 볼 자료입니다.', to: '/prep' },
+  { t: '과목별 안내', d: '담당 과목의 일자별 학습 목표와 내용을 과목 단위로 정리했습니다. 전체 그림을 볼 때 활용하세요.', to: '/subjects' },
+  { t: '참고자료', d: '과목별 공식 문서 링크와 선수·후속 심화 자료 모음. 수업에서 다룬 내용을 더 깊이 파고들 때 사용합니다.', to: '/reference' },
+  { t: '게시판 · 학습관리', d: '질문은 게시판(Q&A)에, 진도는 학습관리에서 자가평가로 기록합니다. 로그인(구글·카카오) 후 이용할 수 있습니다.', to: '/board' },
+]
+
+export default function AboutGuide() {
+  return (
+    <div>
+      <section className="page-header-ed">
+        <div className="container">
+          <span className="eyebrow">Guide</span>
+          <h1>사용방법 안내</h1>
+          <p>실습을 원활히 진행하기 위한 절차와, 이 사이트 자료를 활용하는 방법입니다.</p>
+          <AboutTabs current="guide" />
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          {/* 실습 절차 5단계 */}
+          <div className="section-head">
+            <span className="eyebrow">Process</span>
+            <h2>실습 진행 절차</h2>
+            <p>수업 전 예습부터 종합실습 준비까지 — 이 순서대로 하면 하루 수업이 매끄럽게 흘러갑니다.</p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {STEPS.map((s) => (
+              <div key={s.step} className="card">
+                <div style={{ display: 'flex', gap: 12, alignItems: 'baseline', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 12, fontWeight: 900, color: 'var(--gold)', letterSpacing: 1 }}>{s.step}</span>
+                  <h3 style={{ fontSize: 16.5, fontWeight: 800, color: 'var(--navy-800)' }}>{s.title}</h3>
+                </div>
+                <ul className="dot-list" style={{ marginTop: 10, fontSize: 13.5, lineHeight: 1.8 }}>
+                  {s.items.map((it, i) => <li key={i}>{it}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 자료 활용 안내 */}
+      <section className="section" style={{ background: 'var(--navy-50)', paddingTop: 40 }}>
+        <div className="container">
+          <div className="section-head">
+            <span className="eyebrow">Resources</span>
+            <h2>자료 활용 안내</h2>
+            <p>사이트에 올려 둔 자료들을 목적에 맞게 쓰는 방법입니다. 카드를 누르면 해당 메뉴로 이동합니다.</p>
+          </div>
+          <div className="grid grid-3">
+            {RESOURCES.map((r) =>
+              r.href ? (
+                <a key={r.t} href={r.href} target="_blank" rel="noreferrer" className="card">
+                  <h3 style={{ fontSize: 15.5, fontWeight: 800, color: 'var(--navy-800)' }}>{r.t} ↗</h3>
+                  <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginTop: 6, lineHeight: 1.7 }}>{r.d}</p>
+                </a>
+              ) : (
+                <Link key={r.t} to={r.to} className="card">
+                  <h3 style={{ fontSize: 15.5, fontWeight: 800, color: 'var(--navy-800)' }}>{r.t}</h3>
+                  <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginTop: 6, lineHeight: 1.7 }}>{r.d}</p>
+                </Link>
+              ),
+            )}
+          </div>
+
+          <div className="box box-tips" style={{ marginTop: 24 }}>
+            <div className="box-h">💡 자주 하는 질문</div>
+            <p style={{ margin: 0, lineHeight: 1.9, fontSize: 13.5 }}>
+              · 코드가 안 돌아가요 — 예제의 한글 주석과 note를 먼저 확인하고, 그래도 안 되면 게시판에 에러 메시지를 그대로 붙여 질문해 주세요.{'\n'}
+              · 다른 반과 진도가 달라요 — 반(분반)마다 과목 순서가 다릅니다. 강의안 하단의 담당일정 외 자료에서 우리 반 일정 기준으로 예습·복습하면 됩니다.{'\n'}
+              · 자료를 인쇄하고 싶어요 — 실습교안에서 과목 단위 인쇄 버튼을 사용하세요.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
