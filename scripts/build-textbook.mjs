@@ -11,6 +11,7 @@ import { exams } from '../src/data/exams.js'
 import { quizzes } from '../src/data/quizzes.js'
 import { otherCourses } from '../src/data/othercontent.js'
 import { otherDeep } from '../src/data/otherdeep.js'
+import { otherExams } from '../src/data/otherexams.js'
 import { otherSessions, otherPeriods, TRACKS, EVENT_LABELS } from '../src/data/othersessions.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -102,9 +103,9 @@ function sectionPeriods(dd, subjectId, day) {
   return ''
 }
 
-// 종합실습 평가기준·제출물 (과목 첫날에 노출)
-function renderExam(subjectId) {
-  const e = exams[subjectId]
+// 종합실습 평가기준·제출물 (과목 첫날에 노출) — 기타 과목(참고용)도 같은 렌더 사용
+function renderExam(subjectId, examData) {
+  const e = examData || exams[subjectId]
   if (!e) return ''
   let h = `<h4 class="sec">📋 종합실습 평가기준 · 제출물</h4>`
   if (e.purpose) h += `<div class="box tips"><div class="box-h">🎯 실습 목적</div><p style="margin:0;font-size:14px;color:var(--ink-2,#3a3f66)">${escNl(e.purpose)}</p></div>`
@@ -252,6 +253,9 @@ function renderEtcPage() {
           deep.concepts.map((k) => `<dl class="concept"><dt>${esc(k.term)}</dt><dd>${escNl(k.desc)}</dd></dl>`).join('') + `</div>`
         : '') +
       (deep.examples?.length ? renderExamples(deep.examples, '따라하기 실습', '💻') : '') +
+      (otherExams[id]
+        ? renderExam(id, otherExams[id]) + `<p class="note">※ 타 강사 진행 과목의 평가기준 — 평가 방향을 미리 파악하는 참고자료입니다.</p>`
+        : '') +
       (c.tip ? `<p class="note">🔗 ${escNl(c.tip)}</p>` : '') + `</div>`
   }
 

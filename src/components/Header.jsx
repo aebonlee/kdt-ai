@@ -9,7 +9,6 @@ import AdminMenu from './AdminMenu'
 
 const nav = [
   { to: '/', label: 'About', end: true },
-  { to: '/schedule', label: '수업일정표' },
   { to: '/prep', label: '선수학습자료' },
   { to: '/subjects', label: '과목별 안내' },
   { to: '/lectures', label: '학습강의안' },

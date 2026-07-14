@@ -26,6 +26,30 @@ export const otherDeep = {
       {
         "term": "이벤트 리스너와 비동기(async/await)",
         "desc": "클릭·입력 같은 사용자 행동은 addEventListener()로 감지하는 방식이 권장되며, HTML 속성(onclick)이나 DOM 프로퍼티 방식보다 여러 핸들러 등록과 유지보수에 유리하다. 서버 통신처럼 오래 걸리는 일은 fetch()와 async/await로 기다리는 동안 다른 작업을 막지 않게 처리한다."
+      },
+      {
+        "term": "시맨틱 태그(Semantic Elements)",
+        "desc": "div와 span은 아무 의미 없는 상자지만, header·nav·main·section·article·aside·footer는 태그 이름 자체가 그 영역의 역할을 설명하는 시맨틱 태그다. 코드 구조가 한눈에 읽히고(가독성), 스크린 리더 같은 보조 기술이 화면 구조를 정확히 파악하며(접근성), 검색 엔진이 핵심 콘텐츠를 효율적으로 찾는다(SEO). 이미지·도표에는 figure와 figcaption을 짝지어 설명을 붙인다."
+      },
+      {
+        "term": "CSS Position 5가지와 z-index",
+        "desc": "position은 요소의 배치 유형을 정한다 — static(기본값, top·left 무시), relative(원래 자리 기준으로 이동하되 원래 공간은 유지), absolute(문서 흐름에서 빠져 가장 가까운 position 지정 조상 기준으로 배치), fixed(뷰포트 기준이라 스크롤해도 고정), sticky(스크롤에 따라 relative와 fixed 사이를 전환 — 상단 고정 헤더의 단골). 요소가 겹칠 때 위아래 순서는 z-index 숫자가 큰 쪽이 위로 온다."
+      },
+      {
+        "term": "CSS Grid — 2차원 레이아웃",
+        "desc": "Flexbox가 한 방향(1차원)만 다룬다면 Grid는 행과 열을 동시에 다루는 2차원 레이아웃이다. 부모에 display: grid를 선언하고 grid-template-columns/rows로 트랙을 나누며, 배치 기준은 칸(셀)의 개수가 아니라 칸을 나누는 선(Grid Line)의 번호다. 실무 관례는 페이지 전체 뼈대는 Grid, 내부 요소 정렬은 Flexbox로 나눠 쓰는 것이다."
+      },
+      {
+        "term": "Transition과 @keyframes 애니메이션",
+        "desc": "transition은 속성값이 바뀔 때 그 변화를 지정한 시간 동안 부드럽게 이어 주는 기능으로, property·duration·timing-function·delay 네 속성을 transition: width 2s linear 1s처럼 한 줄 축약형으로 쓴다. 보통 :hover와 짝지어 마우스를 올리면 서서히 커지는 효과를 만든다. 더 복잡한 다단계 움직임은 @keyframes로 장면(0%, 50%, 100%)을 정의하고 animation-name·duration·iteration-count 속성으로 재생한다."
+      },
+      {
+        "term": "반응형 웹 — Viewport 메타태그와 미디어 쿼리",
+        "desc": "반응형 웹은 하나의 HTML 소스로 PC·태블릿·스마트폰 화면 크기에 맞춰 레이아웃이 자동으로 바뀌게 하는 방식으로, 핵심 기술은 Viewport 메타태그·미디어 쿼리·유연한 레이아웃(Grid·Flex) 셋이다. head 안에 meta name=viewport, content=width=device-width, initial-scale=1.0을 넣지 않으면 반응형이 아예 동작하지 않는다. 레이아웃이 바뀌는 기준점을 브레이크포인트라 하며 교재는 767px 이하 모바일, 768~1023px 태블릿, 1024px 이상 데스크톱 구간을 예시로 든다."
+      },
+      {
+        "term": "var·let·const와 스코프",
+        "desc": "let과 const는 ES6에서 도입된 선언 방식으로 중괄호 블록 안에서만 살아 있는 블록 스코프를 가지며, 같은 스코프에서 재선언할 수 없다. const는 재할당까지 금지라 기본은 const로 선언하고 값이 바뀌는 변수만 let을 쓴다. var는 함수 스코프에 호이스팅 시 초기화까지 되어 선언 전에 접근해도 오류가 안 나는 함정이 있어 현대 JavaScript에서는 권장하지 않는다."
       }
     ],
     "examples": [
@@ -46,6 +70,24 @@ export const otherDeep = {
         "lang": "javascript",
         "code": "// HTML의 <select id=\"city\">와 <div id=\"weather-box\">를 DOM에서 찾아온다\nconst citySelect = document.getElementById(\"city\");\nconst box = document.getElementById(\"weather-box\");\n\n// 도시 이름 → 위도/경도 좌표를 담은 JavaScript 객체\nconst cities = {\n  seoul: { name: \"서울\", lat: 37.57, lon: 126.98 },\n  busan: { name: \"부산\", lat: 35.18, lon: 129.08 },\n};\n\n// async 함수: 안에서 await로 서버 응답을 기다릴 수 있다\nasync function showWeather(key) {\n  const c = cities[key];                       // 선택된 도시 정보 꺼내기\n  box.innerHTML = \"로딩 중...\";                 // 기다리는 동안 안내 문구 표시\n  // 백틱 대신 문자열 연결(+)로 Open-Meteo 요청 주소를 조립\n  const url = \"https://api.open-meteo.com/v1/forecast?latitude=\" + c.lat +\n    \"&longitude=\" + c.lon + \"&current=temperature_2m,relative_humidity_2m\";\n  const response = await fetch(url);           // 서버 응답이 올 때까지 대기\n  const data = await response.json();          // JSON 본문을 객체로 변환\n  // DOM 조작(innerHTML)으로 진짜 온도·습도를 화면에 그린다\n  box.innerHTML = c.name + \" 현재 기온 \" + data.current.temperature_2m +\n    \"도, 습도 \" + data.current.relative_humidity_2m + \"%\";\n}\n\n// 권장 방식인 addEventListener로 change 이벤트를 등록\ncitySelect.addEventListener(\"change\", function () {\n  showWeather(citySelect.value);               // 바뀐 도시로 날씨 갱신\n});\n\nshowWeather(\"seoul\");                          // 첫 화면은 서울 날씨로 시작",
         "note": "교재 8장 마지막 [과제] 실시간 날씨를 한 파일로 축약한 코드로, select의 change 이벤트 → fetch/await → innerHTML 갱신이라는 교재의 3단계 흐름을 그대로 따른다. Vue에서는 이 패턴이 @change 핸들러와 반응형 데이터로 바뀌지만, 내부에서 하는 일(이벤트 감지·비동기 요청·화면 갱신)은 완전히 동일하다. 교재는 이후 이 파일을 weatherAPI.js와 realtimeInfo.js 모듈로 분리하는데, 그 감각이 Vue 컴포넌트 분리로 이어진다."
+      },
+      {
+        "title": "시맨틱 태그로 페이지 뼈대 잡기",
+        "lang": "html",
+        "code": "<!-- 의미 없는 div 대신, 이름이 곧 역할인 시맨틱 태그로 구조를 잡는다 -->\n<header>\n  <!-- header: 로고·제목이 들어가는 머리 영역 -->\n  <h1>SKALA 기술 블로그</h1>\n  <!-- nav: 다른 페이지로 이동하는 링크 모음 영역 -->\n  <nav>\n    <a href=\"/\">홈</a> <a href=\"/posts\">글 목록</a>\n  </nav>\n</header>\n<!-- main: 이 문서의 핵심 콘텐츠, 페이지에 하나만 둔다 -->\n<main>\n  <!-- section: 논리적으로 관련 있는 내용의 묶음 -->\n  <section>\n    <h2>최신 글</h2>\n    <!-- article: 떼어 놓아도 독립적으로 성립하는 콘텐츠 단위 -->\n    <article>\n      <h3>CSS Grid 입문</h3>\n      <p>행과 열을 함께 다루는 2차원 레이아웃을 배워 보자.</p>\n      <!-- figure + figcaption: 이미지와 그 설명을 한 묶음으로 -->\n      <figure>\n        <img src=\"grid.png\" alt=\"그리드 예시 그림\">\n        <figcaption>그림 1. 3x2 그리드 레이아웃</figcaption>\n      </figure>\n    </article>\n  </section>\n  <!-- aside: 본문과 직접 관련이 약한 곁가지 영역(광고·추천 글) -->\n  <aside>추천 글: Flexbox 복습하기</aside>\n</main>\n<!-- footer: 저작권·연락처가 들어가는 꼬리 영역 -->\n<footer>ⓒ 2026 SKALA</footer>",
+        "note": "교재 4장 HTML 심화의 시맨틱 레이아웃 태그 표를 한 페이지 뼈대로 조립한 예제다. 태그 이름만 봐도 어디가 머리·본문·곁가지·꼬리인지 드러나므로 가독성·접근성·SEO 세 마리 토끼를 잡는다. Vue 컴포넌트를 만들 때도 최상위 구조를 이 시맨틱 태그로 잡는 습관이 그대로 이어진다."
+      },
+      {
+        "title": "Grid + 미디어 쿼리 — 화면 크기별로 변하는 카드 갤러리",
+        "lang": "css",
+        "code": "/* 상단 헤더: sticky는 스크롤 위치에 따라 relative와 fixed를 오간다 */\n.site-header {\n  position: sticky;                    /* 조건부 고정 배치 */\n  top: 0;                              /* 화면 맨 위에 붙는 기준점 */\n  z-index: 10;                         /* 겹칠 때 카드보다 위에 오도록 */\n}\n/* 카드 갤러리: Grid는 행과 열을 함께 다루는 2차원 레이아웃 */\n.gallery {\n  display: grid;                       /* 이 한 줄이 Grid의 시작 선언 */\n  grid-template-columns: 1fr 1fr 1fr;  /* 남은 공간을 1:1:1로 나눈 3열 */\n  gap: 16px;                           /* 셀과 셀 사이 간격 */\n}\n/* 대표 카드는 그리드 '라인 번호'로 넓게 배치한다 */\n.gallery .hero {\n  grid-column: 1 / 3;                  /* 1번 선에서 3번 선까지 = 두 칸 차지 */\n}\n\n/* 브레이크포인트 1: 767px 이하(모바일)는 1열로 */\n@media (max-width: 767px) {\n  .gallery {\n    grid-template-columns: 1fr;        /* 좁은 화면에선 세로 한 줄 */\n  }\n}\n\n/* 브레이크포인트 2: 768~1023px(태블릿)는 2열로 */\n@media (min-width: 768px) and (max-width: 1023px) {\n  .gallery {\n    grid-template-columns: 1fr 1fr;    /* 중간 화면은 2열 */\n  }\n}",
+        "note": "교재 6장 CSS 심화의 Grid와 반응형 웹(미디어 쿼리 브레이크포인트) 단원을 하나로 합친 예제다. 이 CSS가 동작하려면 HTML head에 viewport 메타태그(width=device-width, initial-scale=1.0)가 반드시 있어야 한다는 것이 교재의 강조점. 그리드는 셀 개수가 아니라 선(Grid Line) 번호로 구역을 잡는다는 점을 hero 카드에서 확인하자."
+      },
+      {
+        "title": "let·const와 배열 메서드(forEach·map·filter)로 점수 가공",
+        "lang": "javascript",
+        "code": "// const: 재할당 금지 — 값이 안 바뀌는 변수는 무조건 const로 선언\nconst scores = [72, 95, 60, 88, 41];\n// let: 값이 바뀌는 변수만 let (var는 함수 스코프 함정 때문에 비권장)\nlet total = 0;\n\n// forEach: 모든 요소를 순회하며 함수를 실행한다 (반환값 없음)\nscores.forEach(function (s) {\n  total = total + s;                    // 점수를 하나씩 합계에 누적\n});\nconsole.log(\"평균: \" + total / scores.length);  // 문자열은 + 로 연결\n\n// map: 모든 요소를 규칙대로 가공한 '새 배열'을 반환한다\nconst boosted = scores.map(function (s) {\n  return s + 5;                         // 전원 5점 가산점\n});\n\n// filter: 조건을 통과한 요소만 골라 '새 배열'로 반환한다\nconst passed = boosted.filter(function (s) {\n  return s >= 70;                       // 70점 이상만 합격\n});\nconsole.log(passed);                    // [77, 100, 93] 처럼 출력\n\n// 화살표 함수로 쓰면 같은 일을 한 줄로 줄일 수 있다\nconst evens = scores.filter(s => s % 2 === 0);  // 짝수 점수만 추출\n\n{\n  let inner = \"블록 안\";               // let은 이 중괄호 안에서만 존재\n}\n// console.log(inner);  // 오류! 블록 밖 접근 불가 — 이것이 블록 스코프",
+        "note": "교재 7장 JavaScript 기초의 변수 선언(let·const·스코프)과 배열 반복 메서드 단원을 한 흐름으로 묶었다. forEach는 반환값이 없고 map·filter는 원본을 건드리지 않고 새 배열을 만든다는 차이가 핵심 — 이 세 메서드는 Vue에서 목록 렌더링용 데이터를 다듬을 때 매일 쓰게 된다."
       }
     ]
   },
@@ -74,6 +116,34 @@ export const otherDeep = {
       {
         "term": "MVCC·격리 수준과 Lock, Deadlock",
         "desc": "MVCC(다중 버전 동시성 제어)는 데이터를 고치는 대신 새 버전을 만들어, 읽는 쪽은 자기 시점의 스냅샷을 보고 쓰는 쪽은 새 버전을 쓰게 해 읽기와 쓰기가 서로를 막지 않게 한다. PostgreSQL과 MySQL InnoDB가 모두 이 방식이며, 트랜잭션이 서로를 어디까지 볼 수 있는지는 READ COMMITTED 같은 격리 수준으로 조절한다.\n그래도 같은 행을 동시에 고치려면 락이 필요하다. SELECT ... FOR UPDATE로 행을 잠그고, 기다리지 않으려면 NOWAIT, 잠긴 행을 건너뛰려면 SKIP LOCKED를 쓴다. 두 트랜잭션이 서로가 잡은 락을 기다리며 멈추는 것이 데드락이며, 테이블 접근 순서를 통일하는 것이 기본 예방책이다."
+      },
+      {
+        "term": "ERD 까마귀발 표기와 개념→논리→물리 3단계 설계",
+        "desc": "ERD는 엔티티·속성·관계를 한 장의 그림으로 표현하는 설계 언어다. 실무 표준인 IE(까마귀발) 표기에서 |는 하나, 세 갈래 까마귀발은 여럿, ○는 없거나 하나를 뜻하고, 관계선도 두 종류다 — FK가 자식의 PK 일부가 되는 식별 관계(실선, 부모 없이 존재 불가한 약한 엔티티)와 FK가 일반 컬럼인 비식별 관계(점선).\n설계는 3단계로 내려간다. 개념적 모델링은 요구사항 문장에서 엔티티(명사)와 관계를 추출해 이해관계자와 소통하는 단계, 논리적 모델링은 테이블 매핑·PK/FK 설정·정규화를 적용하는 단계(여기까지 DBMS 독립적), 물리적 모델링은 특정 DBMS에 맞춰 타입·인덱스·파티셔닝을 정하는 단계다. 금액은 부동소수점 오류를 피해 NUMERIC(10,2), 글로벌 서비스 시간은 TIMESTAMPTZ를 쓰는 결정이 물리 설계의 예다."
+      },
+      {
+        "term": "NULL의 3값 논리 — 참·거짓, 그리고 UNKNOWN",
+        "desc": "SQL의 조건 판정은 참/거짓 2값이 아니라 UNKNOWN이 추가된 3값 논리다. NULL은 '값이 없음/모름'이라 NULL이 낀 비교는 참도 거짓도 아닌 UNKNOWN이 되고, WHERE는 TRUE인 행만 통과시키므로 해당 행은 결과에서 조용히 사라진다. \"데이터가 분명히 있는데 안 나와요\"라는 신고의 상당수가 이 문제이며, memo = NULL은 항상 0건 — NULL은 반드시 IS NULL / IS NOT NULL로 찾는다.\n집계에서도 NULL은 특별 취급이다. COUNT(*)만 NULL 포함 전체 행을 세고, COUNT(컬럼)·SUM·AVG는 NULL을 제외한다 — 특히 AVG는 NULL을 0으로 쳐 주지 않으므로 의도와 다른 평균이 나올 수 있다. 표시용 기본값은 COALESCE(첫 번째 비-NULL 값), 0 나눗셈 방지는 NULLIF(b, 0)가 표준 패턴이다."
+      },
+      {
+        "term": "서브쿼리 4유형 — 스칼라·인라인뷰·WHERE·상관",
+        "desc": "서브쿼리는 놓이는 위치에 따라 성격이 갈린다. SELECT 절의 스칼라 서브쿼리는 단일 값 하나를 반환하지만 행마다 실행돼 성능 주의 대상이고, FROM 절의 인라인 뷰는 서브쿼리 결과를 임시 테이블처럼 쓰는 방식으로 페이지네이션에 자주 쓰인다. WHERE 절 서브쿼리는 비교 조건으로 쓰이며, 바깥 쿼리의 컬럼을 참조하는 상관 서브쿼리는 행마다 다시 실행되므로 JOIN이나 CTE로 대체를 검토한다.\n다중 행 비교 연산자도 구분해 두자 — IN은 목록 포함 여부, EXISTS는 행이 존재하는지만 확인해(SELECT 1) 대용량에서 IN보다 빠르고 NULL에도 안전하다. ANY는 '하나라도 만족'(>ANY는 최솟값 초과와 동일), ALL은 '전부 만족'(>ALL은 최댓값 초과와 동일)이다. 합집합 UNION(중복 제거)·UNION ALL(중복 허용, 더 빠름), 교집합 INTERSECT, 차집합 EXCEPT까지가 이 단원의 도구 상자다."
+      },
+      {
+        "term": "CTE(WITH)와 재귀 CTE — 쿼리를 이름 붙인 단계로 나눈다",
+        "desc": "CTE는 WITH 절로 중간 결과에 이름을 붙여 두고 본 쿼리에서 테이블처럼 쓰는 문법이다. 복잡한 서브쿼리 중첩을 '1단계: 학과별 평균 → 2단계: 평균보다 높은 학생' 같은 읽히는 파이프라인으로 분해할 수 있어 가독성과 재사용성이 좋아진다. 교재의 기준은 명확하다 — 서브쿼리가 복잡해지면 CTE로 분해하라.\nWITH RECURSIVE는 CTE만의 강력한 기능으로, 기저 단계(최상위 행)와 재귀 단계(직전 결과에 JOIN해 한 층 아래를 추가)를 UNION ALL로 이어 조직도·카테고리 트리·경로 탐색 같은 계층 데이터를 한 번에 펼친다. 재귀 단계에는 depth 제한 조건을 반드시 넣어 무한 재귀를 방지하는 것이 철칙이다."
+      },
+      {
+        "term": "View와 Materialized View — 저장된 쿼리 vs 저장된 결과",
+        "desc": "일반 View는 '저장된 SELECT문'이라 조회할 때마다 원본을 다시 읽어 항상 최신 데이터를 보여준다. 용도는 세 가지 — 민감 컬럼을 숨기는 권한 제어, 복잡한 JOIN·집계 쿼리의 재사용, 그리고 원본 테이블 구조가 바뀌어도 응용에는 같은 모양을 보여주는 인터페이스 안정화(논리적 독립성)다.\nMaterialized View는 쿼리 '결과'를 디스크에 저장해 조회가 빠르고 인덱스도 걸 수 있지만, 자동 갱신이 없어 REFRESH MATERIALIZED VIEW를 스케줄러로 돌려야 한다(CONCURRENTLY 옵션이면 잠금 없이 갱신). 대용량 집계 화면은 매번 GROUP BY를 도는 대신 MV나 통계 테이블에 미리 계산해 두는 것이 교재가 권하는 성능 전략이다."
+      },
+      {
+        "term": "DB 보안 5층 — 인증·인가·바인딩·암호화·감사",
+        "desc": "DB 보안은 다섯 층으로 정리된다. 인증(누가 접속했나), 인가(무엇을 할 수 있나), 입력 검증(악성 입력 차단), 암호화(전송 TLS·저장 TDE·민감 컬럼 암호화), 감사(누가 언제 무슨 쿼리를 실행했나). 인가의 원칙은 최소 권한 — 권한을 역할(ROLE)로 묶어 GRANT하고 사용자에게는 역할만 부여하며, 애플리케이션 계정에 관리자 권한을 주는 것이 교재가 꼽는 대표적 실수다.\nSQL Injection의 원인은 단 하나, 사용자 입력을 SQL 문자열에 직접 이어붙이는 것이다. 방어도 한 줄 — 항상 파라미터 바인딩(Prepared Statement)을 쓰고, 바인딩이 불가능한 ORDER BY 컬럼명 같은 곳은 화이트리스트로 검증한다. 여기에 Row-Level Security를 켜면 같은 테이블에서 사용자별로 볼 수 있는 행 자체를 제한할 수 있어 멀티테넌시 구현의 기본기가 된다."
+      },
+      {
+        "term": "OLTP vs OLAP — 쓰기 중심과 읽기 중심은 설계가 다르다",
+        "desc": "OLTP(운영계)는 주문·결제처럼 짧은 트랜잭션이 초당 수천 건 쏟아지는 쓰기 중심 부하라 정규화(3NF)를 유지해 갱신 이상을 막고, OLAP(분석계)은 수억 행을 훑는 집계 읽기 중심이라 JOIN을 줄이는 반정규화와 컬럼 기반 저장(Columnstore)이 유리하다. 인덱스 전략도 부하 성격에 따라 달라지므로, 운영 DB에서 무거운 분석 쿼리를 직접 돌리는 대신 데이터 웨어하우스로 분리하는 것이 정석이다.\n동시성 제어 방식 선택도 같은 논리다 — 충돌이 드문 읽기 위주 작업은 버전 컬럼으로 커밋 시점에 충돌만 감지하는 낙관적 Lock, 은행 이체·좌석 예매처럼 충돌이 잦은 쓰기 집약 작업은 SELECT ... FOR UPDATE로 미리 잠그는 비관적 Lock이 적합하다. 클라우드 관리형 DB는 백업·복구·확장을 대신해 주지만, OLTP/OLAP 구분과 권한 설계는 여전히 사용자의 몫이다."
       }
     ],
     "examples": [
@@ -94,6 +164,30 @@ export const otherDeep = {
         "lang": "sql",
         "code": "-- 1) 튜닝 전: 인덱스가 없어 전체 테이블을 훑는다(Seq Scan)\nEXPLAIN ANALYZE                              -- 실행계획 + 실제 수행 시간 측정\nSELECT id, order_date, amount FROM orders    -- 조회 대상\nWHERE customer_id = 42;                      -- 고객 1명 조회인데 Full Scan 발생\n\n-- 2) WHERE 조건 컬럼에 B-Tree 인덱스 생성\nCREATE INDEX idx_orders_customer             -- 인덱스 이름\nON orders (customer_id, order_date);         -- 함께 쓰는 컬럼은 복합 인덱스로\n\n-- 3) 튜닝 후: 같은 쿼리를 다시 떠서 Index Scan으로 바뀌었는지 확인\nEXPLAIN ANALYZE                              -- Before/After 비교가 튜닝의 기본\nSELECT id, order_date, amount FROM orders WHERE customer_id = 42; -- 동일 쿼리\n\n-- 인덱스를 무력화하는 안티패턴 교정\n-- 나쁨: WHERE user_id = '12345'   (타입 불일치 → 형변환 → Full Scan)\n-- 좋음: WHERE user_id = 12345     (컬럼 타입과 값 타입을 일치)\n-- 나쁨: WHERE name LIKE '%길동%'  (앞 와일드카드는 B-Tree 사용 불가)\n-- 좋음: WHERE name LIKE '홍%'     (접두어 검색은 인덱스 사용 가능)\n\n-- 4) 트랜잭션: 이체는 두 UPDATE가 전부 되거나 전부 취소돼야 한다(원자성)\nBEGIN;                                       -- 트랜잭션 시작(없으면 자동 커밋)\nSELECT balance FROM account                  -- 이체 전 잔액 확인\nWHERE id = 'A' FOR UPDATE;                   -- 행 잠금: 동시 수정 차단\nUPDATE account SET balance = balance - 10000 WHERE id = 'A'; -- 출금\nUPDATE account SET balance = balance + 10000 WHERE id = 'B'; -- 입금\nCOMMIT;                                      -- 확정: WAL 로그를 먼저 쓴 뒤 반영\n-- 중간에 오류가 나면 ROLLBACK; 으로 전체를 취소해 일관성을 지킨다",
         "note": "교재 17~21장을 하나의 흐름으로 압축했다. 인덱스는 만들고 끝이 아니라 EXPLAIN ANALYZE로 실제 효과를 검증해야 하고, 타입 불일치·LIKE 앞 % 같은 안티패턴은 인덱스가 있어도 무력화시킨다. 이체 트랜잭션의 FOR UPDATE는 두 세션이 같은 계좌를 동시에 고치는 사고를 막는 실무 필수 장치다."
+      },
+      {
+        "title": "CASE·COALESCE·NULLIF — 요금 등급 분류와 결측 안전 처리",
+        "lang": "sql",
+        "code": "-- 1) CASE: 월요금 구간별 등급 (위에서부터 평가, 첫 참에서 멈춤)\nSELECT name,                                  -- 가입자 이름\n       monthly_fee,                           -- 월요금\n       CASE                                   -- SQL 안의 if-else\n         WHEN monthly_fee >= 80000 THEN '프리미엄'  -- 8만원 이상\n         WHEN monthly_fee >= 50000 THEN '스탠다드'  -- 5만~8만 미만\n         ELSE '라이트'                        -- 나머지 (ELSE 없으면 NULL)\n       END AS grade                           -- 등급이라는 새 컬럼으로 표시\nFROM subscription;                            -- 통신 가입 테이블\n\n-- 2) NULL 안전 장치: 표시는 COALESCE, 0 나눗셈은 NULLIF\nSELECT name,                                  -- 가입자 이름\n       COALESCE(memo, '메모없음') AS memo_show,      -- NULL이면 기본값으로 표시\n       used_mb / NULLIF(quota_mb, 0) AS usage_ratio  -- 0이면 NULL로 바꿔 에러 대신 NULL 반환\nFROM subscription                             -- 같은 테이블에서\nWHERE memo IS NULL;                           -- NULL 찾기는 = NULL(항상 0건)이 아니라 IS NULL\n\n-- 3) 집계와 NULL: COUNT(*)만 NULL을 센다\nSELECT COUNT(*) AS all_rows,                  -- 전체 행 수 (NULL 포함)\n       COUNT(monthly_fee) AS fee_rows,        -- 값이 있는 행만\n       AVG(monthly_fee) AS avg_fee            -- NULL 제외 평균 (0으로 안 쳐 준다!)\nFROM subscription;                            -- 두 COUNT의 차이 = NULL 개수",
+        "note": "최진철 교재 Day1 4교시(단일 테이블 조회)의 통신 도메인 실습 패턴이다. CASE가 첫 참에서 멈춘다는 평가 순서, = NULL이 3값 논리 때문에 항상 0건이라는 함정, COUNT(*)와 COUNT(컬럼)의 차이가 핵심 세 가지다. 백정열 교재도 COALESCE는 SQL 표준, NVL(Oracle)·ISNULL(SQL Server)은 방언이라고 정리한다."
+      },
+      {
+        "title": "서브쿼리 실전 — 평균보다 비싼 가입, EXISTS, 집합 연산",
+        "lang": "sql",
+        "code": "-- 1) WHERE 절 스칼라 서브쿼리: 전체 평균 요금보다 비싼 가입 찾기\nSELECT name, monthly_fee                      -- 이름과 월요금\nFROM subscription                             -- 가입 테이블\nWHERE monthly_fee > (SELECT AVG(monthly_fee)  -- 서브쿼리가 평균 하나(단일 값)를 반환\n                     FROM subscription);      -- 그 값과 바깥 행을 비교\n\n-- 2) EXISTS: 가입 이력이 하나라도 있는 고객 (행 존재만 확인해 빠르다)\nSELECT c.name                                 -- 고객 이름\nFROM customer c                               -- 고객 테이블\nWHERE EXISTS (SELECT 1                        -- 값은 안 쓰므로 1이면 충분\n              FROM subscription s             -- 가입 테이블에서\n              WHERE s.cust_id = c.cust_id);   -- 바깥 행을 참조 = 상관 서브쿼리\n\n-- 3) 인라인 뷰: FROM 절의 서브쿼리를 임시 테이블처럼 사용\nSELECT p.plan_name, t.avg_fee                 -- 요금제 이름과 평균 요금\nFROM (SELECT plan_id,                         -- 요금제 id별로\n             AVG(monthly_fee) AS avg_fee      -- 평균 요금을 먼저 계산해 두고\n      FROM subscription GROUP BY plan_id) t   -- 별칭 t 필수 (임시 테이블 이름)\nJOIN plan p ON p.plan_id = t.plan_id;         -- 요금제 정보를 붙인다\n\n-- 4) 집합 연산: 2025년과 2026년 모두 가입 이력이 있는 고객\nSELECT cust_id FROM subscription WHERE start_year = 2025  -- 2025년 가입 고객 집합\nINTERSECT                                     -- 교집합 (UNION 합집합, EXCEPT 차집합)\nSELECT cust_id FROM subscription WHERE start_year = 2026; -- 2026년 집합과 겹치는 부분만",
+        "note": "백정열 교재 13장(서브쿼리 & 집합 연산자)의 유형 분류를 통신 도메인으로 재구성했다. 스칼라·인라인뷰·상관 서브쿼리의 위치별 구분과, EXISTS가 SELECT 1로 행 존재만 확인해 대용량에서 IN보다 유리하다는 선택 기준이 요점이다. UNION ALL이 UNION보다 빠른 이유(중복 제거 정렬 생략)도 함께 기억해 두자."
+      },
+      {
+        "title": "CTE와 재귀 CTE — 단계별 분해와 조직도 계층 탐색",
+        "lang": "sql",
+        "code": "-- 1) CTE: 복잡한 쿼리를 이름 붙인 단계로 분해한다\nWITH plan_avg AS (                            -- 1단계: 요금제별 평균 요금 계산\n  SELECT plan_id,                             -- 요금제 id\n         AVG(monthly_fee) AS avg_fee          -- 요금제 안의 평균 요금\n  FROM subscription                           -- 가입 테이블에서\n  GROUP BY plan_id                            -- 요금제 단위로 집계\n)\nSELECT s.name, s.monthly_fee, a.avg_fee       -- 2단계: 원본 행과 평균을 나란히\nFROM subscription s                           -- 가입 테이블\nJOIN plan_avg a ON a.plan_id = s.plan_id      -- CTE를 일반 테이블처럼 JOIN\nWHERE s.monthly_fee > a.avg_fee;              -- 자기 요금제 평균보다 비싼 가입만\n\n-- 2) 재귀 CTE: 자기참조 테이블(조직도)을 위에서 아래로 전부 펼친다\nWITH RECURSIVE org AS (\n  SELECT id, emp_name, manager_id,            -- 직원 기본 정보\n         1 AS depth                           -- 기저 단계: 깊이 1\n  FROM employees                              -- 직원 테이블에서\n  WHERE manager_id IS NULL                    -- 상사가 없는 최상위부터 시작\n  UNION ALL                                   -- 기저 + 재귀 결과를 이어붙인다\n  SELECT e.id, e.emp_name, e.manager_id,      -- 한 단계 아래 직원\n         o.depth + 1                          -- 깊이를 1 늘린다\n  FROM employees e                            -- 직원 테이블과\n  JOIN org o ON o.id = e.manager_id           -- 직전 단계 결과를 연결\n  WHERE o.depth < 10                          -- 무한 재귀 방지 (반드시 필요!)\n)\nSELECT depth, emp_name FROM org ORDER BY depth;  -- 계층 순서대로 출력",
+        "note": "백정열 교재 14장의 두 축이다. CTE는 '요금제 평균 만들기 → 평균과 비교하기'처럼 사고 순서 그대로 쿼리를 쓰게 해 주고, 재귀 CTE는 조직도·카테고리 트리 같은 계층 데이터를 기저+재귀 UNION ALL 패턴으로 푼다. depth 제한이 없으면 데이터 오류(순환 참조) 시 무한 루프가 되므로 교재도 '항상 필요'라고 강조한다."
+      },
+      {
+        "title": "VIEW로 가리고 GRANT로 잠그기 — 읽기 전용 계정과 행 단위 보안",
+        "lang": "sql",
+        "code": "-- 1) 민감 컬럼을 뺀 뷰: 보여줄 것만 골라 담는다\nCREATE OR REPLACE VIEW v_customer_public AS   -- 뷰 = 저장된 SELECT문\nSELECT cust_id, name, join_date               -- 전화번호·식별번호 컬럼은 제외\nFROM customer;                                -- 원본 테이블은 그대로 둔다\n\n-- 2) 읽기 전용 역할(ROLE)을 만들고 필요한 권한만 부여 (최소 권한 원칙)\nCREATE ROLE app_reader NOLOGIN;               -- 로그인 불가 — 권한 묶음 용도\nGRANT SELECT ON v_customer_public TO app_reader;  -- 이 뷰의 SELECT만 허용\n\n-- 3) 실제 접속 계정을 만들어 역할을 상속\nCREATE ROLE app_user LOGIN PASSWORD 'secret'; -- 로그인 가능한 사용자 계정\nGRANT app_reader TO app_user;                 -- 역할 부여: 뷰 조회만 가능해진다\n\n-- app_user로 접속해 보면?\n-- SELECT * FROM v_customer_public;   → 성공 (허용된 뷰)\n-- SELECT * FROM customer;            → 권한 오류 (원본 접근 차단)\n-- DELETE FROM v_customer_public;     → 권한 오류 (SELECT만 허용)\n\n-- 4) 행 단위 보안(RLS): 같은 테이블에서 자기 데이터만 보이게\nALTER TABLE orders ENABLE ROW LEVEL SECURITY; -- 테이블에 RLS 켜기\nCREATE POLICY my_orders ON orders             -- 정책 이름 지정\n  FOR SELECT                                  -- 조회에 적용\n  USING (customer_id =                        -- 행의 고객 id가\n         current_setting('app.customer_id')::int);  -- 세션에 설정된 내 id와 같을 때만 보임",
+        "note": "백정열 교재 14장(View의 권한 제어 용도)과 30장(사용자·역할·권한, RLS)을 하나의 시나리오로 연결했다. 권한은 사용자에게 직접 주지 않고 역할로 묶어 부여하는 것, 애플리케이션 계정에 관리자 권한을 주지 않는 것이 최소 권한 원칙의 실천이다. RLS는 멀티테넌시(한 테이블에 여러 고객 데이터)에서 행 자체를 격리하는 마지막 방어선이다."
       }
     ]
   },
@@ -122,6 +216,34 @@ export const otherDeep = {
       {
         "term": "회귀분석 — 기본 가정과 결과 해석 3단계",
         "desc": "상관분석이 관계를 하나의 값으로 요약한다면, 회귀분석은 관계를 y = a·x + b라는 수식으로 표현해 예측과 요인 해석까지 가능하게 한다. 전제는 독립변수와 종속변수의 관계가 직선(선형성)이라는 것 — 산점도로 먼저 확인하고, 만족하지 않으면 로그변환을 하거나 그 변수를 제거한다. 독립변수끼리 상관이 높으면(다중공선성) 중복 변수를 미리 걸러낸다.\n결과 해석은 3단계다. ① 적합성: 결정계수(Adj. R²)가 0.735라면 모형이 종속변수 변동의 73.5%를 설명한다. ② 모형 유의성: F검정의 p가 0.05 미만이면 회귀모형 자체가 유의하다. ③ 계수 유의성: 각 계수의 p값을 보고 유의하지 않은 변수는 제거한 뒤 회귀식을 다시 만든다."
+      },
+      {
+        "term": "개념적 정의와 조작적 정의 — 분석은 측정 가능한 문장에서 출발",
+        "desc": "개념적 정의는 알고 싶은 것을 추상적으로 서술한 문장이고(\"정상 범위를 벗어날수록 설비가 멈출 가능성이 높다\"), 조작적 정의는 그것을 실제로 측정·관찰할 수 있는 형태로 바꾼 것이다. 교재의 공정 센서 사례가 전형이다 — 정상 기간의 평균과 표준편차로 z값을 구해 '정상 범위 이탈 지수(0~4점 척도)'로 변환하는 순간, 막연한 가설이 계산 가능한 변수가 된다.\n조작적 정의가 서야 그다음 작업인 변수 정의, 분석 단위 설정(개인·가구·상품·기간 등), 척도화가 진행된다. 같은 전력 데이터라도 발전 계획에는 1시간 평균을, 실시간 수요 대응에는 순시 데이터를 쓰듯, 분석 단위는 비즈니스 목적이 결정한다."
+      },
+      {
+        "term": "분석 방법론 6단계 — 비즈니스 이해에서 시스템 적용까지",
+        "desc": "교재는 분석 프로젝트를 비즈니스 이해 → 가설 수립(데이터 이해) → 데이터 준비 → 분석 모델 정의 → 모델 평가 → 시스템 적용의 6단계로 체계화한다. 각 단계는 절차·방법·도구·산출물(데이터 정의서, 분석 결과서, 모델 평가서 등)로 정리되며, 분석 기법 선택이나 코딩은 이 흐름의 일부일 뿐이다.\n단계별 핵심 질문도 정해져 있다 — 데이터 준비에서는 이상치·결측치 처리와 파생변수 로직을, 모델 정의에서는 EDA로 확인한 분포·관계를 근거로 알고리즘 선정을, 모델 평가에서는 비즈니스 관점의 평가와 배포 후 모니터링(성능 저하·데이터 변화 감지) 계획까지 묻는다. 모델을 만들고 끝이 아니라 운영까지가 방법론의 범위다."
+      },
+      {
+        "term": "척도의 4수준 — 명목·순서·구간·비율",
+        "desc": "같은 숫자라도 측정 수준이 다르면 할 수 있는 연산이 다르다. 명목척도는 구분만 하는 기호(등번호, 성별=1/2), 순서척도는 순서까지 있는 값(1등·2등·3등, 등급), 구간척도는 간격이 산술적 의미를 갖지만 0이 '없음'이 아닌 값(온도 0도, 서기 0년), 비율척도는 절대영점이 있어 비율 비교까지 가능한 값(몸무게 0kg, 소요시간 0초)이다. 합격=1/불합격=0처럼 두 상태만 구분하면 이진척도다.\n척도는 분석 기법 선택의 열쇠다 — 독립·종속변수가 각각 범주형인지 연속형인지에 따라 교차분석, 판별분석, 상관분석, 회귀분석으로 갈라진다. 평균을 낼 수 있는 척도인지부터 확인하는 습관이 잘못된 통계량 계산을 막아 준다."
+      },
+      {
+        "term": "변수의 유형 — 독립·종속·매개·통제, 그리고 파생변수",
+        "desc": "원인이 되는 독립변수(X, Feature)와 결과가 되는 종속변수(Y, Target) 외에도 두 유형이 더 있다. 매개변수는 독립변수가 종속변수에 영향을 주는 경로의 중간에 끼는 변수(스마트폰 사용 시간 → 수면시간 → 학업성적)이고, 통제변수는 보려는 효과를 정확히 재기 위해 고정하는 변수(운동 시간과 체중 감소를 볼 때 식이조절 여부)다.\n파생변수는 원천 데이터를 조작적 정의에 따라 조합해 새로 만든 변수다 — 거래 데이터에서 '매출액 합계'를 만들거나, '구매 2건 이상이고 합계 500원 이상이면 A등급' 같은 규칙으로 '고객등급'을 만드는 식이다. 비즈니스 로직이 들어가므로 생성 규칙을 주석·문서로 남기는 것이 필수이고, 업무 담당자와의 협의가 품질을 좌우한다."
+      },
+      {
+        "term": "결측치·이상치 처리 — 지우기 전에 비즈니스 관점부터",
+        "desc": "결측치(NA) 처리는 크게 두 갈래다 — 분석에서 제외하거나, 0·평균·이동평균 같은 대표값·트렌드값으로 대체한다. 교재가 강조하는 순서는 기술이 아니라 판단이다: 제외해도 되는지 비즈니스 관점에서 반드시 검토하고, 어떤 항목을 어떻게 처리했는지 반드시 공유·기록하라. 어떤 방법을 써도 정보 손실과 왜곡 가능성은 남기 때문이다.\n이상치도 박스플롯 기준(IQR 1.5배)을 벗어났다고 기계적으로 지우면 안 된다. 분석 목적에 필요한 데이터인지 먼저 판단해야 하며, 이상거래 탐지(Fraud Detection) 같은 주제에서는 이상치가 삭제 대상이 아니라 바로 분석 대상이다. 이 경우 정상/비정상의 정의와 이상치 구분용 파생변수 설계가 먼저다."
+      },
+      {
+        "term": "데이터 변환 — Min-Max 정규화·로그변환·더미변수",
+        "desc": "Z변환 외에도 자주 쓰는 변환이 세 가지 있다. Min-Max 정규화는 (관측값-최소)/(최대-최소)로 모든 값을 0~1 구간에 넣어 스케일 차이를 제거한다. 로그·제곱근 변환은 소득이나 SNS 연결 수처럼 오른쪽 꼬리가 긴 분포를 대칭에 가깝게 펴서, 정규분포를 가정하는 기법(회귀분석, t-검정, ANOVA 등)을 쓸 수 있게 해 준다.\n연속형을 구간으로 자르는 이산형화(체중 49kg → '하' 그룹)와, 범주형을 0/1 컬럼으로 펴는 이항변수화(더미변수)도 변환의 일종이다. 이산형화는 구간 경계의 근거(분포, 변곡점)를 남겨야 하고, 더미변수는 범주 수보다 1개 적게 만들어야 한다 — 요일 7개면 더미 6개, 전부 만들면 완전한 중복이 생기는 Dummy Trap에 빠진다."
+      },
+      {
+        "term": "로지스틱 회귀 — 확률로 답하는 회귀",
+        "desc": "시험 점수로 합격 '가능성'을 선형회귀로 예측하면 10점에서 -20%, 110점에서 120% 같은 불가능한 값이 나온다. 로지스틱 회귀는 S자 모양의 시그모이드 곡선으로 출력을 0~1 사이에 가둬, 결과를 확률로 해석할 수 있게 만든 회귀다. 종속변수가 연속형이면 선형회귀, 합격/불합격·정상/이상거래처럼 범주형(명목형)이면 로지스틱 회귀 — 이것이 두 기법을 가르는 기준이다.\n종속변수 값이 2개면 이항 로지스틱(대출 가능/불가), 3개 이상이면 다항 로지스틱(승인/거절/보류)으로 나뉜다. 교재의 예시처럼 개인 신용도와 사용금액으로 이상거래 여부를 예측하는 문제가 전형적인 활용이며, 담당 과목의 분류(Classification) 모델로 이어지는 다리 역할을 한다."
       }
     ],
     "examples": [
@@ -142,6 +264,30 @@ export const otherDeep = {
         "lang": "python",
         "code": "import pandas as pd                           # 데이터프레임\nimport statsmodels.api as sm                  # 회귀분석 라이브러리\n\n# 교재 사례: 쿠폰배포매수(x1)·판매가격(x2) 중 무엇이 구매고객수(y)를 움직이나?\ndf = pd.DataFrame({                           # 매장별 마케팅 실적 데이터\n    'coupon': [500, 700, 900, 1100, 1300, 1500, 1700],    # 쿠폰 배포 매수(장)\n    'price':  [3000, 2800, 3200, 2900, 3100, 2700, 3000], # 판매 가격(원)\n    'buyers': [330, 355, 372, 400, 419, 442, 460],        # 구매 고객 수(명)\n})                                            # 실습에서는 CSV를 읽어 사용\nX = sm.add_constant(df[['coupon', 'price']])  # 절편(상수항)을 명시적으로 추가\nmodel = sm.OLS(df['buyers'], X).fit()         # 최소제곱법(OLS)으로 회귀식 적합\nprint(model.summary())                        # 계수·p값·결정계수 결과표 출력\n\n# 해석 3단계 (교재의 순서 그대로)\n# 1) 적합성: Adj. R-squared 0.735라면 모형이 변동의 73.5%를 설명\n# 2) 모형 유의성: F검정 p < 0.05 → 회귀모형 자체가 유의\n# 3) 계수 유의성: coupon p < 0.05 → 유의 / price p = 0.81 → 유의하지 않음\n\nX2 = sm.add_constant(df[['coupon']])          # 유의하지 않은 판매가격을 제거하고\nmodel2 = sm.OLS(df['buyers'], X2).fit()       # 회귀식을 다시 적합한다\nprint(model2.params)                          # 예: buyers = 0.108 x coupon + 282.9\n# 해석: 쿠폰을 1장 더 배포하면 구매고객이 약 0.1명 늘어난다는 뜻",
         "note": "교재 3-(6) 회귀분석의 마케팅 사례를 파이썬으로 재현했다. 결정계수로 설명력을, F검정으로 모형 전체를, 계수별 p값으로 개별 변수를 검증하는 3단계가 해석의 정석이며, 유의하지 않은 변수(판매가격 p=0.81)는 빼고 다시 적합하는 것까지가 한 사이클이다. 이 감각은 담당 과목의 피처 선택·모델 평가로 그대로 이어진다."
+      },
+      {
+        "title": "정규분포로 상위 몇 %인지 계산하기 — 표준화 Z의 활용",
+        "lang": "python",
+        "code": "from scipy import stats                       # 정규분포 확률 계산 함수 모음\n\n# 문제: 평균 600점, 표준편차 150점인 시험에서 800점은 상위 몇 %인가?\nmu = 600                                      # 전체 평균\nsigma = 150                                   # 표준편차(1걸음의 크기)\nscore = 800                                   # 내 점수\n\nz = (score - mu) / sigma                      # 표준화: 평균에서 몇 걸음 떨어졌나\nprint(round(z, 2))                            # 1.33 (표준편차 1.33배 위)\n\nbelow = stats.norm.cdf(z)                     # z 이하일 확률(누적분포) = 0.9082\nabove = 1 - below                             # 나보다 높은 비율 = 상위 비율\nprint(round(above * 100, 2))                  # 9.18 → 상위 약 9.2% 수준\n\n# 정규분포의 기본 감각: 1시그마 안에 약 68%, 2시그마 안에 약 95%\np1 = stats.norm.cdf(1) - stats.norm.cdf(-1)   # 평균 좌우 1시그마 구간 확률\np2 = stats.norm.cdf(2) - stats.norm.cdf(-2)   # 평균 좌우 2시그마 구간 확률\nprint(round(p1, 4), round(p2, 4))             # 0.6827 0.9545\n\n# 응용: N(30, 4의 제곱)에서 값이 22~42 사이일 확률은?\np = stats.norm.cdf(42, 30, 4) - stats.norm.cdf(22, 30, 4)  # 구간 확률 = 큰쪽 누적 - 작은쪽 누적\nprint(round(p, 4))                            # 0.9759 (z=2 구간 0.4772 + z=3 구간 0.4987)",
+        "note": "교재 확률분포 단원의 연습문제 두 개(TOEIC 800점 상위 %, N(30,4^2) 구간 확률)를 코드로 재현했다. 표준정규분포표를 손으로 찾는 대신 stats.norm.cdf 하나면 되지만, 원리는 같다 — 표준편차를 '걸음 수'로 삼아 내 값이 분포 어디쯤인지 확률로 말하는 것. 이 감각이 뒤의 이상 탐지(정상 범위 이탈 지수)로 그대로 이어진다."
+      },
+      {
+        "title": "데이터 변환 3종 비교 — Z변환·Min-Max·로그변환",
+        "lang": "python",
+        "code": "import numpy as np                            # 수치 계산 라이브러리\n\n# 질문: A집단(평균 10, 표준편차 3)의 19점과 B집단(평균 2, 표준편차 1)의 3점, 누가 더 대단한가?\nza = (19 - 10) / 3                            # A집단 Z점수 = 3.0 (평균에서 3시그마 위)\nzb = (3 - 2) / 1                              # B집단 Z점수 = 1.0 (1시그마 위)\nprint(za, zb)                                 # 단위·분포가 달라도 Z로 바꾸면 비교 가능\n\n# Min-Max 정규화: 모든 값을 0~1 구간으로 변환\ny1 = (45 - 10) / (50 - 10)                    # min 10, max 50인 집단의 45 → 0.875\ny2 = (200 - 100) / (1000 - 100)               # min 100, max 1000인 집단의 200 → 0.111\nprint(y1, round(y2, 3))                       # 스케일이 달라도 같은 0~1 잣대로 비교\n\n# 로그변환: 오른쪽 꼬리가 긴 분포를 대칭에 가깝게 편다\nx = np.array([10, 100, 1000])                 # 10배씩 벌어진 치우친 값들\nprint(np.log10(x))                            # [1. 2. 3.] — 간격이 고르게 펴짐\nprint(np.sqrt(x).round(1))                    # [3.2 10. 31.6] — 제곱근 변환도 대안\n\n# 선택 기준 정리\n# 집단 간 비교, 모형 입력의 스케일 통일 → Z변환\n# 0~1 고정 범위가 필요할 때(신경망 입력 등) → Min-Max\n# 소득처럼 오른쪽으로 치우친 분포 교정 → 로그/제곱근 변환",
+        "note": "교재 데이터 변환 단원의 숫자를 그대로 썼다(A집단 19점의 z=3, Min-Max 0.875와 0.111, 로그변환 10/100/1000 → 1/2/3). 변환의 공통 목적은 하나 — 단위와 분포가 다른 데이터를 같은 잣대에 올려 비교·학습 가능하게 만드는 것이다. 특히 로그변환은 정규분포 가정을 쓰는 회귀·t-검정 전에 자주 필요하다."
+      },
+      {
+        "title": "결측치·이상치 전처리 — 평균 대체, 이동평균 대체, IQR 필터",
+        "lang": "python",
+        "code": "import pandas as pd                           # 표 데이터 처리\nimport numpy as np                            # NaN(결측) 표현용\n\n# 일별 판매량 7일치에 결측 2건이 섞여 있다고 가정\ns = pd.Series([120, 130, np.nan, 128, 140, np.nan, 300],          # 판매량 데이터\n              index=pd.date_range('2026-07-01', periods=7))        # 날짜 인덱스\nprint(s.isna().sum())                         # 결측 개수 확인: 2건\n\ndropped = s.dropna()                          # 방법 1: 분석 제외 — 빼도 되는지 비즈니스 검토 먼저\nfill_mean = s.fillna(s.mean())                # 방법 2: 대표값(평균)으로 대체\nfill_ma = s.fillna(s.rolling(3, min_periods=1).mean())  # 방법 3: 이동평균 — 시계열 흐름을 반영한 대체\nprint(fill_ma.round(1))                       # 대체 결과 확인\n\n# 이상치: IQR 기준으로 '후보'를 찾고, 삭제는 비즈니스 판단 후에\nq1, q3 = s.quantile(0.25), s.quantile(0.75)   # 1사분위수, 3사분위수\niqr = q3 - q1                                 # 가운데 50%가 퍼진 폭\noutlier = s[(s < q1 - 1.5 * iqr) | (s > q3 + 1.5 * iqr)]  # 상하한 기준 밖 값\nprint(outlier)                                # 300이 후보 — 프로모션 날 매출이면 지우면 안 된다\n\n# 마지막 규칙: 무엇을 왜 어떻게 처리했는지 반드시 기록·공유한다\n# (어떤 방법을 써도 정보 손실과 왜곡 가능성은 남기 때문)",
+        "note": "교재 Preprocessing 단원의 두 원칙을 코드로 옮겼다 — 결측치는 '제외 vs 대체(0·평균·이동평균)' 중 비즈니스 검토를 거쳐 고르고, 이상치는 IQR로 탐지하되 삭제 여부는 분석 목적으로 판단한다. 이상거래 탐지 주제라면 이상치가 오히려 분석 대상이라는 점, 처리 내역을 문서로 남기라는 당부까지가 교재의 핵심이다."
+      },
+      {
+        "title": "로지스틱 회귀 — 시험 점수로 합격 확률 예측하기",
+        "lang": "python",
+        "code": "import numpy as np                            # 수치 계산\nfrom sklearn.linear_model import LogisticRegression  # 로지스틱 회귀 모델\n\n# 학습 데이터: 시험 점수(x)와 합격 여부(y: 1=합격, 0=불합격)\nx = np.array([[35], [42], [50], [55], [62], [70], [78], [85], [90]])  # 점수 9명\ny = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1])     # 60점 근처에서 합격이 갈린다\n\nmodel = LogisticRegression()                  # S자(시그모이드) 곡선을 적합하는 모델\nmodel.fit(x, y)                               # 학습: 점수와 합격의 경계를 찾는다\n\nnew = np.array([[10], [58], [65], [110]])     # 새로 예측할 점수 4명\nprob = model.predict_proba(new)[:, 1]         # 합격(클래스 1)일 확률만 추출\nprint(prob.round(3))                          # 항상 0~1 사이 확률로만 나온다\n\n# 만약 선형회귀로 풀었다면?\n# 10점 → 합격 가능성 -20%, 110점 → 120% 같은 불가능한 값이 나온다\n# 로지스틱 회귀는 시그모이드로 출력을 0~1에 가두므로\n# '합격 가능성 몇 %'라는 현실적인 답을 준다\n\npred = model.predict(new)                     # 확률 0.5를 기준으로 0/1 분류\nprint(pred)                                   # [0 0 1 1] — 58점 불합격, 65점 합격 예측",
+        "note": "교재 로지스틱 회귀 단원의 도입 예제(시험 점수로 대학 합격 예측, 선형회귀의 -20%·120% 문제)를 sklearn으로 구현했다. 핵심은 종속변수가 범주형일 때는 값이 아니라 확률을 예측한다는 관점 전환이고, 값이 2개면 이항·3개 이상이면 다항 로지스틱으로 확장된다. 신용도·사용금액으로 이상거래를 가르는 교재의 실무 예시도 구조가 같다."
       }
     ]
   },
@@ -170,6 +316,30 @@ export const otherDeep = {
       {
         "term": "REST 상태코드를 ResponseEntity로 직접 말하기",
         "desc": "그냥 객체를 반환하면 늘 200 OK지만, ResponseEntity를 쓰면 의미가 정확한 상태코드를 고를 수 있다. 생성 성공은 201 Created(+ 생성된 id 포함), 삭제 성공은 본문 없는 204 No Content가 REST 표준이고, 잘못된 입력은 400 Bad Request, 인증 실패는 401 Unauthorized, ID 중복 같은 충돌은 409 Conflict로 알린다. 참고로 @RestController의 반환 객체가 JSON이 되는 것은 spring-boot-starter-web에 포함된 Jackson이 자동 직렬화해 주기 때문이다."
+      },
+      {
+        "term": "== vs equals() — 주소 비교와 내용 비교",
+        "desc": "==는 두 변수가 같은 객체(메모리 주소)를 가리키는지 보고, equals()는 담긴 내용이 같은지 본다. 그래서 문자열 비교, 특히 비밀번호 검증은 반드시 equals()를 써야 하며 ==를 쓰면 내용이 같아도 false가 나올 수 있다. 다만 equals()로 평문 비밀번호를 비교하는 것 자체가 타이밍 공격에 취약하다는 것이 Day1의 결론이고, 그래서 Day2에서 BCrypt.checkpw()로 발전시킨다."
+      },
+      {
+        "term": "BCrypt — Salt와 Work Factor가 있는 단방향 해시",
+        "desc": "BCrypt는 복호화가 불가능한 단방향 해시로 비밀번호를 저장하는 실무 표준이다. SHA-256과 달리 Salt가 자동 포함되어 같은 비밀번호도 매번 다른 해시가 나와 레인보우 테이블 공격을 막고, Work Factor로 해시 속도를 일부러 느리게 만들어(10이면 2의 10제곱 = 1024회 반복) 무차별 대입을 방어한다. 해시 문자열 $2a$10$... 안에 버전·Work Factor·Salt·해시값이 모두 들어 있어 검증은 checkpw() 한 번이면 된다."
+      },
+      {
+        "term": "JWT — Header.Payload.Signature 토큰 인증",
+        "desc": "JWT는 Header.Payload.Signature 세 파트를 Base64로 이어 붙인 토큰으로, Payload에 사용자 id 같은 정보와 만료 시간(exp)을 담고 Signature 서명으로 위변조를 막는다. 세션 방식은 서버가 로그인 상태를 기억해야 해서 서버 부하와 수평 확장 문제가 생기지만, JWT는 서버에 상태가 없어(Stateless) MSA·분산 환경에 적합하다. 로그인 흐름은 입력 비밀번호를 checkpw()로 검증하고 통과하면 JWT를 발급해 반환하는 것이다."
+      },
+      {
+        "term": "SOLID 5원칙 — 인증 서버로 배우는 객체지향 설계",
+        "desc": "SRP(단일 책임)는 main() 하나가 입력·암호화·토큰·검증을 다 하던 코드를 User·PasswordEncoder·TokenProvider·AuthService로 나누는 것이고, OCP(개방-폐쇄)는 카카오 로그인을 추가할 때 기존 코드를 고치지 않고 구현체만 새로 만드는 것이다. LSP는 자식 클래스가 부모 자리를 완전히 대체할 수 있어야 한다는 것, ISP는 큰 인터페이스 하나보다 작은 인터페이스 여럿이 낫다는 것이다. DIP(의존 역전)는 구현체가 아닌 인터페이스 타입으로 선언하라는 원칙으로, Spring의 DI가 바로 이 원칙의 실천이다."
+      },
+      {
+        "term": "인증 vs 인가, Spring Security 필터 체인",
+        "desc": "인증(Authentication)은 당신이 누구인지 확인하는 것(JWT 토큰 검증), 인가(Authorization)는 무엇을 할 수 있는지 결정하는 것(게시글 수정은 작성자만, 관리자 API는 ADMIN만)이다. Spring Security는 필터 체인이 Controller 앞에서 모든 요청을 가로채 JWT를 검증하고, 실패하면 Controller에 들어가 보지도 못하고 401이 자동 반환된다. 커스텀 필터는 요청당 정확히 1회 실행이 보장되는 OncePerRequestFilter를 상속해 만들고, 검증된 사용자 정보는 SecurityContext에 저장한다."
+      },
+      {
+        "term": "Spring Profile 환경 분리와 JAR 배포",
+        "desc": "application-dev.yml(H2 인메모리, SQL 로그 출력)과 application-prod.yml(MariaDB, 테이블 유지)로 설정을 나누면 실행 시 --spring.profiles.active 옵션만 바꿔 개발·운영 환경을 오간다. H2에서 MariaDB로 DB를 교체해도 JPA가 추상화해 주므로 Controller·Service·Repository 코드는 한 줄도 안 바뀐다. ./gradlew build로 JAR 하나로 패키징하면 내장 톰캣 덕분에 java -jar만으로 단독 실행된다 — bootRun은 개발용, java -jar는 배포·운영용이다."
       }
     ],
     "examples": [
@@ -190,6 +360,24 @@ export const otherDeep = {
         "lang": "java",
         "code": "// AuthService.java — 인터페이스는 계약: 구현이 바뀌어도 호출자는 그대로\npublic interface AuthService {\n    void register(String id, String pw);  // 무엇을 하는지만 선언, 어떻게는 구현체 몫\n    String login(String id, String pw);   // 성공 시 토큰 문자열 반환\n}\n\n// AuthException.java — RuntimeException을 상속한 커스텀 예외의 뿌리\nclass AuthException extends RuntimeException {\n    public AuthException(String msg) { super(msg); }  // 메시지를 부모 생성자에 전달\n}\nclass DuplicateIdException extends AuthException {    // 상황별로 세분화한 자식 예외\n    public DuplicateIdException() { super(\"이미 존재하는 ID\"); }\n}\n\n// MemoryAuthService.java — Day2 구현체: HashMap 메모리 저장\npublic class MemoryAuthService implements AuthService {\n    private final Map<String, String> store = new HashMap<>();  // id → BCrypt 해시\n    public void register(String id, String pw) {\n        if (store.containsKey(id)) throw new DuplicateIdException();  // 중복은 예외로 거절\n        store.put(id, BCrypt.hashpw(pw, BCrypt.gensalt()));  // 평문 대신 해시를 저장\n    }\n    public String login(String id, String pw) {\n        if (!store.containsKey(id)) throw new AuthException(\"없는 ID\");   // 존재 확인\n        if (!BCrypt.checkpw(pw, store.get(id))) throw new AuthException(\"비밀번호 불일치\");\n        return Jwt.issue(id);             // 검증 통과 시 JWT 발급\n    }\n}\n// Day4 — 저장소를 JpaAuthService로 교체해도, AuthService 타입으로 선언한\n// 호출 코드는 한 줄도 바뀌지 않는다. 다형성의 실전 가치가 여기서 드러난다.",
         "note": "교재가 Day2→Day4 내내 반복 강조하는 설계다. HashMap(오늘) ↔ JPA(Day4) 교체가 가능한 이유는 호출부가 구현체가 아닌 AuthService 인터페이스 타입으로 선언됐기 때문(DIP). 커스텀 예외는 RuntimeException 상속으로 만들고, if-return 대신 예외로 흐름을 끊어 오류 처리를 한곳에 모은다."
+      },
+      {
+        "title": "PasswordEncoder + TokenProvider — 순수 Java로 BCrypt·JWT 구현",
+        "lang": "java",
+        "code": "// PasswordEncoder.java — 비밀번호 암호화·검증만 책임지는 클래스(SRP)\npublic class PasswordEncoder {\n    // 평문을 BCrypt 해시로 변환한다 (복호화 불가능한 단방향)\n    public String encode(String raw) {\n        // gensalt(12): Work Factor 12 — 기본 10보다 반복이 많아 더 안전\n        return BCrypt.hashpw(raw, BCrypt.gensalt(12));\n    }\n    // 입력 평문과 저장된 해시를 비교한다 — equals() 비교 금지\n    public boolean matches(String raw, String hash) {\n        // Salt가 해시 문자열 안에 있어 checkpw가 알아서 꺼내 검증한다\n        return BCrypt.checkpw(raw, hash);\n    }\n}\n\n// TokenProvider.java — 로그인 성공자에게 JWT를 발급하는 클래스\npublic class TokenProvider {\n    // 서명용 비밀키 — 32자 이상이어야 HMAC 서명이 가능하다\n    private final String SECRET = \"day2-secret-must-be-at-least-32-chars\";\n    // 토큰 유효 시간 30분(밀리초 단위)\n    private final long EXP = 1800000L;\n    // 사용자 id를 담은 토큰을 발급한다\n    public String generate(String userId) {\n        return Jwts.builder()                    // 빌더 패턴으로 토큰 조립 시작\n                .setSubject(userId)              // Payload에 사용자 식별자 저장\n                .setExpiration(new Date(System.currentTimeMillis() + EXP)) // 만료 시각(exp)\n                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))  // 서명 — 위변조 방지\n                .compact();                      // Header.Payload.Signature 문자열 완성\n    }\n}",
+        "note": "교재 Day2 인증 서버 실습의 두 핵심 클래스다. Day1의 평문 저장 + equals() 비교가 왜 위험한지 체감한 뒤, 저장은 hashpw()·검증은 checkpw()·인증 유지 상태는 JWT로 바꾸는 것이 Day2의 전부다. 실무에서는 Spring Security가 제공하는 BCryptPasswordEncoder를 쓰지만 원리는 이 코드와 동일하다."
+      },
+      {
+        "title": "SecurityConfig + JwtAuthFilter — 모든 요청을 지키는 문지기 세우기",
+        "lang": "java",
+        "code": "// SecurityConfig.java — 전체 인증 정책을 한곳에서 선언한다\n@Configuration @EnableWebSecurity @RequiredArgsConstructor\npublic class SecurityConfig {\n    private final JwtAuthFilter jwtAuthFilter;   // 아래에서 만드는 JWT 검증 필터\n\n    @Bean  // 필터 체인 규칙을 Bean으로 등록\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        return http\n            // REST API는 JWT가 보호를 맡으므로 CSRF 방어는 끈다\n            .csrf(csrf -> csrf.disable())\n            // 세션을 아예 만들지 않는다 — 요청마다 JWT로 인증(Stateless)\n            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))\n            .authorizeHttpRequests(auth -> auth\n                // 로그인·회원가입은 토큰이 없어도 접근 허용\n                .requestMatchers(\"/api/auth/**\").permitAll()\n                // 그 외 모든 요청은 유효한 JWT 필수\n                .anyRequest().authenticated())\n            // 기본 인증 필터보다 앞에 내 JWT 필터를 배치한다\n            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)\n            .build();                            // 설정 완성\n    }\n}\n\n// JwtAuthFilter.java — 요청당 정확히 1회 실행되는 커스텀 필터\npublic class JwtAuthFilter extends OncePerRequestFilter {\n    // 처리 순서: ① Authorization 헤더에서 \"Bearer \" 뒤 토큰 추출\n    // ② TokenProvider.validate()로 만료·서명 검증\n    // ③ Payload의 subject(userId)를 꺼내 SecurityContext에 인증 정보 등록\n    // 검증 실패 시 예외 발생 → 401 자동 반환, Controller에는 진입조차 못 한다\n}",
+        "note": "교재 Day5의 SecurityConfig 전체 코드와 JWT 필터 처리 흐름 5단계를 압축했다. Day4까지는 JWT 없이도 /api/posts에 접근됐지만, 이 필터를 씌우면 토큰 없이는 401 자동 차단 — 인증 로직을 Controller마다 쓰지 않고 한곳에서 관리하는 것이 Spring Security의 가치다. Controller에서는 @AuthenticationPrincipal로 인증된 사용자 id를 꺼내 쓴다."
+      },
+      {
+        "title": "JAR 빌드와 프로파일 배포 — 개발 서버에서 운영 서버로",
+        "lang": "bash",
+        "code": "# 1) 전체 빌드: 테스트 실행 후 실행 가능한 JAR 하나로 패키징\n./gradlew clean build\n# 2) 산출물 확인: build/libs 폴더에 JAR가 생겼는지 본다\nls build/libs/\n# 3) 개발 프로파일로 실행: H2 인메모리 DB + SQL 로그 출력(dev)\njava -jar build/libs/app-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev\n# 4) 운영 프로파일로 실행: MariaDB 접속 + 테이블 유지(prod)\n#    DB가 바뀌어도 소스코드는 한 줄도 안 바뀐다 (JPA 추상화)\njava -jar build/libs/app-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod\n# 5) 보안 검증: 토큰 없이 보호된 API 접근 → 401이 나와야 정상\ncurl -i http://localhost:8080/api/posts\n# 6) 로그인으로 받은 JWT를 헤더에 실으면 → 200 성공\ncurl -i -H \"Authorization: Bearer eyJhbG...\" http://localhost:8080/api/posts\n# 참고: 개발 중에는 ./gradlew bootRun (코드 수정 즉시 반영)\n# 배포·운영은 java -jar (내장 톰캣 포함, 의존성 없는 단독 실행)",
+        "note": "교재 Day5 종합 실습의 빌드-배포-검증 흐름 그대로다. Spring Boot는 내장 톰캣을 JAR 안에 품고 있어 서버 설치 없이 java -jar 한 줄로 서비스가 뜬다는 것이 핵심. 401(토큰 없음)과 200(토큰 있음)을 직접 확인하는 것까지가 5일 과정의 완성 조건이다."
       }
     ]
   },
@@ -218,6 +406,30 @@ export const otherDeep = {
       {
         "term": "동기(REST) vs 비동기(Kafka) — 통신 방식 선택 기준",
         "desc": "즉시 응답이 필요한 요청-응답 관계면 REST 동기 호출을, 서비스 간 느슨한 결합과 이벤트 전파가 목적이면 Kafka 비동기를 쓴다. Kafka는 Producer가 Topic에 이벤트를 발행하면 Consumer들이 구독해 가져가는 구조라, 발행자는 누가 받는지 몰라도 된다 — 주문 상태 변경 이벤트를 알림·통계 서비스가 각자 구독하는 식이다. 모의 프로젝트에서는 로그인 검증(즉시 응답 필요)은 REST, 상태 변경 전파는 Kafka로 나눠 체험한다."
+      },
+      {
+        "term": "스크럼 3역할 — PO·SM·Dev의 책임 분담",
+        "desc": "Product Owner는 제품 백로그를 소유하고 우선순위와 ROI를 책임지는 사람, Scrum Master는 프로세스를 촉진하고 장애물을 제거하며 팀을 보호하고 타임박스를 관리하는 사람, Development Team은 기능을 설계·구현·테스트해 Increment를 완성하는 사람들이다. PO가 다른 업무와 겸직하면 의사결정이 지연되는 병목이 생기므로 전담 배치가 원칙이다. 모의 프로젝트에서는 역할을 고정하지 말고 다음 Sprint에서 다른 역할을 경험해 보는 것을 권장한다."
+      },
+      {
+        "term": "Definition of Done vs 인수 기준(Acceptance Criteria)",
+        "desc": "Definition of Done(완료의 정의)은 Increment가 완료로 인정받기 위한 팀 공통 기준으로, 실습이든 실무든 Sprint 시작 전에 팀이 합의해야 한다. 인수 기준은 개별 User Story 하나가 끝났는지 검증하는 조건 명세로 Given-When-Then 형태로 적는다. 같은 '로그인 스토리'라도 DoD가 얼마나 구체적이냐에 따라 Task 분할 결과가 완전히 달라진다는 것을 교재는 웹 에디터 예시로 보여 준다."
+      },
+      {
+        "term": "Agile 도입 5단계와 실패 패턴",
+        "desc": "도입 순서는 현황 진단 → 파일럿팀 선정(자발적 1~2개 소규모 팀) → Sprint 0 준비(백로그 초안·DoD 합의·역할 지정) → 첫 Sprint 실행(1~2주, Retro로 즉시 보정) → 확산·정착이며, 처음부터 전사 적용을 시도하지 않는 것이 핵심 원칙이다. 대표 실패 패턴은 Sprint라는 이름만 쓰는 무늬만 Agile, PO 겸직 병목, 회고 없는 반복, Waterfall식 문서화 병행, Sprint Board 없는 진행상황 미가시화 — 각각 목적에 맞는 이벤트 운영, PO 전담, Retro 액션의 다음 Sprint 반영, 대화·시각화 중심 전환, Board·Burndown 매일 갱신으로 대응한다."
+      },
+      {
+        "term": "Release Planning — 백로그에서 출시 로드맵으로",
+        "desc": "릴리즈 계획은 백로그 우선순위에 기반해 제품 출시 계획과 Sprint 일정을 세우는 활동으로, 비즈니스 우선순위 정의 → Release별 Epic 배치(Roadmap) → Sprint 일정 수립 순서로 진행한다. 우선순위는 고객 관점의 MoSCoW 기법이나 사용자 행동 순서·빈도를 따지는 User 행동 기법으로 정하고, Sprint 주기는 2~4주 사이에서 전체 기간과 출시 계획을 고려해 결정한다. 화물 운송 서비스라면 차주 등록 기능을 1차 오픈에, 화주 주문·예약을 2차 오픈에 배치하는 식이다."
+      },
+      {
+        "term": "SOLID 리팩토링으로 모놀리스를 MSA로 쪼개기",
+        "desc": "LoginService 클래스 하나가 입력 검증·비밀번호 확인·세션 생성·로그 기록을 모두 담당하면 인증 로직만 떼어 다른 서비스로 옮길 수 없다. SRP로 CredentialValidator·SessionManager·AuthLogger로 책임을 나누고, OCP로 인증 방식(비밀번호/OAuth) 추가 시 기존 코드 수정 없이 확장하며, DIP로 UserRepository 인터페이스에 의존하게 바꾼다. 이렇게 분리된 컴포넌트가 각각 인증서버 내부 로직·OAuth 모듈·Kafka 이벤트 발행으로 이관된다 — 이 매핑표가 그대로 Sprint 1의 Product Backlog가 된다."
+      },
+      {
+        "term": "Circuit Breaker와 Anti-corruption Layer",
+        "desc": "MSA는 서비스 간 통신이 많아져 한 서비스의 장애가 연쇄적으로 번질 수 있는데, Circuit Breaker는 오류가 반복되는 서비스로 가는 호출을 차단(사용 불가 전환)해 장애 전파를 막고 fallback 함수로 대체 응답을 주며 대시보드로 상태를 모니터링한다. Anti-corruption Layer는 서비스끼리 데이터 모델을 공유하지 않고 API 결과만 받아 자기 서비스 쪽에서 가공하는 방식이다. 서비스별 중복 코드·중복 데이터가 생기는 것을 감수하는 대신, 각 서비스가 서로 영향 없이 독립적으로 개발할 수 있게 된다."
       }
     ],
     "examples": [
@@ -232,6 +444,24 @@ export const otherDeep = {
         "lang": "text",
         "code": "[요청 흐름] Client가 보낸 요청 하나가 지나가는 길\n  1. Client ---> API Gateway        : 모든 요청의 단일 진입점\n  2. Gateway ---> Eureka 조회        : 대상 서비스의 위치를 찾아 라우팅\n  3. 인증 필요 시 ---> 인증서버(Auth)  : JWT 토큰 검증\n  4. 비즈니스 서비스 처리 후 ---> Kafka : 상태 변경 이벤트 발행,\n                                       다른 서비스들이 비동기로 구독\n\n[컴포넌트 x 통신 방식]\n  인증서버 Auth : 로그인 처리, JWT 발급·검증        - REST 동기\n  Eureka        : 서비스 등록·위치 탐색(Discovery)   - 등록/조회\n  API Gateway   : 진입점, 라우팅·인증 필터           - REST 동기\n  Kafka         : 이벤트 기반 서비스 간 통신          - Producer/Consumer, Topic\n\n[Sprint Board] 팀 진행 상황을 매일 가시화\n  To Do              In Progress        Done\n  Kafka Topic 설정    로그인 API 구현     Gateway 라우팅 설정\n  단위 테스트 작성    JWT 토큰 로직\n\n[Daily Scrum 한마디 — 15분, 보드 앞에서]\n  \"어제 Gateway 라우팅 설정을 완료해서 Done으로 옮겼습니다.\n   오늘은 로그인 API 구현을 시작하는데, JWT 라이브러리 버전\n   확인이 필요해서 In Progress에 유지하겠습니다.\"\n  * 장애물은 여기서 발견만, 해결 논의는 스크럼 종료 후 별도로",
         "note": "교재 Day2 모의 프로젝트의 아키텍처와 운영 시나리오다. Day1에서 작성한 User Story가 그대로 컴포넌트에 매핑된다 — \"로그인하고 싶다\"는 인증서버, \"다른 서비스를 찾고 싶다\"는 Eureka, \"주문 상태를 실시간으로 알고 싶다\"는 Kafka 구현으로 이어진다. 계획(Story)과 실행(보드)이 한 몸이 되는 것이 이 과목의 핵심 체험이다."
+      },
+      {
+        "title": "우리 팀 Agile 전환 체크리스트 — Sprint 0 전후로 점검",
+        "lang": "text",
+        "code": "[Sprint 0 이전 — 시작할 준비가 됐는가]\n  [ ] PO / SM / Dev 역할을 명확히 확정했는가?\n  [ ] Definition of Done 초안을 팀과 합의했는가?\n  [ ] Product Backlog에 최소 10~15개 항목을 확보했는가?\n\n[Sprint 0 — 첫 Sprint를 설계했는가]\n  [ ] Sprint 목표(Goal)를 한 문장으로 정의했는가?\n  [ ] Sprint Backlog를 Task 단위로 구성했는가?\n  [ ] Sprint Board(물리 또는 디지털)를 셋업했는가?\n\n[첫 Sprint 종료 후 — 개선 고리가 돌아가는가]\n  [ ] Retrospective를 진행하고 액션 아이템을 도출했는가?\n  [ ] Velocity(팀 처리량) 기록을 시작했는가?\n  [ ] 도출된 개선사항을 다음 Sprint 계획에 반영했는가?\n\n[함께 보는 실패 패턴 -> 대응]\n  무늬만 Agile(이름만 Sprint)  -> 이벤트를 형식이 아닌 목적대로 운영\n  PO 겸직 병목                 -> PO 전담 배치 또는 권한 팀 위임\n  회고 없는 반복               -> Retro 액션을 다음 Sprint에 반드시 반영\n  과도한 문서화 병행           -> 꼭 필요한 산출물만, 대화·시각화 중심\n  진행상황 미가시화            -> Board·Burndown Chart로 매일 가시화",
+        "note": "교재 Day 1의 'Agile 전환 체크리스트'와 '흔한 문제 상황과 대응' 표를 한 장으로 합쳤다. 처음부터 전사 적용하지 않고 파일럿 팀에서 검증 후 확산한다는 5단계 로드맵의 실행 도구이며, 팀 프로젝트 시작 전에 이 체크리스트를 그대로 돌려 보면 Sprint 0에서 무엇이 빠졌는지 바로 드러난다."
+      },
+      {
+        "title": "수강신청 MSA — Sprint 1~3 실행과 Review·갭 분석·KPT",
+        "lang": "text",
+        "code": "[Sprint별 목표와 대표 Task (Story Point)]\n  Sprint 1  인증서버(OAuth) 구축\n    기존 로그인 로직 분석(3) / SOLID 리팩토링(5)\n    Spring Boot 이관(3) / OAuth 서버 설정(5) / Gateway 라우팅(3)\n  Sprint 2  Eureka 서비스 디스커버리 연동\n    Eureka Server 구축(3) / 각 서비스 Client 등록(3)\n    서비스명 기반 동적 라우팅(3) / 서비스 간 REST 호출(5)\n  Sprint 3  Kafka 이벤트 연동\n    course-applied Topic 생성(2) / Producer 구현(3)\n    알림 서비스 Consumer 구현(3) / End-to-End 통합 테스트(3)\n\n[Sprint Review — 계획 대비 실행 갭 분석]\n  계획 항목            실행 결과    차이 원인\n  인증/로그인 API      완료         SOLID 리팩토링에 예상보다 시간 소요\n  Eureka 연동          완료         계획대로 진행\n  Kafka 발행/구독      부분 완료    장애 대응 로직은 다음 Sprint로 이월\n\n[Retrospective — Keep / Problem / Try]\n  Keep    : Sprint로 나누니 Kafka 같은 낯선 기술도 부담 없이 접근\n  Problem : Story Point 추정이 실제 난이도보다 낮게 잡혔다\n  Try     : 낯선 기술은 Spike(사전 조사) Task를 별도 배정,\n            난이도 높은 Task는 Point를 보수적으로 추정",
+        "note": "교재 Day 2의 Sprint 1~3 Planning 표, 갭 분석 프레임워크, Retrospective 대본을 하나의 실행 기록으로 재구성했다. Review는 무엇을 완성했는지 보여주는 자리라 미완성 Task도 솔직히 공유하고 다음 계획에 반영하는 것이 규칙. 계획보다 오래 걸린 원인이 추정 오류인지 기술 난이도인지 구분하는 질문이 갭 분석의 핵심이다."
+      },
+      {
+        "title": "온라인 교육 플랫폼 — 요구사항에서 서비스 경계 도출까지",
+        "lang": "text",
+        "code": "[Step 1. 요구사항 분석 — 주체별 기능 나열]\n  수강생 : 회원가입, 로그인, 강의 검색, 수강신청, 결제, 추천 강의 조회\n  강사   : 회원가입, 로그인, 강의 등록\n  시스템 : 결제 완료 후 수강 활성화, 수강 완료 후 추천 갱신\n\n[Step 2. 도메인 분리 — 기능을 묶어 서비스 경계 도출]\n  서비스               스택         포트   묶인 기능              핵심 데이터\n  User Service         Spring Boot  8081   가입·로그인·JWT 인증   users\n  Course Service       Spring Boot  8082   강의 등록·목록·검색    courses\n  Enrollment Service   Spring Boot  8083   수강신청·상태 관리     enrollments\n  Payment Service      Spring Boot  8084   결제 처리·내역         payments\n  Recommend Service    FastAPI      8085   수강 이력 기반 추천    (조회 전용)\n\n[Step 3~4. 인프라·통신 설계 판단 기준]\n  즉시 응답이 필요한 요청-응답    -> REST 동기 (예: 로그인, 강의 검색)\n  상태 변경을 여럿에게 전파       -> Kafka 비동기 (예: 결제 완료 이벤트)\n  장애 전파 차단                  -> Circuit Breaker + fallback\n  모델 공유 금지                  -> API 결과만 받아 자기 쪽에서 가공(ACL)",
+        "note": "교재 Day 3(MSA를 이용한 웹 서비스 구축)의 Step 1~4를 압축한 설계 캔버스다. 서비스마다 스택과 포트가 달라도 되는 것(Recommend만 FastAPI)이 MSA의 기술 스택 자유이고, 기능을 묶는 기준은 도메인 경계와 데이터 소유권이다. 팀 프로젝트에서 어떤 기능을 몇 개의 서비스로 나눌지 정할 때 이 표 형식을 그대로 재사용하면 된다."
       }
     ]
   },
@@ -256,6 +486,26 @@ export const otherDeep = {
       {
         "term": "브리지 네트워크와 이름 통신",
         "desc": "Docker 가 컨테이너들을 위해 자동으로 깔아 주는 가상 도로망(bridge network)으로, 같은 네트워크 위의 컨테이너끼리는 IP 대신 컨테이너 이름을 주소처럼 써서 통신한다. compose 를 쓰면 이 네트워크가 자동으로 만들어지므로 DB_HOST=db 처럼 서비스 이름만 적어도 연결된다."
+      },
+      {
+        "term": "프로그램·프로세스, 이미지·컨테이너 — 같은 관계",
+        "desc": "프로그램은 디스크에 가만히 저장된 코드(악보), 프로세스는 CPU와 메모리를 쓰며 실제로 실행 중인 상태(연주)다. 이미지와 컨테이너가 정확히 같은 관계다 — 이미지는 실행되기 전의 저장된 설계도(붕어빵 틀), 컨테이너는 그 이미지로 실제 실행되고 있는 것(붕어빵). 틀 하나로 붕어빵을 여러 개 굽듯, 이미지 하나로 컨테이너를 여러 개 띄울 수 있다."
+      },
+      {
+        "term": "Bare-metal → VM → Container 진화",
+        "desc": "Bare-metal은 물리 서버에 프로그램을 직접 설치하는 방식이라 앱끼리 라이브러리가 충돌하고 서버 한 대가 죽으면 전부 멈춘다. VM은 Hypervisor 위에 Guest OS를 통째로 얹어 완전히 격리하지만, 원룸마다 부엌·화장실을 새로 짓는 것처럼 무겁고 느리다. 컨테이너는 OS 커널을 공유하면서 앱 실행에 필요한 코드·라이브러리·설정만 포장한다 — 가상 컴퓨터가 아니라 살짝 눈가림된 프로세스라서 VM보다 훨씬 가볍고 순식간에 뜬다."
+      },
+      {
+        "term": "포트 매핑(-p 호스트포트:컨테이너포트)",
+        "desc": "포트는 한 컴퓨터 안에서 여러 프로그램을 구분하는 번호로, 아파트의 호수(101호, 102호)와 같다. docker run의 -p 6000:5000은 내 컴퓨터 6000번 문을 컨테이너의 5000번 문과 연결하라는 뜻이라, 브라우저에서는 localhost:6000으로 접속해야 열린다. Dockerfile의 EXPOSE는 실제 연결이 아니라 이 컨테이너가 몇 번 문으로 손님을 받는지 적어 둔 안내문이다."
+      },
+      {
+        "term": "Bind Mount vs Named Volume",
+        "desc": "둘 다 컨테이너 바깥에 데이터를 두는 방법이지만 성격이 다르다. Bind Mount는 내 컴퓨터의 특정 폴더를 컨테이너에 그대로 연결하는 방식이라 코드를 수정하면 즉시 반영되어 개발할 때 편리하다. Named Volume은 Docker가 알아서 관리하는 창고라 DB처럼 계속 남아야 할 데이터에 적합하고, 어느 컴퓨터로 옮겨도 잘 동작한다."
+      },
+      {
+        "term": "리눅스 터미널·권한·쉘 스크립트",
+        "desc": "리눅스는 Windows의 C드라이브 대신 뿌리(/) 하나에서 시작하는 나무 구조로 파일을 정리하고, 터미널에서 pwd(현재 위치)·ls(목록)·cd(이동)·mkdir·touch·cp·mv·rm으로 다룬다. 모든 파일에는 읽기(r)·쓰기(w)·실행(x) 세 권한이 소유자·그룹·기타 세 그룹별로 걸려 있고, 스크립트를 실행하려면 chmod +x로 실행 권한을 줘야 한다. 명령어를 순서대로 적어 한 번에 실행하는 파일이 쉘 스크립트(.sh)이며 변수·조건문·반복문 세 가지만 알면 충분하다."
       }
     ],
     "examples": [
@@ -273,6 +523,24 @@ export const otherDeep = {
         "title": "Web·WAS·DB 3계층 게시판을 compose 파일 하나로 띄우기",
         "lang": "yaml",
         "code": "services:                          # 함께 띄울 컨테이너(서비스) 목록\n  web:                             # 1층: 사용자가 보는 화면(웹 서버)\n    build: ./web                   # web 폴더의 Dockerfile 로 이미지를 만든다\n    ports:                         # 포트 연결 설정\n      - \"8080:80\"                  # 내 컴퓨터 8080 을 컨테이너 80에 연결\n    depends_on: [was]              # was 가 먼저 켜진 뒤에 시작한다\n  was:                             # 2층: 요청을 처리하는 서버(WAS)\n    build: ./was                   # was 폴더의 Dockerfile 로 빌드\n    environment:                   # 환경 변수로 설정을 주입한다\n      - DB_HOST=db                 # db 는 아래 서비스 이름과 정확히 같아야 한다\n    depends_on: [db]               # db 가 먼저 켜진 뒤에 시작한다\n  db:                              # 3층: 데이터를 저장하는 DB\n    image: postgres:17             # 공식 postgres 이미지를 그대로 사용\n    environment:                   # DB 초기 설정값\n      - POSTGRES_PASSWORD=1234     # 접속 비밀번호\n      - POSTGRES_DB=board          # 게시판용 데이터베이스 이름\n    volumes:                       # 데이터를 지킬 볼륨 연결\n      - board-data:/var/lib/postgresql/data   # postgres 의 데이터 저장 경로\nvolumes:                           # 볼륨은 최상위에서 한 번 더 선언해야 한다\n  board-data:                      # down 후 다시 up 해도 데이터가 남는 창고"
+      },
+      {
+        "title": "터미널 첫걸음 — 실습 폴더 만들기와 쉘 스크립트",
+        "lang": "bash",
+        "code": "# 지금 내가 어느 폴더에 있는지 확인한다 (print working directory)\npwd\n# 실습용 폴더를 새로 만든다\nmkdir workspace\n# 만든 폴더 안으로 이동한다 (change directory)\ncd workspace\n# 내용이 빈 파일을 만든다\ntouch app.py\n# 숨김 파일까지 자세히 나열해 결과를 확인한다\nls -al\n# 배포 스크립트 파일을 만든다고 하자 — 아래 세 줄이 스크립트의 전부다\ncat deploy.sh\n#   #!/bin/bash                        <- 이 파일을 bash로 실행하라는 선언\n#   APP_NAME=\"my-app\"                  <- 변수: 자주 바뀌는 값에 이름표 붙이기\n#   echo \"안녕하세요, $APP_NAME 입니다\"  <- 변수 값을 넣어 출력\n# 스크립트에 '실행' 권한이라는 열쇠를 추가한다\nchmod +x deploy.sh\n# 이제 직접 실행할 수 있다\n./deploy.sh\n# 로그 파일의 마지막 20줄만 본다 (최근 상황 확인)\ntail -n 20 app.log\n# 로그에서 ERROR 글자가 있는 줄만 골라낸다\ncat app.log | grep ERROR",
+        "note": "교재 1장 Linux OS 기초의 실습(나만의 폴더 만들기)과 쉘 스크립트 단원을 이어 붙였다. rm은 휴지통 없이 즉시 삭제되니 실행 전 꼭 확인하고, 조건문의 대괄호 [ ] 양옆 띄어쓰기가 가장 흔한 실수라는 것이 교재의 팁. 컨테이너와의 대화는 전부 이 터미널 위에서 이루어지므로 여기서 손을 풀어 두자."
+      },
+      {
+        "title": "컨테이너의 정체 확인 — 프로세스·포트·볼륨 3연속 실험",
+        "lang": "bash",
+        "code": "# nginx 컨테이너를 백그라운드(-d)로 하나 띄운다\ndocker run -d --name demo nginx\n# [실험1] 호스트에서 프로세스 목록을 보면 nginx가 그대로 보인다\nps -ef | grep nginx\n# 컨테이너 안에서 보면 자기 혼자만 있는 것처럼 보인다 (Namespace 눈가림)\ndocker exec demo ps -ef\n# 결론: 컨테이너 = 가상 컴퓨터가 아니라 격리된 '프로세스'\n\n# [실험2] 포트 매핑의 앞 숫자만 내가 접속할 문 번호다\ndocker run -d -p 6000:5000 my-app:1.0\n# localhost:6000 은 열리고, localhost:5000 은 안 열린다\ncurl http://localhost:6000\n\n# [실험3] 볼륨: 컨테이너가 사라져도 데이터가 남는 바깥 창고\ndocker volume create my-data\n# 만들어진 볼륨 목록을 확인한다\ndocker volume ls\n# 볼륨을 /data 경로에 연결해 컨테이너를 실행한다\ndocker run -d -v my-data:/data alpine sleep 1000\n# 볼륨의 실제 저장 위치 등 상세 정보를 확인한다\ndocker volume inspect my-data",
+        "note": "교재 7장(컨테이너 구조)의 '컨테이너도 결국 프로세스' 실습과 3장(네트워크·스토리지)의 포트 바꿔 실행하기·볼륨 만들기 실습을 하나로 묶었다. 호스트의 ps에는 보이는데 컨테이너 안에서는 자기만 보이는 것이 Namespace의 눈가림이고, 이 가벼움이 VM과의 결정적 차이다."
+      },
+      {
+        "title": "Compose 없이 3-tier 게시판 손으로 연결하기 (Day 1 방식)",
+        "lang": "bash",
+        "code": "# 세 컨테이너가 이름으로 대화할 전용 도로망(네트워크)을 먼저 깐다\ndocker network create board-net\n# [1층 DB] 공식 postgres 이미지를 네트워크에 붙여 실행한다\ndocker run --name board-db --network board-net \\\n  -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=board -d postgres:17\n# [2층 WAS] 서버용 Dockerfile로 이미지를 빌드한다\ndocker build -t board-was:1.0 ./was\n# WAS 실행: DB 주소는 IP가 아니라 컨테이너 '이름'(board-db)을 그대로 쓴다\ndocker run --name board-was --network board-net \\\n  -e DB_HOST=board-db -p 5000:5000 -d board-was:1.0\n# [3층 Web] 화면용 nginx 이미지를 빌드한다\ndocker build -t board-web:1.0 ./web\n# Web 실행: 내 컴퓨터 8080 문을 컨테이너 80 문에 연결한다\ndocker run --name board-web -p 8080:80 -d board-web:1.0\n# 세 컨테이너가 모두 Up 상태인지 확인한다\ndocker ps\n# 브라우저에서 localhost:8080 접속 → 글쓰기 → DB 저장까지 확인\n# 문제가 있으면 WAS의 DB 연결 로그부터 본다\ndocker logs board-was",
+        "note": "교재 5장 종합 실습 1의 Step 1~6을 명령어 흐름으로 압축했다. DB_HOST=board-db처럼 컨테이너 이름을 주소로 쓸 수 있는 것이 같은 네트워크의 힘이며, run을 세 번 치는 이 번거로움이 Day 2에서 docker-compose.yml 파일 하나 + up 한 줄로 바뀐다. 기존 실습예제의 compose 3계층 예제와 비교하며 보면 Compose의 고마움이 확실해진다."
       }
     ]
   },

@@ -11,14 +11,17 @@ SKALA(SK AI Leader Academy) 4기 **이애본 강사** 학습 플랫폼. 담당 1
 | `npm run smoke` | 15검사(데이터 정합·산출물) — **CI에서 실패 시 배포 차단**. 콘텐츠 수정 후 필수 |
 | `npm run textbook` | A4 PDF 교재 재생성(Chrome 헤드리스) → `dist-textbook/SKALA_4기_실습교재_이애본.pdf` |
 | `node scripts/merge-additions.mjs` | 실습예제 병합 → `lectureexamples3.js` |
-| `node scripts/merge-quizzes.mjs` / `merge-otherdeep.mjs` | 퀴즈 / 담당일정 외 심화 병합 |
+| `node scripts/merge-quizzes.mjs` / `merge-otherdeep.mjs` | 퀴즈 / 담당일정 외 심화 병합(이어붙이기, 기존은 `*_000_base.mjs` 시드로 보존) |
+| `SKALA_SCRATCH_DIR` env | merge 스크립트 입력 폴더 오버라이드(세션 scratchpad 경로 하드코딩 대체) |
 
 ## 데이터 구조 (진실원본 — 여기만 편집)
 - `src/data/curriculum.js` — 과목 18(subjects) + 담당 세션 48(sessions). **일정 변경은 여기**
 - `src/data/lecture*.js` 6종 — 강의안 본문(subjectId-day 키, 42키 정합 필수). `scripts/split-lectures.mjs`가 `src/data/lectures/<id>.js`(gitignore) 생성
 - `src/data/lectureexamples{,2,3}.js` — 실습예제 3층(`examplesFor`가 병합). **3은 자료 그라운딩 전용, merge-additions 생성물이므로 직접 수정 금지**(scratchpad cluster 재병합)
-- `src/data/exams.js` / `quizzes.js` — 평가기준 12과목 / 퀴즈 18과목 148문항
+- `src/data/exams.js` / `quizzes.js` — 담당 평가기준 12과목 / 퀴즈 18과목 148문항. `otherexams.js` — 담당외 참고용 평가기준 6과목(스모크 기준 12+6=18)
 - `src/data/othercontent.js` + `otherdeep.js` + `othersessions.js` — 담당일정 외 11과목(요약·심화·4트랙 일정 73일)
+- `src/data/adminschedule.js` — 관리자 전용 페어링 시간표(48건, 반별 시간표_F 260710 판독 생성물). 8/20은 정동엽 대타(`substitute`)·담당 유지
+- `/schedule` 수업일정표는 **학생 비공개(RequireAdmin)** — 공개 내비에 다시 넣지 말 것(대표 지시 2026-07-14)
 - 생성물(gitignore): `src/data/lectures/`, `public/practice-textbook.html`, `dist-textbook/`
 
 ## 콘텐츠 작성 규칙 (엄수)
@@ -45,11 +48,11 @@ SKALA(SK AI Leader Academy) 4기 **이애본 강사** 학습 플랫폼. 담당 1
 ## 주의사항
 - 실라버스·배정표 원본 구글시트는 **AI 접근 차단** — 스크린샷 판독으로 처리(배정표 변경 시 재수령 → othersessions.js)
 - `.env.local` 없으면 로컬 로그인 깨짐 → 형제 리포(chosun 등)의 Supabase anon key 복사
-- 실습교안 gzip 크기 모니터링(현 541KB, ~700KB 도달 시 과목 분할 검토)
+- 실습교안 gzip 크기 모니터링(현 606KB, ~700KB 도달 시 과목 분할 검토)
 - Supabase 단일 프로젝트 공유(hcmgdztsgjvzcyxyayaj) — 분리 제안 금지, skala_ 접두사 테이블
 
 ## 다음 작업 후보 (대기 중 — 어느 세션이든 이어받기)
-1. **평가기준 6과목 반영** — git·vue·spring-ai·modeldev·langchain·serving 평가양식이 자료 폴더에 들어오면 `extract_rubrics 방식(zipfile 파싱)` → exams.js 추가 (평가기준 섹션·스모크 기준 자동 반영)
+1. **평가기준 6과목 반영** — git·vue·spring-ai·modeldev·langchain·serving 평가양식이 들어오면 exams.js 추가(2026-07-14 수령분에도 없음 — 담당외 6과목은 otherexams.js로 반영 완료, 담당 12과목은 최신본과 정합 검증 완료). 타 강사판 평가안 3건(feature 이은호, prompt·transformer 박병선) 병기 여부는 대표 결정 대기
 2. **새 강의 자료 반영** — skala-4 폴더의 **날짜별 새 폴더** 발견 시: 추출 → 클러스터 에이전트 → merge-additions → smoke → 배포 (위 '에이전트 활용 패턴' 그대로)
 3. **배정표 변경 반영** — 새 배정표 스크린샷 수령 시 판독 → `othersessions.js` 갱신(담당 일정 변경이면 curriculum.js sessions도)
 4. 실습교안 gzip ~700KB 도달 시 과목별 분할 로드 / CI에 접근성 자동검사(axe) 추가 검토

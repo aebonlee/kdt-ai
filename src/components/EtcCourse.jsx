@@ -3,8 +3,10 @@
 import { Link } from 'react-router-dom'
 import { otherCourses } from '../data/othercontent'
 import { otherDeep } from '../data/otherdeep'
+import { otherExams } from '../data/otherexams'
 import { otherSessions, TRACKS } from '../data/othersessions'
 import CodeBlock from './CodeBlock'
+import { ExamBlock } from './ExamQuiz'
 
 const fmt = (d) => `${d.slice(5, 7)}-${d.slice(8, 10)}`
 
@@ -97,6 +99,15 @@ export default function EtcCourse({ courseId }) {
           <div className="box-h">🔗 담당 과목과의 연결</div>
           <p style={{ margin: 0, whiteSpace: 'pre-line' }}>{c.tip}</p>
         </div>
+      )}
+
+      {otherExams[courseId] && (
+        <>
+          <ExamBlock e={otherExams[courseId]} />
+          <p style={{ marginTop: 8, fontSize: 12.5, color: 'var(--ink-soft)' }}>
+            ※ 타 강사 진행 과목의 평가기준입니다. 평가 방향을 미리 파악하는 참고자료로 활용하세요.
+          </p>
+        </>
       )}
 
       {rows.length > 0 && (

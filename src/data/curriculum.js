@@ -857,11 +857,12 @@ export const sessions = [
   { date: '2026-08-03', weekday: '월', region: '판교', klass: '5층', subjectId: 'vue', day: 2 },
   { date: '2026-08-04', weekday: '화', region: '판교', klass: '5층', subjectId: 'vue', day: 3 },
   { date: '2026-08-05', weekday: '수', region: '판교', klass: '5층', subjectId: 'vue', day: 4 },
-  // Vue.js — 광주 분반 (Day1~4)
-  { date: '2026-08-18', weekday: '화', region: '광주', klass: '1반', subjectId: 'vue', day: 1 },
-  { date: '2026-08-19', weekday: '수', region: '광주', klass: '1반', subjectId: 'vue', day: 2 },
-  { date: '2026-08-20', weekday: '목', region: '광주', klass: '1반', subjectId: 'vue', day: 3 },
-  { date: '2026-08-21', weekday: '금', region: '광주', klass: '1반', subjectId: 'vue', day: 4 },
+  // Vue.js — 광주 분반(3반·204호). 8/20(Day3)은 본인 일정 중복으로 정동엽 강사가 대타 진행하나
+  // 담당 일정으로 유지(대표 확인 2026-07-14). 반별 시간표_F 260710 확정본 기준 반 표기 3반으로 정정.
+  { date: '2026-08-18', weekday: '화', region: '광주', klass: '3반', subjectId: 'vue', day: 1 },
+  { date: '2026-08-19', weekday: '수', region: '광주', klass: '3반', subjectId: 'vue', day: 2 },
+  { date: '2026-08-20', weekday: '목', region: '광주', klass: '3반', subjectId: 'vue', day: 3 },
+  { date: '2026-08-21', weekday: '금', region: '광주', klass: '3반', subjectId: 'vue', day: 4 },
   // sLLM
   { date: '2026-08-28', weekday: '금', region: '판교', klass: '5층', subjectId: 'sllm', day: 1 },
   { date: '2026-08-31', weekday: '월', region: '판교', klass: '5층', subjectId: 'sllm', day: 2 },
@@ -893,9 +894,9 @@ export const sessions = [
   { date: '2026-10-06', weekday: '화', region: '광주', klass: '1반', subjectId: 'serving', day: 1 },
   { date: '2026-10-07', weekday: '수', region: '광주', klass: '1반', subjectId: 'serving', day: 2 },
   { date: '2026-10-08', weekday: '목', region: '광주', klass: '1반', subjectId: 'serving', day: 3 },
-  // AI Agent
-  { date: '2026-10-12', weekday: '월', region: '광주', klass: '1반', subjectId: 'agent', day: 1 },
-  { date: '2026-10-13', weekday: '화', region: '광주', klass: '1반', subjectId: 'agent', day: 2 },
+  // AI Agent — 광주 3반(204호) (반별 시간표_F 260710 기준)
+  { date: '2026-10-12', weekday: '월', region: '광주', klass: '3반', subjectId: 'agent', day: 1 },
+  { date: '2026-10-13', weekday: '화', region: '광주', klass: '3반', subjectId: 'agent', day: 2 },
   // Vector DB
   { date: '2026-10-14', weekday: '수', region: '광주', klass: '1반', subjectId: 'vectordb', day: 1 },
   // AI Agent Capstone

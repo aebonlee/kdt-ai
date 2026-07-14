@@ -5,7 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const DIR = '/private/tmp/claude-501/-Users-aebonlee/7a88327c-a942-462a-b81d-24924ee8e3f9/scratchpad/etc_enrich'
+const DIR = process.env.SKALA_SCRATCH_DIR || '/private/tmp/claude-501/-Users-aebonlee/9687267a-0417-44d5-9c32-3a9303a4f76a/scratchpad/etc_enrich'
 
 const merged = {}
 for (const f of readdirSync(DIR).filter((f) => f.endsWith('.mjs')).sort()) {
@@ -14,8 +14,15 @@ for (const f of readdirSync(DIR).filter((f) => f.endsWith('.mjs')).sort()) {
     // 형식 검증
     for (const k of v.concepts || []) if (!k.term || !k.desc) throw new Error(`${id}: concept 필드 누락`)
     for (const e of v.examples || []) if (!e.title || !e.lang || !e.code) throw new Error(`${id}: example 필드 누락(${e.title || '무제'})`)
-    merged[id] = v
-    console.log(`  ${f} → ${id}: 개념 ${v.concepts?.length || 0} · 실습 ${v.examples?.length || 0}`)
+    // 같은 과목이 여러 파일에 있으면 덮어쓰지 않고 이어붙인다(기존 콘텐츠 보존)
+    const prev = merged[id] || {}
+    merged[id] = {
+      ...prev,
+      ...v,
+      concepts: [...(prev.concepts || []), ...(v.concepts || [])],
+      examples: [...(prev.examples || []), ...(v.examples || [])],
+    }
+    console.log(`  ${f} → ${id}: 개념 +${v.concepts?.length || 0} · 실습 +${v.examples?.length || 0}`)
   }
 }
 

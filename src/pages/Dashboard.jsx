@@ -127,8 +127,8 @@ export default function Dashboard() {
                 )
               })}
             </div>
-            <Link to="/schedule" className="section-link" style={{ display: 'inline-block', marginTop: 12 }}>
-              전체 일정으로 →
+            <Link to="/lectures" className="section-link" style={{ display: 'inline-block', marginTop: 12 }}>
+              강의안으로 →
             </Link>
           </div>
 

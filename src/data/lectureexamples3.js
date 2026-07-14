@@ -44,6 +44,42 @@ export const examplesExtra3 = {
       "lang": "bash",
       "code": "# 완성한 프로젝트 폴더를 통째로 '새 브랜치'에 담아 원격에 올리는 8단계\ncd ~/Desktop/my-project            # 1) 프로젝트 폴더로 이동\ngit status                         # 2) 상태 확인 (\"not a git repository\" 면 git init 먼저)\ngit switch -c html_js_css          # 3) 새 브랜치 생성과 동시에 이동 (-c = create)\ngit add .                          # 4) 프로젝트 전체를 스테이징\ngit commit -m \"Complete HTML JS CSS project\"   # 5) 커밋 생성\ngit remote -v                      # 6) 원격 연결 확인 (아무것도 안 나오면 아래로)\ngit remote add origin https://github.com/내계정/data.git   # 7) 원격 최초 연결\n\n# \"remote origin already exists\" 오류가 나면 add 대신 주소만 교체\ngit remote set-url origin https://github.com/내계정/data.git\n\ngit push -u origin html_js_css     # 8) 새 브랜치를 원격에 업로드 (-u: 다음부턴 git push 만)\n# 성공 메시지: * [new branch] html_js_css -> html_js_css\n\n# 자주 만나는 push 오류 처방전\n# \"Authentication failed\"        → 비밀번호 대신 Personal Access Token(PAT) 입력\n# \"failed to push some refs\"     → git pull --rebase origin html_js_css 후 다시 push\n# \"src refspec ... not match\"    → 커밋이 아직 없다는 뜻, add · commit 먼저\n# GitHub 웹에서 브랜치 메뉴 → html_js_css 선택 → 파일이 보이면 최종 성공",
       "note": "김성영 실습교수 가이드의 \"종합실습 2 — 완성 프로젝트를 새 브랜치로 GitHub에 올리기\" 8단계 시나리오를 재구성했다. main 이 아닌 작업 브랜치를 push -u 로 올리는 흐름과, 초보가 반드시 한 번은 만나는 push 오류 4종의 원인별 해결 명령을 처방전 형식으로 붙였다. 오류 메시지를 보고 겁먹지 않고 대응하는 것이 이 실습의 진짜 목표다."
+    },
+    {
+      "title": "Git-Flow 전략 — 브랜치 5종으로 개발부터 출시까지 흉내내기",
+      "lang": "bash",
+      "code": "# Git-Flow: 역할별 브랜치 5종으로 개발-출시를 체계화하는 협업 규칙\n# main=배포된 안정 버전 / develop=다음 출시 준비의 중심 / feature=기능 / release=출시 준비 / hotfix=긴급 수정\ngit switch -c develop              # 1) main에서 develop 분기(모든 개발의 기준점)\ngit switch -c feature/login        # 2) 기능 브랜치는 develop에서 갈라진다\necho \"로그인 폼\" > login.html       # 기능 개발 작업(파일 생성)\ngit add . && git commit -m \"feat: 로그인 폼\"   # 기능 커밋\ngit switch develop                 # 3) 기능 완료 후 develop으로 복귀\ngit merge feature/login            #    develop에 병합(원본 main은 아직 안전)\ngit branch -d feature/login        #    역할이 끝난 기능 브랜치는 삭제\ngit switch -c release/1.0          # 4) 출시 준비: develop에서 release 분기(QA와 버그수정 전용)\ngit switch main                    # 5) 출시 확정 시 main으로 이동해\ngit merge release/1.0              #    release를 main에 병합(=v1.0 출시)\ngit switch develop                 #    같은 내용을 develop에도 병합해 두 브랜치를 맞춘다\ngit merge release/1.0\n# 6) 배포 후 긴급 버그 발견 → hotfix는 develop이 아니라 main에서 바로 분기\ngit switch main\ngit switch -c hotfix/1.0.1         # 급한 불을 끄고, 수정본을 main과 develop 양쪽에 병합하는 것까지가 규칙",
+      "note": "브랜치 전략은 여러 명이 한 저장소를 쓸 때 언제 브랜치를 만들고 어디로 합칠지 정한 팀 규칙이다. Git-Flow는 v1.0, v2.0처럼 출시 주기가 명확한 제품에 맞는 대표 전략으로, feature는 develop에서 나와 develop으로, release와 hotfix는 main과 develop 양쪽으로 합쳐진다는 이동 경로만 기억하면 그림이 그려진다."
+    },
+    {
+      "title": "GitHub-Flow — main과 feature 둘로 끝내는 수시 배포 전략과 Pull Request",
+      "lang": "bash",
+      "code": "# GitHub-Flow: 브랜치는 main과 feature 딱 두 종류 — 하루에도 몇 번씩 배포하는 웹 서비스용\n# 규칙 1: main은 언제나 오류 없이 '즉시 배포 가능한' 상태를 유지한다\ngit switch main                    # 기준 브랜치로 이동\ngit pull origin main               # 항상 최신 main에서 출발한다\ngit switch -c feature/search-box   # 규칙 2: 작업은 main에서 바로 분기한 feature 브랜치에서\necho \"검색창\" > search.html         # 기능 개발\ngit add . && git commit -m \"feat: 검색창 추가\"   # 커밋\ngit push -u origin feature/search-box   # 규칙 3: 작업 브랜치를 원격에 올린다\n# 규칙 4: GitHub 웹에서 Pull Request(PR)를 연다\n#   PR = \"내가 작업한 브랜치를 검토하고 main에 합쳐 달라\"는 공식 요청\n#   동료의 코드 리뷰와 자동 테스트를 통과해야 병합된다\n# 규칙 5: PR이 main에 병합되면 곧바로 서버에 자동 배포(CI/CD)\ngit switch main                    # 병합이 끝나면 로컬 정리 시작\ngit pull origin main               # 내 기능이 합쳐진 최신 main을 받고\ngit branch -d feature/search-box   # 역할이 끝난 브랜치는 삭제\n# 비교: Git-Flow는 정기 출시형, GitHub-Flow는 수시 배포형,\n# GitLab-Flow는 여기에 스테이징/운영 서버용 환경 브랜치를 더한 절충형이다",
+      "note": "출시 일정 없이 계속 배포하는 서비스라면 Git-Flow의 5종 브랜치는 과하다. GitHub-Flow는 main을 항상 배포 가능하게 지키는 대신 모든 변경이 Pull Request의 코드 리뷰를 거치게 해 품질을 확보한다. SKALA 팀 프로젝트에서 가장 먼저 써 보게 될 전략이다."
+    },
+    {
+      "title": "fetch → diff → merge: 합치기 전에 눈으로 확인하는 안전 동기화",
+      "lang": "bash",
+      "code": "# pull은 '받기+합치기'를 한 번에 해서 편하지만, 무엇이 합쳐질지 모른 채 덮어쓴다\n# 심화: 받기만 하고(fetch) → 비교해 보고(diff) → 그때 합치는(merge) 3단계 안전 동기화\ngit fetch origin                   # 1) 원격의 새 커밋을 내려받기만 한다(내 작업 파일은 그대로)\ngit diff HEAD origin/main          # 2) 내 최신 커밋과 원격 main의 차이를 +/- 로 비교\n# 예상 출력:\n#   +팀원이 추가한 줄     <- 병합하면 내 코드에 들어올 내용이 미리 보인다\ngit merge origin/main              # 3) 내용을 확인하고 안전하다고 판단되면 그때 병합\n# 정리: git pull origin main = fetch + merge 를 한 번에 실행하는 축약형이다\n# 발표 직전처럼 민감한 시점에는 fetch로 먼저 살펴보고 합치는 습관이 사고를 막는다",
+      "note": "fetch는 원격 이력만 가져오고 내 파일은 건드리지 않으므로 언제 실행해도 안전하다. pull이 fetch+merge의 축약이라는 구조를 이해하면, 큰 변경이 예상될 때 중간에서 diff로 검문하는 프로 습관을 들일 수 있다."
+    },
+    {
+      "title": "push가 거절될 때 — --force 대신 --force-with-lease 안전장치",
+      "lang": "bash",
+      "code": "# push는 원격에 '내가 모르는 새 커밋'이 있으면 데이터 보호를 위해 거절된다\ngit push origin main\n# ! [rejected]  main -> main (fetch first)   <- 거절 메시지 예시\n\n# 해법 1(정석): 원격 최신을 먼저 받아 합치고 다시 올린다\ngit pull origin main               # 남이 올린 커밋을 내 것과 병합\ngit push origin main               # 이제 정상적으로 올라간다\n\n# 해법 2(예외 상황): 원격을 내 로컬 상태로 강제로 덮어써야 할 때\ngit push --force origin feature-branch\n# --force 는 그 사이 팀원이 올린 커밋까지 통째로 지워버릴 수 있다(매우 주의)\n\ngit push --force-with-lease origin feature-branch\n# --force-with-lease: 내가 마지막으로 확인한 원격 상태 그대로면 강제 push 허용,\n# 그새 누군가 새 커밋을 올렸다면 거부하는 '안전장치 달린' 강제 push\n\n# 팀 안전수칙: 공유 브랜치(main, develop)에는 강제 push 자체를 금지하는 것이 보통이다",
+      "note": "강제 push는 원격 역사를 지우는 유일한 명령이라 협업 사고의 단골 원인이다. 꼭 써야 한다면 --force 대신, 남의 새 커밋이 감지되면 스스로 멈추는 --force-with-lease를 기본기로 삼자."
+    },
+    {
+      "title": "commit -am의 함정 — 새 파일(Untracked)은 -a가 못 담는다",
+      "lang": "bash",
+      "code": "# git commit -am 은 add와 commit을 한 번에 처리하는 단축 명령 — 단, '아는 파일'만 담는다\necho \"수정된 내용\" >> index.html    # index.html 은 이미 커밋한 적 있는 Tracked 파일\necho \"새 메모\" > memo.txt          # memo.txt 는 한 번도 add 한 적 없는 Untracked 새 파일\ngit commit -am \"수정사항 저장\"      # -a 옵션은 Tracked 파일만 자동으로 add 한다\ngit status                         # 결과를 확인해 보면...\n# Untracked files:\n#   memo.txt        <- 새 파일은 커밋에서 빠져 있다!\ngit add memo.txt                   # 새 파일은 반드시 add 로 '추적 시작'을 먼저 알려야 한다\ngit commit -m \"메모 파일 추가\"      # 이 커밋 이후부터는 memo.txt 도 -am 으로 처리된다\n\n# 파일의 신분 정리(Git이 파일을 보는 눈):\n#  Untracked = 한 번도 관리한 적 없는 새 파일 -> 내용이 바뀌어도 기록되지 않음\n#  Tracked   = add 된 적 있는 관리 대상 -> Unmodified / Modified / Staged 3단계를 순환",
+      "note": "-am만 믿고 커밋했다가 새 파일이 GitHub에 안 올라가 있는 것은 왕초보가 가장 자주 겪는 사고다. -a는 Tracked 파일의 수정만 자동 스테이징하므로, 새 파일을 만들었다면 git status로 Untracked 목록을 확인하고 add부터 하는 습관이 필요하다."
+    },
+    {
+      "title": "README를 체크해 만든 원격 저장소와 로컬 합치기 — pull --rebase",
+      "lang": "bash",
+      "code": "# 상황: 로컬에서 git init 으로 프로젝트를 시작했는데,\n# GitHub에서 저장소를 만들 때 'Add a README' 를 체크했다\n# -> 원격에도 별개의 첫 커밋(README)이 생겨 두 역사가 서로 어긋난다\ngit remote add origin https://github.com/내계정/skala-intro.git   # 원격 연결\ngit push -u origin main            # 올려 보면...\n# ! [rejected] ... (fetch first)   <- 양쪽에 서로 모르는 커밋이 있어 거절됨\n\ngit pull origin main --rebase      # 원격 커밋(README)을 먼저 깔고, 그 위에 내 커밋을 다시 쌓는다\n# rebase = 내 커밋을 잠시 들어냈다가 원격 최신 위로 '옮겨 심기'\n# merge 와 달리 병합 커밋 없이 역사가 한 줄로 깔끔하게 정리된다\n\ngit log --oneline                  # README 커밋 -> 내 커밋 순서의 한 줄 역사 확인\ngit push -u origin main            # 이제 거절 없이 올라간다\n\n# 예방책: 로컬에 이미 프로젝트가 있다면\n# GitHub 저장소는 README 체크 없이 '빈 저장소'로 만드는 것이 정석이다",
+      "note": "저장소 생성 화면에서 무심코 README를 체크하면 첫 push부터 거절당하는, 교육 첫날 단골 사고다. 이때 필요한 pull --rebase는 원격 이력 위에 내 커밋을 옮겨 심어 한 줄 역사로 만드는 명령으로, merge와의 차이를 체감하는 첫 rebase 실습이기도 하다."
     }
   ],
   "vue-1": [
@@ -64,6 +100,30 @@ export const examplesExtra3 = {
       "lang": "vue",
       "code": "<script setup>\nimport { ref } from 'vue'\nconst log = ref('아직 클릭 전')                      // 무슨 일이 일어났는지 기록\nfunction goLink() { log.value = '페이지 이동을 막고 함수만 실행됨' }\nfunction outer() { log.value = '바깥 상자 클릭' }\nfunction inner() { log.value = '안쪽 버튼만 클릭(바깥으로 안 번짐)' }\n</script>\n\n<template>\n  <!-- .prevent : a 태그의 기본 페이지 이동을 취소하고 함수만 실행 -->\n  <a href=\"https://naver.com\" @click.prevent=\"goLink\">이동 대신 함수 실행</a>\n\n  <!-- 바깥 div 클릭 시 outer 실행 -->\n  <div @click=\"outer\" style=\"padding:20px; background:#eee\">\n    바깥 영역\n    <!-- .stop : 클릭이 바깥 div 까지 번지는 것(버블링)을 차단 -->\n    <button @click.stop=\"inner\">나만 반응하는 버튼</button>\n  </div>\n\n  <p>{{ log }}</p>\n</template>",
       "note": ".prevent 는 링크·폼 제출 같은 브라우저 기본동작을 막고, .stop 은 안쪽 클릭이 바깥 요소까지 전파되는 것을 막는다. 수식어를 붙이면 함수 안에서 preventDefault·stopPropagation 을 직접 부를 필요가 없다."
+    },
+    {
+      "title": "reactive() 로 객체 상태 묶어 관리하기 — 재할당 금지 주의",
+      "lang": "vue",
+      "code": "<script setup>\n// 객체·배열을 통째로 반응형으로 만드는 reactive 를 가져온다\nimport { reactive } from 'vue'\n// 이름과 나이를 한 덩어리로 묶은 반응형 객체(스크립트에서 .value 불필요)\nconst user = reactive({ name: '이순신', age: 30 })\n// 버튼 클릭 시 나이만 1 올리는 함수\nfunction birthday() {\n  user.age++   // 알맹이 속성만 바꾸면 화면이 자동으로 갱신된다\n}\n// (주의) user = { name: '홍길동', age: 0 } 처럼 통째로 재할당하면\n// 반응형 연결이 끊어져 화면이 더 이상 갱신되지 않는다!\n</script>\n\n<template>\n  <!-- reactive 객체는 템플릿에서도 점 표기로 바로 읽는다 -->\n  <p>이름: {{ user.name }} / 나이: {{ user.age }}세</p>\n  <!-- 클릭할 때마다 나이가 한 살씩 늘어난다 -->\n  <button @click=\"birthday\">나이 한 살 추가</button>\n</template>",
+      "note": "ref 는 어떤 값이든 감싸고 .value 로 접근하지만, reactive 는 객체 전용이고 .value 없이 쓴다. 대신 새 객체로 통째 재할당하면 반응성이 끊기는 약점이 있어, 현업에서는 객체도 그냥 ref 로 통일하는 추세가 강하다."
+    },
+    {
+      "title": "v-if vs v-show — 없애서 숨기기 vs 가려서 숨기기",
+      "lang": "vue",
+      "code": "<script setup>\nimport { ref } from 'vue'   // 반응형 값 도구\nconst open = ref(true)      // 열림/닫힘 상태(두 상자가 공유)\n</script>\n\n<template>\n  <!-- 클릭할 때마다 참/거짓이 뒤집힌다 -->\n  <button @click=\"open = !open\">토글 (현재: {{ open }})</button>\n\n  <!-- v-if: 거짓이면 태그 자체를 DOM 에서 없애 버린다(개발자도구에서 사라짐) -->\n  <p v-if=\"open\">v-if 상자 — 조건이 거짓이면 아예 존재하지 않음</p>\n\n  <!-- v-show: 태그는 그대로 두고 CSS display:none 으로 눈에만 숨긴다 -->\n  <p v-show=\"open\">v-show 상자 — 숨겨져도 DOM 에는 남아 있음</p>\n</template>",
+      "note": "v-if 는 처음에 거짓이면 아예 그리지 않아 초기 비용이 낮지만, 바뀔 때마다 태그를 부수고 다시 지어 전환 비용이 크다. 그래서 모달·탭처럼 전환이 잦은 곳은 v-show, 로그인 후 화면처럼 전환이 드문 곳은 v-if 를 쓴다. v-show 는 v-else 조합이 안 된다는 점도 기억하자."
+    },
+    {
+      "title": "toRefs — reactive 객체를 구조분해해도 반응성 지키기",
+      "lang": "vue",
+      "code": "<script setup>\n// reactive 객체와, 속성을 반응형 그대로 꺼내는 toRefs 를 가져온다\nimport { reactive, toRefs } from 'vue'\n// 도시와 기온을 묶은 반응형 객체\nconst state = reactive({ city: '수원', temp: 24 })\n// (X) const { city, temp } = state → 일반 값 복사라 반응성이 끊긴다\n// (O) toRefs 로 감싸면 모든 속성이 반응형 ref 로 추출된다\nconst { city, temp } = toRefs(state)\n// 꺼낸 뒤에는 ref 이므로 스크립트에서 .value 로 다룬다\nfunction warmer() { temp.value++ }   // 원본 state.temp 도 함께 바뀐다\n</script>\n\n<template>\n  <!-- 추출한 ref 를 바꿔도 원본 객체와 같은 값이 유지된다 -->\n  <p>{{ city }} 기온: {{ temp }}도 (원본 확인: {{ state.temp }}도)</p>\n  <button @click=\"warmer\">기온 +1</button>\n</template>",
+      "note": "reactive 객체를 그냥 구조분해하면 반응형 연결이 끊어지는 것이 대표적인 초보 실수다. toRefs 는 모든 속성을, toRef 는 속성 1개만 반응형 ref 로 추출해 이 문제를 해결한다."
+    },
+    {
+      "title": "watch 로 reactive 객체 감시 — 통째 감시 vs 특정 속성 조준",
+      "lang": "vue",
+      "code": "<script setup>\nimport { reactive, ref, watch } from 'vue'\n// 상품 정보를 묶은 reactive 객체\nconst state = reactive({ name: '노트북', price: 1000 })\nconst log = ref('아직 변동 없음')   // 감시 결과를 보여줄 문구\n\n// 방법1) 객체를 통째로 감시: 내부 어떤 속성이 바뀌어도 실행되지만\n// 새값과 옛값이 같은 객체를 가리켜 '진짜 이전 값'을 알 수 없다\nwatch(state, () => { console.log('내부 어딘가가 바뀜(이전 값 추적 불가)') })\n\n// 방법2) () => state.price 처럼 화살표 함수로 특정 속성만 조준하면\n// 이전 값이 제대로 보존되어 변화 폭까지 계산할 수 있다\nwatch(() => state.price, (newP, oldP) => {\n  log.value = oldP + '원 → ' + newP + '원 (' + (newP - oldP) + '원 변동)'\n})\n</script>\n\n<template>\n  <p>{{ state.name }}: {{ state.price }}원</p>\n  <!-- 버튼을 누르면 두 감시자가 모두 반응한다 -->\n  <button @click=\"state.price += 500\">가격 +500</button>\n  <p>{{ log }}</p>\n</template>",
+      "note": "reactive 객체는 변수명을 그대로 넣으면 자동으로 깊은 감시가 되지만 이전 값을 못 쓴다. 객체 안의 특정 속성 변화를 낚아채고 싶으면 반드시 화살표 함수(getter) 형태로 조준해야 옛값·새값 비교가 가능하다."
     }
   ],
   "vue-2": [
@@ -84,6 +144,30 @@ export const examplesExtra3 = {
       "lang": "vue",
       "code": "<script setup>\nimport { ref, watch } from 'vue'\nconst keyword = ref('')                 // 검색어 입력값\nconst status = ref('입력을 기다리는 중') // 안내 문구\n// watch: keyword 가 바뀔 때마다 (새값, 옛값)을 받아 후속 로직 실행\nwatch(keyword, (newVal, oldVal) => {\n  console.log(oldVal, '->', newVal)     // 어떻게 바뀌었는지 로그\n  // 두 글자 이상일 때만 검색 준비(실무에선 여기서 API 를 호출)\n  status.value = newVal.length >= 2 ? '검색 준비 완료' : '두 글자 이상 입력'\n})\n</script>\n\n<template>\n  <!-- 타이핑할 때마다 watch 가 반응해 status 를 갱신 -->\n  <input v-model=\"keyword\" placeholder=\"검색어 입력\" />\n  <p>{{ status }}</p>\n</template>",
       "note": "computed 가 \"값을 계산\"한다면 watch 는 \"값이 바뀐 순간 부수효과(API 호출·로그·검증)\"를 실행한다. 새값·옛값을 둘 다 받아 변화를 비교할 수 있다."
+    },
+    {
+      "title": "슬롯(slot) — 데이터가 아니라 마크업 조각을 주입하기",
+      "lang": "vue",
+      "code": "<!-- ===== 자식: PanelCard.vue — 레이아웃 틀만 제공한다 ===== -->\n<template>\n  <div class=\"card\">\n    <header>\n      <!-- 이름 있는 슬롯: 부모가 #header 로 보낸 조각이 여기 꽂힌다 -->\n      <slot name=\"header\"></slot>\n    </header>\n    <main>\n      <!-- 이름 없는 기본 슬롯: 나머지 내용이 이 자리에 들어온다 -->\n      <slot>부모가 아무것도 안 주면 보이는 기본 문구</slot>\n    </main>\n  </div>\n</template>\n\n<!-- ===== 부모: 틀 안에 채울 내용을 자유롭게 주입한다 ===== -->\n<template>\n  <PanelCard>\n    <!-- template v-slot:header(축약형 #header)로 꽂을 위치를 지정 -->\n    <template #header>\n      <h2>오늘의 날씨</h2>\n    </template>\n    <!-- 이름을 안 붙인 나머지는 기본 슬롯으로 들어간다 -->\n    <p>맑음, 기온 24도</p>\n  </PanelCard>\n</template>",
+      "note": "props 가 부모의 데이터를 주입한다면, 슬롯은 HTML 마크업·레이아웃 조각 자체를 주입한다. 자식의 slot 태그 안에 미리 적어 둔 내용은 부모가 아무것도 안 넘겼을 때 나오는 대체(기본) 콘텐츠다."
+    },
+    {
+      "title": "스코프드 슬롯 — 자식의 데이터를 부모가 받아서 그리기",
+      "lang": "vue",
+      "code": "<!-- ===== 자식: ServerStatus.vue — 데이터는 자식이 소유한다 ===== -->\n<script setup>\nimport { ref } from 'vue'\nconst message = ref('서버 상태 정상')   // 자식 내부 데이터 1\nconst userCount = ref(150)              // 자식 내부 데이터 2\n</script>\n<template>\n  <!-- slot 태그의 속성 바인딩(:이름=\"변수\")으로 데이터를 부모로 올려 보낸다 -->\n  <slot :text=\"message\" :count=\"userCount\"></slot>\n</template>\n\n<!-- ===== 부모: 자식이 보낸 값을 받아 원하는 모양으로 배치한다 ===== -->\n<template>\n  <!-- v-slot=\"변수주머니이름\" 으로 자식이 보낸 값들을 한 묶음으로 수신 -->\n  <ServerStatus v-slot=\"slotBag\">\n    <!-- 주머니에서 text 와 count 를 꺼내 부모 마음대로 그린다 -->\n    <p>알림 메시지: {{ slotBag.text }}</p>\n    <p>접속자 수: {{ slotBag.count }}명</p>\n  </ServerStatus>\n</template>",
+      "note": "일반 슬롯이 부모→자식으로 마크업을 내려보낸다면, 스코프드 슬롯은 반대로 자식의 로컬 데이터를 부모가 받아 화면을 설계한다. 데이터는 자식이 관리하되 보여 주는 모양은 부모가 결정하는 역할 분담 패턴이다."
+    },
+    {
+      "title": "provide / inject — 중간 계층 건너뛰고 깊은 자식에 값 전달",
+      "lang": "vue",
+      "code": "<!-- ===== 조상: App.vue — 값을 아래로 공급(provide)한다 ===== -->\n<script setup>\nimport { ref, provide } from 'vue'\n// 테마 색을 반응형으로 만들고\nconst themeColor = ref('dark')\n// 'globalTheme' 이라는 키 이름으로 모든 후손에게 공급한다\nprovide('globalTheme', themeColor)\n</script>\n\n<!-- ===== 깊은 자식: 중간 부모를 몇 단계 건너뛰어도 바로 받는다 ===== -->\n<script setup>\nimport { inject } from 'vue'\n// 조상이 provide 한 키 이름을 지정해 직접 주입받는다\nconst theme = inject('globalTheme')\n</script>\n<template>\n  <!-- 조상의 값이 바뀌면 이 문구도 함께 갱신된다(반응형 유지) -->\n  <p>현재 테마: {{ theme }}</p>\n  <!-- 주입받은 ref 라서 여기서 바꾸면 조상 값도 함께 바뀐다 -->\n  <button @click=\"theme = theme === 'dark' ? 'light' : 'dark'\">테마 전환</button>\n</template>",
+      "note": "props 를 층층이 릴레이로 내려보내는 번거로움 없이, 조상이 선언한 반응형 상태를 깊은 자식이 키 이름 하나로 바로 받는다. 다만 전역 상태는 Pinia 가 표준이라 provide/inject 의 실무 사용 빈도는 높지 않다는 점도 알아 두자."
+    },
+    {
+      "title": "라이프사이클 훅 총정리 — onUnmounted 로 타이머 청소하기",
+      "lang": "vue",
+      "code": "<script setup>\n// 부착·갱신·소멸 시점에 실행되는 훅들을 가져온다\nimport { ref, onMounted, onUpdated, onUnmounted } from 'vue'\nconst count = ref(0)   // 1초마다 자동으로 올라갈 숫자\nlet timerId = null     // 타이머 번호(나중에 끌 때 필요)\n\n// [1. 생성] script setup 본문 자체가 생성 단계 — 아직 화면(DOM)에는 접근 불가\nconsole.log('컴포넌트가 메모리에 생성됨')\n// [2. 부착] 화면에 붙은 직후 — API 호출·타이머 시작의 최적 타이밍\nonMounted(() => {\n  timerId = setInterval(() => { count.value++ }, 1000)   // 1초마다 +1\n})\n// [3. 갱신] 데이터가 바뀌어 화면을 다시 그린 직후마다 실행\nonUpdated(() => { console.log('화면 다시 그림, 현재 ' + count.value) })\n// [4. 소멸] v-if 등으로 컴포넌트가 사라질 때 — 타이머를 꼭 꺼서 메모리 누수 방지\nonUnmounted(() => { clearInterval(timerId) })\n</script>\n\n<template>\n  <p>자동 카운트: {{ count }}</p>\n</template>",
+      "note": "컴포넌트는 생성 → 부착 → 갱신 → 소멸의 생명주기를 돈다. onMounted 에서 켠 setInterval 을 onUnmounted 에서 안 꺼 주면 컴포넌트가 화면에서 사라져도 타이머가 백그라운드에서 영원히 돌며 메모리가 새는 대표적인 버그가 된다."
     }
   ],
   "vue-3": [
@@ -104,6 +188,30 @@ export const examplesExtra3 = {
       "lang": "vue",
       "code": "<script setup>\n// 전역 스토어와, 반응성을 지켜 꺼내는 storeToRefs 를 가져온다\nimport { storeToRefs } from 'pinia'\nimport { useCartStore } from '../stores/cart'\n\nconst cart = useCartStore()\n// (X) const { count } = cart  → 반응성이 끊겨 값이 바뀌어도 화면이 안 변함\n// (O) state·getters 는 storeToRefs 로 감싸야 반응형 연결이 유지된다\nconst { count, total } = storeToRefs(cart)\n// 함수(actions)는 반응형 대상이 아니므로 그냥 구조분해해도 된다\nconst { add } = cart\n</script>\n\n<template>\n  <!-- 스토어 값이 바뀌면 이 숫자들도 자동 갱신된다 -->\n  <p>담긴 개수: {{ count }} / 합계: {{ total }}원</p>\n  <!-- 버튼으로 담으면 위 숫자가 즉시 반응 -->\n  <button @click=\"add({ id: 1, name: '사과', price: 3000 })\">사과 담기</button>\n</template>",
       "note": "스토어에서 state·getters 를 그냥 구조분해하면 반응성이 끊긴다. storeToRefs 로 감싸야 값이 바뀔 때 화면이 따라 갱신된다. 반면 actions(함수)는 반응형 대상이 아니라 그대로 꺼내 써도 된다."
+    },
+    {
+      "title": "라우트 지연 로딩(Lazy Loading)과 redirect 설정",
+      "lang": "javascript",
+      "code": "// src/router/index.js — 필요한 순간에만 코드를 내려받는 지연 로딩\nimport { createRouter, createWebHistory } from 'vue-router'\n// 정적 import: 앱 시작과 동시에 메모리에 올라간다(첫 화면용에 적합)\nimport HomeView from '../views/HomeView.vue'\n\nconst routes = [\n  { path: '/', name: 'home', component: HomeView },\n  // 동적 import: 이 주소에 실제로 들어갈 때에야 파일을 내려받는다\n  // → 첫 로딩이 가벼워져 페이지가 많은 앱의 필수 최적화 기법\n  { path: '/about', name: 'about', component: () => import('../views/AboutView.vue') },\n  // redirect: 옛 주소로 들어오면 새 주소로 자동으로 돌려보낸다\n  { path: '/home', redirect: '/' },\n]\n\n// createWebHistory: 슬래시(/) 기반의 일반 주소 형태로 URL 을 관리한다\nconst router = createRouter({ history: createWebHistory(), routes })\nexport default router",
+      "note": "component 에 컴포넌트를 바로 적으면 정적 로드, () => import(...) 함수로 적으면 방문 시점에 내려받는 지연 로드가 된다. 빌드하면 지연 로드 컴포넌트는 별도 js 파일로 쪼개져, 사용자가 첫 화면을 훨씬 빨리 만나게 된다."
+    },
+    {
+      "title": "push vs replace vs go — 이동 기록을 남길까 말까",
+      "lang": "vue",
+      "code": "<script setup>\n// 코드로 페이지를 조종하는 useRouter 를 가져온다\nimport { useRouter } from 'vue-router'\nconst router = useRouter()\n\n// push: 방문 기록(History)을 남기며 이동 → 뒤로가기로 돌아올 수 있다\nfunction goDetail() { router.push('/weather/seoul') }\n\n// replace: 기록을 남기지 않고 현재 페이지를 교체\n// → 인증 만료 후 로그인 화면처럼 '뒤로가기로 못 돌아가야 하는' 이동에 쓴다\nfunction forceLogin() { router.replace('/login') }\n\n// go(-1): 브라우저 뒤로가기 버튼과 똑같이 한 단계 이전으로 이동\nfunction goBack() { router.go(-1) }\n</script>\n\n<template>\n  <button @click=\"goDetail\">상세로 이동 (push)</button>\n  <button @click=\"forceLogin\">강제 교체 (replace)</button>\n  <button @click=\"goBack\">이전 화면으로 (go)</button>\n</template>",
+      "note": "push 와 replace 의 차이는 오직 '뒤로가기 기록을 남기느냐'다. 로그인 만료로 튕겨낸 화면에 뒤로가기로 다시 돌아오면 곤란하므로 이런 강제 이동에는 replace 를 쓰고, go(-1)/back() 은 브라우저 뒤로가기를 코드로 대신하는 명령이다."
+    },
+    {
+      "title": "Pinia Setup 스토어 — ref·computed 문법 그대로 스토어 만들기",
+      "lang": "javascript",
+      "code": "// src/stores/counter.js — 컴포넌트에서 쓰던 문법을 그대로 쓰는 Setup 방식\nimport { defineStore } from 'pinia'\nimport { ref, computed } from 'vue'\n\n// 스토어 변수 이름은 use + 파일명 + Store 규칙으로 짓는다\nexport const useCounterStore = defineStore('counter', () => {\n  // ref 로 선언하면 그대로 state(전역 공유 데이터)가 된다\n  const count = ref(0)\n  // computed 로 선언하면 getters(읽기 전용 계산값)가 된다\n  const doubleCount = computed(() => count.value * 2)\n  // 일반 함수로 선언하면 actions(상태 변경·비동기 통신 담당)가 된다\n  function increment() { count.value++ }\n  // return 으로 내보낸 것만 외부 컴포넌트가 쓸 수 있다(외부 개방 API)\n  return { count, doubleCount, increment }\n})\n\n// 사용하는 쪽: const store = useCounterStore()\n// {{ store.count }} / {{ store.doubleCount }} / @click=\"store.increment\"",
+      "note": "state/getters/actions 세 칸을 채우는 Options 방식과 결과는 같지만, Setup 방식은 컴포넌트에서 익힌 ref·computed·함수 문법을 그대로 재사용한다. ref=state, computed=getters, function=actions 로 일대일 매핑된다는 것이 핵심이다."
+    },
+    {
+      "title": "전역 설정 스토어 활용 — 온도 단위(℃/℉) 앱 전체 전환",
+      "lang": "vue",
+      "code": "<script setup>\n// 단위 설정 스토어: state(unit), getters(unitSymbol), actions(toggleUnit)\nimport { computed } from 'vue'\nimport { useConfigStore } from '../stores/configStore'\nconst configStore = useConfigStore()\n// 부모가 내려준 도시 데이터(원본 기온은 항상 섭씨 숫자)\nconst props = defineProps({ cityItem: Object })\n\n// 화면 표시용 기온: 전역 단위 설정에 따라 실시간으로 변환된다\nconst displayTemp = computed(() => {\n  const raw = props.cityItem.temp             // 원본 섭씨 값\n  if (configStore.unit === 'fahrenheit') {\n    return Math.round((raw * 9) / 5 + 32)     // 화씨 변환 공식\n  }\n  return raw                                   // 섭씨면 그대로 반환\n})\n</script>\n\n<template>\n  <!-- 변환된 기온 + 스토어 getter 가 주는 단위 기호(℃/℉) -->\n  <p>{{ cityItem.name }}: {{ displayTemp }}{{ configStore.unitSymbol }}</p>\n  <!-- 어느 컴포넌트에서 눌러도 앱 전체의 표시 단위가 한꺼번에 바뀐다 -->\n  <button @click=\"configStore.toggleUnit\">단위 전환</button>\n</template>",
+      "note": "원본 데이터(섭씨)는 그대로 두고, 전역 스토어의 설정값 + computed 조합으로 '보여 주는 값'만 변환하는 것이 포인트다. 스토어 값이 바뀌면 이 computed 를 쓰는 모든 화면이 동시에 갱신되어, 설정 하나로 앱 전체가 일사불란하게 움직인다."
     }
   ],
   "vue-4": [
@@ -124,6 +232,30 @@ export const examplesExtra3 = {
       "lang": "javascript",
       "code": "// vite.config.js : 빌드·배포 환경 설정 파일\nimport { defineConfig } from 'vite'\nimport vue from '@vitejs/plugin-vue'\n\nexport default defineConfig({\n  plugins: [vue()],\n  // base: 배포 경로의 기준점.\n  //  - 루트/커스텀 도메인이면 '/'\n  //  - GitHub Pages 하위경로(아이디.github.io/레포명/)면 '/레포명/'\n  // 이 값이 안 맞으면 빌드 후 JS·CSS 자산이 404 나며 흰 화면이 뜬다\n  base: '/skala-vue/',\n})\n\n// --- 터미널 흐름 ---\n// npm run dev     : 개발 서버(localhost:5173), 저장 즉시 반영(HMR)\n// npm run build   : dist 폴더로 압축·최적화된 정적 파일 생성(실제 올릴 결과물)\n// npm run preview : 빌드 결과를 실제처럼 미리보기",
       "note": "npm run build 는 소스를 압축·최적화해 dist 폴더를 만든다. GitHub Pages 하위경로에 올릴 때 base 를 레포명으로 맞추지 않으면 자산 경로가 어긋나 화면이 하얗게 뜨는 대표적 실수가 난다."
+    },
+    {
+      "title": "환경변수(.env)와 import.meta.env — 서버 주소를 코드 밖으로",
+      "lang": "vue",
+      "code": "<script setup>\n// Vite 는 프로젝트 루트의 .env 파일들을 자동으로 읽어 들인다\n//   .env.staging    → VITE_API_URL=https://api-stage.example.com\n//   .env.production → VITE_API_URL=https://api-prod.example.com\n// 규칙: VITE_ 로 시작하는 변수만 화면 코드로 노출된다(보안 장치)\n\n// import.meta.env 로 현재 빌드 모드에 주입된 값을 읽는다\nconst apiUrl = import.meta.env.VITE_API_URL\nconsole.log('현재 주입된 API 서버 주소:', apiUrl)\n</script>\n\n<template>\n  <!-- staging 으로 빌드하면 stage 주소, production 이면 prod 주소가 보인다 -->\n  <p>연동 API 서버: {{ apiUrl }}</p>\n</template>\n\n<!-- package.json 스크립트에 --mode 를 붙여 환경을 골라 빌드한다\n  \"build:staging\":    \"vite build --mode staging\"\n  \"build:production\": \"vite build --mode production\"\n소스 수정 없이 명령어만 바꿔 검증 서버와 실서버 주소를 스위칭한다 -->",
+      "note": "API 키·서버 주소 같은 설정값을 소스에 하드코딩하면 Git 에 노출되고, 서버가 바뀔 때마다 코드를 고쳐야 한다. .env 파일로 격리하면 빌드 명령의 --mode 옵션만으로 검증/상용 환경을 오갈 수 있고, VITE_ 접두사 규칙이 민감 변수의 실수 노출을 막아 준다."
+    },
+    {
+      "title": "ESLint 커스텀 규칙 — == 금지하고 === 강제하기",
+      "lang": "javascript",
+      "code": "// eslint.config.js — 프로젝트 전체에 적용할 나만의 검사 규칙 추가\n// (배열에서 아래에 둘수록 앞서 로드된 기본 규칙을 덮어쓴다)\nexport default [\n  // ...js 추천 규칙, Vue 필수 규칙 등 기본 세트가 먼저 오고\n  {\n    name: 'app/custom-rules',   // 규칙 묶음의 식별자 이름(선택)\n    rules: {\n      'eqeqeq': ['error', 'always'],   // == 금지, === 강제(암묵적 형변환 버그 차단)\n      'no-unused-vars': 'warn',        // 선언만 하고 안 쓴 변수는 경고 처리\n      'no-console': 'off',             // 학습 편의를 위해 console.log 허용\n      'vue/multi-word-component-names': 'off',  // 한 단어 컴포넌트명 허용\n    },\n  },\n]\n\n// 동작 확인 3단계:\n// 1) 코드에 if (userAge == 20) 처럼 느슨한 비교를 일부러 넣고 저장\n// 2) 에디터에 빨간 물결과 \"Expected '===' and instead saw '=='\" 툴팁 확인\n// 3) 터미널에서 npm run lint 로 프로젝트 전체를 일괄 점검",
+      "note": "ESLint 는 코드를 실행하지 않고도 오타·미사용 변수·위험한 패턴을 잡아 주는 정적 분석 도구다. 자바스크립트는 문법 오류가 있어도 배포가 되어 버리는 인터프리터 언어라, CI 에 lint 를 걸어 결함 코드가 상용에 나가는 것을 자동 차단하는 것이 실무 표준이다."
+    },
+    {
+      "title": "ElMessageBox 확인 팝업과 el-progress 게이지 바",
+      "lang": "vue",
+      "code": "<script setup>\nimport { ref } from 'vue'\n// 확인 팝업과 토스트 알림(Element Plus 가 JS 호출형으로 제공)\nimport { ElMessage, ElMessageBox } from 'element-plus'\nconst progress = ref(0)   // 게이지 진행률(0~100)\n\n// 구식 confirm() 을 대체하는 세련된 최종 확인 팝업\nfunction confirmDelete() {\n  ElMessageBox.confirm('파일을 영구 삭제할까요?', '최종 확인', { type: 'warning' })\n    .then(() => ElMessage.success('삭제되었습니다'))   // 확인을 누르면 실행\n    .catch(() => ElMessage.info('취소되었습니다'))     // 취소를 누르면 실행\n}\n// 다운로드 시뮬레이션: 0.4초마다 게이지를 20씩 채운다\nfunction startDownload() {\n  progress.value = 0\n  const timer = setInterval(() => {\n    progress.value += 20\n    if (progress.value >= 100) { clearInterval(timer); ElMessage.success('완료!') }\n  }, 400)\n}\n</script>\n\n<template>\n  <el-button type=\"danger\" @click=\"confirmDelete\">파일 삭제</el-button>\n  <el-button @click=\"startDownload\">다운로드 시작</el-button>\n  <!-- 진행률 숫자만 넘기면 애니메이션 게이지 바가 자동으로 그려진다 -->\n  <el-progress :percentage=\"progress\" />\n</template>",
+      "note": "브라우저 기본 confirm() 은 못생기고 커스텀이 안 되지만, ElMessageBox.confirm 은 Promise 를 돌려줘 확인은 then, 취소는 catch 로 갈라 처리한다. el-progress 는 percentage 값 하나로 진행률 UI 를 완성하는, 삭제 확인·다운로드 표시 같은 실무 단골 패턴이다."
+    },
+    {
+      "title": "Promise .then 체이닝 vs async/await — 콘솔 순서로 보는 차이",
+      "lang": "javascript",
+      "code": "// 같은 통신을 두 가지 문법으로 — 콘솔에 찍히는 번호 순서에 주목!\nimport axios from 'axios'\nconst URL = 'https://jsonplaceholder.typicode.com/posts/1'\n\n// 방법1) .then 체이닝: 요청만 걸어두고 다음 줄로 먼저 내려간다\nfunction withThen() {\n  console.log('1. 통신 시작')\n  axios.get(URL)\n    .then((res) => console.log('3. 데이터 도착:', res.data.title))  // 성공 시\n    .catch((err) => console.error('에러 발생:', err))              // 실패 시\n  console.log('2. 요청 직후 라인')   // 데이터보다 이 줄이 먼저 찍힌다!\n}\n\n// 방법2) async/await: 응답이 올 때까지 기다렸다가 다음 줄로 — 위에서 아래로 읽힌다\nasync function withAwait() {\n  console.log('1. 통신 시작')\n  try {\n    const res = await axios.get(URL)              // 도착할 때까지 대기\n    console.log('2. 데이터 도착:', res.data.title)\n  } catch (err) {\n    console.error('에러 발생:', err)               // 실패는 정석 try/catch 로\n  }\n  console.log('3. 통신이 다 끝난 후 라인')          // 1→2→3 순서대로 찍힌다\n}",
+      "note": ".then 방식은 요청을 걸어 두고 아래 코드가 먼저 실행되어 로그가 1→2→3 순서로 어긋나 보이지만, await 는 응답을 기다렸다가 진행해 위에서 아래로 정직하게 읽힌다. 그래서 가독성과 유지보수 면에서 async/await + try/catch 가 실무 표준이 되었다."
     }
   ],
   "webproject-1": [
@@ -198,6 +330,30 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 소스 -> AST -> 바이트코드 -> PVM: 파이썬이 코드를 실행하는 진짜 순서\nimport dis  # 함수가 어떤 바이트코드로 컴파일되는지 보여주는 표준 모듈\n\n# 아주 단순한 덧셈 함수 하나를 정의한다\ndef add(x, y):\n    return x + y  # 이 한 줄이 실제로 어떤 명령들로 쪼개지는지 확인\n\n# dis 로 내부 바이트코드 명령을 출력한다\ndis.dis(add)\n# 출력(요지):\n#   LOAD_FAST   x    <- 지역변수 x 를 스택에 올림\n#   LOAD_FAST   y    <- 지역변수 y 를 스택에 올림\n#   BINARY_OP   +    <- 스택 위 두 값을 더함\n#   RETURN_VALUE     <- 결과를 반환\n\n# CPython 은 소스를 기계어가 아니라 '바이트코드'로 바꿔 PVM 이 한 줄씩 실행한다.\n# 이 구조를 알면 __pycache__(.pyc)가 왜 생기는지, 그리고 컴프리헨션이\n# for 루프보다 빠른 이유(생성되는 바이트코드 수가 더 적음)를 납득할 수 있다.",
       "note": "교재 1장의 dis·LOAD_FAST·BINARY_OP·RETURN_VALUE 설명을 그대로 실습으로. \"왜 컴프리헨션이 빠른가\"를 느낌이 아니라 바이트코드 개수로 이해하게 하는 개념 데모다."
+    },
+    {
+      "title": "list vs set — 자료구조 선택이 속도를 가른다 (timeit 실측)",
+      "lang": "python",
+      "code": "import timeit                      # 코드 실행 시간을 반복 측정하는 표준 모듈\n\ndata_list = list(range(100_000))   # 10만 개 숫자를 담은 리스트\ndata_set = set(data_list)          # 같은 숫자를 담은 집합(내부는 해시 테이블)\n\n# 리스트의 in 검사: 앞에서부터 하나씩 훑는다 - O(n)\nt_list = timeit.timeit(lambda: 99_999 in data_list, number=1000)\n# 집합의 in 검사: 해시로 위치를 바로 찾는다 - O(1)\nt_set = timeit.timeit(lambda: 99_999 in data_set, number=1000)\n\nprint('리스트 검색:', round(t_list, 4), '초')   # 집합보다 수백 배 느리다\nprint('집합 검색  :', round(t_set, 6), '초')    # 거의 0에 가깝다\n\n# set 은 중복 제거에 더해 집합 연산까지 한 줄로 된다\na = {'서울', '부산', '대구'}       # 이번 달 매출이 있는 지역\nb = {'서울', '인천'}               # 프로모션 대상 지역\nprint('교집합:', a & b)            # 결과: {'서울'} - 둘 다 해당\nprint('차집합:', a - b)            # 결과: {'부산', '대구'} - 매출만 있는 곳",
+      "note": "같은 in 검사라도 리스트는 전부 훑고(O(n)) 집합은 해시로 바로 찾는다(O(1)). timeit 으로 반복 측정하면 감이 아니라 숫자로 차이를 확인할 수 있어, 자료구조 선택 기준을 몸으로 익히게 된다."
+    },
+    {
+      "title": "TypedDict + mypy — dict 에 타입 계약을 새겨 실행 전에 오류 잡기",
+      "lang": "python",
+      "code": "from typing import TypedDict       # dict 모양에 타입 힌트를 입히는 도구\n\n# dict 를 그대로 쓰되, 어떤 키에 어떤 타입이 오는지 '계약'을 선언한다\nclass SalesRow(TypedDict):\n    date: str      # 날짜 문자열\n    region: str    # 지역명\n    amount: float  # 매출액(실수)\n\n# CSV 한 행을 읽었다고 가정 - 겉모습은 평범한 dict 다\nrow: SalesRow = {'date': '2026-01', 'region': '서울', 'amount': 1500.0}\nprint(row['region'])               # 일반 dict 처럼 자유롭게 사용\n\n# 타입 힌트가 있으면 정적 검사기가 실수를 '실행 전에' 잡아 준다\ndef compute_avg(values: list[float]) -> float:\n    return sum(values) / len(values)   # 평균 계산\n\n# compute_avg(['a', 'b'])   # <- 문자열 리스트를 넘기는 실수(주석 해제해 실험)\n# 터미널에서:  mypy analysis.py\n#   error: Argument 1 has incompatible type 'list[str]'; expected 'list[float]'\n# 수백만 행을 처리한 뒤 터지는 것보다, 실행 전에 빨간 줄로 아는 편이 훨씬 싸다",
+      "note": "dataclass 가 클래스형 레코드라면 TypedDict 는 dict 를 그대로 쓰면서 타입만 계약하는 방식이라 Pandas 행·JSON 과 궁합이 좋다. mypy 나 VS Code Pylance 가 이 힌트를 읽어 컬럼 타입 실수를 런타임 전에 차단해 준다."
+    },
+    {
+      "title": "ProcessPoolExecutor — CPU 무거운 전처리를 코어 수만큼 병렬로",
+      "lang": "python",
+      "code": "from concurrent.futures import ProcessPoolExecutor  # 여러 프로세스로 나눠 실행\nimport multiprocessing as mp       # 내 컴퓨터의 CPU 코어 수 확인용\n\n# CPU 를 많이 쓰는 무거운 계산(행 단위 전처리라고 가정)\ndef process_chunk(chunk):\n    return [x * x % 97 for x in chunk]   # 청크 안의 값을 하나씩 변환\n\ndef split_chunks(data, n):         # 데이터를 코어 수만큼 등분하는 함수\n    size = len(data) // n          # 청크 하나의 크기\n    return [data[i*size:(i+1)*size] for i in range(n)]   # n 개 조각으로 분할\n\nif __name__ == '__main__':         # 멀티프로세싱은 이 가드가 반드시 필요하다\n    data = list(range(1_000_000))  # 처리할 큰 데이터(100만 건)\n    n_cores = mp.cpu_count()       # CPU 코어 수(예: 8)\n    chunks = split_chunks(data, n_cores)   # 코어 수만큼 청크 분할\n    with ProcessPoolExecutor(max_workers=n_cores) as exe:\n        results = list(exe.map(process_chunk, chunks))   # 청크들을 동시에 처리\n    total = sum(len(r) for r in results)   # 조각난 결과를 다시 합친다\n    print(n_cores, '코어로', total, '건 병렬 처리 완료')   # 이론상 코어 수배 빨라진다",
+      "note": "asyncio 는 네트워크처럼 기다림이 많은 작업용이고, 계산 자체가 무거운 작업은 GIL 을 우회하는 멀티프로세싱이 답이다. 데이터를 코어 수만큼 등분해 ProcessPoolExecutor.map 에 넘기는 것이 대용량 전처리의 기본 병렬 패턴이다."
+    },
+    {
+      "title": "cProfile — 느린 함수를 느낌이 아니라 측정으로 찾기",
+      "lang": "python",
+      "code": "import cProfile                    # 함수별 호출 횟수·누적 시간을 재는 표준 도구\n\ndef load_data():                   # 1단계: 데이터 읽기(빠르다고 가정)\n    return list(range(200_000))\n\ndef slow_clean(data):              # 2단계: 일부러 느리게 만든 정제 함수(병목 후보)\n    out = []\n    for x in data:                 # 파이썬 루프 + 문자열 변환이라 느리다\n        out.append(str(x).zfill(8))\n    return out\n\ndef summarize(data):               # 3단계: 요약 통계(빠르다)\n    return sum(len(s) for s in data)\n\ndef analysis():                    # 전체 분석 흐름을 하나로 묶은 함수\n    data = load_data()             # 읽고\n    cleaned = slow_clean(data)     # 정제하고\n    return summarize(cleaned)      # 요약한다\n\n# cumtime(누적 시간) 순으로 정렬해 어느 함수가 오래 걸렸는지 표로 출력\ncProfile.run('analysis()', sort='cumtime')\n# 출력에서 slow_clean 이 시간 대부분을 차지함을 확인 -> 최적화는 여기부터",
+      "note": "느리다는 느낌만으로 아무 곳이나 고치면 헛수고가 되기 쉽다. cProfile 로 함수별 누적 시간을 먼저 재고, 가장 오래 걸린 함수 하나만 벡터화·병렬화하는 것이 올바른 최적화 순서다."
     }
   ],
   "python-2": [
@@ -230,6 +386,30 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 실습4(Practice 4): 지역과 결제수단이 서로 관련 있는가(범주형 vs 범주형)\nimport pandas as pd\nfrom scipy.stats import chi2_contingency  # 카이제곱 독립성 검정 함수\n\ndf = pd.DataFrame({\n    'region': ['서울', '서울', '부산', '부산', '서울', '부산', '서울', '부산'],\n    'pay':    ['카드', '현금', '카드', '카드', '현금', '현금', '카드', '현금'],\n})\n\n# 1) 두 범주형 변수로 분할표(교차표)를 만든다\ntable = pd.crosstab(df['region'], df['pay'])\nprint(table)\n\n# 2) 카이제곱 검정: 지역과 결제수단이 독립인지 검정\nchi2, p, dof, expected = chi2_contingency(table)\nprint('카이제곱:', round(chi2, 3), 'p-value:', round(p, 3))\n\n# 3) 해석은 반드시 코드/주석으로 남긴다(수치만 출력하면 감점)\nif p < 0.05:\n    print('=> p<0.05: 지역과 결제수단은 독립이 아니다(관련 있음)')\nelse:\n    print('=> p>=0.05: 독립이 아니라고 볼 근거가 부족하다')",
       "note": "Practice 4는 t-test 외에 chi2_contingency로 범주형 독립성까지 요구한다. Checkpoint가 \"p<0.05 유의미 여부 판단을 코드/주석으로 남기지 않으면 -20\"이라, 판정 분기를 반드시 넣는 습관을 보여준다."
+    },
+    {
+      "title": "pivot_table 과 merge — 엑셀 피벗과 SQL JOIN 을 Pandas 로",
+      "lang": "python",
+      "code": "import pandas as pd                # 표 처리 라이브러리\n\n# 매출 표: 고객·지역·분류별 거래 기록\nsales = pd.DataFrame({\n    'customer_id': [1, 2, 1, 3],                    # 고객 번호\n    'region': ['서울', '부산', '서울', '부산'],       # 지역\n    'category': ['가전', '식품', '식품', '가전'],     # 상품 분류\n    'amount': [1200, 300, 500, 2000],               # 매출액\n})\n# 고객 표: 고객 번호와 등급(다른 파일에서 온 표라고 가정)\ncust = pd.DataFrame({'customer_id': [1, 2, 3], 'grade': ['VIP', '일반', '일반']})\n\n# 1) pivot_table: 엑셀 피벗과 동일 - 행=지역, 열=분류, 값=매출 합계\npivot = sales.pivot_table(values='amount', index='region',\n                          columns='category', aggfunc='sum', fill_value=0)\nprint(pivot)                       # 지역 x 분류 매출 교차표 완성\n\n# 2) merge: SQL 의 LEFT JOIN - 고객 등급을 매출 표에 붙인다\njoined = pd.merge(sales, cust, on='customer_id', how='left')\nprint(joined[['customer_id', 'amount', 'grade']])   # 등급이 붙은 매출 표\n\n# 3) 결합했으니 등급별 매출 합계도 한 줄\nprint(joined.groupby('grade')['amount'].sum())      # VIP 1700, 일반 2300",
+      "note": "pivot_table 은 행·열 두 축으로 펼쳐 보는 교차 집계, merge 는 두 표를 공통 키로 잇는 SQL JOIN 이다. 다른 출처의 표를 merge 로 붙인 뒤 groupby·pivot 으로 집계하는 것이 실무 분석의 기본 결합 흐름이다."
+    },
+    {
+      "title": "Pandas 2.x Copy-on-Write — 걸러낸 조각을 고칠 때의 함정",
+      "lang": "python",
+      "code": "import pandas as pd                # Pandas 2.x 부터 Copy-on-Write 가 기본이다\n\ndf = pd.DataFrame({'region': ['서울', '부산', '서울'],\n                   'amount': [1000, 2000, 3000]})   # 원본 매출 표\n\n# [위험] 조건으로 걸러낸 조각은 '뷰'라서 바로 대입하면 경고/오류가 난다\nseoul = df[df['region'] == '서울']          # 이 시점의 seoul 은 원본을 비추는 뷰\n# seoul['amount'] = seoul['amount'] * 1.1  # <- ChainedAssignment 경고! (2.x)\n\n# [안전 1] copy() 로 원본과 연결을 끊은 복사본을 만들어 수정한다\nseoul = df[df['region'] == '서울'].copy()  # 독립된 내 표\nseoul['amount'] = seoul['amount'] * 1.1    # 마음껏 수정 가능\nprint(seoul)                               # 서울 행만 10% 인상된 복사본\n\n# [안전 2] 원본 자체를 고치려면 .loc 으로 조건과 열을 한 번에 지정한다\ndf.loc[df['region'] == '서울', 'amount'] *= 1.1   # 원본 직접 수정(경고 없음)\nprint(df)                                  # 원본에서도 서울 행만 인상됨",
+      "note": "Pandas 2.x 는 Copy-on-Write 가 기본이라, 걸러낸 뷰에 연쇄 대입하면 경고가 나고 의도대로 안 바뀔 수 있다. 복사본을 원하면 .copy(), 원본 수정이 목적이면 .loc 한 줄 — 이 두 패턴만 지키면 가장 흔한 Pandas 사고를 예방한다."
+    },
+    {
+      "title": "apply 대신 벡터화 — str·dt 접근자로 열 전체를 한 번에",
+      "lang": "python",
+      "code": "import pandas as pd                # 표 처리 라이브러리\n\ndf = pd.DataFrame({\n    'name': ['kim', 'lee', 'park'] * 1000,                        # 고객명 3000건\n    'date': ['2026-01-05', '2026-02-14', '2026-03-01'] * 1000,    # 주문일 3000건\n})\n\n# [느린 방법] apply: 행마다 파이썬 함수를 호출한다(사실상 파이썬 루프)\ndf['upper1'] = df['name'].apply(lambda x: x.upper())\n\n# [빠른 방법] str 접근자: C 레벨에서 열 전체를 한 번에 처리(벡터화)\ndf['upper2'] = df['name'].str.upper()      # 100만 행 기준 수십 배 빠르다\n\n# 날짜도 마찬가지 - dt 접근자로 연·월·요일을 한 번에 뽑는다\ndf['date'] = pd.to_datetime(df['date'])    # 문자열을 날짜 타입으로 변환\ndf['month'] = df['date'].dt.month          # 월 추출\ndf['weekday'] = df['date'].dt.day_name()   # 요일 이름 추출\nprint(df[['name', 'upper2', 'month', 'weekday']].head(3))\n\n# 습관: apply 를 쓰기 전에 'str/dt/산술 벡터 연산으로 되는가'를 먼저 묻는다",
+      "note": "apply 는 편하지만 행마다 파이썬 함수를 부르는 루프라 느리고, str.upper()·dt.month 같은 벡터화 연산은 C 수준에서 열 전체를 처리해 수십 배 빠르다. 교재 실측 기준 100만 행에서 apply 약 3.2초, str 접근자 약 0.08초로 40배 차이가 난다."
+    },
+    {
+      "title": "schedule 로 매일 아침 리포트 자동 실행 — 반복 분석 자동화",
+      "lang": "python",
+      "code": "import schedule                    # pip install schedule - 파이썬 안의 간단한 스케줄러\nimport time                        # 대기 루프용\nimport logging                     # 성공/실패를 기록으로 남기기 위해\n\nlogging.basicConfig(level=logging.INFO)    # 실행 기록을 화면에 출력\n\ndef run_daily_report():            # 매일 반복할 분석 작업 한 덩어리\n    try:                           # 자동 실행은 실패해도 프로그램이 죽으면 안 된다\n        # df = load_and_clean('sales.csv')   # 1) 데이터 적재·정제\n        # stats = compute_stats(df)          # 2) 통계 계산\n        # render_report(stats)               # 3) 리포트 파일 생성\n        logging.info('아침 리포트 생성 완료')          # 성공 기록\n    except Exception as e:\n        logging.error('리포트 실패: ' + str(e))       # 실패도 기록으로 남긴다\n\nschedule.every().day.at('08:00').do(run_daily_report)     # 매일 아침 8시\nschedule.every().monday.at('09:00').do(run_daily_report)  # 매주 월요일 9시(주간판)\nschedule.every(1).hours.do(run_daily_report)              # 매시간(새 데이터 확인용)\n\nwhile True:                        # 프로그램을 켜 두면\n    schedule.run_pending()         # 예약 시각이 된 작업을 실행하고\n    time.sleep(60)                 # 1분마다 예약을 확인한다",
+      "note": "매주 손으로 만들던 리포트를 schedule 에 등록하면 수십 분 작업이 0분이 되고, 같은 코드가 항상 같은 결과를 내 복붙 오류도 사라진다. 자동 실행 함수는 반드시 try/except 와 logging 으로 감싸, 실패해도 죽지 않고 기록이 남게 하는 것이 핵심이다."
     }
   ],
   "prompt-1": [
@@ -322,6 +502,30 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "from sentence_transformers import SentenceTransformer  # 문장을 벡터로 바꾸는 임베딩 모델\nimport faiss                               # 벡터 유사도 검색 라이브러리(메타 제작)\n\n# 검색 대상 사내 문서 조각들(실제로는 파일을 청크로 나눠 넣는다)\nchunks = [\n    \"연차 휴가는 입사 1년 후 15일이 부여된다.\",   # 문서1\n    \"재택근무는 팀장 승인 시 주 2회까지 가능하다.\", # 문서2\n    \"복지포인트는 매년 1월 1일에 지급된다.\",       # 문서3\n]\nembedder = SentenceTransformer(\"paraphrase-multilingual-MiniLM-L12-v2\")  # 다국어 임베딩\nvecs = embedder.encode(chunks, normalize_embeddings=True)  # 문서들을 벡터로(정규화)\n\nindex = faiss.IndexFlatIP(vecs.shape[1])   # 내적(=코사인) 기준 벡터 인덱스 생성\nindex.add(vecs)                            # 문서 벡터들을 인덱스에 저장\n\nquestion = \"재택근무 며칠까지 돼?\"           # 사용자 질문\nq_vec = embedder.encode([question], normalize_embeddings=True)  # 질문도 같은 방식으로 벡터화\nscores, ids = index.search(q_vec, k=1)     # 가장 가까운 문서 1개 검색\nprint(\"가장 관련 있는 문서:\", chunks[ids[0][0]])  # 결과: 재택근무 문서",
       "note": "FAISS는 문서 벡터를 인덱스에 담아 질문 벡터와 가장 가까운 조각을 빠르게 찾아 준다. 이렇게 찾은 근거를 sLLM 프롬프트에 붙이면 사내 문서 기반 RAG가 된다."
+    },
+    {
+      "title": "MLM vs CLM — 빈칸 채우기와 이어 쓰기를 직접 비교",
+      "lang": "python",
+      "code": "from transformers import pipeline   # 허깅페이스 편의 파이프라인\n\n# 1) MLM(빈칸 채우기) - BERT 계열: 앞뒤 문맥을 '양방향'으로 보고 [MASK]를 맞힌다\nfill = pipeline('fill-mask', model='bert-base-multilingual-cased')\nfor cand in fill('서울은 한국의 [MASK]이다.')[:3]:   # 확률 높은 후보 3개\n    print('MLM 후보:', cand['token_str'], round(cand['score'], 3))\n\n# 2) CLM(다음 토큰 예측) - GPT 계열: '왼쪽 문맥만' 보고 뒤를 이어 쓴다\ngen = pipeline('text-generation', model='Qwen/Qwen2.5-0.5B')\nout = gen('서울은 한국의', max_new_tokens=20, do_sample=False)\nprint('CLM 생성:', out[0]['generated_text'])   # 문장이 자연스럽게 이어진다\n\n# 정리: MLM 은 문장 이해(분류·개체명 인식)에, CLM 은 생성(대화·요약)에 강하다\n# 요즘 sLLM(Llama·Qwen·Gemma·EXAONE)이 전부 CLM(Decoder-only)인 이유:\n#   '프롬프트 -> 응답' 학습이 다음 토큰 예측 구조와 그대로 맞아떨어지기 때문",
+      "note": "MLM(BERT)은 양방향 문맥으로 빈칸을 맞추고, CLM(GPT)은 이전 토큰만 보고 다음을 예측한다. 지시-응답 형태의 파인튜닝이 CLM 의 다음 토큰 예측과 직접 일치하기 때문에, sLLM 파인튜닝은 사실상 CLM 중심으로 이루어진다."
+    },
+    {
+      "title": "토크나이저 뜯어보기 — 분해·번호화·복원과 pad 토큰 준비",
+      "lang": "python",
+      "code": "from transformers import AutoTokenizer   # 모델과 짝을 이루는 토크나이저 로더\n\ntok = AutoTokenizer.from_pretrained('Qwen/Qwen2.5-0.5B')  # Qwen 토크나이저\n\ntext = '연차 신청은 어떻게 하나요?'        # 모델에 넣을 문장\ntokens = tok.tokenize(text)               # 1) 문장을 토큰 조각으로 분해\nprint('토큰 조각:', tokens)               # 한글이 여러 조각으로 쪼개진다\n\nids = tok.encode(text)                    # 2) 각 조각을 번호(ID)로 변환\nprint('토큰 ID :', ids)                   # 모델이 실제로 먹는 것은 이 숫자들\nprint('토큰 수 :', len(ids))              # 과금·컨텍스트 길이의 단위\n\nprint('복원    :', tok.decode(ids))       # 3) 번호를 다시 문장으로 복원\n\n# 학습·배치 처리 때 길이를 맞출 pad 토큰이 없는 모델은 eos 로 대신 지정한다\nif tok.pad_token is None:                 # Qwen 계열은 pad 토큰이 비어 있다\n    tok.pad_token = tok.eos_token         # 문장 끝(eos) 토큰을 패딩으로 재사용\nprint('패딩 토큰:', tok.pad_token)         # 파인튜닝 전에 꼭 거치는 준비 단계",
+      "note": "LLM 은 글자가 아니라 토큰 번호를 먹기 때문에, 분해(tokenize)→번호화(encode)→복원(decode)의 왕복을 눈으로 확인하는 것이 첫걸음이다. pad_token 이 없는 모델에 eos 를 패딩으로 지정하는 것은 이후 모든 파인튜닝 실습 코드의 공통 준비 동작이다."
+    },
+    {
+      "title": "LoRA 적용 전/후 — 학습 파라미터가 1% 미만으로 줄어드는 것 확인",
+      "lang": "python",
+      "code": "from transformers import AutoModelForCausalLM          # 생성형(CLM) 모델 로더\nfrom peft import LoraConfig, get_peft_model, TaskType   # LoRA 도구 3종\n\nmodel = AutoModelForCausalLM.from_pretrained('Qwen/Qwen2.5-0.5B')  # 베이스 sLLM\n\n# [적용 전] 전체 파라미터 수를 직접 세어 본다\ntotal = sum(p.numel() for p in model.parameters())   # 모든 가중치 개수 합산\nprint('전체 파라미터:', format(total, ','))            # 약 5억 개\n\n# LoRA 설정: 원래 가중치는 얼려 두고, 작은 보조 행렬만 학습한다\nlora = LoraConfig(\n    task_type=TaskType.CAUSAL_LM,   # 생성형 과제용\n    r=8,                # rank: 낮을수록 경량, 높일수록 표현력 증가\n    lora_alpha=16,      # 스케일링 계수(관례상 r 의 2배에서 시작)\n    lora_dropout=0.05,  # 과적합 방지용 드롭아웃\n    target_modules=['q_proj', 'v_proj'],   # 어텐션 투영층에만 부착\n)\nmodel = get_peft_model(model, lora)   # 모델에 LoRA 어댑터 결합\n\n# [적용 후] 실제로 학습되는 파라미터 비율을 확인한다\nmodel.print_trainable_parameters()\n# 예: trainable params: 1.1M || all params: 495M || trainable%: 0.22\n# 전체의 1% 미만만 학습해도 도메인 지식 주입이 가능한 것이 LoRA 의 힘",
+      "note": "LoRA 는 기존 가중치를 얼리고 어텐션 투영층 옆에 저랭크 행렬만 붙여 학습한다. 적용 전 전체 파라미터와 적용 후 trainable 비율을 나란히 확인하면, rank(r)와 alpha 가 학습량·표현력을 조절하는 손잡이라는 것이 숫자로 보인다."
+    },
+    {
+      "title": "GPU/CPU 환경 분기 로딩 — 어디서든 도는 실습 준비 코드",
+      "lang": "python",
+      "code": "import torch                                        # 장치(GPU/CPU) 확인용\nfrom transformers import AutoModelForCausalLM, AutoTokenizer  # 모델·토크나이저\n\nMODEL = 'Qwen/Qwen2.5-1.5B'        # 실습 기준 sLLM\ntok = AutoTokenizer.from_pretrained(MODEL)   # 토크나이저는 환경과 무관하게 동일\n\nif torch.cuda.is_available():      # GPU(CUDA)가 있는 환경 - 예: Colab\n    model = AutoModelForCausalLM.from_pretrained(\n        MODEL,\n        torch_dtype=torch.float16, # 절반 정밀도로 메모리 절약\n        device_map='auto',         # 모델을 GPU 에 자동 배치\n    )\n    print('GPU 로딩:', torch.cuda.get_device_name(0))   # 어떤 GPU 인지 확인\nelse:                              # CPU 만 있는 환경 - Mac/Windows 노트북 공통\n    model = AutoModelForCausalLM.from_pretrained(\n        MODEL,\n        torch_dtype=torch.float32, # CPU 는 float32 가 안전하다\n    )\n    print('CPU 로딩 완료 (느리지만 어디서나 실행된다)')\n\nif tok.pad_token is None:          # 공통 마무리: 패딩 토큰 준비\n    tok.pad_token = tok.eos_token  # eos 를 패딩으로 재사용\nmodel.config.pad_token_id = tok.pad_token_id   # 모델 설정에도 반영",
+      "note": "같은 실습 코드라도 GPU 에서는 float16+device_map, CPU 에서는 float32 로 로딩 방식이 달라진다. torch.cuda.is_available() 분기 하나로 Colab 과 내 노트북 어디서든 도는 코드를 만드는 것이 sLLM 실습의 출발 준비다."
     }
   ],
   "sllm-2": [
@@ -342,6 +546,30 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "from transformers import AutoModelForCausalLM, AutoTokenizer  # 모델·토크나이저\nimport torch                               # 텐서 계산\n\nname = \"Qwen/Qwen2.5-1.5B-Instruct\"        # sLLM\ntok = AutoTokenizer.from_pretrained(name)  # 토크나이저\nmodel = AutoModelForCausalLM.from_pretrained(name)  # 모델\nmodel.eval()                               # 추론 모드\n\ndef generate(prompt, n=200):               # 프롬프트를 넣어 텍스트를 생성\n    ids = tok(prompt, return_tensors=\"pt\").input_ids  # 토큰화\n    with torch.no_grad():                  # 추론\n        out = model.generate(ids, max_new_tokens=n, do_sample=False)  # 생성\n    return tok.decode(out[0], skip_special_tokens=True)  # 문자열로 복원\n\nlong_doc = \"연차는 입사 1년 후 15일 부여. 반차는 오전·오후로 신청 가능. (이하 긴 규정 원문)\"  # 긴 문서\n# 1) 먼저 문서를 질문 답변에 쓸 '핵심 맥락'으로 압축한다\ncompressed = generate(\"다음 문서를 핵심 규칙만 남겨 압축하라:\\n\" + long_doc, n=150)\n# 2) 압축된 맥락만 근거로 질문에 답한다(토큰 절약 + 잡음 감소)\nanswer = generate(\"아래 맥락만 근거로 답하라.\\n[맥락]\\n\" + compressed + \"\\n[질문]\\n연차는 며칠?\")\nprint(answer)                              # 압축 맥락에 근거한 답 출력",
       "note": "검색된 문서를 통째로 넣으면 토큰이 낭비되고 잡음이 섞인다. 먼저 핵심만 압축한 뒤 그 맥락으로 답하면 제한된 컨텍스트를 효율적으로 쓰면서 정확도를 지킬 수 있다."
+    },
+    {
+      "title": "Trainer 로 미니 파인튜닝 실행 — 하이퍼파라미터의 의미까지",
+      "lang": "python",
+      "code": "# 앞 예제에서 LoRA 를 붙인 model 과 tok 을 그대로 사용한다고 가정\nfrom datasets import load_dataset                  # JSONL 학습셋 로더\nfrom transformers import (Trainer, TrainingArguments,\n                          DataCollatorForLanguageModeling)  # 학습 도구 3종\n\n# faq_train.jsonl: 한 줄에 {'question': ..., 'answer': ...} 형식의 사내 FAQ\ndataset = load_dataset('json', data_files='faq_train.jsonl')['train']\n\ndef build_prompt(ex):              # Q/A 쌍을 하나의 학습 문장으로 조립\n    text = '다음은 사내 FAQ입니다.\\n\\nQ: ' + ex['question'] + '\\nA: ' + ex['answer'] + tok.eos_token\n    return {'text': text}          # 끝에 eos: '여기서 답이 끝난다'를 가르친다\n\ndef tokenize(ex):                  # 문장을 토큰으로 바꾸고 정답(labels)을 만든다\n    out = tok(ex['text'], truncation=True, max_length=512, padding='max_length')\n    out['labels'] = out['input_ids'].copy()   # CLM: 입력 그대로가 다음 토큰의 정답\n    return out\n\ndata = dataset.map(build_prompt).map(tokenize, remove_columns=dataset.column_names)\n\nargs = TrainingArguments(\n    output_dir='./qwen-lora-faq',      # 체크포인트 저장 폴더\n    num_train_epochs=3,                # 전체 데이터를 3바퀴 학습\n    per_device_train_batch_size=1,     # 한 번에 1건(메모리 절약)\n    gradient_accumulation_steps=4,     # 4번 모아 1번 업데이트 = 실질 배치 4\n    learning_rate=2e-4,                # LoRA 는 비교적 큰 학습률을 쓴다\n    logging_steps=10,                  # 10스텝마다 loss 출력(학습 모니터링)\n    report_to='none',                  # 외부 로깅 서비스 끔\n)\ncollator = DataCollatorForLanguageModeling(tokenizer=tok, mlm=False)  # CLM 용 배치 조립\ntrainer = Trainer(model=model, args=args, train_dataset=data, data_collator=collator)\ntrainer.train()                        # loss 가 점점 줄어드는지 지켜본다\nmodel.save_pretrained('./qwen-faq-lora')   # LoRA 어댑터만 저장(용량 수 MB)",
+      "note": "학습의 실체는 프롬프트 조립→토큰화(labels=input_ids)→Trainer 실행의 3단계다. 배치 1에 gradient_accumulation 4를 곱해 실질 배치를 키우고, LoRA 특유의 큰 학습률(2e-4)과 logging_steps 로 loss 감소를 관찰하는 것이 하이퍼파라미터 읽기의 시작이다."
+    },
+    {
+      "title": "Long-Context 확장(YaRN) — 긴 계약서를 압축 없이 통째로 넣기",
+      "lang": "python",
+      "code": "import torch                                        # 텐서 계산\nfrom transformers import AutoConfig, AutoTokenizer, AutoModelForCausalLM\n\nMODEL = 'Qwen/Qwen2.5-1.5B-Instruct'   # 기본 32K 컨텍스트 모델\n\n# 1) 설정을 먼저 불러와 RoPE 스케일링(YaRN)으로 컨텍스트를 약 4배 확장\nconfig = AutoConfig.from_pretrained(MODEL)\nconfig.rope_scaling = {\n    'rope_type': 'yarn',                        # 위치 인코딩을 늘려 잡는 기법\n    'factor': 4.0,                              # 32K -> 약 128K 로 확장\n    'original_max_position_embeddings': 32768,  # 원래 학습된 최대 길이\n}\n\ntok = AutoTokenizer.from_pretrained(MODEL)          # 토크나이저 로드\nmodel = AutoModelForCausalLM.from_pretrained(       # 확장 설정을 적용해 로드\n    MODEL, config=config, torch_dtype=torch.float32)\n\n# 2) 긴 문서 원문을 '압축하지 않고 통째로' 넣어 질문한다\nlong_doc = '제1조 ... (수만 자짜리 계약서 원문이라고 가정) ...'\nprompt = '다음 문서 원문을 그대로 참고해 답하세요.\\n[문서]\\n' + long_doc + '\\n[질문]\\n손해배상 예외 사유는?\\n[답변]\\n'\nids = tok(prompt, return_tensors='pt', truncation=True, max_length=32768 * 4)\nprint('입력 토큰 수:', ids['input_ids'].shape[1])    # 얼마나 긴 입력인지 확인\nout = model.generate(**ids, max_new_tokens=200, do_sample=False)\nprint(tok.decode(out[0], skip_special_tokens=True))  # 원문 근거 그대로 답변",
+      "note": "요약 압축은 빠르지만 세부 정보가 유실될 수 있고, YaRN 으로 컨텍스트를 확장하면 원문 손실은 없는 대신 연산·메모리 부담이 커진다. 조항 하나하나가 중요한 계약서 검토처럼 '세부가 생명'인 작업에서 Long-Context 를 선택하는 판단 기준을 익힌다."
+    },
+    {
+      "title": "FastAPI 로 파인튜닝 sLLM 서빙 — /ask 한 개로 시작하는 API 서버",
+      "lang": "python",
+      "code": "# app.py - 파인튜닝된 sLLM 을 API 로 여는 최소 서빙 코드\nfrom fastapi import FastAPI            # pip install fastapi uvicorn\nfrom pydantic import BaseModel         # 요청 형식을 검증하는 도구\n\napp = FastAPI(title='사내 FAQ sLLM')    # API 서버 객체 생성\n\nclass Ask(BaseModel):                  # /ask 로 들어올 요청의 형태 선언\n    question: str                      # 질문 문자열(필수)\n    max_new_tokens: int = 128          # 답변 길이 상한(기본 128)\n\n@app.get('/health')                    # 서버 상태 확인용(배포 체크리스트 항목)\ndef health():\n    return {'status': 'ok', 'model': 'Qwen2.5-1.5B + LoRA'}\n\n@app.post('/ask')                      # 질문을 받아 답을 돌려주는 핵심 창구\ndef ask(req: Ask):\n    # 학습 때와 '같은 형식'의 프롬프트로 조립해야 성능이 안정적이다\n    prompt = '다음은 사내 FAQ입니다.\\n\\nQ: ' + req.question + '\\nA:'\n    answer = generate_text(prompt, req.max_new_tokens)  # 학습 실습의 생성 함수 재사용\n    return {'question': req.question, 'answer': answer}\n\n# 실행: uvicorn app:app --port 8000\n# 접속: http://localhost:8000/docs (Swagger 화면에서 바로 눌러 테스트)\n# 배포 전 점검: 응답 지연시간(예: 3초 이내), 검색 결과 없음·토큰 초과 예외 처리",
+      "note": "튜닝한 모델은 파일로 두면 끝이 아니라 API 로 열어야 서비스가 된다. FastAPI 는 Pydantic 으로 요청을 검증하고 /docs 스와거 화면을 공짜로 만들어 주며, /health 응답·지연시간·예외 처리는 교재 배포 체크리스트의 필수 점검 항목이다."
+    },
+    {
+      "title": "RAG vs Fine-Tuning — 도메인 지식을 넣는 두 갈래 선택 기준",
+      "lang": "text",
+      "code": "# 도메인 지식 주입의 두 갈래 - 서로 다른 층위의 작업이다\n[RAG / 벡터DB 검색]\n  - 지식 위치: 외부 벡터DB (실행 시점에 검색해 근거로 제시)\n  - 최신성  : 문서만 갈아끼우면 즉시 반영\n  - 잘하는 것: 사실 검색, 근거 제시, 자주 바뀌는 규정 대응\n  - 한계    : 검색 품질에 성능이 좌우, 추론·판단형 질문에 약함\n\n[Fine-Tuning / 파라미터 학습]\n  - 지식 위치: 모델 가중치 내부 (학습으로 내재화)\n  - 최신성  : 바뀔 때마다 재학습 필요(비용·시간 소요)\n  - 잘하는 것: 전문 용어·응답 말투·판단 기준 자체를 모델에 심기\n  - 한계    : 재학습 비용, 과적합 위험\n\n[실무 결론]\n  - 둘은 경쟁이 아니라 결합: 검색(RAG) + 맥락 압축 + LoRA 튜닝 모델\n  - 예: 계약서 검토 보조 = 맥락압축 60% + LoRA(법무 용어 주입) 40%\n  - 실패 패턴 1: RAG 만 쓰다 실패 - 근거 문서가 없는 추론 질문에 취약\n  - 실패 패턴 2: 튜닝만 쓰다 실패 - 자주 바뀌는 규정을 재학습이 못 따라감\n  - 임베딩과 sLLM 의 언어 커버리지가 어긋나면 검색은 돼도 답변 품질이 떨어진다",
+      "note": "RAG 는 지식을 밖(벡터DB)에 두고 검색하고, Fine-Tuning 은 지식을 안(가중치)에 심는다는 근본 차이가 있다. 실무에서는 둘 중 하나가 아니라 목적에 따라 비중을 배분해 결합하며, 작은 시나리오로 시작해 비중을 조정하는 것이 검증된 접근이다."
     }
   ],
   "langchain-1": [
@@ -620,6 +848,24 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 터미널에서 먼저 실행: docker run -p 6333:6333 qdrant/qdrant\n# pip install qdrant-client\nfrom qdrant_client import QdrantClient\nfrom qdrant_client.models import Distance, VectorParams, PointStruct, Filter, FieldCondition, Range\n\nclient = QdrantClient(host='localhost', port=6333)   # 로컬 Qdrant 서버에 연결\nclient.recreate_collection(                           # 'rag_docs' 컬렉션(=테이블) 생성\n    collection_name='rag_docs',\n    vectors_config=VectorParams(size=4, distance=Distance.COSINE),  # 4차원·코사인 거리\n)\n\npoints = [                                            # Point = ID + 벡터 + payload(메타데이터)\n    PointStruct(id=1, vector=[0.1, 0.2, 0.1, 0.9], payload={'page': 3, 'category': '재무'}),\n    PointStruct(id=2, vector=[0.9, 0.1, 0.2, 0.1], payload={'page': 8, 'category': '법무'}),\n]\nclient.upsert(collection_name='rag_docs', points=points)  # 벡터+메타데이터를 함께 저장(Upsert)\n\nhits = client.search(                                 # 5페이지 이후 문서에서만 유사도 검색\n    collection_name='rag_docs',\n    query_vector=[0.1, 0.2, 0.1, 0.8],\n    query_filter=Filter(must=[FieldCondition(key='page', range=Range(gte=5))]),  # page>=5 필터\n    limit=3,\n)\nprint('필터 통과 결과:', [(h.id, h.payload) for h in hits])  # page 8짜리(id=2)만 남는다",
       "note": "FAISS와 달리 Qdrant는 벡터에 payload(메타데이터)를 붙여 저장하고 \"재무팀 5페이지 이후\"처럼 조건 필터 검색이 가능하다. 그래서 실무 프로덕션에서 선호된다."
+    },
+    {
+      "title": "NumPy만으로 Flat 검색 - 행렬곱 한 번과 argpartition으로 Top-k",
+      "lang": "python",
+      "code": "import numpy as np                                   # 수치 계산 라이브러리\n\nN, d = 10000, 768                                    # 문서 1만 개, 768차원 임베딩 가정\ndocs = np.random.randn(N, d).astype('float32')       # 문서 임베딩(연습용 난수)\nquery = np.random.randn(d).astype('float32')         # 질문 임베딩 1개\n\n# 코사인용 정규화: 길이를 1로 만들어 두면 내적 = 코사인 유사도\ndocs = docs / np.linalg.norm(docs, axis=1, keepdims=True)   # 각 행을 길이 1로\nquery = query / np.linalg.norm(query)                       # 질문도 길이 1로\n\nscores = docs @ query                                # 행렬-벡터 곱 1번으로 1만 개 점수 계산\nk = 5                                                # 상위 5개만 필요\nidx = np.argpartition(-scores, k - 1)[:k]            # 전체 정렬 대신 부분 선택(훨씬 빠름)\nidx = idx[np.argsort(-scores[idx])]                  # 뽑힌 5개만 점수순으로 정렬\nprint('Top-5 문서 번호:', idx)                        # 가장 비슷한 문서 5개\nprint('Top-5 점수:', np.round(scores[idx], 4))       # 유사도 점수 확인",
+      "note": "Flat(브루트포스) 인덱스는 모든 벡터와 전부 비교하는 전수조사라 항상 정답이다. 파이썬 for 루프 대신 BLAS 기반 행렬곱을 쓰고, 전체 정렬 O(N log N) 대신 argpartition(평균 O(N))으로 Top-k만 뽑는 것이 교재가 강조하는 핵심 최적화다. 데이터가 작을 때는 ANN을 붙이는 것보다 이 방식이 오히려 빠르고 정확하다."
+    },
+    {
+      "title": "IVF-PQ 압축 인덱스 - 벡터를 코드북으로 눌러 담아 메모리 절약",
+      "lang": "python",
+      "code": "import faiss                                     # 벡터 검색 라이브러리 (pip install faiss-cpu)\nimport numpy as np                               # 수치 계산\n\ndata = np.random.random((10000, 128)).astype('float32')  # 128차원 벡터 1만 개\nd = 128                                          # 벡터 차원\nm = 8                                            # 서브벡터 개수: 128차원을 8조각으로 분할\nnlist = 100                                      # IVF 클러스터(동네) 개수\n\nquantizer = faiss.IndexFlatL2(d)                 # 클러스터 중심을 찾는 기준 인덱스\nindex = faiss.IndexIVFPQ(quantizer, d, nlist, m, 8)  # 조각당 8비트 = 256개 코드북\nindex.train(data)                                # K-means 학습 + 코드북 생성\nindex.add(data)                                  # 압축 저장: 벡터당 512바이트 -> 8바이트\n\nquery = np.random.random((1, 128)).astype('float32')  # 질문 벡터\nindex.nprobe = 10                                # 가까운 동네 10곳만 열어 봄\nD, I = index.search(query, 5)                    # 근사 Top-5 검색\nprint('Top-5 문서 ID:', I)                        # 압축했는데도 비슷한 것을 잘 찾는다",
+      "note": "PQ(Product Quantization)는 큰 벡터를 여러 조각으로 나눠 각 조각을 대표 코드 번호 하나로 바꾸는 압축 기술로, 메모리를 수십~수백 배 줄인다. 벡터 1억 개면 200GB가 되는 문제를 풀기 위한 것으로, 보통 클러스터 기반 IVF와 묶어 IVF-PQ로 쓴다. 대신 근사치라 정확도를 약간 희생하는 속도·메모리·정확도의 균형 기술이다."
+    },
+    {
+      "title": "MinHash-LSH로 중복 문서 잡아내기 - 비슷하면 같은 버킷에 모인다",
+      "lang": "python",
+      "code": "from datasketch import MinHash, MinHashLSH   # 스케치 기반 유사도 라이브러리\nimport re                                    # 단어 추출용 정규식\n\ndef shingles(text, k=3):                     # 문장을 k개 단어 묶음(셰이글)으로 자르기\n    tokens = re.findall(r'\\w+', text.lower())   # 소문자로 바꿔 단어만 추출\n    return set(tuple(tokens[i:i+k]) for i in range(max(0, len(tokens)-k+1)))  # k-gram 집합\n\ndocs = ['deep learning advances nlp and cv',           # 문서 0\n        'nlp and cv see advances with deep learning',  # 문서 1: 0과 거의 같은 내용\n        'i love espresso and latte']                   # 문서 2: 전혀 다른 내용\n\nmh_list = []                                 # 문서별 MinHash 시그니처 보관\nfor doc in docs:                             # 문서마다\n    m = MinHash(num_perm=128)                # 길이 128짜리 시그니처 생성기\n    for sh in shingles(doc):                 # 셰이글 하나하나를\n        m.update(' '.join(sh).encode('utf-8'))   # 해시에 반영\n    mh_list.append(m)                        # 시그니처 완성\n\nlsh = MinHashLSH(threshold=0.8, num_perm=128)   # 자카드 유사도 0.8 이상이면 같은 버킷\nfor i, m in enumerate(mh_list):                 # 시그니처를 인덱스에 등록\n    lsh.insert('doc-' + str(i), m)              # 문서 이름표를 붙여 삽입\nprint(lsh.query(mh_list[0]))                    # 0번과 비슷한 후보: doc-0, doc-1",
+      "note": "LSH는 비슷한 것끼리 일부러 같은 해시 버킷에 충돌시키는 발상의 전환으로, 전부 비교하지 않고 소수의 후보만 정밀 비교하게 해 준다. 뉴스 서비스의 실시간 중복 기사 탐지가 대표 사례다. threshold를 0.7~0.9로 바꿔 가며 후보가 어떻게 달라지는지 관찰해 보자."
     }
   ],
   "rag-1": [
@@ -634,6 +880,24 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 검색 정밀도(작은 Child)와 문맥 풍부함(큰 Parent)을 동시에 얻는 전략\nfrom langchain.retrievers import ParentDocumentRetriever\nfrom langchain_text_splitters import RecursiveCharacterTextSplitter\nfrom langchain_community.vectorstores import Chroma\nfrom langchain_openai import OpenAIEmbeddings\nfrom langchain.storage import InMemoryStore\n\nparent_splitter = RecursiveCharacterTextSplitter(chunk_size=1000)  # 큰 단위(맥락 보존, LLM에 전달용)\nchild_splitter = RecursiveCharacterTextSplitter(chunk_size=200)    # 작은 단위(정밀 검색·임베딩용)\n\nvectorstore = Chroma(embedding_function=OpenAIEmbeddings())        # Child 벡터를 저장할 곳\ndocstore = InMemoryStore()                                         # 원본 Parent 문서를 보관할 곳\n\nretriever = ParentDocumentRetriever(                               # 두 저장소를 묶는 검색기\n    vectorstore=vectorstore,      # 검색은 작은 Child 벡터로\n    docstore=docstore,            # 반환은 Child가 속한 큰 Parent로\n    child_splitter=child_splitter,\n    parent_splitter=parent_splitter,\n)\nretriever.add_documents(docs)                                     # 문서를 넣으면 Parent/Child가 자동 생성\nfound = retriever.invoke('HBM 메모리 대역폭은?')                    # 작은 청크로 정확히 매칭한 뒤\nprint('반환된 문맥 길이:', len(found[0].page_content))             # 큰 Parent 청크를 통째로 돌려준다",
       "note": "Child(200토큰)로 정밀하게 위치를 찾고, 그 청크가 속한 Parent(1000토큰)를 LLM에 넘긴다. 검색 정밀도와 답변 문맥을 동시에 잡는 실무 표준 전략이다."
+    },
+    {
+      "title": "토큰과 청크의 관계 - 슬라이딩 윈도우로 직접 잘라 보기",
+      "lang": "python",
+      "code": "sentence = 'This is an example text for demonstration'   # 실습용 문장\ntokens = sentence.split()                  # 아주 단순한 토크나이저: 공백으로 단어 조각내기\nprint('토큰:', tokens)                      # 토큰 = 단어 조각 7개\n\nchunk_size = 4                             # 청크 하나에 담을 토큰 수\nchunk_overlap = 2                          # 앞 청크와 겹칠 토큰 수(문맥 단절 방지)\nstep = chunk_size - chunk_overlap          # 창을 옮기는 보폭 = 4 - 2 = 2\n\nchunks = []                                # 완성된 청크를 담을 리스트\nfor start in range(0, len(tokens), step):  # 보폭만큼 창을 밀며 반복\n    chunk = tokens[start:start + chunk_size]   # 현재 창 안의 토큰들\n    if chunk:                              # 빈 조각은 제외하고\n        chunks.append(chunk)               # 청크로 저장\n    if start + chunk_size >= len(tokens):  # 문장 끝에 닿으면\n        break                              # 반복 종료\n\nfor i, c in enumerate(chunks):             # 결과 확인\n    print('Chunk' + str(i + 1) + ':', c)   # 청크 경계마다 두 토큰이 겹친다",
+      "note": "토큰은 문장을 쪼갠 단어 조각이고, 청크는 모델이 감당할 수 있게 토큰을 다시 묶은 덩어리다. 교재 예시 그대로 chunk_size=4, overlap=2로 자르면 청크 사이에 두 토큰이 겹쳐 문맥이 끊기지 않고 이어진다. 오버랩은 보통 청크 크기의 10~20%가 권장값이다."
+    },
+    {
+      "title": "원핫 인코딩 vs 학습된 임베딩 - 왜 밀집 벡터를 쓰는가",
+      "lang": "python",
+      "code": "import numpy as np                          # 수치 계산\n\nvocab = ['request', 'feature', 'how', 'issue', 'credit']  # 단어 사전 5개\none_hot = np.eye(len(vocab))                # 원핫: 자기 자리만 1, 나머지 전부 0\nprint('request 원핫:', one_hot[0])          # [1,0,0,0,0] - 절대다수가 0(희소 벡터)\n\n# 원핫끼리 내적하면 다른 단어는 무조건 0 -> 의미 유사도를 전혀 표현 못 함\nprint('request-issue 유사도:', one_hot[0] @ one_hot[3])   # 항상 0.0\n\n# 학습된 임베딩(예시 값): 문맥상 비슷한 단어는 벡터도 가깝게 학습된다\nemb = {'request': np.array([0.007, -0.039, -0.002, -0.024, 0.007]),    # request\n       'issue':   np.array([-0.015, -0.035, -0.009, -0.012, -0.015]),  # issue\n       'credit':  np.array([-0.012, -0.027, -0.001, -0.051, 0.064])}   # credit\n\ndef cos(a, b):                              # 코사인 유사도 함수\n    return float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b)))  # 내적 / 크기곱\n\nprint('request-issue :', round(cos(emb['request'], emb['issue']), 3))   # 의미 관계가 숫자로\nprint('request-credit:', round(cos(emb['request'], emb['credit']), 3))  # 단어쌍마다 다른 유사도",
+      "note": "원핫은 단어 수만큼 차원이 커지고 대부분이 0인 희소 구조라 서로 다른 단어의 유사도가 항상 0이다. 학습된 임베딩은 낮은 차원(보통 384~1536)에 의미를 밀집시켜 비슷한 단어가 가까운 점이 되도록 만든다. RAG의 임베딩 단계는 이 원리를 문장·청크 단위로 확장한 것이다."
+    },
+    {
+      "title": "메타데이터 설계 - 권한 태그와 문서 타입으로 검색 전에 거르기",
+      "lang": "python",
+      "code": "# 교재 권장 메타데이터: 식별자 + 검색 근거 + 필터링 필드를 함께 저장한다\nchunks = [\n    {'content': '2024년 재무 실적 요약...', 'metadata': {              # 청크 1\n        'doc_id': 'annual_2024', 'page': 23, 'document_type': '보고서',  # 식별자·근거\n        'updated_at': '2024-03-15', 'access_tag': ['finance']}},         # 필터 필드\n    {'content': '설치 절차 1단계...', 'metadata': {                   # 청크 2\n        'doc_id': 'manual_v2', 'page': 7, 'document_type': '매뉴얼',\n        'updated_at': '2024-06-01', 'access_tag': ['all']}},\n]\n\ndef visible_chunks(user_tags, doc_type=None):     # 벡터 검색 전에 후보를 거르는 함수\n    out = []                                      # 통과한 청크 저장\n    for c in chunks:                              # 모든 청크 검사\n        meta = c['metadata']                      # 메타데이터 꺼내기\n        opened = 'all' in meta['access_tag']      # 전체 공개 문서인가\n        allowed = set(meta['access_tag']) & set(user_tags)   # 사용자 권한과 교집합\n        if not opened and not allowed:            # 공개도 아니고 권한도 없으면\n            continue                              # 검색 대상에서 제외(허용 vs 배제)\n        if doc_type and meta['document_type'] != doc_type:   # 문서 타입 조건 불일치도\n            continue                              # 제외\n        out.append(c)                             # 조건 통과한 청크만 남김\n    return out                                    # 남은 후보만 벡터 검색으로 넘긴다\n\nprint(len(visible_chunks(['all'])))               # 일반 사용자: 매뉴얼 1건만 보임\nprint(len(visible_chunks(['finance'], '보고서')))  # 재무 권한 + 보고서 필터: 1건",
+      "note": "메타데이터는 doc_id 같은 식별자, page·section 같은 검색 근거, access_tag·document_type·updated_at 같은 필터링 필드의 세 층으로 설계한다. 특히 접근 권한은 답변을 만든 뒤가 아니라 검색 단계에서부터 체크해야 내부 정보 유출을 막을 수 있다는 것이 교재의 강조점이다."
     }
   ],
   "rag-2": [
@@ -654,6 +918,24 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# pip install FlagEmbedding\n# Hybrid로 Top-50을 빠르게 추린 뒤, 질문+문서를 함께 넣어 정밀 채점한다\nfrom FlagEmbedding import FlagReranker\n\nreranker = FlagReranker('BAAI/bge-reranker-v2-m3', use_fp16=True)  # 다국어(한국어) 리랭커, CPU도 동작\n\nquery = 'HNSW 인덱스와 IVF의 메모리 사용 차이'          # 사용자 질문\ncandidates = [                                        # Hybrid 검색이 넘겨준 후보 문서들\n    'FAISS 라이브러리 소개',\n    'HNSW 구조와 메모리 사용량 설명',\n    'IVF 클러스터 기반 검색 원리',\n]\npairs = [[query, doc] for doc in candidates]          # (질문, 문서) 쌍으로 묶는다\nscores = reranker.compute_score(pairs, normalize=True)  # 0~1 관련도 점수로 정밀 채점\n\nranked = sorted(zip(scores, candidates), reverse=True)  # 점수 높은 순으로 재정렬\nfor score, doc in ranked:                             # 관련 있는 문서가 위로 올라온다\n    print(round(score, 3), doc)                       # HNSW·IVF 문서가 상위, 무관한 소개글이 하위",
       "note": "Bi-Encoder(벡터검색)는 빠르지만 질문-문서 상호작용을 못 본다. Cross-Encoder인 BGE-Reranker는 둘을 함께 입력해 정밀하게 채점한다. 느려서 전체 DB엔 못 쓰고 Top-50에만 적용한다."
+    },
+    {
+      "title": "MMR 직접 구현 - 관련성과 다양성 사이를 λ로 조절",
+      "lang": "python",
+      "code": "import numpy as np                              # 수치 계산\n\nnp.random.seed(0)                               # 결과 재현용 시드\nquery = np.random.randn(8)                      # 질문 벡터(8차원 연습)\ndocs = np.random.randn(6, 8)                    # 후보 문서 6개\n\ndef cos(a, b):                                  # 코사인 유사도\n    return float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-12))\n\ndef mmr(query, docs, k=3, lam=0.5):             # lam=1 관련성만, lam=0 다양성만\n    selected = []                               # 뽑힌 문서 번호\n    rest = list(range(len(docs)))               # 아직 남은 후보\n    while len(selected) < k and rest:           # k개 뽑을 때까지 반복\n        best, best_score = None, -1e9           # 이번 라운드 최고 후보\n        for i in rest:                          # 남은 후보마다\n            rel = cos(query, docs[i])           # 쿼리와의 관련성\n            red = max((cos(docs[i], docs[j]) for j in selected), default=0)  # 기존 선택과의 중복도\n            score = lam * rel - (1 - lam) * red # MMR 점수 = 관련성 - 중복 벌점\n            if score > best_score:              # 더 좋은 후보를 찾으면\n                best, best_score = i, score     # 갱신\n        selected.append(best)                   # 최고 후보 확정\n        rest.remove(best)                       # 후보군에서 제거\n    return selected                             # 관련 있으면서 서로 다른 k개\n\nprint('lam=1.0(유사도만):', mmr(query, docs, lam=1.0))   # 단순 Top-k와 같아짐\nprint('lam=0.5(균형)  :', mmr(query, docs, lam=0.5))     # 중복을 피해 고른 결과",
+      "note": "코사인 Top-k는 서로 거의 같은 문서만 몰려 나와 새로 더해 주는 가치가 0에 가까울 수 있다. MMR은 쿼리와 가까우면서 이미 뽑힌 문서와는 먼 후보에 높은 점수를 줘, 여러 관점을 모아야 하는 질의에 유리하다. λ가 1이면 유사성만, 0이면 다양성만 보게 되어 중간값으로 균형을 잡는다."
+    },
+    {
+      "title": "RAG 체인 조립 - retriever | prompt | llm 파이프라인",
+      "lang": "python",
+      "code": "from langchain_core.prompts import PromptTemplate          # 프롬프트 틀\nfrom langchain_openai import ChatOpenAI                    # 답변 생성 LLM\nfrom langchain_core.output_parsers import StrOutputParser  # 답변 텍스트만 뽑는 파서\nfrom langchain_core.runnables import RunnablePassthrough   # 입력을 그대로 통과\n\nprompt = PromptTemplate.from_template(          # RAG 표준 프롬프트: 지시 + 질문 + 문맥\n    '당신은 질문-답변 작업을 수행하는 AI 어시스턴트입니다.\\n'\n    '검색된 문맥(context)을 사용하여 질문(question)에 답하세요.\\n'\n    '문맥에서 답을 찾을 수 없다면 모른다고 말하세요. 한국어로 답하세요.\\n\\n'\n    '# Question:\\n{question}\\n\\n# Context:\\n{context}\\n\\n# Answer:'\n)\nllm = ChatOpenAI(model='gpt-4o-mini', temperature=0)   # 사실 위주 답변이라 온도 0\n# retriever = vectorstore.as_retriever()               # 앞 실습에서 만든 검색기 재사용\n\nchain = (                                      # LCEL 파이프라인 조립\n    {'context': retriever,                     # 질문 -> 리트리버가 문맥을 검색해 채움\n     'question': RunnablePassthrough()}        # 질문은 가공 없이 그대로 전달\n    | prompt                                   # 문맥+질문을 프롬프트에 채우고\n    | llm                                      # LLM이 답변을 생성한 뒤\n    | StrOutputParser()                        # 텍스트만 추출\n)\nprint(chain.invoke('RAG의 전처리 단계는 무엇인가요?'))   # 체인 한 번에 실행",
+      "note": "Document Loader부터 Retriever까지 만든 부품을 파이프(|) 연산자 하나로 잇는 Chain 단계다. 프롬프트는 지시사항·질문·문맥의 3부 구성이 표준이며, 문맥에 없으면 모른다고 답하라는 지시가 환각을 줄이는 핵심 문구다. 검색 결과(chunk)가 context 자리에 자동으로 채워진다."
+    },
+    {
+      "title": "요약 기반 검색 - 요약으로 찾고 원문으로 답한다",
+      "lang": "python",
+      "code": "# 긴 원문 대신 짧은 요약을 임베딩해 검색 속도와 관련도를 높이는 전략\ndocs = [                                        # 원문과 요약을 쌍으로 저장\n    {'id': 0, 'raw': '3분기 매출은 전년 대비 12% 증가했으며 원인은... (긴 본문)',\n     'summary': '3분기 매출 12% 증가와 원인 분석'},                 # 검색용 요약\n    {'id': 1, 'raw': '신규 채용 절차는 서류, 코딩테스트, 면접 순이며... (긴 본문)',\n     'summary': '신규 채용 3단계 절차 안내'},                       # 검색용 요약\n]\n\nfrom langchain_openai import OpenAIEmbeddings   # 임베딩 모델\nimport numpy as np                              # 유사도 계산\nemb = OpenAIEmbeddings()                        # 요약문 임베딩에 사용\n\nvecs = np.array(emb.embed_documents([d['summary'] for d in docs]))  # 요약만 임베딩\nq = np.array(emb.embed_query('채용 절차가 어떻게 되나요?'))           # 질문 임베딩\n\nscores = vecs @ q / (np.linalg.norm(vecs, axis=1) * np.linalg.norm(q))  # 코사인 유사도\nbest = int(np.argmax(scores))                   # 요약 기준으로 1등 문서 선택\nprint('검색은 요약으로 :', docs[best]['summary'])  # 짧고 핵심적인 요약이 검색 대상\nprint('LLM에는 원문 전달:', docs[best]['raw'])     # 답변 생성에는 풍부한 원문 사용",
+      "note": "벡터 저장 전에 LLM으로 요약을 만들어 두고, 검색은 요약으로 하되 답변 생성에는 원문(또는 원문+요약)을 쓰는 교재의 요약 기반 검색 전략이다. Parent-Child가 조각 크기로 검색과 전달을 나눈다면, 이 방식은 정보 밀도로 나눈다. 문서가 길면 Map-Reduce·Refine 요약과 결합하고, 요약 품질을 높이려면 Chain of Density를 검토한다."
     }
   ],
   "rag-3": [
@@ -668,6 +950,24 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 생성된 답변이 문맥에 충실한지 다른 LLM에게 심사를 맡긴다\nfrom openai import OpenAI\nclient = OpenAI(api_key='sk-본인키')\n\nJUDGE = '''당신은 RAG 답변 평가자입니다. 아래 기준으로 1~5점 채점하세요.\n- 정확성(Correctness): 문맥과 사실이 일치하는가\n- 충실성(Faithfulness): 문맥에 없는 내용을 지어내지 않았는가(환각 감점)\n반드시 \"정확성:N 충실성:N 이유:...\" 형식으로만 답하세요.'''\n\nquestion = 'HBM이란 무엇인가?'                          # 사용자 질문\ncontext = 'HBM은 여러 D램을 수직으로 쌓은 고대역폭 메모리다.'  # 검색된 근거 문맥\nanswer = 'HBM은 D램을 쌓아 대역폭을 높인 메모리이며 2010년 삼성이 최초 개발했다.'  # 평가 대상 답변\n\nres = client.chat.completions.create(                 # 심사 LLM 호출\n    model='gpt-4o-mini',\n    messages=[\n        {'role': 'system', 'content': JUDGE},         # 평가자 역할과 기준 부여\n        {'role': 'user', 'content': f'질문:{question}\\n문맥:{context}\\n답변:{answer}'},\n    ],\n    temperature=0,                                    # 일관된 채점을 위해 0 고정\n)\nprint(res.choices[0].message.content)                 # 뒷부분 '삼성 최초 개발'은 문맥에 없어 충실성 감점",
       "note": "정답 라벨을 일일이 만들기 어려운 생성 품질은 LLM-as-a-Judge로 평가한다. 정확성·충실성처럼 판정 가능한 기준을 명시하고 형식을 고정해야 채점이 일관된다."
+    },
+    {
+      "title": "쿼리 분해(Query Transformation) - 비교 질문을 하위 질문으로",
+      "lang": "python",
+      "code": "from langchain_openai import ChatOpenAI                    # LLM\nfrom langchain_core.prompts import PromptTemplate          # 프롬프트 틀\nfrom langchain_core.output_parsers import StrOutputParser  # 텍스트 파서\n\nllm = ChatOpenAI(model='gpt-4o-mini', temperature=0)   # 분해는 일관성이 중요해 온도 0\n\ndecompose = PromptTemplate.from_template(              # 하위 질문 생성 지시\n    '다음 질문을 검색하기 좋은 단순한 하위 질문 2~3개로 나눠줘.\\n'\n    '한 줄에 하나씩만 출력해줘.\\n질문: {question}'\n) | llm | StrOutputParser()                            # 분해 전용 미니 체인\n\nquestion = '삼성전자와 애플의 최근 3년 실적을 비교해 주세요.'   # 복합 비교 질문\nsub_questions = decompose.invoke({'question': question}).strip().split('\\n')  # 하위 질문 목록\n\nresults = []                                           # 하위 질문별 검색 결과 기록\nfor sq in sub_questions:                               # 하위 질문마다\n    found = retriever.invoke(sq)                       # 각각 독립적으로 검색\n    results.append(sq + ' -> 검색 문서 ' + str(len(found)) + '건')  # 결과 정리\n\nprint('하위 질문:', sub_questions)                      # 분해가 잘 되었는지 확인\nprint(results)                                         # 마지막에 답변을 종합 생성한다",
+      "note": "Naive RAG는 1질문=1검색 구조라 비교·인과 같은 복합 질문에 약하다. Advanced RAG의 Pre-Retrieval 단계에서 질문을 하위 질문으로 변환(Query Transformation)해 각각 검색하고 마지막에 종합하면 검색 누락이 크게 줄어든다. 단, 분해가 잘못되면 전체가 오답이 되고 LLM 호출이 늘어나는 트레이드오프가 있다."
+    },
+    {
+      "title": "Modular RAG 라우팅 패턴 - 질문 유형별로 다른 파이프라인",
+      "lang": "python",
+      "code": "def route(question):                          # Query Routing: 어느 흐름으로 보낼지 결정\n    if any(w in question for w in ['얼마', '평균', '%']):    # 수치·계산형 질문\n        return 'calc'                          # 계산 모듈 경로\n    if any(w in question for w in ['최신', '오늘', '뉴스']):  # 실시간 정보형 질문\n        return 'web'                           # 웹 검색 모듈 경로\n    return 'vector'                            # 기본: 사내 문서 벡터 검색 경로\n\ndef run_pipeline(question):                    # 경로별로 다른 모듈 조합 실행\n    path = route(question)                     # 1) 규칙 기반 라우팅 판단\n    if path == 'calc':                         # 계산형이면\n        return '계산 모듈: 수치 테이블 조회 후 계산'       # RDB + 계산 도구 조합\n    if path == 'web':                          # 실시간형이면\n        return '웹 검색 모듈: 최신 문서 수집 후 요약'      # 웹 검색 + 요약 조합\n    return '벡터 검색 모듈: 문서 검색 + 재순위 + 생성'     # 기본 RAG 조합\n\nquestions = ['작년 영업이익률은 몇 %인가요?',     # 유형이 다른 세 질문\n             '오늘 반도체 뉴스 요약해줘',\n             '휴가 규정 알려줘']\nfor q in questions:                            # 질문마다\n    print(q, '->', run_pipeline(q))            # 서로 다른 경로로 분기되는지 확인",
+      "note": "Modular RAG는 RAG를 레고처럼 기능 모듈로 쪼개고 Routing·Branching·Loop 패턴으로 재조립하는 프레임워크다. 라우팅 조건은 LLM 판단이 아니라 규칙(Rule)으로 정의해야 흐름이 안정적이라는 것이 교재의 지적이다. 실무에서는 검색기·프롬프트 템플릿·모델까지 경로별로 바꿔 끼운다."
+    },
+    {
+      "title": "RAGAS 합성 테스트셋 - 평가용 질문·정답 쌍을 자동 생성",
+      "lang": "python",
+      "code": "from ragas.testset.generator import TestsetGenerator     # 테스트셋 생성기\nfrom ragas.testset.evolutions import simple, reasoning, multi_context, conditional  # 질문 유형 4종\n\ngenerator = TestsetGenerator.from_langchain(   # 생성기 조립\n    generator_llm,                             # 질문을 만들어 내는 LLM\n    critic_llm,                                # 만들어진 질문의 품질을 검사하는 LLM\n    ragas_embeddings,                          # 임베딩 모델\n    doc_store,                                 # 문서 저장소(InMemory)\n)\n\ndistributions = {simple: 0.4,        # 단순 사실 질문 40%\n                 reasoning: 0.2,     # 추론이 필요한 질문 20%\n                 multi_context: 0.2, # 여러 문맥을 종합하는 질문 20%\n                 conditional: 0.2}   # 조건부 질문 20%\n\ntest_set = generator.generate_with_langchain_docs(   # 우리 문서에서 자동 생성\n    documents=docs,                # 지식베이스 문서\n    test_size=10,                  # 질문 10개\n    distributions=distributions,   # 유형 비율 반영\n)\nprint(test_set.to_pandas().head()) # 질문·문맥·정답(Ground Truth) 쌍 확인",
+      "note": "평가셋을 손으로 만들기 어려울 때 RAGAS의 Synthetic Test Dataset 기능이 문서에서 질문·문맥·참조답변 쌍을 자동 생성해 준다. 단순 질문만 섞으면 검색기의 약점이 드러나지 않으므로 추론·다중문맥·조건부 유형의 비율을 함께 지정하는 것이 핵심이다. 이렇게 만든 데이터로 Context Precision/Recall, Faithfulness 등을 채점한다."
     }
   ],
   "agent-1": [
@@ -688,6 +988,24 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# pip install langchain langchain-openai\n# LangChain 1.0은 create_agent 하나로 프롬프트+모델+도구를 묶는다(scratchpad 자동 관리)\nfrom langchain.agents import create_agent\nfrom langchain_core.tools import tool\nfrom langchain_openai import ChatOpenAI\n\n@tool\ndef get_stock_price(ticker: str) -> str:              # @tool 데코레이터로 함수를 도구로 변환\n    \"Return today's closing price for a stock ticker.\"  # docstring은 LLM이 읽는 사용설명(영어 권장)\n    prices = {'000660': '18만원', '005930': '7만원'}   # 실제로는 외부 API 호출\n    return prices.get(ticker, '정보 없음')             # 티커에 맞는 종가 반환\n\nagent = create_agent(                                 # 에이전트 정의\n    model=ChatOpenAI(model='gpt-4o-mini'),            # 두뇌 역할 LLM\n    tools=[get_stock_price],                          # 손발 역할 도구 목록\n    system_prompt='너는 도구를 활용해 답하는 금융 비서다.',  # 역할 지시\n)\nresult = agent.invoke({'messages': [                   # 메시지 중심 구조로 실행\n    {'role': 'user', 'content': 'SK하이닉스(000660) 종가 알려줘'},\n]})\nprint(result['messages'][-1].content)                 # LLM이 스스로 도구를 호출(ReAct)해 답한다",
       "note": "ReAct는 생각(Thought)->도구 호출(Action)->관찰(Observation)을 반복한다. create_agent가 이 루프와 scratchpad를 자동 관리해, @tool로 만든 도구만 넘기면 에이전트가 알아서 호출한다."
+    },
+    {
+      "title": "ReAct 루프를 파이썬으로 흉내 - Thought, Action, Observation",
+      "lang": "python",
+      "code": "def stock_price_tool(ticker):                  # 도구: 주가 조회(연습용 가짜 데이터)\n    prices = {'SK하이닉스': 210000, '삼성전자': 71000}   # 미리 준비한 종가 표\n    return prices.get(ticker, 0)               # 종목명으로 가격 반환\n\ndef react_agent(question):                     # ReAct: 사고와 행동을 번갈아 반복\n    log = []                                   # 지금까지의 사고 기록(scratchpad)\n    for step in range(3):                      # 무한루프 방지: 최대 3회 반복\n        log.append('Thought: 답하려면 어떤 도구가 필요한가?')   # 1) Thought: 다음 행동 사고\n        if 'SK하이닉스' in question:            # 2) Action: 도구 호출 결정\n            obs = stock_price_tool('SK하이닉스')            # 도구 실행\n            log.append('Action: stock_price_tool / Observation: ' + str(obs))  # 3) 결과 관찰\n            if obs > 0:                        # 정보 충족성 판단(루프 종료 조건)\n                return log, 'SK하이닉스 종가는 ' + format(obs, ',') + '원입니다.'  # 답변 확정\n        log.append('Observation: 정보 부족, 다시 사고')   # 부족하면 루프 계속\n    return log, '답을 찾지 못했습니다.'          # 최대 반복 도달 시 안전 종료\n\nlog, answer = react_agent('금일 SK하이닉스 종가는 얼마인가요?')   # 실행\nprint('\\n'.join(log))                          # 사고-행동-관찰 흐름 출력\nprint('Answer:', answer)                       # 최종 답변",
+      "note": "ReAct는 Thought(사고), Action(도구 실행), Observation(결과 관찰)을 답이 나올 때까지 반복하는 프레임워크로, Reasoning과 Acting을 최초로 하나의 시스템에 결합한 연구다. 이 수동 구현이 create_agent가 내부에서 대신해 주는 일의 뼈대다. 정보 충족성 판단과 최대 반복 횟수 같은 종료 조건이 없으면 루프는 끝나지 않는다."
+    },
+    {
+      "title": "State 덮어쓰기(Overwrite) - 노드는 바뀐 키만 갱신한다",
+      "lang": "python",
+      "code": "# LangGraph의 State는 노드를 지날 때 '바뀐 키만' 덮어쓰고 나머지는 유지된다\nstate = {}                                     # 빈 상태에서 시작\n\ndef node1(state):                              # 노드1: 질문 입력 단계\n    return {'time': 1, 'name': '철수', 'llm': 'GPT'}   # 세 키를 기록\n\ndef node2(state):                              # 노드2: 시간만 갱신\n    return {'time': 2}                         # name과 llm은 건드리지 않음\n\ndef node3(state):                              # 노드3: 이름 변경 단계\n    return {'time': 3, 'name': '영희'}          # name을 덮어쓰기\n\nmessages = []                                  # 대화 기록(누적이 필요한 필드)\nfor node in [node1, node2, node3]:             # 노드를 순서대로 실행\n    update = node(state)                       # 노드가 돌려준 '부분 업데이트'\n    state.update(update)                       # 일반 필드: 선택적 덮어쓰기\n    messages = messages + ['통과: ' + str(update)]   # 리스트 필드: 리듀서처럼 누적\n    print('state:', state)                     # 매 단계 상태 확인\n\nprint('messages 개수:', len(messages))         # 3건 모두 남아 있음(누적)\nprint('name 최종값:', state['name'])            # 영희 - 마지막 갱신만 남음(덮어쓰기)",
+      "note": "교재의 State Update 표 그대로, 일반 필드는 Overwrite 방식이라 바뀐 키만 갱신되고 변경되지 않은 값은 유지되며 State가 점진적으로 확장된다. 반면 messages 같은 대화 필드는 add_messages 리듀서로 덮지 않고 누적해야 한다. 이 차이를 모르면 대화가 사라지거나 답이 안 바뀌는 버그를 만나게 된다."
+    },
+    {
+      "title": "실무형 GraphState 설계 - 중첩 구조와 실행 제어 필드",
+      "lang": "python",
+      "code": "from typing import TypedDict, List, Literal      # 타입 명세 도구\n\nclass RetrievalResult(TypedDict):                # 검색 계층: 검색 노드만 쓰는 영역\n    query: str                                   # 실제 실행된 검색어\n    documents: List[str]                         # 찾아온 문서들\n    retrieval_time_ms: float                     # 검색 소요 시간(관측용)\n\nclass EvaluationResult(TypedDict):               # 평가 계층: 판정 노드만 쓰는 영역\n    relevance: float                             # 관련성 점수\n    overall: Literal['GOOD', 'BAD']              # 최종 판정(분기 기준)\n\nclass ErrorInfo(TypedDict, total=False):         # 실패 대비 영역(선택 필드 허용)\n    message: str                                 # 에러 메시지\n    node: str                                    # 실패한 노드 이름\n    retry_count: int                             # 재시도 횟수\n\nclass GraphState(TypedDict, total=False):        # 전체 상태: 계층별로 묶어 관리\n    user_input: str                              # 사용자 입력\n    retrieval: RetrievalResult                   # 검색 결과(중첩 구조)\n    evaluation: EvaluationResult                 # 평가 결과(중첩 구조)\n    status: Literal['RUNNING', 'FAILED', 'SUCCESS']  # 실행 상태(관측·제어)\n    step_count: int                              # 스텝 수(무한루프 방지)\n    error: ErrorInfo                             # 에러 정보\n\nstate = GraphState(user_input='휴가 규정?', status='RUNNING', step_count=0)  # 초기 상태\nprint(state)                                     # 노드는 자기 계층의 키만 읽고 쓴다",
+      "note": "교재의 Production-level State 설계로, 평평한 dict 대신 검색·평가·에러를 계층별 중첩 구조로 묶고 status·step_count·retry_count 같은 실행 제어 필드를 반드시 포함한다. State는 데이터 컨테이너가 아니라 노드 간의 Read/Write 계약이며, 노드는 자신이 읽고 쓸 키만 알아야 한다(State Ownership). step_count는 무한루프 방지의 안전장치다."
     }
   ],
   "agent-2": [
@@ -702,6 +1020,24 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 에이전트가 자기 답을 되돌아보고(Reflect) 더 나은 답을 만드는 품질 통제 루프\nfrom openai import OpenAI\nclient = OpenAI(api_key='sk-본인키')\n\ndef generate(task, feedback=''):                      # 생성 단계: 초안 또는 개선안 작성\n    prompt = f'과제: {task}'                           # 기본 지시\n    if feedback:                                      # 피드백이 있으면 반영하도록 덧붙인다\n        prompt += f'\\n아래 지적을 반영해 다시 써라:\\n{feedback}'\n    r = client.chat.completions.create(model='gpt-4o-mini',\n        messages=[{'role': 'user', 'content': prompt}])\n    return r.choices[0].message.content\n\ndef reflect(draft):                                   # 비평 단계: 초안의 약점을 지적\n    r = client.chat.completions.create(model='gpt-4o-mini',\n        messages=[{'role': 'user', 'content': f'다음 글의 부족한 점만 짚어라:\\n{draft}'}])\n    return r.choices[0].message.content\n\ntask = '벡터DB를 3문장으로 설명'                        # 수행할 과제\ndraft = generate(task)                                # 1) 초안 생성\nfor i in range(2):                                    # 2) 비평->개선을 최대 2회 반복\n    critique = reflect(draft)                         # 자기 비평\n    draft = generate(task, feedback=critique)         # 비평을 반영해 다시 생성\nprint('최종본:', draft)                                # 루프를 거치며 품질이 올라간다",
       "note": "Reflection은 Generate와 Reflect 두 LLM 호출을 번갈아 돌려 답을 개선한다. Andrew Ng 실험처럼 반복 워크플로를 감싸면 같은 모델도 성능이 크게 오른다. 반복 상한을 둬 비용·무한루프를 통제한다."
+    },
+    {
+      "title": "Agent-as-Tool - 서브에이전트를 도구처럼 감싸 호출",
+      "lang": "python",
+      "code": "from langchain.tools import tool                 # 함수를 도구로 바꾸는 데코레이터\n\ndef python_exec_agent(task, data):               # 내부는 복잡한 서브에이전트라고 가정\n    result = sum(data) / len(data)               # (예시) 데이터 분석 코드 실행\n    return '평균 = ' + str(round(result, 2))     # 결과만 요약해 반환\n\n@tool\ndef run_python_agent(task: str) -> str:\n    \"\"\"Run the python analysis agent for numeric tasks.\"\"\"  # LLM이 읽는 설명(영어 권장)\n    data = [12, 45, 33, 60]                      # 필요한 데이터만 골라 전달(State 격리)\n    return python_exec_agent(task, data)         # 서브에이전트의 최종 결과만 돌려줌\n\n# 오케스트레이터(메인 에이전트)는 이 도구의 내부가 에이전트인지 알 필요가 없다\n# 전체 대화 기록을 넘기지 않고 입출력 인터페이스만 노출하는 것이 핵심\nprint(run_python_agent.invoke('네 개 수치의 평균을 구해줘'))     # 도구처럼 한 번 호출\nprint(run_python_agent.name, ':', run_python_agent.description)  # 도구 메타 정보 확인",
+      "note": "코드 실행이 필요할 때만 서브에이전트에 필요한 데이터만 전달하고 결과값을 받아오는, 교재 퀴즈 1번의 정답 패턴이다. 전체 대화 기록을 공유하지 않는 State Isolation 덕분에 컨텍스트 오염과 비용을 줄인다. 다만 도구로 호출될 때마다 서브에이전트 전체 실행 비용이 발생하고 오케스트레이터 의존도가 커진다."
+    },
+    {
+      "title": "Judge와 Gate 분리 - 판정은 확률, 분기는 결정론",
+      "lang": "python",
+      "code": "import random                                   # LLM 판정의 확률성을 흉내\n\ndef judge_node(answer):                         # Judge: LLM 호출(확률적 출력)\n    score = random.uniform(0.5, 1.0)            # 같은 입력에도 점수가 흔들릴 수 있음\n    verdict = 'PASS' if score >= 0.8 else 'FAIL'    # 판정 결과\n    return {'verdict': verdict, 'score': round(score, 2)}   # 판정만 반환(라우팅은 안 함)\n\ndef gate(judge_result, retry_count, max_retry=2):   # Gate: 순수 함수(결정론적 라우팅)\n    if judge_result['verdict'] == 'PASS':       # PASS면 언제나\n        return 'END'                            # 같은 경로: 종료\n    if retry_count >= max_retry:                # 재시도 한도를 넘으면 언제나\n        return 'FALLBACK'                       # 같은 경로: 대체 응답\n    return 'REGENERATE'                         # 그 외에는 언제나: 재생성\n\nretry = 0                                       # 재시도 카운터\nwhile True:                                     # 에이전트 루프\n    result = judge_node('생성된 답변')            # 1) 확률적 판정\n    route = gate(result, retry)                 # 2) 결정론적 분기\n    print('판정:', result, '-> 경로:', route)    # 흐름 확인\n    if route != 'REGENERATE':                   # 종료 또는 대체 경로면\n        break                                   # 루프 탈출(코드로 강제된 종료 조건)\n    retry += 1                                  # 재시도 횟수 증가",
+      "note": "Harness Engineering의 결정론적 경계 — LLM Judge의 출력은 여전히 확률 분포라서 결정론이 되는 것은 판정의 정확성이 아니라 판정 결과를 받아 분기·재시도로 잇는 파이프라인의 동작이다. 판정과 라우팅을 한 노드에 섞으면(검증하고 다음 단계도 정해라) 이 경계가 사라진다. 루프 종료 조건은 모델 판단이 아니라 코드 상수(max_retry)에 박아야 한다."
+    },
+    {
+      "title": "도구 권한 하네스 - 노출 필터와 실행 게이트의 2단 방어",
+      "lang": "python",
+      "code": "WRITE_TOOLS = {'refund', 'delete_record'}       # 쓰기(위험) 도구 목록: 상수로 고정\nREFUND_CAP = 100000                             # 환불 한도: 프롬프트가 아닌 코드에 박기\n\ndef expose_tools(role):                         # 1단계 노출 필터(결정론)\n    all_tools = ['search', 'calculator', 'refund', 'delete_record']   # 전체 도구\n    if role != 'admin':                         # 관리자가 아니면\n        return [t for t in all_tools if t not in WRITE_TOOLS]  # 위험 도구를 모델에게 아예 안 보여줌\n    return all_tools                            # 관리자에게만 전부 노출\n\ndef execute_gate(tool_name, args, role):        # 2단계 실행 게이트(결정론 + HITL)\n    if tool_name in WRITE_TOOLS and role != 'admin':   # 권한 없는 쓰기 요청은\n        return '차단: 권한 없음'                  # 무조건 차단\n    if tool_name == 'refund' and args.get('amount', 0) > REFUND_CAP:  # 한도 초과 환불은\n        return '보류: 사람 승인 필요(HITL)'        # 사람의 승인 흐름으로 전환\n    return '실행 허용'                            # 안전한 요청만 실제 실행\n\nprint(expose_tools('user'))                     # 일반 사용자: 조회 도구만 보임\nprint(execute_gate('refund', {'amount': 50000}, 'admin'))    # 한도 이내: 허용\nprint(execute_gate('refund', {'amount': 999999}, 'admin'))   # 한도 초과: HITL 보류\nprint(execute_gate('delete_record', {}, 'user'))             # 권한 없음: 차단",
+      "note": "권한을 프롬프트에 위임하는 것이 대표 안티패턴 — 프롬프트는 확률적 준수일 뿐 강제가 아니다. 교재의 가이드처럼 두 미들웨어로 나눠, 노출 필터는 역할에 따라 모델에게 보이는 도구 자체를 제한하고 실행 게이트는 호출 시점에 상수(REFUND_CAP)와 분기 조건으로 재검증한다. 결정론으로 거를 수 없는 고위험 요청만 HITL(사람 승인)로 넘긴다."
     }
   ]
 }

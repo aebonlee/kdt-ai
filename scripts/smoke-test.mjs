@@ -45,6 +45,7 @@ assert(missing.length === 0, `전 일차 실습·Lab·시간표·개념·예제(
 // ── 2. 평가기준·퀴즈 형식 ────────────────────────────────────
 console.log('\n[2] 평가기준·퀴즈')
 const { exams } = await import(join(ROOT, 'src/data/exams.js'))
+const { otherExams } = await import(join(ROOT, 'src/data/otherexams.js'))
 const { quizzes } = await import(join(ROOT, 'src/data/quizzes.js'))
 const subjectIds = new Set(subjects.map((s) => s.id))
 
@@ -88,7 +89,8 @@ if (existsSync(join(dist, 'practice-textbook.html'))) {
   const examSecs = (pt.match(/📋 종합실습 평가기준/g) || []).length
   assert(pages === subjects.length + 2, `실습교안 페이지 ${pages} = 개요+${subjects.length}과목+기타`)
   assert(quizSecs === Object.keys(quizzes).length, `실습교안 퀴즈 섹션 ${quizSecs}`)
-  assert(examSecs === Object.keys(exams).length, `실습교안 평가기준 섹션 ${examSecs}`)
+  // 담당 과목 평가기준 + 담당일정 외 참고용 평가기준(otherexams)이 함께 수록된다
+  assert(examSecs === Object.keys(exams).length + Object.keys(otherExams).length, `실습교안 평가기준 섹션 ${examSecs} = 담당 ${Object.keys(exams).length} + 참고 ${Object.keys(otherExams).length}`)
   assert(!pt.includes('&amp;lt;') && !pt.includes('&amp;gt;'), '이중 이스케이프 없음')
   assert(pt.includes('class="copy-btn"') && pt.includes('class="cmt"'), '복사 버튼·녹색 주석 존재')
 }

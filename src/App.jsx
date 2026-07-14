@@ -24,6 +24,7 @@ const BoardDetail = lazy(() => import('./pages/BoardDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Admin = lazy(() => import('./pages/Admin'))
 const AdminTeams = lazy(() => import('./pages/AdminTeams'))
+const AdminSchedule = lazy(() => import('./pages/AdminSchedule'))
 
 // lazy 청크를 내려받는 동안 잠깐 보여줄 로딩 표시
 function PageFallback() {
@@ -43,7 +44,6 @@ export default function App() {
         <Suspense fallback={<PageFallback />}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/schedule" element={<Schedule />} />
             <Route path="/prep" element={<Prep />} />
             <Route path="/prep/:id" element={<PrepDetail />} />
             <Route path="/lectures" element={<Lectures />} />
@@ -60,9 +60,11 @@ export default function App() {
             <Route path="/board/:id" element={<RequireAuth><BoardDetail /></RequireAuth>} />
             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
 
-            {/* 관리자(강사) 전용 자료실 — 구글드라이브 강의자료 열람 */}
+            {/* 관리자(강사) 전용 — 수업일정표(학생 비공개)·자료실·페어링 시간표 */}
+            <Route path="/schedule" element={<RequireAdmin><Schedule /></RequireAdmin>} />
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
             <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
+            <Route path="/admin/schedule" element={<RequireAdmin><AdminSchedule /></RequireAdmin>} />
             {/* 알 수 없는 경로는 홈으로 정규화(주소창에 죽은 URL 남지 않게) */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

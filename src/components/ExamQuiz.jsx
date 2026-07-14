@@ -5,7 +5,7 @@ import { quizzes } from '../data/quizzes'
 const H = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 const TYPE = { ox: 'O/X', choice: '4지선다', short: '단답' }
 
-function ExamBlock({ e }) {
+export function ExamBlock({ e }) {
   if (!e) return null
   const hasPoints = e.criteria?.some((c) => c.points)
   return (

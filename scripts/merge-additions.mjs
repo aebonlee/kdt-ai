@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const ADD = '/private/tmp/claude-501/-Users-aebonlee/7a88327c-a942-462a-b81d-24924ee8e3f9/scratchpad/additions'
+const ADD = process.env.SKALA_SCRATCH_DIR || '/private/tmp/claude-501/-Users-aebonlee/9687267a-0417-44d5-9c32-3a9303a4f76a/scratchpad/additions'
 
 if (!existsSync(ADD)) {
   console.error('additions 폴더 없음:', ADD)

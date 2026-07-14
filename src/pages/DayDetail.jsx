@@ -38,7 +38,7 @@ export default function DayDetail() {
       <section className="section">
         <div className="container" style={{ textAlign: 'center' }}>
           <p style={{ fontWeight: 600 }}>{date} 일자의 등록된 강의가 없습니다.</p>
-          <Link to="/schedule" className="back-link" style={{ marginTop: 16 }}>← 전체 일정으로</Link>
+          <Link to="/lectures" className="back-link" style={{ marginTop: 16 }}>← 강의안으로</Link>
         </div>
       </section>
     )
@@ -58,7 +58,7 @@ export default function DayDetail() {
   return (
     <section className="section">
       <div className="container" style={{ maxWidth: 820 }}>
-        <Link to="/schedule" className="back-link">← 전체 일정</Link>
+        <Link to="/lectures" className="back-link">← 강의안</Link>
 
         <div className="detail-card">
           <div className="detail-meta">
