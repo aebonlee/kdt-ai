@@ -1,6 +1,7 @@
 // 강사 소개 — hufs.dreamitbiz.com InstructorIntro 내역 기반 (About 2페이지 중 하나)
 import { Link } from 'react-router-dom'
 import AboutTabs from '../components/AboutTabs'
+import Sentences from '../components/Sentences'
 
 
 const KEY_INFO = [
@@ -44,15 +45,26 @@ export default function InstructorIntro() {
         <div className="container">
           {/* 프로필 헤더 + KEY INFO */}
           <div className="card">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div style={{ flex: '1 1 380px' }}>
-                <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--navy-800)' }}>
-                  이애본 <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-soft)' }}>Ph.D Aebon Lee</span>
-                </h3>
-                <p style={{ color: 'var(--ink-soft)', fontSize: 14, marginTop: 10, lineHeight: 1.8 }}>
-                  생성형 인공지능 교육과 에듀테크 플랫폼 개발을 전문으로 하는 강사입니다.
-                  120여 개의 교육 사이트를 직접 설계·개발·운영하고 있으며,
-                  대학교(경기대·한신대·한국기술교육대·전남대·서울대·한국외대 등)와 기업·공공기관에서 AI 활용 교육을 진행하고 있습니다.
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                <img
+                  src="/aebon.jpeg"
+                  alt="이애본 박사"
+                  width={160}
+                  height={160}
+                  style={{
+                    width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center top',
+                    border: '3px solid var(--bg-white)', boxShadow: '0 8px 24px rgba(15,27,51,0.18)',
+                  }}
+                />
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 19, fontWeight: 900, color: 'var(--navy-800)' }}>이애본</div>
+                  <div style={{ fontSize: 12.5, color: 'var(--gold)', fontWeight: 700, marginTop: 2 }}>Ph.D Aebon Lee</div>
+                </div>
+              </div>
+              <div style={{ flex: '1 1 340px' }}>
+                <p style={{ color: 'var(--ink-soft)', fontSize: 14, marginTop: 4, lineHeight: 1.9 }}>
+                  <Sentences text={'생성형 인공지능 교육과 에듀테크 플랫폼 개발을 전문으로 하는 강사입니다. 120여 개의 교육 사이트를 직접 설계·개발·운영하고 있습니다. 대학교(경기대·한신대·한국기술교육대·전남대·서울대·한국외대 등)와 기업·공공기관에서 AI 활용 교육을 진행하고 있습니다.'} />
                 </p>
               </div>
               <div style={{ flex: '1 1 320px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
@@ -99,10 +111,8 @@ export default function InstructorIntro() {
           <div className="card" style={{ marginTop: 26, background: 'var(--ink-surface)', color: '#fff' }}>
             <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--gold)', letterSpacing: 1 }}>TEACHING PHILOSOPHY</div>
             <p style={{ marginTop: 8, fontWeight: 900, fontSize: 19 }}>"AI는 도구이고, 진짜 혁신은 사람이 만듭니다."</p>
-            <p style={{ marginTop: 8, fontSize: 13.5, lineHeight: 1.8, color: 'rgba(255,255,255,0.85)' }}>
-              교육의 핵심은 기술을 '아는 것'이 아니라 '할 수 있는 것'으로 만드는 데 있습니다.
-              이론 30% · 실습 70% 구성으로 교육 현장에서 바로 적용할 수 있는 실무 역량을 키우는 것을 목표로 하며,
-              교육이 끝난 뒤에도 이 플랫폼에서 학습이 계속 이어지도록 함께 운영합니다.
+            <p style={{ marginTop: 8, fontSize: 13.5, lineHeight: 1.9, color: 'rgba(255,255,255,0.85)' }}>
+              <Sentences text={"교육의 핵심은 기술을 '아는 것'이 아니라 '할 수 있는 것'으로 만드는 데 있습니다. 이론 30% · 실습 70% 구성으로 교육 현장에서 바로 적용할 수 있는 실무 역량을 키웁니다. 교육이 끝난 뒤에도 이 플랫폼에서 학습이 계속 이어지도록 함께 운영합니다."} />
             </p>
           </div>
 
