@@ -213,18 +213,27 @@ export default function Lectures() {
                 <div key={g.month}>
                   <div className="side-nav-title etc-month">{Number(g.month.slice(5))}월</div>
                   {g.items.map((it) => {
-                    const clickable = !!otherCourses[it.c]
+                    const isEtcCourse = !!otherCourses[it.c]
+                    // 담당 과목의 타 반(타 강사) 진행 — 클릭하면 담당 강의안 첫날로 연결
+                    const mySubjectDate = !isEtcCourse ? all.find((s) => s.subjectId === it.c)?.date : null
+                    const clickable = isEtcCourse || !!mySubjectDate
                     const range = it.from === it.to ? it.from.slice(5) : `${it.from.slice(5)}~${it.to.slice(8)}`
                     const active = etc?.courseId === it.c
                     return (
                       <button
                         key={`${g.month}-${it.c}`}
                         className={`side-link etc-link${active ? ' active' : ''}${clickable ? '' : ' etc-plain'}`}
-                        onClick={() => clickable && navigate(`/lectures/etc-${it.c}`)}
+                        onClick={() => {
+                          if (isEtcCourse) navigate(`/lectures/etc-${it.c}`)
+                          else if (mySubjectDate) navigate(`/lectures/${mySubjectDate}`)
+                        }}
                         disabled={!clickable}
                       >
                         {etcName(it.c)}
-                        <span className="sl-sub">{range} · {it.tracks.join(' · ')}</span>
+                        {mySubjectDate ? <span style={{ marginLeft: 4, color: 'var(--gold)', fontWeight: 800 }}>★</span> : null}
+                        <span className="sl-sub">
+                          {range} · {it.tracks.join(' · ')}{mySubjectDate ? ' · 담당 강의안 보기' : ''}
+                        </span>
                       </button>
                     )
                   })}

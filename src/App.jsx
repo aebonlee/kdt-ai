@@ -9,6 +9,7 @@ import Home from './pages/Home' // 랜딩은 정적 import — entry→Home→cu
 
 // 라우트 단위 코드 스플리팅 — 각 페이지를 필요할 때만 내려받는다.
 // 특히 무거운 강의안 데이터(lecture*.js)는 Lectures 청크에만 포함되어 초기 번들에서 빠진다.
+const About = lazy(() => import('./pages/About'))
 const Subjects = lazy(() => import('./pages/Subjects'))
 const Schedule = lazy(() => import('./pages/Schedule'))
 const DayDetail = lazy(() => import('./pages/DayDetail'))
@@ -44,6 +45,7 @@ export default function App() {
         <Suspense fallback={<PageFallback />}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
             <Route path="/prep" element={<Prep />} />
             <Route path="/prep/:id" element={<PrepDetail />} />
             <Route path="/lectures" element={<Lectures />} />
