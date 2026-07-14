@@ -107,13 +107,43 @@ export default function InstructorIntro() {
             ))}
           </div>
 
-          {/* Teaching Philosophy */}
-          <div className="card" style={{ marginTop: 26, background: 'var(--ink-surface)', color: '#fff' }}>
+          {/* Teaching Philosophy — 우측 장식(따옴표 + 궤도 노드, 히어로 비주얼과 같은 모티프) */}
+          <div className="card" style={{ marginTop: 26, background: 'var(--ink-surface)', color: '#fff', position: 'relative', overflow: 'hidden' }}>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 260 220"
+              style={{ position: 'absolute', right: -10, top: '50%', transform: 'translateY(-50%)', height: '135%', opacity: 0.9, pointerEvents: 'none' }}
+            >
+              <defs>
+                <linearGradient id="tpG" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#6C4DFF" />
+                  <stop offset="1" stopColor="#3F51FF" />
+                </linearGradient>
+                <radialGradient id="tpGlow" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stopColor="#3F51FF" stopOpacity="0.5" />
+                  <stop offset="1" stopColor="#3F51FF" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <circle cx="170" cy="110" r="100" fill="url(#tpGlow)" />
+              <circle cx="170" cy="110" r="72" fill="none" stroke="#ACBEFF" strokeOpacity="0.28" strokeWidth="1" strokeDasharray="3 6" />
+              <circle cx="170" cy="110" r="46" fill="none" stroke="#ACBEFF" strokeOpacity="0.18" strokeWidth="1" />
+              {/* 큰 따옴표 */}
+              <text x="120" y="150" fontSize="120" fontWeight="900" fill="url(#tpG)" opacity="0.55" fontFamily="Georgia, serif">”</text>
+              {/* 궤도 노드 */}
+              <circle cx="170" cy="38" r="5" fill="#B78CFF" />
+              <circle cx="242" cy="110" r="4" fill="#4DD8C7" />
+              <circle cx="170" cy="182" r="4.5" fill="#FFB65C" />
+              <circle cx="98" cy="110" r="3.5" fill="#7C8CFF" />
+              <line x1="170" y1="43" x2="170" y2="64" stroke="#ACBEFF" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="3 4" />
+              <line x1="238" y1="110" x2="216" y2="110" stroke="#ACBEFF" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="3 4" />
+            </svg>
+            <div style={{ position: 'relative', maxWidth: '78%' }}>
             <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--gold)', letterSpacing: 1 }}>TEACHING PHILOSOPHY</div>
             <p style={{ marginTop: 8, fontWeight: 900, fontSize: 19 }}>"AI는 도구이고, 진짜 혁신은 사람이 만듭니다."</p>
             <p style={{ marginTop: 8, fontSize: 13.5, lineHeight: 1.9, color: 'rgba(255,255,255,0.85)' }}>
               <Sentences text={"교육의 핵심은 기술을 '아는 것'이 아니라 '할 수 있는 것'으로 만드는 데 있습니다. 이론 30% · 실습 70% 구성으로 교육 현장에서 바로 적용할 수 있는 실무 역량을 키웁니다. 교육이 끝난 뒤에도 이 플랫폼에서 학습이 계속 이어지도록 함께 운영합니다."} />
             </p>
+            </div>
           </div>
 
           <div style={{ marginTop: 22, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
