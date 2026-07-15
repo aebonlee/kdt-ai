@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { prepTopics } from '../data/resources'
 
-const CAT_ORDER = ['필수', '프론트', '백엔드', '데이터', 'AI 데모', '배포', 'BaaS', '실습환경', 'AI 기초', 'SKALA 연계']
+const CAT_ORDER = ['필수', '프론트', '백엔드', '데이터', '라이브러리', 'AI 데모', '배포', 'BaaS', '실습환경', 'AI 기초', 'SKALA 연계']
 const categories = ['전체', ...CAT_ORDER.filter((c) => prepTopics.some((t) => t.tag === c))]
 
 export default function Prep() {

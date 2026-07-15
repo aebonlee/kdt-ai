@@ -726,6 +726,675 @@ kubectl expose deployment web --port=80 --type=NodePort   # 서비스로 노출`
       { label: 'GitHub Actions (CI/CD)', url: 'https://docs.github.com/actions' },
     ],
   },
+  // ── 2026-07-15 확장: 파이썬 자료구조·알고리즘 + 라이브러리 개별 주제(에이전트 작성·검증) ──
+  {
+    "id": "python-dsa",
+    "name": "파이썬 자료구조·알고리즘",
+    "tag": "필수",
+    "desc": "코드가 \"왜 느린지/빠른지\"를 설명하는 힘. AI 모델링·데이터 처리 전 과목에서 좋은 코드를 쓰기 위한 기초 체력입니다.",
+    "sections": [
+      {
+        "h": "시간복잡도 직관",
+        "items": [
+          "Big-O: 입력이 2배면 시간은 몇 배?",
+          "O(1) < O(log n) < O(n) < O(n log n) < O(n^2)",
+          "반복문 중첩 = 곱하기, 순차 실행 = 더하기",
+          "데이터 100만 건이면 O(n^2)은 사실상 불가"
+        ]
+      },
+      {
+        "h": "내장 자료구조의 속사정",
+        "items": [
+          "list: 끝 추가 O(1), 앞 삽입/삭제는 O(n)",
+          "deque: 양쪽 끝 삽입·삭제 모두 O(1)",
+          "dict/set: 해시 기반이라 조회가 평균 O(1)",
+          "\"in 리스트\"는 O(n), \"in 집합\"은 O(1) — 검색은 set으로"
+        ]
+      },
+      {
+        "h": "collections · heapq",
+        "items": [
+          "Counter: 빈도 집계 한 줄",
+          "defaultdict: 키 없을 때 기본값 자동 생성",
+          "deque: 큐(BFS)·스택 겸용",
+          "heapq: 최솟값을 O(log n)에 꺼내는 우선순위 큐"
+        ]
+      },
+      {
+        "h": "정렬과 탐색",
+        "items": [
+          "sort(key=lambda x: ...)로 기준 정렬",
+          "reverse=True 내림차순, 튜플 key로 다중 기준",
+          "정렬된 리스트에서 bisect로 이진 탐색 O(log n)",
+          "파이썬 정렬은 안정 정렬(같은 값의 순서 유지)"
+        ]
+      },
+      {
+        "h": "대표 알고리즘 패턴",
+        "items": [
+          "재귀: 자기 호출 + 종료 조건(내부적으로 스택 사용)",
+          "투 포인터: 양끝/두 지점 포인터로 O(n) 순회",
+          "슬라이딩 윈도우: 구간 합·최대를 창을 밀며 갱신",
+          "BFS(큐, 최단거리) vs DFS(스택/재귀, 모든 경로)"
+        ]
+      }
+    ],
+    "practice": [
+      "두 수의 합: 정수 리스트와 목표값이 주어질 때 합이 목표값이 되는 두 원소가 있는지 판정 — 이중 for문 O(n^2) 풀이와 set 이용 O(n) 풀이를 모두 작성하고 시간을 비교",
+      "괄호 짝 검사: \"(()[])\" 같은 문자열이 올바른 괄호열인지 리스트를 스택처럼(append/pop) 써서 판정",
+      "최빈 단어 Top3: 문장 리스트에서 단어 빈도를 defaultdict로 직접 집계한 뒤 sort(key=...)로 상위 3개 출력(파이썬 A to Z의 Counter 한 줄 풀이와 결과 비교)",
+      "미로 최단거리: 0(길)/1(벽) 격자에서 시작→도착 최단 칸 수를 deque 기반 BFS로 계산(도달 불가면 -1)"
+    ],
+    "tips": [
+      "코딩테스트 시간초과의 8할은 \"in 리스트\"와 앞쪽 insert/pop(0) — set과 deque로 바꾸면 해결되는 경우가 많음",
+      "dict.get(key, 0) 또는 defaultdict를 쓰면 \"키 있나 확인 후 추가\" 패턴이 사라짐",
+      "파이썬 재귀 깊이 기본 한도는 약 1000 — 깊은 재귀는 반복문+스택으로 바꾸는 습관",
+      "정렬 key에 튜플을 주면 다중 기준: sort(key=lambda x: (-x[1], x[0])) 처럼 부호로 방향 제어",
+      "먼저 무식하게(브루트포스) 맞히고, 그 다음 복잡도를 줄이기 — 처음부터 최적화하려다 못 푸는 게 최악"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# BFS로 미로 최단거리 구하기 (0=길, 1=벽)\nfrom collections import deque              # 양끝 O(1) 큐\n\nmaze = [[0, 0, 1], [1, 0, 1], [1, 0, 0]]   # 3x3 미로\nn, m = len(maze), len(maze[0])             # 행/열 크기\ndist = [[-1] * m for _ in range(n)]        # 거리표(-1=미방문)\n\nq = deque([(0, 0)])                        # 시작 칸을 큐에 넣기\ndist[0][0] = 0                             # 시작 거리는 0\nwhile q:                                   # 큐가 빌 때까지 반복\n    x, y = q.popleft()                     # 가장 먼저 넣은 칸부터\n    for dx, dy in [(1,0),(-1,0),(0,1),(0,-1)]:  # 상하좌우\n        nx, ny = x + dx, y + dy            # 이웃 칸 좌표\n        if 0 <= nx < n and 0 <= ny < m:    # 격자 범위 안이고\n            if maze[nx][ny] == 0 and dist[nx][ny] == -1:  # 길+미방문\n                dist[nx][ny] = dist[x][y] + 1  # 거리 = 현재+1\n                q.append((nx, ny))         # 다음 탐색 대상으로\n\nprint(dist[2][2])                          # 도착 칸 최단거리 → 4"
+    },
+    "links": [
+      {
+        "label": "정렬 HOW TO (파이썬 공식·한글)",
+        "url": "https://docs.python.org/ko/3/howto/sorting.html"
+      },
+      {
+        "label": "collections 공식 문서(한글)",
+        "url": "https://docs.python.org/ko/3/library/collections.html"
+      },
+      {
+        "label": "heapq 공식 문서(한글)",
+        "url": "https://docs.python.org/ko/3/library/heapq.html"
+      }
+    ]
+  },
+  {
+    "id": "numpy",
+    "name": "NumPy",
+    "tag": "라이브러리",
+    "desc": "pandas·scikit-learn·PyTorch가 모두 그 위에 서 있는 수치 계산의 뿌리. 머신러닝 모델링·딥러닝 과목 전에 배열 감각을 잡아두면 수업이 쉬워집니다.",
+    "sections": [
+      {
+        "h": "ndarray 기본기",
+        "items": [
+          "np.array / zeros / arange 로 배열 만들기",
+          "dtype: 배열 전체가 같은 자료형(int64, float32...)",
+          "shape: (행, 열) — 모든 에러의 8할은 shape 불일치",
+          "reshape(-1, 1)로 형태 바꾸기(-1은 자동 계산)"
+        ]
+      },
+      {
+        "h": "브로드캐스팅",
+        "items": [
+          "배열 + 숫자: 숫자가 전체에 자동으로 퍼짐",
+          "(3,4) + (4,) 처럼 모양이 맞으면 자동 확장",
+          "정규화 한 줄: (x - x.mean()) / x.std()",
+          "모양이 안 맞으면 에러 — shape부터 print"
+        ]
+      },
+      {
+        "h": "인덱싱·불리언 마스크",
+        "items": [
+          "a[행, 열] 2차원 인덱싱과 슬라이싱 a[:, 0]",
+          "조건식 a > 5 는 True/False 배열(마스크)을 만듦",
+          "a[a > 5] 로 조건에 맞는 값만 골라내기",
+          "np.where(조건, 참값, 거짓값) 조건 치환"
+        ]
+      },
+      {
+        "h": "벡터화 vs 반복문",
+        "items": [
+          "for문으로 원소 하나씩 = 느림(파이썬 레벨)",
+          "배열 연산 한 줄 = 빠름(C 레벨에서 일괄 처리)",
+          "합·평균도 sum() 대신 np.sum() / arr.mean()",
+          "axis=0은 열 방향, axis=1은 행 방향 집계"
+        ]
+      },
+      {
+        "h": "난수·통계와 ML에서의 역할",
+        "items": [
+          "rng = np.random.default_rng(42) 시드 고정 난수",
+          "mean / std / min / argmax 기본 통계",
+          "pandas의 열, sklearn의 X, torch.Tensor 모두 ndarray가 원형",
+          "이미지=3차원 배열, 임베딩=2차원 배열 — 데이터는 결국 배열"
+        ]
+      }
+    ],
+    "practice": [
+      "점수 정규화: 학생 20명의 점수 배열을 만들어 평균 0, 표준편차 1로 표준화하고 원본 평균·표준편차와 비교",
+      "마스크 필터링: 난수 100개 중 70 이상인 값의 개수와 평균을 불리언 마스크로 구하기(np.where로 합격/불합격 라벨도 생성)",
+      "속도 비교: 100만 개 원소 제곱합을 for문과 벡터화(arr ** 2).sum() 두 방식으로 구해 time으로 시간 측정",
+      "성적표 집계: (학생 5, 과목 3) 2차원 배열에서 axis를 바꿔가며 학생별 평균과 과목별 평균을 각각 계산"
+    ],
+    "tips": [
+      "막히면 무조건 print(arr.shape, arr.dtype) — 에러 메시지보다 정보가 많음",
+      "정수 배열에 3.5를 넣으면 3이 됨(dtype 고정) — 소수가 필요하면 처음부터 float로",
+      "슬라이싱은 원본을 공유(뷰) — 복사본이 필요하면 .copy()를 명시",
+      "난수는 np.random.default_rng(시드) 방식이 최신 권장 — 시드를 고정해야 실험 재현 가능",
+      "반복문을 쓰고 있다면 \"NumPy 함수 한 줄로 되지 않을까?\"를 먼저 검색"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# 브로드캐스팅 + 불리언 마스크 한 번에 맛보기\nimport numpy as np                          # 수치 계산 라이브러리\n\nrng = np.random.default_rng(42)             # 시드 고정 난수 생성기\nscores = rng.integers(50, 100, size=(4, 3)) # 학생4 x 과목3 점수\nprint(scores.shape, scores.dtype)           # (4, 3) int64 확인\n\nz = (scores - scores.mean()) / scores.std() # 표준화(브로드캐스팅)\nprint(z.round(2))                           # 평균0 기준 상대 위치\n\nhigh = scores >= 80                         # 80점 이상 True 마스크\nprint(scores[high])                         # 조건에 맞는 값만 추출\nprint(high.sum(), \"과목이 80점 이상\")        # True 개수 = 합계\n\navg_by_subject = scores.mean(axis=0)        # 열 방향 = 과목별 평균\nprint(avg_by_subject.round(1))              # 과목 3개의 평균 점수"
+    },
+    "links": [
+      {
+        "label": "NumPy 공식 절대 초보자 가이드",
+        "url": "https://numpy.org/doc/stable/user/absolute_beginners.html"
+      },
+      {
+        "label": "NumPy 브로드캐스팅 공식 설명",
+        "url": "https://numpy.org/doc/stable/user/basics.broadcasting.html"
+      },
+      {
+        "label": "파이썬 코딩도장 NumPy 사용하기",
+        "url": "https://dojang.io/mod/page/view.php?id=2461"
+      }
+    ]
+  },
+  {
+    "id": "matplotlib",
+    "name": "Matplotlib · 시각화",
+    "tag": "라이브러리",
+    "desc": "숫자를 그림으로 바꿔 인사이트를 전달하는 표준 도구. 데이터 분석·EDA와 모델 학습곡선 확인 등 실습 전반의 선수 지식입니다.",
+    "sections": [
+      {
+        "h": "Figure와 Axes 구조",
+        "items": [
+          "Figure = 도화지, Axes = 그 위의 그래프 한 칸",
+          "fig, ax = plt.subplots() 가 표준 시작 코드",
+          "ax.plot(...) 그리고 → plt.show() 로 표시",
+          "plt.plot 단축형보다 ax 방식이 확장에 유리"
+        ]
+      },
+      {
+        "h": "기본 차트 4종",
+        "items": [
+          "line(plot): 시간에 따른 변화·추세",
+          "bar: 범주별 크기 비교",
+          "scatter: 두 변수의 관계·상관",
+          "hist: 값의 분포(구간별 빈도)"
+        ]
+      },
+      {
+        "h": "한글 폰트 설정",
+        "items": [
+          "기본 설정에선 한글이 네모(□)로 깨짐",
+          "Windows: plt.rc(\"font\", family=\"Malgun Gothic\")",
+          "macOS: AppleGothic, Colab은 나눔폰트 설치 후 재시작",
+          "음수 부호 깨짐 방지: plt.rc(\"axes\", unicode_minus=False)"
+        ]
+      },
+      {
+        "h": "여러 그래프와 꾸미기",
+        "items": [
+          "plt.subplots(2, 2) 로 2x2 격자 배치",
+          "set_title / set_xlabel / legend 로 제목·축·범례",
+          "figsize=(가로, 세로) 로 크기 조절",
+          "plt.style.use(\"ggplot\") 등 스타일 한 줄 변경"
+        ]
+      },
+      {
+        "h": "pandas 연동 · seaborn 소개",
+        "items": [
+          "df.plot(kind=\"bar\") — DataFrame에서 바로 그리기",
+          "df[\"col\"].hist() 로 분포 즉시 확인",
+          "groupby 집계 결과를 .plot()으로 이어 그리기",
+          "seaborn: matplotlib 위에서 통계 차트를 더 예쁘게(sns.heatmap 등)"
+        ]
+      }
+    ],
+    "practice": [
+      "월별 매출 추이: 12개월 매출 리스트를 선 그래프로 그리고 제목·축 라벨·범례를 한글로 달기(폰트 설정 포함)",
+      "분포 관찰: 난수 1000개(정규분포)를 hist로 그리고 bins를 10/30/100으로 바꿔 모양 변화 관찰",
+      "2x2 대시보드: 같은 데이터로 line·bar·scatter·hist 네 가지를 subplots(2,2)에 한 화면 배치",
+      "pandas 연동: CSV를 DataFrame으로 읽어 groupby 집계 후 .plot(kind=\"bar\")까지 한 흐름으로 그리기"
+    ],
+    "tips": [
+      "그래프에 한글을 쓸 계획이면 폰트 설정 두 줄을 노트북 맨 위에 습관처럼 붙여두기",
+      "차트 선택 공식: 추세=line, 비교=bar, 관계=scatter, 분포=hist",
+      "plt.savefig(\"out.png\", dpi=150) 은 plt.show() 보다 먼저 호출해야 빈 그림이 안 나옴",
+      "Colab에서 나눔폰트 설치 후에는 런타임 다시 시작을 해야 적용됨",
+      "색·꾸밈보다 제목과 축 라벨이 먼저 — 라벨 없는 그래프는 남이 못 읽음"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# 한글 제목이 있는 2단 차트 (line + bar)\nimport matplotlib.pyplot as plt             # 시각화 라이브러리\n\nplt.rc(\"font\", family=\"AppleGothic\")        # 한글 폰트(맥) / 윈도우는 Malgun Gothic\nplt.rc(\"axes\", unicode_minus=False)         # 음수 부호 깨짐 방지\n\nmonths = [\"1월\", \"2월\", \"3월\", \"4월\"]       # x축 범주(한글)\nsales = [120, 150, 90, 200]                 # 월별 매출 데이터\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))  # 도화지에 그래프 2칸\naxes[0].plot(months, sales, marker=\"o\")     # 왼쪽: 추세용 선 그래프\naxes[0].set_title(\"월별 매출 추이\")          # 왼쪽 그래프 제목\naxes[1].bar(months, sales, color=\"tan\")     # 오른쪽: 비교용 막대\naxes[1].set_title(\"월별 매출 비교\")          # 오른쪽 그래프 제목\n\nfig.tight_layout()                          # 겹침 없이 여백 정리\nplt.show()                                  # 화면에 표시"
+    },
+    "links": [
+      {
+        "label": "Matplotlib 공식 Quick Start",
+        "url": "https://matplotlib.org/stable/users/explain/quick_start.html"
+      },
+      {
+        "label": "Matplotlib Tutorial (위키독스·한글)",
+        "url": "https://wikidocs.net/book/5011"
+      },
+      {
+        "label": "seaborn 공식 문서",
+        "url": "https://seaborn.pydata.org/"
+      }
+    ]
+  },
+  {
+    "id": "fastapi",
+    "name": "FastAPI",
+    "tag": "라이브러리",
+    "desc": "타입 힌트 기반의 현대적 파이썬 API 프레임워크. \"모델 서빙 및 AIOps\" 과목에서 모델을 API로 배포하기 전에 익혀둘 선수 기초입니다.",
+    "sections": [
+      {
+        "h": "첫 API 만들기",
+        "items": [
+          "app = FastAPI() 인스턴스 생성",
+          "@app.get(\"/\") 데코레이터로 라우팅",
+          "함수가 dict를 반환하면 자동으로 JSON 응답",
+          "설치: pip install fastapi uvicorn"
+        ]
+      },
+      {
+        "h": "경로·쿼리 파라미터",
+        "items": [
+          "@app.get(\"/items/{item_id}\") 경로 파라미터",
+          "함수 인자 타입 힌트(item_id: int)로 자동 형변환·검증",
+          "경로에 없는 인자는 쿼리 파라미터(?q=abc)가 됨",
+          "기본값을 주면 선택 파라미터(q: str = \"\")"
+        ]
+      },
+      {
+        "h": "Pydantic 모델과 POST",
+        "items": [
+          "BaseModel 상속 클래스로 요청 본문 스키마 정의",
+          "타입이 안 맞으면 FastAPI가 알아서 422 에러 응답",
+          "@app.post + 함수 인자로 모델을 받으면 JSON 자동 파싱",
+          "응답도 모델로 정의하면 문서·검증이 함께 됨"
+        ]
+      },
+      {
+        "h": "실행과 자동 문서",
+        "items": [
+          "uvicorn main:app --reload 로 개발 서버 실행",
+          "--reload: 코드 저장 시 자동 재시작(개발용)",
+          "/docs: Swagger UI에서 브라우저로 바로 테스트",
+          "/redoc: 읽기 좋은 문서 뷰 자동 생성"
+        ]
+      },
+      {
+        "h": "ML 추론 API 패턴",
+        "items": [
+          "서버 시작 시 모델을 한 번만 로드(전역 or lifespan)",
+          "입력 Pydantic 모델 → predict → 결과 JSON 반환",
+          "요청마다 모델을 다시 읽으면 치명적으로 느려짐",
+          "이후 확장: Docker로 감싸 배포(→ Docker 기초 주제)"
+        ]
+      }
+    ],
+    "practice": [
+      "헬로 API: GET / 와 GET /hello/{name} 두 라우트를 만들고 /docs에서 직접 호출해보기",
+      "계산 API: GET /add?a=3&b=5 쿼리 파라미터 버전과, Pydantic 모델로 받는 POST /add 버전을 모두 구현해 차이 비교",
+      "검증 체험: 숫자 필드에 문자열을 보내 422 에러 응답을 관찰하고, 에러 메시지에서 어떤 필드가 왜 실패했는지 읽어보기",
+      "미니 추론 API: 붓꽃(iris) 모델을 학습·저장한 뒤 서버 시작 시 로드하고, 꽃 측정값 4개를 받아 품종을 반환하는 POST /predict 완성"
+    ],
+    "tips": [
+      "주소를 붙일 땐 uvicorn main:app --host 0.0.0.0 --port 8000 형태 — Docker·클라우드에서 필수",
+      "타입 힌트가 곧 검증이자 문서 — int/float/str을 정확히 적을수록 API가 좋아짐",
+      "Flask보다 좋은 점을 하나만 꼽으면 /docs 자동 문서 — 프론트엔드 협업이 훨씬 쉬워짐",
+      "무거운 모델 로드는 요청 함수 밖에서 한 번만 — 함수 안에 넣는 실수가 가장 흔함",
+      "async def는 외부 API 호출 등 대기가 많을 때 유리 — 처음엔 일반 def로 시작해도 충분"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# 간단 ML 추론 API 뼈대 (uvicorn main:app --reload 로 실행)\nfrom fastapi import FastAPI                 # 웹 프레임워크\nfrom pydantic import BaseModel              # 입력 검증용 모델\n\napp = FastAPI(title=\"붓꽃 예측 API\")         # 앱 생성(+문서 제목)\nmodel = load_model(\"iris.pkl\")              # 시작 시 모델 1회 로드\nclass IrisInput(BaseModel):                 # 요청 본문 스키마 정의\n    sepal_len: float                        # 꽃받침 길이\n    sepal_wid: float                        # 꽃받침 너비\n    petal_len: float                        # 꽃잎 길이\n    petal_wid: float                        # 꽃잎 너비\n\n@app.get(\"/hello/{name}\")                   # 경로 파라미터 라우트\ndef hello(name: str, lang: str = \"ko\"):     # lang은 쿼리 파라미터\n    return {\"message\": \"안녕하세요 \" + name} # dict → JSON 자동 변환\n\n@app.post(\"/predict\")                       # POST 추론 엔드포인트\ndef predict(item: IrisInput):               # JSON 본문 자동 파싱·검증\n    x = [[item.sepal_len, item.sepal_wid, item.petal_len, item.petal_wid]]  # 2차원 입력\n    return {\"species\": model.predict(x)[0]} # 예측 결과 JSON 반환"
+    },
+    "links": [
+      {
+        "label": "FastAPI 공식 문서(한글)",
+        "url": "https://fastapi.tiangolo.com/ko/"
+      },
+      {
+        "label": "FastAPI 자습서(한글)",
+        "url": "https://fastapi.tiangolo.com/ko/tutorial/"
+      },
+      {
+        "label": "점프 투 FastAPI (위키독스)",
+        "url": "https://wikidocs.net/book/8531"
+      }
+    ]
+  },
+  {
+    "id": "scikit-learn",
+    "name": "Scikit-learn",
+    "tag": "라이브러리",
+    "desc": "파이썬 머신러닝의 표준 라이브러리. 머신러닝·딥러닝 이해와 실전 Feature Engineering 과목을 듣기 전에 fit/predict 흐름만 익혀두면 실습이 훨씬 편해집니다.",
+    "sections": [
+      {
+        "h": "핵심 패턴: fit / predict",
+        "items": [
+          "모든 모델이 같은 사용법 — 학습은 fit(), 예측은 predict()",
+          "분류 확률이 필요하면 predict_proba()",
+          "전처리기는 fit_transform()으로 배우고 변환까지 한 번에",
+          "사용법이 통일되어 있어 모델 교체가 한 줄로 끝남"
+        ]
+      },
+      {
+        "h": "데이터 분할",
+        "items": [
+          "train_test_split으로 학습용/평가용 분리(보통 8:2)",
+          "random_state를 고정하면 매번 같은 결과로 재현 가능",
+          "stratify=y로 분류 문제의 클래스 비율을 유지",
+          "평가는 반드시 모델이 못 본 test 데이터로"
+        ]
+      },
+      {
+        "h": "전처리",
+        "items": [
+          "StandardScaler — 평균 0, 표준편차 1로 표준화",
+          "OneHotEncoder / pd.get_dummies — 범주형을 숫자로",
+          "SimpleImputer — 결측치를 평균·중앙값 등으로 대치",
+          "전처리기의 fit은 학습 데이터에만(테스트는 transform만)"
+        ]
+      },
+      {
+        "h": "대표 모델 3종",
+        "items": [
+          "LogisticRegression — 이름과 달리 분류 모델, 해석이 쉬움",
+          "RandomForestClassifier — 나무 여러 그루의 다수결, 강력한 기본기",
+          "KMeans — 정답 없이 비슷한 것끼리 묶는 군집(비지도학습)",
+          "작고 단순한 모델부터 시작해 성능 기준선(baseline)을 잡기"
+        ]
+      },
+      {
+        "h": "평가지표 · Pipeline",
+        "items": [
+          "accuracy_score — 전체 중 맞힌 비율(불균형 데이터엔 부족)",
+          "f1_score — 정밀도·재현율의 조화평균, 불균형 데이터에 유용",
+          "confusion_matrix — 무엇을 무엇으로 헷갈렸는지 표로 확인",
+          "Pipeline으로 전처리+모델을 묶으면 실수(데이터 누수)가 줄어듦"
+        ]
+      }
+    ],
+    "practice": [
+      "load_iris 데이터로 train_test_split → LogisticRegression 학습 → accuracy 출력",
+      "같은 데이터에 StandardScaler 유무로 성능 비교해 보기",
+      "RandomForestClassifier로 바꿔 학습하고 feature_importances_ 확인",
+      "confusion_matrix를 출력해 어떤 클래스를 헷갈리는지 해석해 보기"
+    ],
+    "tips": [
+      "외울 것은 fit → predict → 평가지표, 이 세 단계뿐",
+      "random_state=42처럼 시드를 고정해야 결과를 재현·비교할 수 있음",
+      "스케일링은 거리 기반 모델(KNN·SVM·KMeans)에 특히 중요",
+      "테스트 데이터에 fit을 다시 하면 데이터 누수 — transform만 할 것",
+      "정확도가 높아 보여도 클래스가 불균형하면 f1_score를 같이 볼 것"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# 붓꽃 데이터로 sklearn의 기본 흐름(분할 -> 전처리 -> 학습 -> 평가) 익히기\nfrom sklearn.datasets import load_iris                    # 연습용 데이터셋\nfrom sklearn.model_selection import train_test_split      # 학습/평가 분할 도구\nfrom sklearn.preprocessing import StandardScaler          # 표준화 전처리기\nfrom sklearn.linear_model import LogisticRegression       # 로지스틱 회귀(분류)\nfrom sklearn.pipeline import Pipeline                     # 전처리+모델 묶기\nfrom sklearn.metrics import accuracy_score, f1_score      # 평가 지표\n\nX, y = load_iris(return_X_y=True)                         # 특성 X와 정답 y 불러오기\nX_train, X_test, y_train, y_test = train_test_split(      # 학습용/평가용으로 분리\n    X, y, test_size=0.2, random_state=42, stratify=y)     # 20%는 평가용, 비율 유지\n\nmodel = Pipeline([(\"scaler\", StandardScaler()),           # 1단계: 표준화\n                  (\"clf\", LogisticRegression())])         # 2단계: 분류 모델\nmodel.fit(X_train, y_train)                               # 학습은 언제나 fit\npred = model.predict(X_test)                              # 예측은 언제나 predict\nprint(\"정확도:\", accuracy_score(y_test, pred))            # 전체 중 맞힌 비율\nprint(\"F1점수:\", f1_score(y_test, pred, average=\"macro\")) # 클래스별 균형 지표\n"
+    },
+    "links": [
+      {
+        "label": "scikit-learn 공식 시작 가이드",
+        "url": "https://scikit-learn.org/stable/getting_started.html"
+      },
+      {
+        "label": "scikit-learn 사용자 가이드",
+        "url": "https://scikit-learn.org/stable/user_guide.html"
+      }
+    ]
+  },
+  {
+    "id": "pytorch",
+    "name": "PyTorch 기초",
+    "tag": "라이브러리",
+    "desc": "딥러닝 프레임워크의 사실상 표준. 모델 개발·최적화와 sLLM 과목의 선수 지식으로, 텐서와 학습 루프 5단계만 이해하면 수업을 따라갈 수 있습니다.",
+    "sections": [
+      {
+        "h": "텐서(Tensor)",
+        "items": [
+          "넘파이 배열과 비슷한 다차원 숫자 상자 — 딥러닝의 기본 단위",
+          "torch.tensor / torch.randn / torch.zeros 로 생성",
+          "shape(모양)와 dtype(자료형)을 항상 먼저 확인하는 습관",
+          "numpy() / from_numpy 로 NumPy와 자유롭게 오가기"
+        ]
+      },
+      {
+        "h": "GPU 사용",
+        "items": [
+          "torch.cuda.is_available() 로 GPU 사용 가능 여부 확인",
+          ".to(\"cuda\") 로 텐서·모델을 GPU 메모리로 이동",
+          "모델과 데이터는 반드시 같은 장치(device)에 있어야 함",
+          "Colab에서 무료 GPU로 바로 실습 가능"
+        ]
+      },
+      {
+        "h": "autograd(자동 미분)",
+        "items": [
+          "requires_grad=True 인 텐서는 연산 과정을 기억함",
+          "loss.backward() 한 줄이면 모든 기울기(gradient)가 자동 계산",
+          "기울기 = 손실을 줄이려면 가중치를 어느 방향으로 움직일지에 대한 힌트",
+          "직접 미분식을 쓸 일이 없다는 것이 PyTorch의 핵심 편의"
+        ]
+      },
+      {
+        "h": "nn.Module로 모델 만들기",
+        "items": [
+          "nn.Linear(입력수, 출력수) — 가장 기본 레이어",
+          "nn.ReLU 같은 활성화 함수로 비선형성 부여",
+          "간단한 구조는 nn.Sequential 로 층을 순서대로 쌓기",
+          "커스텀 모델은 nn.Module 상속 + __init__(레이어) + forward(계산)"
+        ]
+      },
+      {
+        "h": "학습 루프 · DataLoader",
+        "items": [
+          "5단계 반복: 순전파 → 손실 계산 → zero_grad → backward → step",
+          "DataLoader(dataset, batch_size, shuffle)로 미니배치 공급",
+          "학습 때는 model.train(), 평가 때는 model.eval()",
+          "평가·추론은 torch.no_grad() 안에서(기울기 계산 끔 → 빠르고 가벼움)"
+        ]
+      }
+    ],
+    "practice": [
+      "torch.randn(3, 4) 텐서를 만들어 shape·dtype·평균을 출력해 보기",
+      "requires_grad=True 텐서로 y = x**2 를 만들고 backward 후 x.grad 확인",
+      "nn.Sequential 3층 모델로 임의 데이터를 100 에포크 학습시키고 손실 감소 관찰",
+      "Colab에서 GPU 런타임으로 바꿔 .to(\"cuda\") 전후 연산 속도 비교"
+    ],
+    "tips": [
+      "에러의 90%는 shape 불일치 — print(x.shape)를 습관처럼",
+      "optimizer.zero_grad()를 빼먹으면 기울기가 누적되어 학습이 이상해짐",
+      "\"같은 device\" 에러가 나면 모델·데이터 모두 .to(device) 했는지 확인",
+      "loss가 줄어드는지 매 에포크 출력하며 학습을 눈으로 확인할 것",
+      "Dropout·BatchNorm 때문에 train()/eval() 모드 전환을 잊지 말 것"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# 가장 작은 학습 루프 — 이 5단계가 모든 딥러닝 학습의 뼈대\nimport torch                                         # 파이토치 불러오기\nimport torch.nn as nn                                # 신경망 레이어 모듈\n\ndevice = \"cuda\" if torch.cuda.is_available() else \"cpu\"   # GPU 있으면 GPU 사용\nX = torch.randn(100, 3).to(device)                   # 입력 100건(특성 3개)\ny = torch.randn(100, 1).to(device)                   # 정답값 100건\n\nmodel = nn.Sequential(nn.Linear(3, 16),              # 입력 3 -> 은닉 16\n                      nn.ReLU(),                     # 비선형 활성화 함수\n                      nn.Linear(16, 1)).to(device)   # 은닉 16 -> 출력 1\nloss_fn = nn.MSELoss()                               # 손실 함수(평균제곱오차)\nopt = torch.optim.Adam(model.parameters(), lr=0.01)  # 옵티마이저(가중치 갱신 담당)\nfor epoch in range(100):                             # 100번 반복 학습\n    pred = model(X)                                  # 1) 순전파: 예측값 계산\n    loss = loss_fn(pred, y)                          # 2) 손실: 예측과 정답의 차이\n    opt.zero_grad()                                  # 3) 이전 기울기 초기화(필수)\n    loss.backward()                                  # 4) 역전파: 기울기 자동 계산\n    opt.step()                                       # 5) 가중치 한 걸음 업데이트\nprint(\"최종 손실:\", loss.item())                     # 손실이 줄었는지 확인\n"
+    },
+    "links": [
+      {
+        "label": "PyTorch 한국어 튜토리얼",
+        "url": "https://tutorials.pytorch.kr/"
+      },
+      {
+        "label": "PyTorch 공식 60분 입문",
+        "url": "https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html"
+      },
+      {
+        "label": "PyTorch 공식 문서",
+        "url": "https://pytorch.org/docs/stable/index.html"
+      }
+    ]
+  },
+  {
+    "id": "transformers",
+    "name": "Hugging Face Transformers",
+    "tag": "라이브러리",
+    "desc": "공개 AI 모델을 몇 줄로 내려받아 쓰게 해주는 라이브러리. sLLM 개발과 LangChain 기반 서비스 개발 과목의 선수 지식입니다.",
+    "sections": [
+      {
+        "h": "pipeline() 한 줄 추론",
+        "items": [
+          "pipeline(\"sentiment-analysis\") 처럼 작업 이름만 주면 끝",
+          "요약·번역·질의응답·텍스트생성 등 수십 개 태스크 지원",
+          "model= 인자로 허브의 원하는 모델을 지정 가능",
+          "내부에서 토큰화 → 모델 추론 → 후처리를 전부 대신 해줌"
+        ]
+      },
+      {
+        "h": "모델 허브에서 받기",
+        "items": [
+          "huggingface.co/models 에서 수십만 개 공개 모델 검색",
+          "from_pretrained(\"조직명/모델명\") 한 줄로 자동 다운로드",
+          "처음 한 번만 받고 이후엔 로컬 캐시(~/.cache/huggingface) 재사용",
+          "모델 카드(README)에서 용도·언어·라이선스를 꼭 확인"
+        ]
+      },
+      {
+        "h": "토큰화 개념",
+        "items": [
+          "모델은 문장을 그대로 못 읽음 — 토큰(조각) ID 숫자로 변환 필요",
+          "AutoTokenizer가 모델에 맞는 토큰화 방식을 자동 선택",
+          "한 단어가 여러 토큰으로 쪼개지기도 함(한국어는 특히 잘게)",
+          "[CLS], [SEP] 같은 특수 토큰이 자동으로 붙음"
+        ]
+      },
+      {
+        "h": "AutoTokenizer / AutoModel",
+        "items": [
+          "토크나이저와 모델은 반드시 같은 이름으로 짝 맞춰 로드",
+          "분류는 AutoModelForSequenceClassification 등 용도별 클래스",
+          "직접 쓰면 pipeline보다 세밀한 제어 가능(입력·출력 커스텀)",
+          "흐름: 문장 → 토크나이저 → 텐서 → 모델 → 결과 해석"
+        ]
+      },
+      {
+        "h": "GPU · dtype 선택",
+        "items": [
+          "pipeline(..., device=0) 또는 device_map=\"auto\"로 GPU 사용",
+          "torch_dtype=torch.float16 이면 메모리 절반으로 큰 모델 로드",
+          "GPU 메모리가 부족하면 더 작은 모델·양자화 모델을 선택",
+          "한국어 모델 예시: klue/bert-base, skt/kogpt2-base-v2"
+        ]
+      }
+    ],
+    "practice": [
+      "pipeline(\"sentiment-analysis\")로 한국어 문장 3개의 감성 분석해 보기",
+      "AutoTokenizer(\"klue/bert-base\")로 같은 문장의 토큰 분해 결과 관찰",
+      "허브에서 한국어 요약 모델을 검색해 pipeline(\"summarization\")으로 실행",
+      "Colab GPU에서 device=0 지정 전후의 추론 속도 비교해 보기"
+    ],
+    "tips": [
+      "처음엔 무조건 pipeline부터 — 개념 잡힌 뒤 Auto 클래스로 내려가기",
+      "모델 이름 오타가 가장 흔한 에러 — 허브 페이지에서 복사해 붙여넣기",
+      "큰 모델을 받기 전 파일 크기(GB)를 확인 — Colab 디스크·메모리 한계 주의",
+      "토큰 수 제한(max_length)을 넘는 긴 입력은 잘리므로 분할 처리",
+      "같은 태스크라도 모델마다 성능 차이가 큼 — 다운로드 수·좋아요를 참고"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# 파이프라인 한 줄 추론 + 토큰화가 무엇인지 눈으로 확인하기\nfrom transformers import pipeline                     # 한 줄 추론 도구\n\nclf = pipeline(                                       # 감성 분석 파이프라인 생성\n    \"sentiment-analysis\",                             # 태스크 이름 지정\n    model=\"nlptown/bert-base-multilingual-uncased-sentiment\")  # 다국어 별점 모델\nprint(clf(\"이 강의는 정말 유익해요\"))                 # 별점(1~5) 예측 결과 출력\n\nfrom transformers import AutoTokenizer                # 모델 짝꿍 토크나이저\ntok = AutoTokenizer.from_pretrained(\"klue/bert-base\") # 한국어 BERT 토크나이저 로드\nids = tok(\"안녕하세요 스칼라\")[\"input_ids\"]           # 문장 -> 토큰 ID 숫자 목록\nprint(ids)                                            # 모델이 실제로 읽는 숫자들\nprint(tok.convert_ids_to_tokens(ids))                 # ID -> 토큰 조각으로 역변환\n"
+    },
+    "links": [
+      {
+        "label": "Transformers 공식 문서(한국어)",
+        "url": "https://huggingface.co/docs/transformers/ko/index"
+      },
+      {
+        "label": "Hugging Face 모델 허브",
+        "url": "https://huggingface.co/models"
+      },
+      {
+        "label": "Hugging Face NLP 코스",
+        "url": "https://huggingface.co/learn/nlp-course/ko/chapter1/1"
+      }
+    ]
+  },
+  {
+    "id": "openai-api",
+    "name": "OpenAI API 기초",
+    "tag": "라이브러리",
+    "desc": "LLM을 코드에서 호출하는 가장 표준적인 방법. 생성형 AI 서비스 개발(LangChain)과 AI Agent 과목의 선수 지식으로, 키 관리와 호출 구조·비용 감각을 먼저 잡습니다.",
+    "sections": [
+      {
+        "h": "API 키 발급 · 보관",
+        "items": [
+          "platform.openai.com → API keys 에서 발급(발급 순간만 전체 표시)",
+          "키는 코드가 아니라 .env 파일에 저장하고 python-dotenv로 로드",
+          ".env는 반드시 .gitignore에 추가 — 키가 GitHub에 올라가면 즉시 악용됨",
+          "유출이 의심되면 그 키를 지우고(revoke) 새로 발급"
+        ]
+      },
+      {
+        "h": "기본 호출 구조",
+        "items": [
+          "client.chat.completions.create(model=..., messages=[...])",
+          "messages는 대화 기록 리스트 — 딕셔너리 하나가 발화 하나",
+          "응답 본문은 resp.choices[0].message.content 에 들어 있음",
+          "모델명은 gpt-4o-mini 처럼 문자열로 지정(소형 모델이 저렴)"
+        ]
+      },
+      {
+        "h": "역할(role) 이해",
+        "items": [
+          "system — AI의 정체성·말투·규칙을 정하는 지침(맨 앞 1개)",
+          "user — 사용자의 질문·요청",
+          "assistant — AI의 이전 답변(대화를 이어갈 때 함께 전달)",
+          "API는 기억이 없음 — 이전 대화를 매번 messages에 다시 담아 보냄"
+        ]
+      },
+      {
+        "h": "주요 파라미터",
+        "items": [
+          "temperature(0~2) — 낮으면 일관·사실형, 높으면 창의·다양",
+          "max_tokens — 출력 길이 상한(비용 폭주 방지 안전장치)",
+          "stream=True — 답변을 조각(chunk) 단위로 받아 타자 치듯 출력",
+          "같은 질문도 temperature에 따라 답이 달라짐을 직접 실험"
+        ]
+      },
+      {
+        "h": "비용(토큰) 감각",
+        "items": [
+          "과금 기준은 토큰 — 입력(프롬프트)과 출력(답변) 모두 계산",
+          "한국어는 영어보다 같은 내용에 토큰을 더 많이 소모하는 편",
+          "resp.usage 로 이번 호출의 토큰 수를 즉시 확인 가능",
+          "대시보드에서 월 사용 한도(limit)를 먼저 걸어두고 실습할 것"
+        ]
+      }
+    ],
+    "practice": [
+      ".env 파일에 키를 넣고 os.environ으로 읽어 첫 호출 성공시키기",
+      "system 지침을 \"해적처럼 말하기\"로 바꿔 답변 변화 관찰",
+      "temperature 0과 1.5로 같은 질문을 3번씩 보내 답변 비교",
+      "매 호출 후 resp.usage.total_tokens를 출력해 비용 감각 익히기"
+    ],
+    "tips": [
+      "키를 코드에 직접 쓰면 커밋 한 번에 유출 — 항상 환경변수로",
+      "SDK는 OPENAI_API_KEY 환경변수가 있으면 자동 인식(OpenAI() 만으로 동작)",
+      "실습은 소형 모델(gpt-4o-mini 등)로 — 품질 대비 수십 배 저렴",
+      "429 에러는 요청 과다 또는 잔액 부족 — 결제·한도 설정을 확인",
+      "챗봇을 만들 땐 대화 이력이 길어질수록 입력 토큰이 늘어남을 기억"
+    ],
+    "snippet": {
+      "lang": "python",
+      "code": "# 키는 .env에서 읽고, 역할·파라미터·토큰 사용량까지 한 번에 익히기\nimport os                                            # 환경변수 읽기용\nfrom dotenv import load_dotenv                       # .env 파일 로더\nfrom openai import OpenAI                            # OpenAI 공식 SDK\n\nload_dotenv()                                        # .env 내용을 환경변수로 로드\nclient = OpenAI(api_key=os.environ[\"OPENAI_API_KEY\"])  # 키는 코드에 쓰지 않기\n\nresp = client.chat.completions.create(               # 대화형 API 호출\n    model=\"gpt-4o-mini\",                             # 저렴한 소형 모델로 실습\n    messages=[                                       # 대화 기록 리스트\n        {\"role\": \"system\", \"content\": \"당신은 친절한 파이썬 튜터입니다.\"},  # AI 지침\n        {\"role\": \"user\", \"content\": \"리스트와 튜플 차이를 한 줄로 알려줘\"},  # 질문\n    ],                                               # 이전 대화도 여기에 이어 담음\n    temperature=0.3,                                 # 낮을수록 일관된 답변\n    max_tokens=200,                                  # 출력 상한 = 비용 안전장치\n)                                                    # 호출 실행\nprint(resp.choices[0].message.content)               # 답변 본문 출력\nprint(\"사용 토큰:\", resp.usage.total_tokens)         # 과금 기준 토큰 수 확인\n"
+    },
+    "links": [
+      {
+        "label": "OpenAI 퀵스타트",
+        "url": "https://platform.openai.com/docs/quickstart"
+      },
+      {
+        "label": "Chat Completions API 레퍼런스",
+        "url": "https://platform.openai.com/docs/api-reference/chat"
+      },
+      {
+        "label": "OpenAI API 요금표",
+        "url": "https://openai.com/api/pricing/"
+      }
+    ]
+  },
 ]
 
 export const prepById = (id) => prepTopics.find((t) => t.id === id)
