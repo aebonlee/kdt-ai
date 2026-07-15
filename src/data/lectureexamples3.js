@@ -390,6 +390,18 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "import cProfile                    # 함수별 호출 횟수·누적 시간을 재는 표준 도구\n\ndef load_data():                   # 1단계: 데이터 읽기(빠르다고 가정)\n    return list(range(200_000))\n\ndef slow_clean(data):              # 2단계: 일부러 느리게 만든 정제 함수(병목 후보)\n    out = []\n    for x in data:                 # 파이썬 루프 + 문자열 변환이라 느리다\n        out.append(str(x).zfill(8))\n    return out\n\ndef summarize(data):               # 3단계: 요약 통계(빠르다)\n    return sum(len(s) for s in data)\n\ndef analysis():                    # 전체 분석 흐름을 하나로 묶은 함수\n    data = load_data()             # 읽고\n    cleaned = slow_clean(data)     # 정제하고\n    return summarize(cleaned)      # 요약한다\n\n# cumtime(누적 시간) 순으로 정렬해 어느 함수가 오래 걸렸는지 표로 출력\ncProfile.run('analysis()', sort='cumtime')\n# 출력에서 slow_clean 이 시간 대부분을 차지함을 확인 -> 최적화는 여기부터",
       "note": "느리다는 느낌만으로 아무 곳이나 고치면 헛수고가 되기 쉽다. cProfile 로 함수별 누적 시간을 먼저 재고, 가장 오래 걸린 함수 하나만 벡터화·병렬화하는 것이 올바른 최적화 순서다."
+    },
+    {
+      "title": "Practice 2 데이터 받기 — json.load로 판매 데이터 읽기",
+      "lang": "python",
+      "code": "# Practice 2 데이터: 사이트에서 내려받아 코드와 같은 폴더에 둔다\n#   https://skala.dreamitbiz.com/practice/Python_Practice2_Data.json\nimport json                                    # 표준 라이브러리 — 설치 불필요\n\n# 1) 파일을 열고 json.load 로 파이썬 객체로 변환한다\nwith open(\"Python_Practice2_Data.json\", encoding=\"utf-8\") as f:\n    sales = json.load(f)                       # 리스트[딕셔너리] 형태로 읽힌다\n\n# 2) 구조부터 확인하는 습관 — 몇 건인지, 한 건이 어떻게 생겼는지\nprint(len(sales))                              # 100  (판매 기록 100건)\nprint(sales[0])                                # {'region': '서울', 'category': '전자', 'amount': 1500, 'month': '2024-01'}\n\n# 3) 필드 확인: region(지역) · category(품목) · amount(금액) · month(연-월)\n#    ※ 문제지에는 date 로 나오지만, 이 파일은 month 로 제공된다 — 변수명 month 로 진행해도 된다(강사 공지)\nfor row in sales[:3]:                          # 앞 3건만 훑어보기\n    print(row[\"month\"], row[\"region\"], row[\"category\"], row[\"amount\"])",
+      "note": "json.load(파일객체)와 json.loads(문자열)를 구분하자. 분석 코드를 짜기 전에 len()과 첫 항목 출력으로 데이터 모양부터 확인하는 것이 실수를 줄이는 가장 빠른 길이다."
+    },
+    {
+      "title": "Practice 2 집계 — 월별·지역별 매출 합계와 품목 Top",
+      "lang": "python",
+      "code": "# Practice 2 본 과제: 읽어 온 판매 데이터를 기준별로 집계한다\nimport json\nfrom collections import defaultdict, Counter  # 집계 전용 도구 2가지\n\nwith open(\"Python_Practice2_Data.json\", encoding=\"utf-8\") as f:\n    sales = json.load(f)                       # 100건 로드\n\n# 1) 월(month)별 매출 합계 — 키가 없으면 0에서 시작하는 defaultdict\nby_month = defaultdict(int)\nfor row in sales:\n    by_month[row[\"month\"]] += row[\"amount\"]    # 같은 달끼리 금액 누적\nfor month in sorted(by_month):                 # 1월부터 순서대로\n    print(month, by_month[month])\n\n# 2) 지역(region)별 매출 합계 — 같은 패턴 재사용\nby_region = defaultdict(int)\nfor row in sales:\n    by_region[row[\"region\"]] += row[\"amount\"]\nprint(sorted(by_region.items(), key=lambda x: -x[1]))   # 매출 큰 지역부터\n\n# 3) 품목(category) 판매 건수 Top 2 — 건수 세기는 Counter 한 줄\ntop = Counter(row[\"category\"] for row in sales)\nprint(top.most_common(2))                      # [('전자', n1), ('의류', n2)] 형태",
+      "note": "합계 집계는 defaultdict(int), 건수 집계는 Counter — 이 두 도구만 알면 Practice 2 유형은 전부 풀린다. 같은 for 패턴을 키만 바꿔 재사용하는 감각을 익히자."
     }
   ],
   "python-2": [
