@@ -12,6 +12,7 @@ import ClassOnboarding from './components/ClassOnboarding'
 // 라우트 단위 코드 스플리팅 — 각 페이지를 필요할 때만 내려받는다.
 // 특히 무거운 강의안 데이터(lecture*.js)는 Lectures 청크에만 포함되어 초기 번들에서 빠진다.
 const About = lazy(() => import('./pages/About'))
+const Tracks = lazy(() => import('./pages/Tracks'))
 const InstructorIntro = lazy(() => import('./pages/InstructorIntro'))
 const AboutGuide = lazy(() => import('./pages/AboutGuide'))
 const Textbook = lazy(() => import('./pages/Textbook'))
@@ -57,6 +58,7 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/about/guide" element={<AboutGuide />} />
             <Route path="/about/instructor" element={<InstructorIntro />} />
+            <Route path="/tracks" element={<RequireAuth><Tracks /></RequireAuth>} />
             <Route path="/prep" element={<Prep />} />
             <Route path="/prep/:id" element={<PrepDetail />} />
             <Route path="/lectures" element={<RequireAuth><Lectures /></RequireAuth>} />
