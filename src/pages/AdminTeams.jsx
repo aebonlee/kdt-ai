@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import AdminNav from '../components/AdminNav'
 import { Link } from 'react-router-dom'
 import { listAllProgress } from '../data/db'
 import { totalSessions } from '../data/curriculum'
@@ -59,6 +60,7 @@ export default function AdminTeams() {
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800 }}>
               🔒 관리자 전용
             </div>
+        <AdminNav />
             <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>프로젝트 팀별 명단</h1>
             <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14 }}>
               팀 편성은 <code>src/data/teams.js</code> 에 넣습니다. 이름이 로그인 학습자와 매칭되면 진도율이 함께 표시됩니다.

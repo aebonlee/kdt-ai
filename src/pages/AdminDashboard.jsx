@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import AdminNav from '../components/AdminNav'
 import { supabase, hasSupabase } from '../lib/supabase'
 import { TRACK_LABELS, CLASS_MAP, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
@@ -34,6 +35,9 @@ export default function AdminDashboard() {
 
   const students = profiles.filter((p) => p.role === 'student')
   const instructors = profiles.filter((p) => p.role === 'instructor')
+  // 소속 확인이 오래됐거나 없는 학생(14일 기준) — 재확인 대상
+  const staleCount = students.filter((p) => !p.confirmed_at ||
+    Date.now() - new Date(p.confirmed_at).getTime() > 14 * 24 * 60 * 60 * 1000).length
 
   // 분반별 그룹 (가입 학생 + 명단 프리셋 정원)
   const classes = []
@@ -58,6 +62,7 @@ export default function AdminDashboard() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800 }}>
           🔒 관리자 전용 · {user?.email}
         </div>
+        <AdminNav />
         <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>관리자 대시보드</h1>
         <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14 }}>
           분반별 가입 현황과 담당 강의 평가 진행 상황입니다. 세부 화면은 상단 관리 메뉴에서 그대로 이동할 수 있습니다.
@@ -71,6 +76,7 @@ export default function AdminDashboard() {
             ['교수자', `${instructors.length}명`],
             ['활성 분반', `${classes.filter((c) => c.members.length).length}개`],
             ['평가 단위(과목×분반)', `${unitsWithExam.length}건`],
+            ['소속 재확인 대상', `${staleCount}명`],
           ].map(([label, val]) => (
             <div key={label} className="card" style={{ padding: '14px 16px' }}>
               <div style={{ fontSize: 12, color: 'var(--ink-soft)', fontWeight: 700 }}>{label}</div>

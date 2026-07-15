@@ -3,6 +3,7 @@
 // 입력·내보내기 형식은 원본 평가지의 "평가결과" 시트(고유번호·성명·항목별·점수·판단근거·보완사항·비고)를 따른다.
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import AdminNav from '../components/AdminNav'
 import { supabase, hasSupabase } from '../lib/supabase'
 import { exams } from '../data/exams'
 import { subjectById, subjects } from '../data/curriculum'
@@ -153,6 +154,26 @@ export default function AdminEvaluate() {
   }
 
   const doneCount = rows.filter((r) => r.student_name.trim() && criteria.every((c) => r.scores?.[c.item] !== undefined && r.scores?.[c.item] !== '')).length
+  const hasDirty = rows.some((r) => r._dirty && r.student_name.trim())
+
+  // 미저장 변경이 있으면 이탈 경고
+  useEffect(() => {
+    if (!hasDirty) return
+    const onLeave = (e) => { e.preventDefault(); e.returnValue = '' }
+    window.addEventListener('beforeunload', onLeave)
+    return () => window.removeEventListener('beforeunload', onLeave)
+  }, [hasDirty])
+
+  // 고유번호순 정렬
+  const sortRows = () => setRows((prev) => [...prev].sort((a, b) =>
+    (a.student_no || '\uffff').localeCompare(b.student_no || '\uffff') || a.student_name.localeCompare(b.student_name)))
+
+  // 통계(입력 완료자 기준)
+  const totals = rows.filter((r) => r.student_name.trim()).map(totalOf).filter((t) => t > 0)
+  const stats = totals.length ? {
+    avg: (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1),
+    max: Math.max(...totals), min: Math.min(...totals),
+  } : null
 
   return (
     <section className="section">
@@ -160,6 +181,7 @@ export default function AdminEvaluate() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800 }}>
           🔒 관리자 전용 · {user?.email}
         </div>
+        <AdminNav />
         <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>교과목 평가</h1>
         <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14, lineHeight: 1.7 }}>
           사이트에 수록된 종합실습 평가기준(수령 평가지와 정합 검증 완료) 그대로 점수를 입력하고,
@@ -202,7 +224,15 @@ export default function AdminEvaluate() {
           <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={() => setShowRubric((v) => !v)}>
             📋 평가기준 {showRubric ? '접기' : '보기'}
           </button>
+          <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={sortRows}>
+            ↕ 번호순 정렬
+          </button>
           <span style={{ flex: 1 }} />
+          {stats && (
+            <span style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>
+              평균 <b style={{ color: 'var(--navy-800)' }}>{stats.avg}</b> · 최고 {stats.max} · 최저 {stats.min}
+            </span>
+          )}
           <span style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>입력 완료 {doneCount} / {rows.length}명</span>
           <button className="btn btn-cta" style={{ padding: '8px 18px', fontSize: 13, opacity: saving ? 0.6 : 1 }} disabled={saving} onClick={saveAll}>
             {saving ? '저장 중…' : '💾 저장'}
