@@ -19,6 +19,22 @@ export const DOCS_ROOT_FOLDER =
 
 // t: 표시 이름, id: 드라이브 파일ID, x: 확장자, b: 바이트
 export const docsGroups = [
+  {
+    id: 'recv0715',
+    title: '[0715] 수령자료',
+    desc: '7/15 수령 신규·갱신분 — 교육환경 스크립트 v2/v3 · KDT 신판 · Prompt 교재·가이드 · 판교5층 시간표 양식',
+    folder: 'https://drive.google.com/drive/folders/1cZhvrKiahDbgU1h6gOij8nYEU9Bhhr8l',
+    files: [
+      { t: "KDT 프로그래밍기초_1. Git·AI코딩·환경구성 (신판 _02)", id: "1dcal0F_idRRc4Nsbnbt5I82DT926cKSX", x: "pdf", b: 18903408, d: "2026-07-15" },
+      { t: "4)생성형AI_1. Prompt 설계·Context Engineering (박병선w)", id: "1xF4OEGMbGNsAXfNr1KiIqY6ayCWp7f-Z", x: "pdf", b: 7803085, d: "2026-07-15" },
+      { t: "HTML·CSS·JS 실습 링크모음 + 교재 (권기창 외)", id: "1v1N13pm5894smhniwNWhn_OeJLPT-V1e", x: "zip", b: 11509537, d: "2026-07-15" },
+      { t: "종합실습가이드_Prompt 설계·Context Engineering (윤재성)", id: "1_MF8A8PGJzzalioKpkZXNywbsbzUtnrA", x: "pdf", b: 616234, d: "2026-07-15" },
+      { t: "skala-config-setup v3 (Xcode 타임아웃·심볼릭 링크)", id: "1RwyVdFRZDSeZj_Y4AE-rKmHlbj_9Hqzv", x: "sh", b: 24429, d: "2026-07-15" },
+      { t: "skala-config-setup v2 (--break-system-packages)", id: "1OT--n6J3YqLdYQmbjzuyXhVqWuG5dLO6", x: "sh", b: 22610, d: "2026-07-15" },
+      { t: "[SK+AX] 시간표 양식(판교 5층) 6-10회차", id: "14FRPqzIgxLzpnGG1uE7pI1GWTYk6-ph6", x: "xlsx", b: 32986, d: "2026-07-15" },
+      { t: "K-뉴딜_Git 이해활용 실습예제코드 (백정열)", id: "1M7DiHM8_eNOijlxdRdk1ICDkUoNBkzd_", x: "zip", b: 27438, d: "2026-07-15" },
+    ],
+  },
 
   // ── 2026-07-14 수령자료 (드라이브 skala-drive-upload-0714, 기존 보유분 대조 후 신규분만) ──
   {

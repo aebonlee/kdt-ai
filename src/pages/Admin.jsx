@@ -27,6 +27,7 @@ const fmtSize = (b) => {
 // 구분(카테고리) 탭 — 그룹 id 를 성격별로 묶는다
 const TABS = [
   { key: 'all', label: '전체', groups: null },
+  { key: 'recv', label: '수령자료', groups: ['recv0715'] },
   { key: 'tt', label: '시간표', groups: ['tt0714'] },
   { key: 'syl', label: '실라버스', groups: ['syl0714', 'syllabus'] },
   { key: 'eval', label: '평가', groups: ['eval0714', 'eval'] },
