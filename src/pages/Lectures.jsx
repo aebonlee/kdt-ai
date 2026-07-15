@@ -48,7 +48,10 @@ export default function Lectures() {
   const etc = parseEtc(date)
   const ref = !etc ? parseRef(date) : null
   const session = !ref && !etc ? sessionByDate(date) : null
-  const current = session || ref || all[0]
+  // 날짜 미지정 진입 시: 오늘 강의일 → 없으면 다음 강의일 → 과정 종료 후엔 마지막 강의일 (시스템 날짜 기준 유동)
+  const todayStr = new Date().toLocaleDateString('sv-SE')
+  const defaultSession = sessionByDate(todayStr) || all.find((s) => s.date >= todayStr) || all[all.length - 1]
+  const current = session || ref || defaultSession
   const isRef = !!current.isRef
   const activeKey = isRef ? `ref-${current.subjectId}-${current.day}` : current.date
 
