@@ -100,8 +100,9 @@ function QuizBlock({ qs }) {
 }
 
 export default function ExamQuiz({ subjectId, day, totalDays }) {
-  const e = day === 1 ? exams[subjectId] : null
-  const alt = day === 1 ? examsAlt[subjectId] : null
+  // 평가기준은 과목 첫날 + 마지막날(종합실습 평가 당일)에 노출
+  const e = day === 1 || day === totalDays ? exams[subjectId] : null
+  const alt = day === 1 || day === totalDays ? examsAlt[subjectId] : null
   const qs = day === totalDays ? quizzes[subjectId] : null
   if (!e && !alt && !qs) return null
   return (
