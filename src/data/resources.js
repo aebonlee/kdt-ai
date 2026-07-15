@@ -1470,6 +1470,8 @@ export const refGroups = [
   {
     title: '프론트엔드',
     links: [
+      // 2026-07-15 강병호 강사 공유 — 수업 공식 소스 저장소
+      { label: '수업 공식 소스 — skala-vue (강병호 강사)', url: 'https://github.com/bottletiger/skala-vue' },
       { label: 'Vue.js 공식 문서', url: 'https://ko.vuejs.org/' },
       { label: 'Vue Router', url: 'https://router.vuejs.org/' },
       { label: 'Pinia (상태관리)', url: 'https://pinia.vuejs.org/' },
@@ -1519,6 +1521,7 @@ export const refGroups = [
       { label: 'MDN — JavaScript', url: 'https://developer.mozilla.org/ko/docs/Web/JavaScript' },
       { label: '모던 JavaScript 튜토리얼', url: 'https://ko.javascript.info/' },
       // 2026-07-15 수령 HTML/CSS/JS 수업 실습 링크 모음(link.txt) 반영 — 수업에서 쓰는 셀프 챌린지
+      { label: '수업 공식 소스 — skala-front (강병호 강사)', url: 'https://github.com/bottletiger/skala-front' },
       { label: 'W3Schools HTML 튜토리얼', url: 'https://www.w3schools.com/html/default.asp' },
       { label: 'W3Schools CSS 챌린지(셀프 실습)', url: 'https://www.w3schools.com/css/css_challenges_howto.asp' },
       { label: 'W3Schools JS 튜토리얼', url: 'https://www.w3schools.com/js/default.asp' },
