@@ -4,6 +4,8 @@
 // 담당(이애본) 강의 앞뒤에 배우는 과목의 예습·복습용 요약 데이터
 export const otherCourses = {
   'htmlcss': {
+    level: 1,
+    weight: 2,
     name: 'HTML, CSS, JavaScript',
     hours: 16,
     category: 'Full-stack 기초',
@@ -22,6 +24,8 @@ export const otherCourses = {
     tip: 'Vue.js 수업의 직접 선수 과목. 태그·선택자·이벤트·비동기를 미리 손에 익혀두면 Vue의 템플릿 문법과 디렉티브가 자연스럽게 읽히고, 컴포넌트 스타일링도 훨씬 수월해진다.',
   },
   'smartdata': {
+    level: 2,
+    weight: 3,
     name: '스마트 데이터 이해 및 활용',
     hours: 24,
     category: 'Full-stack 기초',
@@ -40,6 +44,8 @@ export const otherCourses = {
     tip: 'VectorDB·Supabase 수업의 토대가 되는 과목. SELECT·JOIN·인덱스 감각이 있으면 벡터 검색 쿼리와 Supabase(PostgreSQL) 테이블 설계·RLS가 바로 이해되고, RAG 파이프라인의 데이터 계층도 선명해진다.',
   },
   'java': {
+    level: 2,
+    weight: 2,
     name: 'Java, SpringBoot, Rest API 구현',
     hours: 40,
     category: 'Full-stack 기초',
@@ -58,6 +64,8 @@ export const otherCourses = {
     tip: 'Spring AI 수업의 필수 선수 과목. Controller-Service-Repository 흐름과 DI가 몸에 익어 있어야 Spring AI의 ChatClient·Tool 연동 구조가 곧바로 이해되고, 인증 서버 경험은 AI 서비스 백엔드 설계로 그대로 이어진다.',
   },
   'agile': {
+    level: 1,
+    weight: 2,
     name: 'Agile 방법론 및 MSA 개발',
     hours: 16,
     category: 'Full-stack 기초',
@@ -76,6 +84,8 @@ export const otherCourses = {
     tip: '캡스톤·팀프로젝트 협업의 예행연습. Sprint Planning-Daily-Review 리듬과 Task 분할 감각을 여기서 익혀두면, 팀프로젝트에서 역할 분담과 진행 관리가 훨씬 매끄러워진다.',
   },
   'container': {
+    level: 2,
+    weight: 3,
     name: '컨테이너 이해 및 애플리케이션 컨테이너화',
     hours: 16,
     category: 'Cloud Native',
@@ -93,6 +103,8 @@ export const otherCourses = {
     tip: '모델 서빙·AIOps로 가는 첫 관문. 내가 만든 AI 서비스를 이미지로 만들어 어디서든 똑같이 띄우는 감각을 여기서 잡아두면, 이후 쿠버네티스 배포와 모델 서빙 파이프라인이 한결 쉬워진다.',
   },
   'k8s': {
+    level: 3,
+    weight: 2,
     name: '쿠버네티스 이해 및 애플리케이션 배포',
     hours: 16,
     category: 'Cloud Native',
@@ -111,6 +123,8 @@ export const otherCourses = {
     tip: '모델 서빙 수업과 직결되는 과목. Pod·Deployment·Ingress·probe 개념이 서 있으면 AI 모델을 K8s 위에 서빙하고 트래픽·헬스체크를 관리하는 MLOps/AIOps 구성이 그대로 연결된다.',
   },
   'k8s-adv': {
+    level: 3,
+    weight: 2,
     name: '쿠버네티스 실무 심화',
     hours: 24,
     category: 'Cloud Native',
@@ -129,6 +143,8 @@ export const otherCourses = {
     tip: 'AI 서비스를 실제 운영 트래픽에 올릴 때 필요한 기술 묶음. 오토스케일링·Canary·스토리지 구성은 모델 서빙의 부하 대응과 안전한 모델 버전 교체(AIOps)로 곧장 이어진다.',
   },
   'devops': {
+    level: 2,
+    weight: 2,
     name: 'DevOps 이해 및 활용',
     hours: 16,
     category: 'Cloud Native',
@@ -146,6 +162,8 @@ export const otherCourses = {
     tip: 'Cloud Native 트랙의 마무리이자 AIOps의 핵심 도구 세트. 코드 푸시부터 배포까지 자동으로 흐르는 파이프라인 감각은 모델 재학습-재배포를 자동화하는 MLOps 사이클로 그대로 확장된다.',
   },
   'method': {
+    level: 1,
+    weight: 2,
     name: 'AI 프로젝트 방법론',
     hours: 2,
     category: '프로젝트 방법론',
@@ -163,6 +181,8 @@ export const otherCourses = {
     tip: '캡스톤·팀프로젝트 직전에 듣는 나침반 강의. 요구사항 정의와 WBS·테스트 체크포인트를 팀프로젝트 계획서에 그대로 대입하면 프로젝트 방향 잡기가 한결 수월해진다.',
   },
   'datamini': {
+    level: 2,
+    weight: 2,
     name: '데이터 분석 Mini-project',
     hours: 16,
     category: '데이터분석 · MLOps',
@@ -180,6 +200,8 @@ export const otherCourses = {
     tip: 'ML/DL·모델개발 수업에서 배운 내용을 실전으로 검증하는 자리. 수업에서 다룬 EDA-피처-모델-최적화 흐름을 미리 복습해 가면 이틀 안에 전략 수립부터 성능 개선까지 완주할 수 있다.',
   },
   'stats': {
+    level: 1,
+    weight: 3,
     name: '데이터 분석 개요 및 기초통계', hours: 16, category: '데이터분석 · MLOps',
     summary: '데이터 분석의 기본 개념과 기초 통계를 익히고, 회귀분석으로 변수 간 관계를 해석해 의사결정에 활용한다',
     topics: [

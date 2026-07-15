@@ -6,6 +6,7 @@ import { otherDeep } from '../data/otherdeep'
 import { otherExams } from '../data/otherexams'
 import { otherSessions, TRACKS } from '../data/othersessions'
 import CodeBlock from './CodeBlock'
+import Rating from './Rating'
 import { ExamBlock } from './ExamQuiz'
 
 const fmt = (d) => `${d.slice(5, 7)}-${d.slice(8, 10)}`
@@ -38,6 +39,7 @@ export default function EtcCourse({ courseId }) {
         <span className="chip chip-cat">{c.category}</span>
         <span className="chip chip-day">{c.hours}시간</span>
         <span className="chip chip-region gwangju">타 강사 진행</span>
+        <Rating level={c.level} weight={c.weight} />
       </div>
 
       <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginTop: 8 }}>{c.name}</h2>

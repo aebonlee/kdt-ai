@@ -4,6 +4,7 @@ import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } 
 import { PERIOD_TIMES } from '../data/lectureperiods'
 import { modeOf, periodTagsOf } from '../data/lecturemodes'
 import CodeBlock from '../components/CodeBlock'
+import Rating from '../components/Rating'
 import ExamQuiz from '../components/ExamQuiz'
 import EtcCourse from '../components/EtcCourse'
 import { otherCourses } from '../data/othercontent'
@@ -270,6 +271,7 @@ export default function Lectures() {
                 </span>
               )}
               <span className="chip chip-day">Day {current.day} / {subj?.days.length}</span>
+              <Rating level={subj?.level} weight={subj?.weight} />
               {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
             </div>
 

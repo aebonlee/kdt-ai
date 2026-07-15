@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { prepTopics, prepById } from '../data/resources'
-import { PrepRating } from './Prep'
+import Rating from '../components/Rating'
 import { deepFor } from '../data/prepdeep'
 import CodeBlock from '../components/CodeBlock'
 
@@ -46,7 +46,7 @@ export default function PrepDetail() {
       <div className="page-header-ed">
         <div className="container">
           <span className="eyebrow">Prerequisites · {t.tag}</span>
-          <div style={{ marginBottom: 10 }}><PrepRating level={t.level} weight={t.weight} /></div>
+          <div style={{ marginBottom: 10 }}><Rating level={t.level} weight={t.weight} /></div>
           <h1>{t.name}</h1>
           <p>{t.desc}</p>
         </div>

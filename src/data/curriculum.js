@@ -15,6 +15,8 @@ export const subjects = [
   {
     id: 'git',
     code: '1-1',
+    level: 1,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'Git 이해/활용',
     category: '프로그래밍 기초',
     summary: '팀빌딩으로 협업 기반을 다지고, Git·GitHub로 버전관리와 협업 워크플로를 익힌다',
@@ -47,6 +49,8 @@ export const subjects = [
   {
     id: 'transformer',
     code: '8-2',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'LLM과 Transformer 아키텍처',
     category: 'LLM · Agent',
     summary: 'LLM의 토대가 된 Transformer 아키텍처를 Attention부터 사전학습·파인튜닝까지 원리로 이해한다',
@@ -92,6 +96,8 @@ export const subjects = [
   {
     id: 'python',
     code: '7-1',
+    level: 1,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: '데이터 분석을 위한 Python 이해',
     category: '데이터분석 · MLOps',
     summary: '현대 Python 실행 구조와 실무 개발환경을 익히고, Pandas 2.x·Polars·DuckDB로 데이터 처리·시각화·분석 파이프라인을 구축',
@@ -140,6 +146,8 @@ export const subjects = [
     // 최종 일정 미배정 → 일정·과목별엔 표시 안 됨. 강의안 "참고"에만 노출.
     id: 'prompt',
     code: '8-1',
+    level: 1,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'Prompt 설계와 Context Engineering',
     category: 'LLM · Agent',
     reference: true,
@@ -168,6 +176,8 @@ export const subjects = [
   {
     id: 'vue',
     code: '2-1',
+    level: 2,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'Front-Framework: Vue.js',
     category: 'Front-End',
     summary: 'Vue 3 기반 컴포넌트 프론트엔드 개발 (반응형, Composition API, 라우팅)',
@@ -241,6 +251,8 @@ export const subjects = [
   {
     id: 'webproject',
     code: '2-2',
+    level: 2,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: '웹 서비스 개발 mini-Project',
     category: 'Front-End',
     summary: '기획부터 배포까지 한 사이클로, AI 기능을 얹은 웹 서비스를 만들어 보는 미니 프로젝트',
@@ -289,6 +301,8 @@ export const subjects = [
     // 현재 강의 배정 없음(세션 없음) → 일정·과목별 강의엔 표시 안 됨. 강의안에 "참고용"으로만 노출.
     id: 'spring-ai',
     code: '4-2',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 2,  // 중요도 1~3
     name: 'Spring AI',
     category: 'Back-end',
     reference: true,
@@ -348,6 +362,8 @@ export const subjects = [
   {
     id: 'sllm',
     code: '8-3',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'sLLM 구현 및 Fine Tunning',
     category: 'LLM · Agent',
     summary: '오픈소스 소형 LLM(sLLM)의 활용과 LoRA 기반 파인튜닝',
@@ -388,6 +404,8 @@ export const subjects = [
   {
     id: 'ml-dl',
     code: '7-3',
+    level: 2,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: '머신러닝 및 딥러닝 이해',
     category: '데이터분석 · MLOps',
     summary: '머신러닝·딥러닝 핵심 개념을 익히고, 하나의 데이터셋에 ML→DL 모델을 통합 적용해 성능을 개선하는 종합 실습까지',
@@ -443,6 +461,8 @@ export const subjects = [
   {
     id: 'feature',
     code: '7-2',
+    level: 2,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: '실전 Feature Engineering',
     category: '데이터분석 · MLOps',
     summary: '모델 성능을 끌어올리는 실전 피처 엔지니어링 기법',
@@ -469,6 +489,8 @@ export const subjects = [
   {
     id: 'modeldev',
     code: '7-4',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: '모델 개발 및 최적화',
     category: '데이터분석 · MLOps',
     summary: '모델 학습 파이프라인 구성과 하이퍼파라미터·성능 최적화',
@@ -514,6 +536,8 @@ export const subjects = [
     // 최종 일정 미배정 → 일정·과목별엔 표시 안 됨. 강의안 "참고"에만 노출.
     id: 'rag',
     code: '8-7',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'RAG Pipeline 설계 및 구축',
     category: 'LLM · Agent',
     reference: true,
@@ -568,6 +592,8 @@ export const subjects = [
   {
     id: 'langchain',
     code: '8-6',
+    level: 2,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: '생성형 AI 서비스 개발의 이해/활용 (LangChain)',
     category: 'LLM · Agent',
     summary: 'LangChain 으로 LLM 기반 애플리케이션을 구성·서비스화',
@@ -620,6 +646,8 @@ export const subjects = [
   {
     id: 'serving',
     code: '7-5',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: '모델 서빙 및 AIOps 구성',
     category: '데이터분석 · MLOps',
     summary: '학습한 모델의 서빙·운영(MLOps/AIOps) 파이프라인 구성',
@@ -671,6 +699,8 @@ export const subjects = [
   {
     id: 'agent',
     code: '8-8',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'AI Agent 설계 및 구축 (LangGraph)',
     category: 'LLM · Agent',
     summary: 'LangGraph 기반 에이전트(상태·도구·멀티에이전트) 설계와 구축',
@@ -710,6 +740,8 @@ export const subjects = [
   {
     id: 'vectordb',
     code: '8-4',
+    level: 2,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'Vector DB',
     category: 'LLM · Agent',
     summary: '벡터 검색의 원리부터 재순위·Agentic RAG·프로덕션 아키텍처까지',
@@ -736,6 +768,8 @@ export const subjects = [
   {
     id: 'capstone',
     code: 'CAP',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'AI Agent Capstone',
     category: 'LLM · Agent',
     summary: 'Backend·VectorDB·AI Agent(MCP)·Frontend를 하나의 서비스로 설계·구현하는 캡스톤 — MCP·스트리밍·운영까지',
@@ -790,6 +824,8 @@ export const subjects = [
   {
     id: 'miniproject',
     code: '8-10',
+    level: 2,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
     name: 'AI 서비스 개발 Mini-project',
     category: 'LLM · Agent',
     summary: 'LLM·Agentic RAG·Multi-Agent(Supervisor)를 통합해 AI 서비스를 완성하는 과정 종합 미니프로젝트',
