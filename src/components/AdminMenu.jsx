@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 // 강사(최고 관리자) 전용 풍선 메뉴 — 띠줄에서 관리 화면으로 바로가기.
 const ITEMS = [
   { icon: '🏠', label: '관리자 대시보드', desc: '분반 현황 · 평가 진행 · 교수자', to: '/admin/main' },
-  { icon: '👥', label: '학생 명단', desc: '전체 학습자·진도', to: '/dashboard' },
+  { icon: '👥', label: '학생 명단', desc: '분반·진도·소속 확인', to: '/admin/students' },
   { icon: '🧩', label: '팀별 명단', desc: '프로젝트 팀 편성', to: '/admin/teams' },
   { icon: '📂', label: '자료실', desc: '강의자료(구글드라이브)', to: '/admin' },
   { icon: '📅', label: '수업일정표', desc: '월별 타임라인 · 분반별', to: '/schedule' },

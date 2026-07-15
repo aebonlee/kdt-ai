@@ -12,7 +12,7 @@ const ITEMS = [
   { to: '/admin', label: '자료실', icon: '📂', end: true },
   { to: '/schedule', label: '수업일정표', icon: '📅' },
   { to: '/subjects', label: '과목별 안내', icon: '📘' },
-  { to: '/dashboard', label: '학생 명단', icon: '👥' },
+  { to: '/admin/students', label: '학생 명단', icon: '👥' },
   { to: '/admin/teams', label: '팀별 명단', icon: '🧩' },
 ]
 
