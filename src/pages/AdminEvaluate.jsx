@@ -9,6 +9,8 @@ import { subjectById, subjects } from '../data/curriculum'
 import { ExamBlock } from '../components/ExamQuiz'
 import { TRACK_LABELS, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
+import { evalUnits, unitByKey, unitLabel } from '../data/evalunits'
+import { useSearchParams } from 'react-router-dom'
 
 // 배점 문자열("20점")에서 숫자 추출 — 숫자 없으면 상한 없음
 const maxOf = (points) => {
@@ -24,8 +26,15 @@ const newRow = () => ({
 
 export default function AdminEvaluate() {
   const { user } = useAuth()
-  const evaluable = subjects.filter((s) => exams[s.id])
-  const [subjectId, setSubjectId] = useState(evaluable[0]?.id)
+  const [params, setParams] = useSearchParams()
+  // 평가 단위 = 과목 × 담당 분반(강의일자) — 분반마다 개별 평가
+  const unitsWithExam = evalUnits.filter((u) => exams[u.subjectId])
+  const initUnit = unitByKey(params.get('unit')) && exams[unitByKey(params.get('unit')).subjectId]
+    ? params.get('unit') : unitsWithExam[0]?.key
+  const [unitKey, setUnitKey] = useState(initUnit)
+  const unit = unitByKey(unitKey) || unitsWithExam[0]
+  const subjectId = unit?.subjectId
+  const selectUnit = (k) => { setUnitKey(k); setParams({ unit: k }, { replace: true }) }
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -36,22 +45,25 @@ export default function AdminEvaluate() {
   const criteria = exam?.criteria || []
   const totalMax = criteria.reduce((a, c) => a + (maxOf(c.points) || 0), 0)
 
-  // 과목 전환 시 저장된 평가 로드
+  // 평가 단위(과목×분반) 전환 시 해당 분반 저장분만 로드
   useEffect(() => {
-    if (!hasSupabase || !subjectId) return
+    if (!hasSupabase || !unit) return
     setLoading(true); setMsg('')
-    supabase.from('skala_evaluations').select('*').eq('subject_id', subjectId).order('created_at')
+    supabase.from('skala_evaluations').select('*')
+      .eq('subject_id', unit.subjectId).eq('track', unit.track).eq('class_no', unit.classNo)
+      .order('created_at')
       .then(({ data, error }) => {
         if (error) { setMsg('불러오기 실패: ' + error.message + ' — skala_evaluations 테이블(SQL) 실행 여부를 확인하세요.'); setRows([]) }
         else setRows((data || []).map((r) => ({ ...r, _key: r.id, _dirty: false })))
       })
       .finally(() => setLoading(false))
-  }, [subjectId])
+  }, [unitKey])
 
   // 등록 학생 불러오기(소속 분반 온보딩 완료자) — 이미 행에 있는 학생은 건너뜀
   const loadStudents = async () => {
     const { data, error } = await supabase
-      .from('skala_profiles').select('user_id,name,email,track,class_no').eq('role', 'student')
+      .from('skala_profiles').select('user_id,name,email,track,class_no')
+      .eq('role', 'student').eq('track', unit.track).eq('class_no', unit.classNo)
     if (error) { setMsg('학생 명단 로드 실패: ' + error.message); return }
     const existing = new Set(rows.map((r) => r.profile_id).filter(Boolean))
     const added = (data || [])
@@ -63,6 +75,7 @@ export default function AdminEvaluate() {
   }
 
   // 자리배치표 명단 프리셋 불러오기 — 이미 있는 고유번호/성명은 건너뜀
+  const unitRoster = Object.values(ROSTERS).find((r) => r.track === unit?.track && r.class_no === unit?.classNo)
   const loadRoster = (rosterKey) => {
     const r = ROSTERS[rosterKey]
     if (!r) return
@@ -100,7 +113,9 @@ export default function AdminEvaluate() {
     if (!dirty.length) { setMsg('저장할 변경이 없습니다. (성명이 비어 있는 행은 저장되지 않습니다)'); return }
     setSaving(true); setMsg('')
     const payload = dirty.map(({ _key, _dirty, id, ...r }) => ({
-      ...(id ? { id } : {}), ...r, subject_id: subjectId, updated_at: new Date().toISOString(),
+      ...(id ? { id } : {}), ...r, subject_id: subjectId,
+      track: r.track || unit.track, class_no: r.class_no || unit.classNo,
+      updated_at: new Date().toISOString(),
     }))
     const { data, error } = await supabase.from('skala_evaluations').upsert(payload).select()
     setSaving(false)
@@ -132,7 +147,7 @@ export default function AdminEvaluate() {
     const csv = '﻿' + [head.map(esc).join(','), ...lines].join('\r\n')
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
-    a.download = `SKALA4기_종합실습평가_${subj?.name || subjectId}_이애본.csv`
+    a.download = `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_이애본.csv`
     a.click()
     URL.revokeObjectURL(a.href)
   }
@@ -151,28 +166,36 @@ export default function AdminEvaluate() {
           원본 평가지의 "평가결과" 시트 형식 CSV로 내보냅니다. 저장은 Supabase(관리자 전용)에 기록됩니다.
         </p>
 
-        {/* 과목 선택 */}
+        {/* 평가 단위 선택 — 과목 × 담당 분반(강의일자) 개별 평가 */}
         <div style={{ marginTop: 18, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {evaluable.map((s) => (
-            <button key={s.id} onClick={() => setSubjectId(s.id)} style={{
+          {unitsWithExam.map((u) => (
+            <button key={u.key} onClick={() => selectUnit(u.key)} style={{
               padding: '7px 13px', borderRadius: 999, cursor: 'pointer', fontSize: 12.5, fontWeight: 700,
-              border: `1px solid ${subjectId === s.id ? 'var(--gold)' : 'var(--line-strong)'}`,
-              background: subjectId === s.id ? 'var(--gold)' : 'var(--bg-white)',
-              color: subjectId === s.id ? '#fff' : 'var(--navy-600)',
-            }}>{s.name}</button>
+              border: `1px solid ${unitKey === u.key ? 'var(--gold)' : 'var(--line-strong)'}`,
+              background: unitKey === u.key ? 'var(--gold)' : 'var(--bg-white)',
+              color: unitKey === u.key ? '#fff' : 'var(--navy-600)',
+            }}>
+              {u.subjectName} <span style={{ fontWeight: 600, fontSize: 11 }}>· {u.campus} {u.cls} · {u.dateLabel}</span>
+            </button>
           ))}
         </div>
+        {unit && (
+          <p style={{ marginTop: 10, fontSize: 13.5, fontWeight: 800, color: 'var(--navy-800)' }}>
+            {unitLabel(unit)} <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>({unit.room})</span>
+          </p>
+        )}
 
         {/* 도구줄 */}
         <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
           <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={loadStudents}>
             👥 등록 학생 불러오기
           </button>
-          {Object.entries(ROSTERS).map(([k, r]) => (
-            <button key={k} className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={() => loadRoster(k)}>
-              📋 {r.label} 명단
+          {unitRoster && (
+            <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }}
+              onClick={() => loadRoster(Object.keys(ROSTERS).find((k) => ROSTERS[k] === unitRoster))}>
+              📋 {unitRoster.label} 명단 불러오기
             </button>
-          ))}
+          )}
           <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={() => setRows((p) => [...p, newRow()])}>
             + 행 추가(수기)
           </button>
