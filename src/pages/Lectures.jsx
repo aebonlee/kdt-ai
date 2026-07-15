@@ -490,6 +490,15 @@ export default function Lectures() {
                         {ex.title}
                         <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({ex.lang})</span>
                       </div>
+                      {ex.files?.length > 0 && (
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '2px 0 8px' }}>
+                          {ex.files.map((f2) => (
+                            <a key={f2.href} href={f2.href} download className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12.5 }}>
+                              ⬇ {f2.label}
+                            </a>
+                          ))}
+                        </div>
+                      )}
                       <CodeBlock code={ex.code} lang={ex.lang} />
                       {ex.note && (
                         <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
@@ -515,6 +524,15 @@ export default function Lectures() {
                         {ex.title}
                         <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({ex.lang})</span>
                       </div>
+                      {ex.files?.length > 0 && (
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '2px 0 8px' }}>
+                          {ex.files.map((f2) => (
+                            <a key={f2.href} href={f2.href} download className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 12.5 }}>
+                              ⬇ {f2.label}
+                            </a>
+                          ))}
+                        </div>
+                      )}
                       <CodeBlock code={ex.code} lang={ex.lang} />
                       {ex.note && (
                         <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>

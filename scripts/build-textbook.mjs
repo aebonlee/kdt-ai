@@ -115,8 +115,8 @@ function renderExam(subjectId, examData, title) {
       e.tasks.map((t) => `<tr><td class="pt">${esc(t.name)}</td><td>${escNl(t.activity)}</td><td class="pt">${esc(t.time || '')}</td></tr>`).join('') + `</table>`
   }
   if (e.criteria?.length) {
-    h += `<div class="exam-sub">평가 항목</div><table class="plan"><tr><td class="pt"><b>평가 항목</b></td><td><b>평가 내용</b></td>${e.criteria.some((c) => c.points) ? '<td class="pt" style="width:64px"><b>배점</b></td>' : ''}</tr>` +
-      e.criteria.map((c) => `<tr><td class="pt">${esc(c.item)}</td><td>${escNl(c.desc)}</td>${e.criteria.some((x) => x.points) ? `<td class="pt">${esc(c.points || '')}</td>` : ''}</tr>`).join('') + `</table>`
+    h += `<div class="exam-sub">평가 항목</div><table class="plan"><tr><td class="pt"><b>평가 항목</b></td><td><b>평가 내용</b></td>${e.criteria.some((c) => c.points) ? '<td class="pt" style="width:84px;white-space:nowrap;text-align:center"><b>배점</b></td>' : ''}</tr>` +
+      e.criteria.map((c) => `<tr><td class="pt">${esc(c.item)}</td><td>${escNl(c.desc)}</td>${e.criteria.some((x) => x.points) ? `<td class="pt" style="white-space:nowrap;text-align:center">${esc(c.points || '')}</td>` : ''}</tr>`).join('') + `</table>`
   }
   if (e.deliverables?.length) {
     h += `<div class="box practice"><div class="box-h">📦 제출 · 필수 항목</div><ul>` +
@@ -153,7 +153,11 @@ function renderExamples(list, heading, icon) {
   if (!list?.length) return ''
   let h = `<h4 class="sec">${icon} ${heading}</h4>`
   for (const ex of list) {
+    const fileLinks = (ex.files || [])
+      .map((f) => `<a class="ex-file" href="${esc(f.href)}" download>⬇ ${esc(f.label)} <span class="thin">(https://skala.dreamitbiz.com${esc(f.href)})</span></a>`)
+      .join(' ')
     h += `<div class="ex"><div class="ex-h">${esc(ex.title)} <span class="lang">(${esc(ex.lang)})</span></div>` +
+      (fileLinks ? `<div class="ex-files">${fileLinks}</div>` : '') +
       `<div class="code-wrap"><button type="button" class="wrap-btn" aria-label="줄바꿈/가로 전환">↔ 가로</button>` +
       `<button type="button" class="copy-btn" aria-label="코드 복사">복사</button>` +
       `<pre class="code"><code>${hlCode(ex.code, ex.lang)}</code></pre></div>` +
@@ -372,7 +376,7 @@ async function main() {
         .map(([id, c]) => `<section class="page" data-page="etc-${esc(id)}">${renderEtcCourseBlock(id, c)}</section>`)
         .join('')
     const head = `<title>SKALA 4기 실습 교재 — 이애본 강사</title>
-<style>${SCREEN_CSS}${TAB_CSS}</style>`
+<style>${SCREEN_CSS}${TAB_CSS}${EXFILE_CSS}</style>`
     const content = `<div class="tb">
   <div class="tb-overlay" id="tb-overlay" aria-hidden="true"></div>
   <aside class="tb-side" id="tb-side">
@@ -421,7 +425,7 @@ ${PAGE_JS}</script>`
 
   const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <title>SKALA 4기 실습 교재 — 이애본 강사</title>
-<style>${CSS}</style></head><body>${body}</body></html>`
+<style>${CSS}${EXFILE_CSS}</style></head><body>${body}</body></html>`
   writeFileSync(join(outDir, 'textbook.html'), html)
   console.log(`생성: dist-textbook/textbook.html (${(html.length / 1024).toFixed(0)}KB, ${ordered.length}과목 ${totalDays}일차)`)
 }
@@ -777,6 +781,11 @@ document.addEventListener('click', function (e) {
 `
 
 // 페이지 단위 전환(좌측 메뉴=과목 페이지) + 인쇄 (웹 뷰어 전용)
+const EXFILE_CSS = `
+.ex-files{margin:4px 0 8px;}
+.ex-file{display:inline-block;font-size:10pt;font-weight:700;color:#0E7A5F;text-decoration:none;border:1px solid #0E7A5F;border-radius:8px;padding:4px 10px;margin-right:6px;}
+`
+
 const TAB_CSS = `
 /* 담당일정 외 모드 — 좌측 메뉴 컬러를 다크그린으로 전환(레이아웃·스타일 동일) */
 .tb.etc-mode .tb-side{background:#0B3B2E;}

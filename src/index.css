@@ -601,6 +601,8 @@ ul { list-style: none; }
 .exam-table th { background: var(--navy-50); color: var(--navy-800); font-weight: 800; text-align: left; padding: 8px 12px; border: 1px solid var(--line); white-space: nowrap; }
 .exam-table td { padding: 8px 12px; border: 1px solid var(--line); vertical-align: top; color: var(--navy-700); }
 .exam-table td:first-child { font-weight: 700; color: var(--navy-800); white-space: nowrap; }
+/* 배점 열(마지막) — "35점"이 한 줄로 보이게 폭 고정·줄바꿈 금지 */
+.exam-table th:last-child, .exam-table td:last-child { white-space: nowrap; min-width: 72px; text-align: center; }
 .exam-notes { font-size: 13.5px; color: var(--ink-soft); margin-top: 12px; }
 .exam-notes ul { margin: 5px 0; padding-left: 20px; }
 .exam-notes li { margin: 3px 0; }
@@ -779,6 +781,12 @@ ul { list-style: none; }
 .admin-shell-link:hover { background: var(--navy-50); color: var(--navy-800); }
 .admin-shell-link.active { background: var(--navy-50); color: var(--gold); border-left-color: var(--gold); font-weight: 800; }
 .asl-ico { font-size: 15px; flex: 0 0 auto; }
+.admin-shell-sub { margin: 2px 0 6px 14px; padding-left: 10px; border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 1px; }
+.admin-shell-sublink { display: block; padding: 6px 10px; border-radius: 8px; font-size: 12px; color: var(--navy-600); }
+.admin-shell-sublink:hover { background: var(--navy-50); }
+.admin-shell-sublink.active { background: var(--navy-50); color: var(--gold); font-weight: 800; }
+.assl-name { display: block; font-weight: 700; line-height: 1.35; }
+.assl-meta { display: block; font-size: 10.5px; color: var(--ink-soft); margin-top: 1px; }
 .admin-shell-main { min-width: 0; }
 .admin-shell-main .container { max-width: none; padding: 0 8px 0 20px; }
 @media (max-width: 1000px) {

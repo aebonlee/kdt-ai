@@ -11,6 +11,7 @@ import { TRACK_LABELS, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
 import { evalUnits, unitByKey, unitLabel } from '../data/evalunits'
 import { useSearchParams } from 'react-router-dom'
+import * as XLSX from 'xlsx'
 
 // 배점 문자열("20점")에서 숫자 추출 — 숫자 없으면 상한 없음
 const maxOf = (points) => {
@@ -32,9 +33,13 @@ export default function AdminEvaluate() {
   const initUnit = unitByKey(params.get('unit')) && exams[unitByKey(params.get('unit')).subjectId]
     ? params.get('unit') : unitsWithExam[0]?.key
   const [unitKey, setUnitKey] = useState(initUnit)
+  // 좌측 메뉴에서 ?unit= 이 바뀌면 동기화
+  useEffect(() => {
+    const q = params.get('unit')
+    if (q && unitByKey(q) && q !== unitKey) setUnitKey(q)
+  }, [params])
   const unit = unitByKey(unitKey) || unitsWithExam[0]
   const subjectId = unit?.subjectId
-  const selectUnit = (k) => { setUnitKey(k); setParams({ unit: k }, { replace: true }) }
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -132,6 +137,57 @@ export default function AdminEvaluate() {
     setMsg(`저장 완료 — ${payload.length}명 (${new Date().toLocaleTimeString('ko-KR')})`)
   }
 
+  // 공통: 내보낼 표 데이터(헤더+행)
+  const exportTable = () => {
+    const head = ['훈련생 고유번호', '성명', '분반',
+      ...criteria.map((c, i) => `평가항목 ${i + 1}. ${c.item}${maxOf(c.points) != null ? ` (${maxOf(c.points)}점)` : ''}`),
+      `점수 합계${totalMax ? ` (/${totalMax})` : ''}`, '판단근거', '보완사항', '비고']
+    const body = rows.filter((r) => r.student_name.trim()).map((r) => [
+      r.student_no || '', r.student_name, classLabel(r.track, r.class_no),
+      ...criteria.map((c) => r.scores?.[c.item] ?? ''),
+      totalOf(r), r.note_basis || '', r.note_improve || '', '',
+    ])
+    return { head, body }
+  }
+  const exportBase = () => {
+    const subj = subjectById(subjectId)
+    return `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_이애본`
+  }
+
+  // 엑셀(xlsx) 내보내기
+  const exportXlsx = () => {
+    const { head, body } = exportTable()
+    const ws = XLSX.utils.aoa_to_sheet([head, ...body])
+    ws['!cols'] = head.map((h, i) => ({ wch: i < 2 ? 12 : i === 2 ? 12 : i < 3 + criteria.length ? 14 : 22 }))
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '평가결과')
+    XLSX.writeFile(wb, exportBase() + '.xlsx')
+  }
+
+  // PDF 저장 — 인쇄용 창(브라우저 인쇄 → PDF 저장, 한글 폰트 안전)
+  const exportPdf = () => {
+    const { head, body } = exportTable()
+    const esc = (v) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const w = window.open('', '_blank')
+    if (!w) { setMsg('팝업이 차단되었습니다 — 팝업 허용 후 다시 시도하세요.'); return }
+    w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${esc(exportBase())}</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm; }
+  body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; color: #1c2033; }
+  h1 { font-size: 15pt; margin: 0 0 2mm; } .sub { font-size: 9.5pt; color: #555; margin-bottom: 5mm; }
+  table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+  th, td { border: 1px solid #999; padding: 4px 6px; text-align: left; vertical-align: top; }
+  th { background: #eef0fa; font-weight: 800; }
+  td.num { text-align: center; white-space: nowrap; }
+</style></head><body>
+<h1>SKALA 4기 종합실습 평가 — ${esc(subjectById(subjectId)?.name || '')}</h1>
+<div class="sub">${esc(unit.campus)} ${esc(unit.cls)} (${esc(unit.room)}) · 강의일 ${esc(unit.dateLabel)} · 평가자: 이애본 · 출력일 ${new Date().toLocaleDateString('ko-KR')}</div>
+<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+<tbody>${body.map((r) => `<tr>${r.map((v, i) => `<td class="${i >= 3 && i < 3 + criteria.length + 1 ? 'num' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>
+<script>window.onload = () => setTimeout(() => window.print(), 300)</` + `script></body></html>`)
+    w.document.close()
+  }
+
   // CSV 내보내기 — 원본 평가지 "평가결과" 시트 컬럼 그대로
   const exportCsv = () => {
     const subj = subjectById(subjectId)
@@ -186,19 +242,6 @@ export default function AdminEvaluate() {
           원본 평가지의 "평가결과" 시트 형식 CSV로 내보냅니다. 저장은 Supabase(관리자 전용)에 기록됩니다.
         </p>
 
-        {/* 평가 단위 선택 — 과목 × 담당 분반(강의일자) 개별 평가 */}
-        <div style={{ marginTop: 18, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {unitsWithExam.map((u) => (
-            <button key={u.key} onClick={() => selectUnit(u.key)} style={{
-              padding: '7px 13px', borderRadius: 999, cursor: 'pointer', fontSize: 12.5, fontWeight: 700,
-              border: `1px solid ${unitKey === u.key ? 'var(--gold)' : 'var(--line-strong)'}`,
-              background: unitKey === u.key ? 'var(--gold)' : 'var(--bg-white)',
-              color: unitKey === u.key ? '#fff' : 'var(--navy-600)',
-            }}>
-              {u.subjectName} <span style={{ fontWeight: 600, fontSize: 11 }}>· {u.campus} {u.cls} · {u.dateLabel}</span>
-            </button>
-          ))}
-        </div>
         {unit && (
           <p style={{ marginTop: 10, fontSize: 13.5, fontWeight: 800, color: 'var(--navy-800)' }}>
             {unitLabel(unit)} <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>({unit.room})</span>
@@ -235,8 +278,14 @@ export default function AdminEvaluate() {
           <button className="btn btn-cta" style={{ padding: '8px 18px', fontSize: 13, opacity: saving ? 0.6 : 1 }} disabled={saving} onClick={saveAll}>
             {saving ? '저장 중…' : '💾 저장'}
           </button>
-          <button className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }} onClick={exportCsv}>
-            ⬇ CSV 내보내기
+          <button className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }} onClick={exportXlsx}>
+            ⬇ 엑셀(xlsx)
+          </button>
+          <button className="btn btn-ghost" style={{ padding: '8px 18px', fontSize: 13 }} onClick={exportPdf}>
+            🖨 PDF 저장
+          </button>
+          <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={exportCsv}>
+            CSV
           </button>
         </div>
         {msg && <p style={{ marginTop: 10, fontSize: 13, color: msg.includes('실패') ? '#E5484D' : 'var(--gold)', fontWeight: 700 }}>{msg}</p>}
@@ -256,7 +305,7 @@ export default function AdminEvaluate() {
                 {['고유번호', '성명', '분반',
                   ...criteria.map((c) => `${c.item}${maxOf(c.points) != null ? ` (${maxOf(c.points)})` : ''}`),
                   `합계${totalMax ? `/${totalMax}` : ''}`, '판단근거', '보완사항', ''].map((h, i) => (
-                  <th key={i} style={{ textAlign: 'left', padding: '8px 10px', color: 'var(--navy-700)', fontWeight: 800, whiteSpace: i > 2 && i < 3 + criteria.length ? 'normal' : 'nowrap', minWidth: i > 2 && i < 3 + criteria.length ? 84 : undefined, borderBottom: '1px solid var(--line)', fontSize: 11.5, lineHeight: 1.4 }}>{h}</th>
+                  <th key={i} style={{ textAlign: 'left', padding: '8px 10px', color: 'var(--navy-700)', fontWeight: 800, whiteSpace: i > 2 && i < 3 + criteria.length ? 'normal' : 'nowrap', minWidth: i > 2 && i < 3 + criteria.length ? 96 : undefined, borderBottom: '1px solid var(--line)', fontSize: 11.5, lineHeight: 1.4 }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -295,7 +344,7 @@ export default function AdminEvaluate() {
                       <td key={c.item} style={{ padding: '6px 6px' }}>
                         <input type="number" min={0} max={max ?? undefined} value={r.scores?.[c.item] ?? ''} title={c.desc}
                           onChange={(e) => setScore(r._key, c.item, e.target.value, max)}
-                          style={{ width: 64, padding: '6px 6px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5, textAlign: 'center' }} />
+                          style={{ width: 76, padding: '6px 6px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5, textAlign: 'center' }} />
                       </td>
                     )
                   })}
