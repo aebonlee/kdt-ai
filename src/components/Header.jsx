@@ -16,7 +16,6 @@ const nav = [
   { to: '/reference', label: '참고자료' },
   { to: '/progress', label: '학습관리' },
   { to: '/board', label: '게시판' },
-  { to: '/dashboard', label: '대시보드' },
 ]
 
 export default function Header() {
