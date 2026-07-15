@@ -414,6 +414,18 @@ export const examplesExtra3 = {
       ],
       "code": "# Practice 2 본 과제: 읽어 온 판매 데이터를 기준별로 집계한다\nimport json\nfrom collections import defaultdict, Counter  # 집계 전용 도구 2가지\n\nwith open(\"Python_Practice2_Data.json\", encoding=\"utf-8\") as f:\n    sales = json.load(f)                       # 100건 로드\n\n# 1) 월(month)별 매출 합계 — 키가 없으면 0에서 시작하는 defaultdict\nby_month = defaultdict(int)\nfor row in sales:\n    by_month[row[\"month\"]] += row[\"amount\"]    # 같은 달끼리 금액 누적\nfor month in sorted(by_month):                 # 1월부터 순서대로\n    print(month, by_month[month])\n\n# 2) 지역(region)별 매출 합계 — 같은 패턴 재사용\nby_region = defaultdict(int)\nfor row in sales:\n    by_region[row[\"region\"]] += row[\"amount\"]\nprint(sorted(by_region.items(), key=lambda x: -x[1]))   # 매출 큰 지역부터\n\n# 3) 품목(category) 판매 건수 Top 2 — 건수 세기는 Counter 한 줄\ntop = Counter(row[\"category\"] for row in sales)\nprint(top.most_common(2))                      # [('전자', n1), ('의류', n2)] 형태",
       "note": "합계 집계는 defaultdict(int), 건수 집계는 Counter — 이 두 도구만 알면 Practice 2 유형은 전부 풀린다. 같은 for 패턴을 키만 바꿔 재사용하는 감각을 익히자."
+    },
+    {
+      "title": "실습용 외부 API 카탈로그 — 키 없이 바로 호출 가능",
+      "lang": "text",
+      "code": "[키 발급 없이 바로 쓰는 무료 API — 실습 추천]\n\n1) JSONPlaceholder — 연습용 가짜 데이터(가장 안전한 첫 연습)\n   https://jsonplaceholder.typicode.com/posts\n\n2) 환율(ER-API) — 실시간 환율, USD 기준 통화별 시세\n   https://open.er-api.com/v6/latest/USD\n\n3) Open-Meteo — 날씨 예보(위도·경도로 조회, 울산 예시)\n   https://api.open-meteo.com/v1/forecast?latitude=35.54&longitude=129.31&current_weather=true\n\n4) 업비트 공개 시세 — 코인 현재가(실시간 데이터 다루기)\n   https://api.upbit.com/v1/ticker?markets=KRW-BTC\n\n5) Nager.Date — 한국 공휴일 목록(날짜 데이터 연습)\n   https://date.nager.at/api/v3/PublicHolidays/2026/KR\n\n6) httpbin — 내가 보낸 요청을 그대로 보여주는 거울(헤더·파라미터 확인)\n   https://httpbin.org/get\n\n[키 발급이 필요한 API — 실무에서 만나는 형태]\n- 공공데이터포털(data.go.kr): 회원가입 후 활용신청 → 승인 → serviceKey 파라미터로 전달\n- OpenAI API 등 유료 API: 키는 반드시 .env 파일에 보관하고 절대 커밋하지 않는다\n\n[호출 전 체크 3가지]\n① timeout을 항상 지정한다(응답이 없으면 무한 대기)\n② raise_for_status()로 실패(4xx/5xx)를 감지한다\n③ 반복문 안에서 과도하게 호출하지 않는다(요청 제한, rate limit)",
+      "note": "종합실습 1(데이터 수집 파이프라인)의 API 연동 단계에서 이 중 하나를 골라 쓰면 된다. 어떤 API든 '주소 → 상태코드 확인 → json() 파싱' 3단계는 동일하다."
+    },
+    {
+      "title": "외부 API 호출 기본형 — 환율을 안전하게 받아오기",
+      "lang": "python",
+      "code": "# 외부 API 호출의 표준 골격 — 어떤 API로 바꿔도 이 3단계는 같다\nimport requests                                    # pip install requests\n\nURL = \"https://open.er-api.com/v6/latest/USD\"      # 무료 환율 API(키 불필요)\n\ndef get_krw_rate():\n    \"\"\"원/달러 환율을 받아온다 — 실패하면 None을 돌려준다\"\"\"\n    try:\n        r = requests.get(URL, timeout=5)           # ① timeout 필수: 5초 안에 응답 없으면 포기\n        r.raise_for_status()                       # ② 4xx/5xx면 여기서 예외 발생\n        data = r.json()                            # ③ JSON 응답 → 파이썬 dict\n        return data[\"rates\"][\"KRW\"]                # 중첩 dict에서 원화 환율만 추출\n    except requests.Timeout:                       # 시간 초과 — 네트워크 문제\n        print(\"응답 시간 초과 — 잠시 후 다시 시도하세요\")\n    except requests.HTTPError as e:                # 서버가 오류 상태코드를 반환\n        print(\"HTTP 오류:\", e.response.status_code)\n    except (KeyError, ValueError):                 # 응답 구조가 예상과 다름\n        print(\"응답 형식이 예상과 다릅니다\")\n    return None\n\nrate = get_krw_rate()\nif rate:                                           # None 체크 후 사용 — 방어적 코딩\n    print(\"1 USD =\", round(rate, 1), \"KRW\")",
+      "note": "try/except로 시간초과·HTTP 오류·형식 오류를 각각 잡는 것이 평가 기준의 '오류/예외 처리(35점)'에 그대로 대응한다. 종합실습에선 이 골격을 httpx.AsyncClient로 바꿔 비동기 수집으로 확장한다."
     }
   ],
   "python-2": [
