@@ -30,6 +30,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Admin = lazy(() => import('./pages/Admin'))
 const AdminTeams = lazy(() => import('./pages/AdminTeams'))
 const AdminSchedule = lazy(() => import('./pages/AdminSchedule'))
+const AdminEvaluate = lazy(() => import('./pages/AdminEvaluate'))
 
 // lazy 청크를 내려받는 동안 잠깐 보여줄 로딩 표시
 function PageFallback() {
@@ -75,6 +76,7 @@ export default function App() {
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
             <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
             <Route path="/admin/schedule" element={<RequireAdmin><AdminSchedule /></RequireAdmin>} />
+            <Route path="/admin/evaluate" element={<RequireAdmin><AdminEvaluate /></RequireAdmin>} />
             {/* 알 수 없는 경로는 홈으로 정규화(주소창에 죽은 URL 남지 않게) */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
