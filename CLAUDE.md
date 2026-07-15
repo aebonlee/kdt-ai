@@ -42,7 +42,7 @@ SKALA(SK AI Leader Academy) 4기 **이애본 강사** 학습 플랫폼. 담당 1
 ## 스킬·검증 습관
 - UI 변경 → 헤드리스 스크린샷(라이트/다크/모바일 390px)으로 확인 후 배포. 데스크톱 실기기 확인은 대표님 몫(빌드·커밋·푸시·배포까지가 Claude 담당)
 - 배포 확인: `gh run list --limit 1` / `gh run watch <id> --exit-status`
-- 워크플로 원칙: **작업 완료 = Dev_md 문서화 + 커밋 + 푸시 세트** (Dev_md 32편, 커밋 메시지 한국어·상세)
+- 워크플로 원칙: **작업 완료 = Dev_md 문서화 + 커밋 + 푸시 세트** (Dev_md 39편, 커밋 메시지 한국어·상세)
 - claude.ai 웹 뷰어 아티팩트: `dist-textbook/textbook-web.html`을 같은 대화에서 재발행하면 동일 URL 유지
 
 ## 주의사항
@@ -50,6 +50,9 @@ SKALA(SK AI Leader Academy) 4기 **이애본 강사** 학습 플랫폼. 담당 1
 - `.env.local` 없으면 로컬 로그인 깨짐 → 형제 리포(chosun 등)의 Supabase anon key 복사
 - 실습교안 gzip 크기 모니터링(현 606KB, ~700KB 도달 시 과목 분할 검토)
 - Supabase 단일 프로젝트 공유(hcmgdztsgjvzcyxyayaj) — 분리 제안 금지, skala_ 접두사 테이블
+
+## 상태: 3차 고도화 종료(2026-07-15) — 운영 모드
+Dev_md 39 종합평가 A+ 98. 개발 완료, 이하 재개 트리거 발생 시에만 작업.
 
 ## 다음 작업 후보 (대기 중 — 어느 세션이든 이어받기)
 1. **평가기준 6과목 반영** — git·vue·spring-ai·modeldev·langchain·serving 평가양식이 들어오면 exams.js 추가(2026-07-14 수령분에도 없음 — 담당외 6과목은 otherexams.js로 반영 완료, 담당 12과목은 최신본과 정합 검증 완료). 타 강사판 평가안 3건(feature 이은호, prompt·transformer 박병선) 병기 여부는 대표 결정 대기
