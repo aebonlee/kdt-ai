@@ -426,6 +426,18 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# 외부 API 호출의 표준 골격 — 어떤 API로 바꿔도 이 3단계는 같다\nimport requests                                    # pip install requests\n\nURL = \"https://open.er-api.com/v6/latest/USD\"      # 무료 환율 API(키 불필요)\n\ndef get_krw_rate():\n    \"\"\"원/달러 환율을 받아온다 — 실패하면 None을 돌려준다\"\"\"\n    try:\n        r = requests.get(URL, timeout=5)           # ① timeout 필수: 5초 안에 응답 없으면 포기\n        r.raise_for_status()                       # ② 4xx/5xx면 여기서 예외 발생\n        data = r.json()                            # ③ JSON 응답 → 파이썬 dict\n        return data[\"rates\"][\"KRW\"]                # 중첩 dict에서 원화 환율만 추출\n    except requests.Timeout:                       # 시간 초과 — 네트워크 문제\n        print(\"응답 시간 초과 — 잠시 후 다시 시도하세요\")\n    except requests.HTTPError as e:                # 서버가 오류 상태코드를 반환\n        print(\"HTTP 오류:\", e.response.status_code)\n    except (KeyError, ValueError):                 # 응답 구조가 예상과 다름\n        print(\"응답 형식이 예상과 다릅니다\")\n    return None\n\nrate = get_krw_rate()\nif rate:                                           # None 체크 후 사용 — 방어적 코딩\n    print(\"1 USD =\", round(rate, 1), \"KRW\")",
       "note": "try/except로 시간초과·HTTP 오류·형식 오류를 각각 잡는 것이 평가 기준의 '오류/예외 처리(35점)'에 그대로 대응한다. 종합실습에선 이 골격을 httpx.AsyncClient로 바꿔 비동기 수집으로 확장한다."
+    },
+    {
+      "title": "API가 뭐예요? — 식당 주문으로 이해하는 개념 (비전공자용)",
+      "lang": "text",
+      "code": "[API = 식당의 주문 창구]\n\n· 내가 주방에 직접 들어가 요리하지 않는다 → 주문서(요청)를 내면 음식(응답)이 나온다\n· API도 같다: 남의 서버(주방)에 직접 들어갈 수 없으니,\n  정해진 주소(창구)로 요청을 보내면 데이터(음식)를 받는다\n\n[요청 주소(URL) 읽는 법]\n  https://open.er-api.com/v6/latest/USD\n  └─ 가게 주소 ──┘└── 메뉴(경로) ──┘\n\n  https://api.upbit.com/v1/ticker?markets=KRW-BTC\n                                 └ ? 뒤는 주문 옵션(파라미터) : \"비트코인으로 주세요\"\n\n[응답은 JSON — 어제 배운 딕셔너리와 똑같이 생겼다]\n  {\"result\": \"success\", \"rates\": {\"KRW\": 1390.5, \"JPY\": 155.2}}\n  → 파이썬에서 r.json() 하면 그대로 dict가 된다 → data[\"rates\"][\"KRW\"] 로 꺼낸다\n\n[지금 바로 해보기 — 코드 없이!]\n  1) 브라우저 주소창에 https://open.er-api.com/v6/latest/USD 를 붙여넣는다\n  2) 화면에 보이는 글자 덩어리가 바로 JSON 응답이다\n  3) 그 안에서 KRW 를 찾아보자 — 파이썬은 이걸 자동으로 꺼내주는 것뿐이다",
+      "note": "API는 '남이 만들어 둔 데이터 자판기'다. 주소를 알고, 버튼(요청)을 누르고, 나온 것(JSON)을 받아 쓰면 된다. 브라우저로 먼저 열어보면 파이썬 코드가 하는 일이 눈에 보인다."
+    },
+    {
+      "title": "따라하기 — 파이썬 3줄로 첫 API 호출 (비전공자용)",
+      "lang": "python",
+      "code": "# 첫 API 호출 — 딱 3단계만 기억하자: 요청 → 변환 → 꺼내기\nimport requests                                  # 인터넷 요청 도구(설치: pip install requests)\n\n# [1단계] 요청 보내기 — 브라우저 주소창에 치는 것과 같은 일\nr = requests.get(\"https://open.er-api.com/v6/latest/USD\", timeout=5)\nprint(r.status_code)                             # 200이 나오면 성공! (404=주소 틀림, 500=서버 문제)\n\n# [2단계] JSON → 딕셔너리로 변환\ndata = r.json()                                  # 글자 덩어리(JSON)가 파이썬 dict로 변신\nprint(type(data))                                # <class 'dict'> — 우리가 아는 딕셔너리다\nprint(list(data.keys()))                         # 어떤 키가 있는지 먼저 구경\n\n# [3단계] 원하는 값 꺼내기 — 딕셔너리 인덱싱 그대로\nrates = data[\"rates\"]                            # 통화별 환율이 담긴 안쪽 딕셔너리\nprint(\"1달러 =\", rates[\"KRW\"], \"원\")             # 원화 환율\nprint(\"1달러 =\", rates[\"JPY\"], \"엔\")             # 엔화 환율\n\n# 연습: 위 주소의 USD를 EUR로 바꾸면? → 1유로 기준 환율이 나온다",
+      "note": "모르는 API를 만나면 항상 print(list(data.keys()))로 구조부터 구경하자 — 지도 없이 길을 걷지 않는 것과 같다. 3단계(요청→변환→꺼내기)만 익히면 어떤 API든 똑같이 쓸 수 있다."
     }
   ],
   "python-2": [
