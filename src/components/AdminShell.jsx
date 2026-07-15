@@ -1,5 +1,6 @@
 // 관리자 공통 셸 — 좌측 세로 메뉴 + 넓은 콘텐츠(최대 1600px).
 // 라우트 레벨에서 관리자 페이지를 감싼다: <AdminShell><AdminDashboard/></AdminShell>
+import { useEffect, useState } from 'react'
 import { NavLink, useLocation, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { evalUnits } from '../data/evalunits'
@@ -23,6 +24,9 @@ export default function AdminShell({ children }) {
   const onEvaluate = pathname.startsWith('/admin/evaluate')
   const unitsWithExam = evalUnits.filter((u) => exams[u.subjectId])
   const activeUnit = params.get('unit') || (onEvaluate ? unitsWithExam[0]?.key : null)
+  // 하위 메뉴 접기/펼치기 — 평가 화면 진입 시 자동 펼침, 클릭으로 토글
+  const [subOpen, setSubOpen] = useState(onEvaluate)
+  useEffect(() => { if (onEvaluate) setSubOpen(true) }, [onEvaluate])
   return (
     <div className="admin-shell">
       <aside className="admin-shell-side" aria-label="관리자 메뉴">
@@ -37,10 +41,21 @@ export default function AdminShell({ children }) {
                 className={({ isActive }) => `admin-shell-link${isActive ? ' active' : ''}`}
               >
                 <span className="asl-ico">{it.icon}</span>
-                <span>{it.label}</span>
+                <span style={{ flex: 1 }}>{it.label}</span>
+                {it.to === '/admin/evaluate' && (
+                  <button
+                    type="button"
+                    aria-label={subOpen ? '하위 메뉴 접기' : '하위 메뉴 펼치기'}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSubOpen((v) => !v) }}
+                    style={{
+                      background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px',
+                      color: 'inherit', fontSize: 11, transform: subOpen ? 'rotate(180deg)' : 'none', transition: 'transform .15s',
+                    }}
+                  >▾</button>
+                )}
               </NavLink>
-              {/* 교과목 평가 — 평가 단위(과목×분반) 하위 메뉴 */}
-              {it.to === '/admin/evaluate' && onEvaluate && (
+              {/* 교과목 평가 — 평가 단위(과목×분반) 하위 메뉴, 클릭 토글 */}
+              {it.to === '/admin/evaluate' && subOpen && (
                 <div className="admin-shell-sub">
                   {unitsWithExam.map((u) => (
                     <NavLink

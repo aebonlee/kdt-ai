@@ -11,35 +11,9 @@ import { useProgress, setDone, resetProgress } from '../hooks/useProgress'
 import { useProfile, isProfileComplete } from '../hooks/useProfile'
 import { classLabel, trackOfSession } from '../data/classes'
 import { openClassOnboarding } from '../components/ClassOnboarding'
+import { trackSchedule } from '../data/trackschedule'
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
-
-// 소속 트랙의 수강 일정 — 담당(이애본) 세션 + 타 강사 진행(othersessions 셀) 병합
-function trackSchedule(track) {
-  const items = new Map() // date → item
-  for (const s of sortedSessions()) {
-    if (trackOfSession(s) !== track) continue
-    const subj = subjectById(s.subjectId)
-    items.set(s.date, {
-      date: s.date, weekday: s.weekday, name: subj?.name || s.subjectId,
-      by: '이애본', mine: true, link: `/lectures/${s.date}`,
-    })
-  }
-  for (const s of otherSessions) {
-    const cell = s[track]
-    if (!cell || items.has(s.date)) continue
-    const subj = subjectById(cell.c)
-    const etc = otherCourses[cell.c]
-    const name = etc?.name || subj?.name || EVENT_LABELS[cell.c] || cell.c
-    const link = etc
-      ? `/lectures/etc-${cell.c}`
-      : subj
-        ? (sortedSessions().find((x) => x.subjectId === cell.c) ? `/lectures/${sortedSessions().find((x) => x.subjectId === cell.c).date}` : `/lectures/ref-${cell.c}-1`)
-        : null
-    items.set(s.date, { date: s.date, name, by: cell.by || '', mine: false, link, event: !etc && !subj })
-  }
-  return [...items.values()].sort((a, b) => a.date.localeCompare(b.date))
-}
 
 // 학생용 — 분반 수강 리스트 체크
 function TrackProgress({ profile }) {

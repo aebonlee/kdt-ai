@@ -5,7 +5,11 @@ import { isAdmin } from '../config/admin'
 import { useProgress } from '../hooks/useProgress'
 import { totalSessions, sortedSessions, subjectById, dayOf } from '../data/curriculum'
 import { modeOf } from '../data/lecturemodes'
-import { listPosts, syncProgress, listAllProgress } from '../data/db'
+import { listPosts, syncProgress } from '../data/db'
+import { useProfile, isProfileComplete } from '../hooks/useProfile'
+import { classLabel } from '../data/classes'
+import { trackSchedule } from '../data/trackschedule'
+import { openClassOnboarding } from '../components/ClassOnboarding'
 
 const fmt = (s) => new Date(s).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
 // 실라버스 방식 배지 색상 (이론/실습/종합실습)
@@ -17,18 +21,25 @@ export default function Dashboard() {
   const { user } = useAuth()
   const admin = isAdmin(user)
   const done = useProgress()
-  // 저장된 키가 아니라 실제 세션 기준 집계(stale 키로 100% 초과 방지)
-  const allSessions = sortedSessions()
-  const doneCount = allSessions.filter((s) => done[s.date]).length
-  const pct = Math.round((doneCount / totalSessions) * 100)
+  const { status, profile } = useProfile()
+  const student = status === 'ready' && isProfileComplete(profile) && profile.role === 'student'
 
-  // 다가오는 수업 (오늘 이후 6일) — 과정 종료 후엔 마지막 수업들 표시
+  // 개별 진행 기준: 소속 분반이 있으면 "우리 반 수강 일정", 없으면 담당 세션 전체
+  const schedule = student ? trackSchedule(profile.track).filter((it) => !it.event) : null
+  const allSessions = sortedSessions()
+  const totalDays = schedule ? schedule.length : totalSessions
+  const doneCount = schedule
+    ? schedule.filter((it) => done[it.date]).length
+    : allSessions.filter((s) => done[s.date]).length
+  const pct = totalDays ? Math.round((doneCount / totalDays) * 100) : 0
+
+  // 다가오는 수업 — 분반 기준(있으면), 오늘 이후 6개
   const today = new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD (로컬)
-  const upcomingAll = allSessions.filter((s) => s.date >= today)
-  const upcoming = (upcomingAll.length ? upcomingAll : allSessions.slice(-6)).slice(0, 6)
+  const upSource = schedule || allSessions.map((s) => ({ date: s.date, session: s }))
+  const upcomingAll = upSource.filter((x) => x.date >= today)
+  const upcoming = (upcomingAll.length ? upcomingAll : upSource.slice(-6)).slice(0, 6)
 
   const [notices, setNotices] = useState([])
-  const [allProgress, setAllProgress] = useState(null)
 
   // 내 진도를 Supabase에 동기화 (자가평가 변경 시)
   useEffect(() => {
@@ -37,17 +48,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     listPosts('notice').then((p) => setNotices(p.slice(0, 5))).catch(() => {})
-    if (admin) listAllProgress().then(setAllProgress).catch(() => {})
-  }, [admin])
-
-  // 강사용 집계
-  const learnerCount = allProgress?.length ?? 0
-  const avgPct =
-    allProgress && allProgress.length
-      ? Math.round(
-          allProgress.reduce((sum, r) => sum + (r.completed?.length ?? 0), 0) / allProgress.length / totalSessions * 100,
-        )
-      : 0
+  }, [])
 
   return (
     <div>
@@ -57,7 +58,19 @@ export default function Dashboard() {
           <h1>대시보드</h1>
           <p>
             <span style={{ display: 'block' }}>내 학습 진도와 공지를 한눈에 확인하세요.</span>
-            {admin && <span style={{ display: 'block' }}>강사 권한으로 전체 학습 현황도 함께 표시됩니다.</span>}
+            {student ? (
+              <span style={{ display: 'block' }}>
+                소속 <b>{classLabel(profile.track, profile.class_no)}</b>의 수강 일정 기준으로 개별 진행률을 계산합니다.
+              </span>
+            ) : (
+              <span style={{ display: 'block' }}>
+                소속 분반을 등록하면 우리 반 일정 기준으로 진행률이 계산됩니다.{' '}
+                <button onClick={openClassOnboarding} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gold)', fontWeight: 800, textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>
+                  소속 등록
+                </button>
+              </span>
+            )}
+            {admin && <span style={{ display: 'block' }}>관리 기능은 상단 관리 메뉴의 <Link to="/admin/main" style={{ color: 'var(--gold)', fontWeight: 800 }}>관리자 대시보드</Link>에서 확인하세요.</span>}
           </p>
         </div>
       </div>
@@ -75,7 +88,7 @@ export default function Dashboard() {
                 <span style={{ width: `${pct}%` }} />
               </div>
               <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 8 }}>
-                {doneCount} / {totalSessions}일 이해 완료
+                {doneCount} / {totalDays}일 이해 완료{student ? ` · ${classLabel(profile.track, profile.class_no)} 일정 기준` : ''}
               </p>
               <Link to="/progress" className="section-link" style={{ display: 'inline-block', marginTop: 10 }}>
                 학습관리로 →
@@ -110,19 +123,35 @@ export default function Dashboard() {
               🗓 {upcomingAll.length ? '다가오는 수업' : '최근 수업'}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {upcoming.map((s) => {
-                const subj = subjectById(s.subjectId)
-                const d = dayOf(s)
-                const mode = modeOf(s.subjectId, s.day)
+              {upcoming.map((it) => {
+                if (it.session) {
+                  const s2 = it.session
+                  const subj = subjectById(s2.subjectId)
+                  const d = dayOf(s2)
+                  const mode = modeOf(s2.subjectId, s2.day)
+                  return (
+                    <Link key={s2.date + s2.klass} to={`/day/${s2.date}`} className="session-row">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                        <span className="date">{s2.date.slice(5)} ({s2.weekday})</span>
+                        <span className={`chip chip-region ${regionClass(s2.region, s2.klass)}`}>{s2.region} {s2.klass}</span>
+                        {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
+                        <span className="title">{subj?.name} · {d?.title}</span>
+                      </span>
+                      <span style={{ color: 'var(--ink-soft)', fontSize: 13, flex: '0 0 auto' }}>Day {s2.day} →</span>
+                    </Link>
+                  )
+                }
+                // 분반 일정 항목(담당 + 타 강사)
                 return (
-                  <Link key={s.date + s.klass} to={`/day/${s.date}`} className="session-row">
+                  <Link key={it.date} to={it.link || '/lectures'} className="session-row">
                     <span style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                      <span className="date">{s.date.slice(5)} ({s.weekday})</span>
-                      <span className={`chip chip-region ${regionClass(s.region, s.klass)}`}>{s.region} {s.klass}</span>
-                      {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
-                      <span className="title">{subj?.name} · {d?.title}</span>
+                      <span className="date">{it.date.slice(5)}{it.weekday ? ` (${it.weekday})` : ''}</span>
+                      <span className="title" style={!it.mine ? { color: 'var(--etc-green)' } : undefined}>{it.name}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: it.mine ? 'var(--gold)' : 'var(--ink-soft)' }}>
+                        {it.mine ? '이애본 강사' : it.by ? `${it.by} 강사` : ''}
+                      </span>
                     </span>
-                    <span style={{ color: 'var(--ink-soft)', fontSize: 13, flex: '0 0 auto' }}>Day {s.day} →</span>
+                    <span style={{ color: 'var(--ink-soft)', fontSize: 13, flex: '0 0 auto' }}>학습 →</span>
                   </Link>
                 )
               })}
@@ -132,50 +161,6 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          {/* 강사 관리 대시보드 */}
-          {admin && (
-            <>
-              <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--navy-800)', margin: '8px 0 16px' }}>
-                강사 관리 대시보드
-              </h2>
-              <div className="grid grid-3" style={{ marginBottom: 20 }}>
-                <div className="card">
-                  <p style={{ fontSize: 13, color: 'var(--ink-soft)' }}>학습자 수</p>
-                  <div className="progress-num" style={{ marginTop: 6 }}>{learnerCount}<span style={{ fontSize: 18 }}>명</span></div>
-                </div>
-                <div className="card">
-                  <p style={{ fontSize: 13, color: 'var(--ink-soft)' }}>평균 진도율</p>
-                  <div className="progress-num" style={{ marginTop: 6 }}><span className="pct">{avgPct}%</span></div>
-                </div>
-                <div className="card">
-                  <p style={{ fontSize: 13, color: 'var(--ink-soft)' }}>전체 강의일</p>
-                  <div className="progress-num" style={{ marginTop: 6 }}>{totalSessions}<span style={{ fontSize: 18 }}>일</span></div>
-                </div>
-              </div>
-
-              <div className="card">
-                <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 12 }}>학습자별 진도</p>
-                {!allProgress ? (
-                  <p style={{ fontSize: 13, color: 'var(--ink-soft)' }}>불러오는 중… (skala_progress 테이블·RLS 설정 필요)</p>
-                ) : allProgress.length === 0 ? (
-                  <p style={{ fontSize: 13, color: 'var(--ink-soft)' }}>아직 데이터가 없습니다.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {allProgress.map((r) => {
-                      const p = Math.round(((r.completed?.length ?? 0) / totalSessions) * 100)
-                      return (
-                        <div key={r.user_id} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <span style={{ width: 140, fontSize: 13, color: 'var(--navy-700)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.user_name}</span>
-                          <span className="progressbar" style={{ flex: 1 }}><span style={{ width: `${p}%` }} /></span>
-                          <span style={{ width: 44, textAlign: 'right', fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>{p}%</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
         </div>
       </section>
     </div>
