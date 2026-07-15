@@ -3,7 +3,6 @@
 // 입력·내보내기 형식은 원본 평가지의 "평가결과" 시트(고유번호·성명·항목별·점수·판단근거·보완사항·비고)를 따른다.
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import AdminNav from '../components/AdminNav'
 import { supabase, hasSupabase } from '../lib/supabase'
 import { exams } from '../data/exams'
 import { subjectById, subjects } from '../data/curriculum'
@@ -181,7 +180,6 @@ export default function AdminEvaluate() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800 }}>
           🔒 관리자 전용 · {user?.email}
         </div>
-        <AdminNav />
         <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>교과목 평가</h1>
         <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14, lineHeight: 1.7 }}>
           사이트에 수록된 종합실습 평가기준(수령 평가지와 정합 검증 완료) 그대로 점수를 입력하고,

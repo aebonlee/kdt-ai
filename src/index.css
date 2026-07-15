@@ -51,7 +51,7 @@
   --shadow-lg: 0 10px 25px rgba(15, 27, 51, 0.08), 0 4px 10px rgba(15, 27, 51, 0.04);
 
   --nav-height: 72px;
-  --container-max: 1180px;
+  --container-max: 1450px;  /* 데스크톱 기준 1450 (2026-07-15 대표 지시, 기존 1180) */
   --radius: 4px;
 
   --hero-bg: linear-gradient(135deg, #1B2A4A 0%, #0F1B33 50%, #0A1428 100%);
@@ -748,4 +748,47 @@ ul { list-style: none; }
   .topbar-tag { font-size: 11px; }
   .session-row { flex-direction: column; align-items: flex-start; gap: 4px; }
   .brand-logo img { height: 18px; }
+}
+
+
+/* ── 관리자 셸 — 좌측 세로 메뉴 + 넓은 콘텐츠(최대 1600px) ── */
+.admin-shell {
+  max-width: 1600px; margin: 0 auto; padding: 0 24px;
+  display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 8px;
+}
+.admin-shell-side {
+  position: sticky; top: 88px; align-self: start;
+  padding: 28px 14px 28px 0; border-right: 1px solid var(--line);
+  max-height: calc(100vh - 100px); overflow-y: auto;
+}
+.admin-shell-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 999px;
+  background: var(--navy-100); color: var(--navy-700); font-size: 12px; font-weight: 800;
+}
+.admin-shell-user {
+  margin-top: 6px; font-size: 11px; color: var(--ink-soft);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.admin-shell-nav { margin-top: 14px; display: flex; flex-direction: column; gap: 2px; }
+.admin-shell-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 10px; border-left: 3px solid transparent;
+  font-size: 13.5px; font-weight: 700; color: var(--navy-600);
+  transition: background .12s, color .12s;
+}
+.admin-shell-link:hover { background: var(--navy-50); color: var(--navy-800); }
+.admin-shell-link.active { background: var(--navy-50); color: var(--gold); border-left-color: var(--gold); font-weight: 800; }
+.asl-ico { font-size: 15px; flex: 0 0 auto; }
+.admin-shell-main { min-width: 0; }
+.admin-shell-main .container { max-width: none; padding: 0 8px 0 20px; }
+@media (max-width: 1000px) {
+  .admin-shell { grid-template-columns: 1fr; padding: 0 16px; }
+  .admin-shell-side {
+    position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--line);
+    padding: 16px 0 10px;
+  }
+  .admin-shell-nav { flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 6px; }
+  .admin-shell-link { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; border-radius: 8px; }
+  .admin-shell-link.active { border-left: none; }
+  .admin-shell-main .container { padding: 0; }
 }

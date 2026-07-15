@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import AdminNav from '../components/AdminNav'
 import {
   docsGroups,
   docsTotalCount,
@@ -73,7 +72,6 @@ export default function Admin() {
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800, letterSpacing: 0.3 }}>
               🔒 관리자 전용 · {user?.email}
             </div>
-        <AdminNav />
             <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>
               관리자 자료실
             </h1>

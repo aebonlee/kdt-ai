@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import RequireAuth from './components/RequireAuth'
 import RequireAdmin from './components/RequireAdmin'
+import AdminShell from './components/AdminShell'
 import Home from './pages/Home' // 랜딩은 정적 import — entry→Home→curriculum 워터폴 제거(-1 RTT)
 import ClassOnboarding from './components/ClassOnboarding'
 
@@ -74,11 +75,11 @@ export default function App() {
             {/* 관리자(강사) 전용 — 수업일정표(학생 비공개)·자료실·페어링 시간표 */}
             <Route path="/schedule" element={<RequireAdmin><Schedule /></RequireAdmin>} />
             <Route path="/subjects" element={<RequireAdmin><Subjects /></RequireAdmin>} />
-            <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
-            <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
-            <Route path="/admin/schedule" element={<RequireAdmin><AdminSchedule /></RequireAdmin>} />
-            <Route path="/admin/evaluate" element={<RequireAdmin><AdminEvaluate /></RequireAdmin>} />
-            <Route path="/admin/main" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+            <Route path="/admin" element={<RequireAdmin><AdminShell><Admin /></AdminShell></RequireAdmin>} />
+            <Route path="/admin/teams" element={<RequireAdmin><AdminShell><AdminTeams /></AdminShell></RequireAdmin>} />
+            <Route path="/admin/schedule" element={<RequireAdmin><AdminShell><AdminSchedule /></AdminShell></RequireAdmin>} />
+            <Route path="/admin/evaluate" element={<RequireAdmin><AdminShell><AdminEvaluate /></AdminShell></RequireAdmin>} />
+            <Route path="/admin/main" element={<RequireAdmin><AdminShell><AdminDashboard /></AdminShell></RequireAdmin>} />
             {/* 알 수 없는 경로는 홈으로 정규화(주소창에 죽은 URL 남지 않게) */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

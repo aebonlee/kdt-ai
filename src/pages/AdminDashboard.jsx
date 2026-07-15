@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import AdminNav from '../components/AdminNav'
 import { supabase, hasSupabase } from '../lib/supabase'
 import { TRACK_LABELS, CLASS_MAP, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
@@ -62,7 +61,6 @@ export default function AdminDashboard() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800 }}>
           🔒 관리자 전용 · {user?.email}
         </div>
-        <AdminNav />
         <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>관리자 대시보드</h1>
         <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14 }}>
           분반별 가입 현황과 담당 강의 평가 진행 상황입니다. 세부 화면은 상단 관리 메뉴에서 그대로 이동할 수 있습니다.

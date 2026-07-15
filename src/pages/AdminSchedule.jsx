@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import AdminNav from '../components/AdminNav'
 import { myPairings, partnerCounts, instructorDays, scheduleAlerts, PAIRING_SOURCE } from '../data/adminschedule'
 import { subjectById } from '../data/curriculum'
 
@@ -64,7 +63,6 @@ export default function AdminSchedule() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800, letterSpacing: 0.3 }}>
           🔒 관리자 전용 · {user?.email}
         </div>
-        <AdminNav />
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 16, justifyContent: 'space-between' }}>
           <div>
             <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>페어링 시간표</h1>
