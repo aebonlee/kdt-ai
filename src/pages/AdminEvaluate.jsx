@@ -8,6 +8,7 @@ import { exams } from '../data/exams'
 import { subjectById, subjects } from '../data/curriculum'
 import { ExamBlock } from '../components/ExamQuiz'
 import { TRACK_LABELS, classLabel } from '../data/classes'
+import { ROSTERS } from '../data/rosters'
 
 // 배점 문자열("20점")에서 숫자 추출 — 숫자 없으면 상한 없음
 const maxOf = (points) => {
@@ -59,6 +60,20 @@ export default function AdminEvaluate() {
     if (!added.length) { setMsg('추가할 신규 등록 학생이 없습니다.'); return }
     setRows((prev) => [...prev, ...added])
     setMsg(`등록 학생 ${added.length}명을 불러왔습니다. 점수 입력 후 저장하세요.`)
+  }
+
+  // 자리배치표 명단 프리셋 불러오기 — 이미 있는 고유번호/성명은 건너뜀
+  const loadRoster = (rosterKey) => {
+    const r = ROSTERS[rosterKey]
+    if (!r) return
+    const existNo = new Set(rows.map((x) => x.student_no).filter(Boolean))
+    const existName = new Set(rows.map((x) => x.student_name.trim()).filter(Boolean))
+    const added = r.students
+      .filter((st) => !existNo.has(st.no) && !existName.has(st.name))
+      .map((st) => ({ ...newRow(), student_no: st.no, student_name: st.name, track: r.track, class_no: r.class_no }))
+    if (!added.length) { setMsg(`${r.label} 명단이 이미 모두 추가되어 있습니다.`); return }
+    setRows((prev) => [...prev, ...added])
+    setMsg(`${r.label} 명단 ${added.length}명 추가 (자리배치표 기준 · ${r.manager} 제외). 저장 전 성명 오탈자를 확인하세요.`)
   }
 
   const patchRow = (key, patch) =>
@@ -153,6 +168,11 @@ export default function AdminEvaluate() {
           <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={loadStudents}>
             👥 등록 학생 불러오기
           </button>
+          {Object.entries(ROSTERS).map(([k, r]) => (
+            <button key={k} className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={() => loadRoster(k)}>
+              📋 {r.label} 명단
+            </button>
+          ))}
           <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={() => setRows((p) => [...p, newRow()])}>
             + 행 추가(수기)
           </button>

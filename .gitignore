@@ -18,3 +18,4 @@ dist-textbook/
 # "실습교안" 정적 페이지 — prebuild/predev 가 자동 생성
 public/practice-textbook.html
 .env.local*
+docs/
