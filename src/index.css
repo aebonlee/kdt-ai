@@ -801,6 +801,10 @@ ul { list-style: none; }
   .admin-shell-main .container { padding: 0; }
 }
 
+/* 학습추천사이트 리드 문장 — 데스크톱 한 줄 유지, 좁은 화면은 자연 줄바꿈 */
+.rec-lead { white-space: nowrap; }
+@media (max-width: 860px) { .rec-lead { white-space: normal; } }
+
 /* 강의안 강조 — 형광펜(mark.hl)·굵게(b.rich-b)·밑줄(u.rich-u) */
 mark.hl { background: linear-gradient(transparent 52%, rgba(255, 213, 74, 0.55) 52%); color: inherit; font-weight: 700; padding: 0 1px; border-radius: 2px; }
 [data-theme="dark"] mark.hl { background: linear-gradient(transparent 52%, rgba(255, 213, 74, 0.28) 52%); }

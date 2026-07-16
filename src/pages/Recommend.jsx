@@ -12,8 +12,9 @@ export default function Recommend() {
         <div className="container">
           <span className="eyebrow">Recommended Sites</span>
           <h1>학습추천사이트</h1>
-          <p>
-            <span style={{ display: 'block' }}>이애본 강사가 제자들을 위해 만들어 운영하는 학습 사이트 {total}곳입니다. 도움이 된다면 편하게 이용하세요.</span>
+          <p style={{ maxWidth: 'none' }}>
+            {/* 첫 문장은 한 줄 유지(기본 640px 폭 제한 해제) — 좁은 화면에서만 자연 줄바꿈 허용 */}
+            <span className="rec-lead" style={{ display: 'block' }}>이애본 강사가 제자들을 위해 만들어 운영하는 학습 사이트 {total}곳입니다. 도움이 된다면 편하게 이용하세요.</span>
             <span style={{ display: 'block' }}>디자인보다 콘텐츠 중심으로 개발해 내용은 검증된 자료들입니다.</span>
           </p>
         </div>
