@@ -3,6 +3,7 @@ import { prepTopics, prepById } from '../data/resources'
 import Rating from '../components/Rating'
 import { deepFor } from '../data/prepdeep'
 import CodeBlock from '../components/CodeBlock'
+import Rich from '../components/Rich'
 
 function Bullets({ items }) {
   return (
@@ -10,7 +11,7 @@ function Bullets({ items }) {
       {items.map((it, i) => (
         <li key={i} style={{ position: 'relative', paddingLeft: 16, fontSize: 14, color: 'var(--navy-700)' }}>
           <span style={{ position: 'absolute', left: 2, top: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)' }} />
-          {it}
+          <Rich text={it} />
         </li>
       ))}
     </ul>
@@ -79,7 +80,7 @@ export default function PrepDetail() {
             {/* 전문 개요 */}
             {d?.overview && (
               <div className="box box-tips" style={{ marginBottom: 8 }}>
-                <p style={{ fontSize: 14.5, color: 'var(--navy-700)', lineHeight: 1.85 }}>{d.overview}</p>
+                <p style={{ fontSize: 14.5, color: 'var(--navy-700)', lineHeight: 1.85 }}><Rich text={d.overview} /></p>
               </div>
             )}
 
@@ -113,11 +114,11 @@ export default function PrepDetail() {
             <div className="grid grid-2" style={{ marginTop: 16 }}>
               <div className="box box-practice">
                 <div className="box-h">🧪 실습 과제</div>
-                <ol>{t.practice.map((p, i) => <li key={i}>{p}</li>)}</ol>
+                <ol>{t.practice.map((p, i) => <li key={i}><Rich text={p} /></li>)}</ol>
               </div>
               <div className="box box-tips">
                 <div className="box-h">💡 팁</div>
-                <ul>{t.tips.map((p, i) => <li key={i}>{p}</li>)}</ul>
+                <ul>{t.tips.map((p, i) => <li key={i}><Rich text={p} /></li>)}</ul>
               </div>
             </div>
 
@@ -141,7 +142,7 @@ export default function PrepDetail() {
                   </div>
                   <CodeBlock code={ex.code} lang={ex.lang} />
                   {ex.note && (
-                    <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7 }}>💡 {ex.note}</p>
+                    <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7 }}>💡 <Rich text={ex.note} /></p>
                   )}
                 </div>
               ))}
@@ -152,13 +153,13 @@ export default function PrepDetail() {
               {d?.pitfalls?.length > 0 && (
                 <div className="box box-tips">
                   <div className="box-h">⚠️ 자주 하는 실수</div>
-                  <ul>{d.pitfalls.map((p, i) => <li key={i}>{p}</li>)}</ul>
+                  <ul>{d.pitfalls.map((p, i) => <li key={i}><Rich text={p} /></li>)}</ul>
                 </div>
               )}
               {d?.checklist?.length > 0 && (
                 <div className="box box-practice">
                   <div className="box-h">✅ 체크리스트</div>
-                  <ul>{d.checklist.map((p, i) => <li key={i}>{p}</li>)}</ul>
+                  <ul>{d.checklist.map((p, i) => <li key={i}><Rich text={p} /></li>)}</ul>
                 </div>
               )}
             </div>

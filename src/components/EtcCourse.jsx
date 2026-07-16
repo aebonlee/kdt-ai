@@ -1,5 +1,6 @@
 // 기타(타 강사 진행) 과목 상세 — 학습내용 요약 + 분반별 진행 시기.
 // 학생이 담당 강의 앞뒤 과목을 예습·복습할 수 있게 안내한다.
+import Rich from './Rich'
 import { Link } from 'react-router-dom'
 import { otherCourses } from '../data/othercontent'
 import { otherDeep } from '../data/otherdeep'
@@ -57,7 +58,7 @@ export default function EtcCourse({ courseId }) {
           <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>📖 주요 학습내용</h3>
           <div className="card" style={{ marginTop: 12 }}>
             <ul className="dot-list">
-              {c.topics.map((t, i) => <li key={i}>{t}</li>)}
+              {c.topics.map((t, i) => <li key={i}><Rich text={t} /></li>)}
             </ul>
           </div>
         </>
@@ -70,7 +71,7 @@ export default function EtcCourse({ courseId }) {
             {deep.concepts.map((k, i) => (
               <dl key={i} className="concept">
                 <dt>{k.term}</dt>
-                <dd style={{ whiteSpace: 'pre-line' }}>{k.desc}</dd>
+                <dd style={{ whiteSpace: 'pre-line' }}><Rich text={k.desc} /></dd>
               </dl>
             ))}
           </div>
@@ -88,7 +89,7 @@ export default function EtcCourse({ courseId }) {
                 </div>
                 <CodeBlock code={ex.code} lang={ex.lang} />
                 {ex.note && (
-                  <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>💡 {ex.note}</p>
+                  <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>💡 <Rich text={ex.note} /></p>
                 )}
               </div>
             ))}
@@ -99,7 +100,7 @@ export default function EtcCourse({ courseId }) {
       {c.tip && (
         <div className="box box-tips" style={{ marginTop: 20 }}>
           <div className="box-h">🔗 담당 과목과의 연결</div>
-          <p style={{ margin: 0, whiteSpace: 'pre-line' }}>{c.tip}</p>
+          <p style={{ margin: 0, whiteSpace: 'pre-line' }}><Rich text={c.tip} /></p>
         </div>
       )}
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } from '../data/curriculum'
 import { PERIOD_TIMES } from '../data/lectureperiods'
 import { modeOf, periodTagsOf } from '../data/lecturemodes'
+import Rich from '../components/Rich'
 import CodeBlock from '../components/CodeBlock'
 import Rating from '../components/Rating'
 import ExamQuiz from '../components/ExamQuiz'
@@ -303,7 +304,7 @@ export default function Lectures() {
                 <div className="box-h">🎯 학습 목표</div>
                 <ul>
                   {d.objectives.map((o, i) => (
-                    <li key={i}>{o}</li>
+                    <li key={i}><Rich text={o} /></li>
                   ))}
                 </ul>
               </div>
@@ -326,7 +327,7 @@ export default function Lectures() {
                   {keyConcepts.map((c, i) => (
                     <dl key={i} className="concept">
                       <dt>{c.term}</dt>
-                      <dd style={{ whiteSpace: 'pre-line' }}>{c.desc}</dd>
+                      <dd style={{ whiteSpace: 'pre-line' }}><Rich text={c.desc} /></dd>
                     </dl>
                   ))}
                 </div>
@@ -343,7 +344,7 @@ export default function Lectures() {
                   {deepTheory.theory.map((t, i) => (
                     <div key={i} className="card">
                       <h4 style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 6 }}>{t.h}</h4>
-                      <p style={{ fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.85, whiteSpace: 'pre-line' }}>{t.body}</p>
+                      <p style={{ fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.85, whiteSpace: 'pre-line' }}><Rich text={t.body} /></p>
                     </div>
                   ))}
                 </div>
@@ -374,7 +375,7 @@ export default function Lectures() {
                           {items.map((it, k) => (
                             <li key={k} style={{ position: 'relative', paddingLeft: 16, fontSize: 13.5, color: 'var(--navy-700)' }}>
                               <span style={{ position: 'absolute', left: 2, top: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)' }} />
-                              {it}
+                              <Rich text={it} />
                             </li>
                           ))}
                         </ul>
@@ -448,7 +449,7 @@ export default function Lectures() {
                   <div className="box-h">{plan.practice.title}</div>
                   <ol>
                     {plan.practice.steps.map((s, i) => (
-                      <li key={i}>{s}</li>
+                      <li key={i}><Rich text={s} /></li>
                     ))}
                   </ol>
                   <p style={{ marginTop: 12, fontSize: 14, color: 'var(--navy-700)' }}>
@@ -471,7 +472,7 @@ export default function Lectures() {
                       <div className="box-h">{lab.title}</div>
                       <ol>
                         {lab.steps.map((s, k) => (
-                          <li key={k}>{s}</li>
+                          <li key={k}><Rich text={s} /></li>
                         ))}
                       </ol>
                     </div>
@@ -505,7 +506,7 @@ export default function Lectures() {
                       <CodeBlock code={ex.code} lang={ex.lang} />
                       {ex.note && (
                         <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
-                          💡 {ex.note}
+                          💡 <Rich text={ex.note} />
                         </p>
                       )}
                     </div>
@@ -539,7 +540,7 @@ export default function Lectures() {
                       <CodeBlock code={ex.code} lang={ex.lang} />
                       {ex.note && (
                         <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
-                          💡 {ex.note}
+                          💡 <Rich text={ex.note} />
                         </p>
                       )}
                     </div>
@@ -557,7 +558,7 @@ export default function Lectures() {
                 <div className="box box-practice" style={{ marginTop: 12 }}>
                   <ol>
                     {detail.homework.map((h, i) => (
-                      <li key={i}>{h}</li>
+                      <li key={i}><Rich text={h} /></li>
                     ))}
                   </ol>
                 </div>

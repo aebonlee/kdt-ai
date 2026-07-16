@@ -23,13 +23,15 @@ function TrackProgress({ profile }) {
   const doneCount = checkable.filter((it) => done[it.date]).length
   const pct = checkable.length ? Math.round((doneCount / checkable.length) * 100) : 0
 
-  // 월별 그룹
-  const months = []
+  // 과목 순서 그룹 — 우리 반이 수강하는 순서(첫 수업일 기준)대로 과목별 이해도를 확인한다.
+  const groups = []
   for (const it of schedule) {
-    const m = it.date.slice(0, 7)
-    let g = months.find((x) => x.m === m)
-    if (!g) { g = { m, items: [] }; months.push(g) }
+    let g = groups.find((x) => x.name === it.name)
+    if (!g) { g = { name: it.name, event: it.event, mine: it.mine, lead: new Set(), prac: new Set(), items: [] }; groups.push(g) }
     g.items.push(it)
+    if (it.mine) g.mine = true
+    if (it.leadBy) g.lead.add(it.leadBy)
+    if (it.practiceBy) g.prac.add(it.practiceBy)
   }
 
   return (
@@ -61,15 +63,28 @@ function TrackProgress({ profile }) {
           </div>
         </div>
 
-        {months.map((g) => {
+        {groups.map((g, gi) => {
           const mCheckable = g.items.filter((it) => !it.event)
           const mDone = mCheckable.filter((it) => done[it.date]).length
+          const gPct = mCheckable.length ? Math.round((mDone / mCheckable.length) * 100) : 0
           return (
-            <div key={g.m} className="subject">
+            <div key={g.name} className="subject">
               <div className="subject-head">
-                <h3>{Number(g.m.slice(5))}월</h3>
-                <span className="chip chip-day">{mDone} / {mCheckable.length}일</span>
+                <span className="chip chip-code">{String(gi + 1).padStart(2, '0')}</span>
+                <h3 style={!g.mine && !g.event ? { color: 'var(--etc-green)' } : undefined}>{g.name}</h3>
+                {!g.event && <span className="chip chip-day">{mDone} / {mCheckable.length}일 · {gPct}%</span>}
               </div>
+              {!g.event && (
+                <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--ink-soft)' }}>
+                  {g.lead.size > 0 && <>주강사 <b style={{ color: 'var(--navy-700)' }}>{[...g.lead].join(' · ')}</b></>}
+                  {g.prac.size > 0 && <> · 실습강사 <b style={{ color: g.mine ? 'var(--gold)' : 'var(--navy-700)' }}>{[...g.prac].join(' · ')}</b></>}
+                </p>
+              )}
+              {!g.event && (
+                <div className="progressbar" style={{ margin: '10px 0 4px' }}>
+                  <span style={{ width: `${gPct}%` }} />
+                </div>
+              )}
               <div className="grid grid-2" style={{ marginTop: 12 }}>
                 {g.items.map((it) => {
                   const isDone = !!done[it.date]
@@ -193,8 +208,8 @@ export default function Progress() {
           <p>
             {studentView ? (
               <>
-                <span style={{ display: 'block' }}>소속 분반({classLabel(profile.track, profile.class_no)})이 수강하는 일정 기준의 체크리스트입니다.</span>
-                <span style={{ display: 'block' }}>수업 내용을 이해했으면 체크하세요. 체크한 만큼 진도율이 올라갑니다.</span>
+                <span style={{ display: 'block' }}>소속 분반({classLabel(profile.track, profile.class_no)})이 수강하는 과목 순서 기준의 체크리스트입니다.</span>
+                <span style={{ display: 'block' }}>과목별로 수업 내용을 이해했으면 날짜에 체크하세요. 체크한 만큼 진도율이 올라갑니다.</span>
               </>
             ) : (
               <>

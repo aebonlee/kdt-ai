@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { trackSchedule } from '../data/trackschedule'
+import { CURRI_META, CURRI_GROUPS } from '../data/currihours'
 import { useAuth } from '../contexts/AuthContext'
 import { useProfile } from '../hooks/useProfile'
 
@@ -28,16 +29,19 @@ export default function Tracks() {
   const track = tab.tracks[Math.min(trackIdx, tab.tracks.length - 1)].t
 
   const schedule = useMemo(() => trackSchedule(track), [track])
+  // 시간 배정 열 선택 — 판교(p) / 광주·울산(k)
+  const hourKey = campus === '판교' ? 'p' : 'k'
 
   // 교과목 요약 — 같은 과목명끼리 그룹(기간·일수·강사)
   const subjects = useMemo(() => {
     const map = new Map()
     for (const it of schedule) {
       if (it.event) continue
-      if (!map.has(it.name)) map.set(it.name, { name: it.name, mine: it.mine, by: new Set(), dates: [], link: it.link })
+      if (!map.has(it.name)) map.set(it.name, { name: it.name, mine: it.mine, lead: new Set(), prac: new Set(), dates: [], link: it.link })
       const g = map.get(it.name)
       g.dates.push(it.date)
-      if (it.by) g.by.add(it.by)
+      if (it.leadBy) g.lead.add(it.leadBy)
+      if (it.practiceBy) g.prac.add(it.practiceBy)
       if (it.mine) g.mine = true
     }
     return [...map.values()].sort((a, b) => a.dates[0].localeCompare(b.dates[0]))
@@ -64,9 +68,9 @@ export default function Tracks() {
           <span className="eyebrow">Tracks</span>
           <h1>과정별 안내</h1>
           <p>
-            <span style={{ display: 'block' }}>캠퍼스(분반)별 교과목과 시간표입니다. 학생은 소속 교실에서 수강하고, 강사가 캠퍼스로 이동해 강의합니다.</span>
+            <span style={{ display: 'block' }}>캠퍼스(분반)별 교과목과 시간표입니다. 과목마다 교안을 만든 주강사와 교실에서 진행하는 실습강사가 함께합니다.</span>
             <span style={{ display: 'block' }}>
-              <b style={{ color: 'var(--gold)' }}>인디고 = 이애본 강사 담당</b> · <b style={{ color: 'var(--etc-green)' }}>다크그린 = 타 강사 진행</b>
+              <b style={{ color: 'var(--gold)' }}>인디고 = 이애본 실습강사 진행</b> · <b style={{ color: 'var(--etc-green)' }}>다크그린 = 타 실습강사 진행</b>
             </span>
           </p>
           {/* 캠퍼스 탭 */}
@@ -153,7 +157,14 @@ export default function Tracks() {
                   </h3>
                   <p style={{ color: 'var(--ink-soft)', fontSize: 12.5, marginTop: 6 }}>
                     {fmt(s.dates[0])}{s.dates.length > 1 ? ` ~ ${fmt(s.dates[s.dates.length - 1])}` : ''}
-                    {!s.mine && s.by.size > 0 ? ` · ${[...s.by].join(' · ')} 강사` : ''}
+                  </p>
+                  <p style={{ fontSize: 12, marginTop: 4, lineHeight: 1.6 }}>
+                    {s.lead.size > 0 && <span style={{ display: 'block', color: 'var(--navy-700)' }}><b>주강사</b> {[...s.lead].join(' · ')}</span>}
+                    {s.prac.size > 0 && (
+                      <span style={{ display: 'block', color: s.mine ? 'var(--gold)' : 'var(--ink-soft)', fontWeight: s.mine ? 800 : 600 }}>
+                        <b style={{ color: 'var(--navy-700)' }}>실습강사</b> {[...s.prac].join(' · ')}
+                      </span>
+                    )}
                   </p>
                 </Wrapper>
               )
@@ -173,7 +184,7 @@ export default function Tracks() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 560 }}>
                   <thead>
                     <tr style={{ background: 'var(--navy-50)' }}>
-                      {['날짜', '교과목', '강사', ''].map((h, i) => (
+                      {['날짜', '교과목', '주강사', '실습강사', ''].map((h, i) => (
                         <th key={i} style={{ textAlign: 'left', padding: '8px 12px', color: 'var(--navy-700)', fontWeight: 800, whiteSpace: 'nowrap', borderBottom: '1px solid var(--line)' }}>{h}</th>
                       ))}
                     </tr>
@@ -190,8 +201,11 @@ export default function Tracks() {
                           <td style={{ padding: '8px 12px', fontWeight: 700, color: it.event ? 'var(--ink-soft)' : it.mine ? 'var(--navy-800)' : 'var(--etc-green)' }}>
                             {it.name}
                           </td>
+                          <td style={{ padding: '8px 12px', whiteSpace: 'nowrap', fontSize: 12.5, color: 'var(--navy-700)', fontWeight: 600 }}>
+                            {it.event ? '-' : it.leadBy || '-'}
+                          </td>
                           <td style={{ padding: '8px 12px', whiteSpace: 'nowrap', fontSize: 12.5, color: it.mine ? 'var(--gold)' : 'var(--ink-soft)', fontWeight: it.mine ? 800 : 600 }}>
-                            {it.event ? '-' : it.mine ? '이애본' : it.by || '-'}
+                            {it.event ? '-' : it.leadBy && it.leadBy === it.practiceBy ? '주강사 직강' : it.practiceBy || '-'}
                           </td>
                           <td style={{ padding: '8px 12px', whiteSpace: 'nowrap' }}>
                             {it.link && (
@@ -208,6 +222,46 @@ export default function Tracks() {
           ))}
           <p style={{ marginTop: 14, fontSize: 12.5, color: 'var(--ink-soft)' }}>
             ※ 11월 이후는 팀프로젝트 · 최종평가 기간입니다. 상세는 팀 프로젝트 메뉴를 참고하세요.
+          </p>
+
+          {/* 교과목 시간 배정 — 공식 커리큘럼(0602 수정본) 기준, 지역별 시수 */}
+          <div className="section-head" style={{ marginTop: 44 }}>
+            <span className="eyebrow">Hours</span>
+            <h2>{campus} 교과목 시간 배정</h2>
+            <p>
+              공식 커리큘럼 기준 — {CURRI_META[hourKey].label} 총 <b>{CURRI_META[hourKey].total}시간</b> · 교육기간 {CURRI_META[hourKey].period}
+            </p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {CURRI_GROUPS.map((g) => (
+              <div key={g.name} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 16px', background: 'var(--navy-50)', borderBottom: '1px solid var(--line)' }}>
+                  <b style={{ fontSize: 14, color: 'var(--navy-800)' }}>{g.name}</b>
+                  <span className="chip chip-day" style={{ flex: '0 0 auto' }}>{g[hourKey]}시간</span>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <tbody>
+                    {g.items.map((it, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid var(--line)' }}>
+                        <td style={{ padding: '7px 16px', color: 'var(--navy-700)', fontWeight: 600 }}>{it.name}</td>
+                        <td style={{ padding: '7px 16px', whiteSpace: 'nowrap', fontSize: 12.5, color: 'var(--ink-soft)' }}>{it.author ? `주강사 ${it.author}` : ''}</td>
+                        <td style={{ padding: '7px 16px', whiteSpace: 'nowrap', textAlign: 'right', fontWeight: 800, color: 'var(--navy-800)' }}>{it.h ?? it[hourKey]}h</td>
+                      </tr>
+                    ))}
+                    {g.mini && (
+                      <tr>
+                        <td style={{ padding: '7px 16px', fontWeight: 800, color: 'var(--gold)' }}>{g.mini.name}</td>
+                        <td style={{ padding: '7px 16px', whiteSpace: 'nowrap', fontSize: 12.5, color: 'var(--ink-soft)' }}>주강사 {g.mini.author}</td>
+                        <td style={{ padding: '7px 16px', whiteSpace: 'nowrap', textAlign: 'right', fontWeight: 800, color: 'var(--gold)' }}>{g.mini.h}h</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+          <p style={{ marginTop: 12, fontSize: 12.5, color: 'var(--ink-soft)' }}>
+            ※ 총 시수는 변경 불가(공식 커리큘럼 명기) · 판교 862시간, 광주·울산 818시간 — 차이는 팀 프로젝트(272↔244h)·SK Soft Skills(8↔4h)·도메인 특강(24↔16h)·수료식(10↔6h)입니다.
           </p>
         </div>
       </section>

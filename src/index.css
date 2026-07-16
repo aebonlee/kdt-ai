@@ -800,3 +800,9 @@ ul { list-style: none; }
   .admin-shell-link.active { border-left: none; }
   .admin-shell-main .container { padding: 0; }
 }
+
+/* 강의안 강조 — 형광펜(mark.hl)·굵게(b.rich-b)·밑줄(u.rich-u) */
+mark.hl { background: linear-gradient(transparent 52%, rgba(255, 213, 74, 0.55) 52%); color: inherit; font-weight: 700; padding: 0 1px; border-radius: 2px; }
+[data-theme="dark"] mark.hl { background: linear-gradient(transparent 52%, rgba(255, 213, 74, 0.28) 52%); }
+b.rich-b { color: var(--navy-800); font-weight: 800; }
+u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
