@@ -21,6 +21,8 @@ export const ROSTERS = {
       { no: 'U133', name: '이*목', team: 6 }, { no: 'U134', name: '장*훈', team: 3 }, { no: 'U135', name: '정*욱', team: 2 },
       { no: 'U136', name: '정*지', team: 2 }, { no: 'U137', name: '정*윤', team: 3 }, { no: 'U138', name: '한*진', team: 5 },
       { no: 'U139', name: '허*원', team: 6 },
+      // 추가 등록 2명(2026-07-16 대표 지시) — 가나다순 뒤에 붙임(고유번호 순서 유지)
+      { no: 'U140', name: '백*혁', team: 3 }, { no: 'U141', name: '안*준', team: 6 },
     ],
   },
   p5_7: {
