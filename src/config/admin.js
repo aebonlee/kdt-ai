@@ -4,6 +4,7 @@ export const ADMIN_EMAILS = [
   'aebon@kyonggi.ac.kr', // 구글 로그인
   'aebon@kakao.com', // 카카오 로그인(주 사용)
   'boraborami@gmail.com', // 안보람 (운영 매니저 — 최고관리자, 2026-07-15 대표 지시)
+  'humanaiphd@gmail.com', // 임성렬 (주강사, 2026-07-16 추가)
 ]
 
 export const isAdmin = (user) =>
