@@ -191,6 +191,23 @@ export default function AdminEvaluate() {
     w.document.close()
   }
 
+  // 실습 제출 평가표 — 수업 결과 평가 취합 양식(2026-07-16 수령분)과 동일 레이아웃.
+  // 캠퍼스·반·조·이름은 명단 기준으로 채우고, 제출일·점수 칸은 비워 내려받아 취합에 쓴다.
+  const PRACTICE_COLS = ['Practice 1', 'Practice 2', '종합실습1', 'Practice 3', 'Practice 4', '종합실습2']
+  const exportPracticeSheet = () => {
+    if (!unitRoster) return
+    const campus = unit.campus.replace(/ \d층$/, '') // "판교 5층" → "판교" (양식의 캠퍼스 표기)
+    const head = ['캠퍼스', '반', '조', '이름', '사진', ...PRACTICE_COLS.flatMap((c) => [c, '제출일', '점수'])]
+    const body = unitRoster.students.map((st) => [
+      campus, unit.classNo, st.team ?? '', st.name, '', ...PRACTICE_COLS.flatMap(() => ['', '', '']),
+    ])
+    const ws = XLSX.utils.aoa_to_sheet([head, ...body])
+    ws['!cols'] = head.map((h, i) => ({ wch: i === 3 ? 10 : i < 5 ? 7 : /제출일/.test(h) ? 11 : /점수/.test(h) ? 7 : 13 }))
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '실습 제출 평가')
+    XLSX.writeFile(wb, `SKALA4기_실습제출평가표_${unit.campus}${unit.cls}.xlsx`)
+  }
+
   // CSV 내보내기 — 원본 평가지 "평가결과" 시트 컬럼 그대로
   const exportCsv = () => {
     const subj = subjectById(subjectId)
@@ -316,6 +333,12 @@ export default function AdminEvaluate() {
           <button className="btn btn-ghost" style={{ padding: '8px 18px', fontSize: 13 }} onClick={exportPdf}>
             🖨 PDF 저장
           </button>
+          {unitRoster && (
+            <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={exportPracticeSheet}
+              title="캠퍼스·반·조·이름이 채워진 실습 제출 취합 양식(Practice 1~4 · 종합실습 1~2, 제출일/점수 공란)">
+              ⬇ 실습 제출표
+            </button>
+          )}
           <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={exportCsv}>
             CSV
           </button>
