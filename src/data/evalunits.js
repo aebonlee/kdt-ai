@@ -2,6 +2,7 @@
 // 원천: adminschedule.js myPairings(반별 시간표_F 판독본). 과목을 여러 분반에 진행하면 분반마다 별도 단위.
 import { myPairings } from './adminschedule'
 import { subjectById } from './curriculum'
+import { TRACK_LABELS, CLASS_MAP } from './classes'
 
 const CAMPUS_TRACK = { '광주': 'gj', '울산': 'us', '판교 4층': 'p4', '판교 5층': 'p5' }
 
@@ -37,6 +38,33 @@ export const evalUnits = (() => {
 })()
 
 export const unitByKey = (key) => evalUnits.find((u) => u.key === key)
+
+// 전체 분반 조회 단위 — 주강사·운영 매니저(관리자)가 담당 외 분반의 평가도
+// 확인할 수 있게, 임의의 과목 × 분반을 같은 단위 형태로 만든다. key 접두어 'x|'.
+export const customKey = (subjectId, track, classNo) => `x|${subjectId}|${track}|${classNo}`
+
+export function customUnit(key) {
+  if (!key || !key.startsWith('x|')) return null
+  const [, subjectId, track, classNoS] = key.split('|')
+  const classNo = Number(classNoS)
+  if (!TRACK_LABELS[track] || !classNo) return null
+  return {
+    key,
+    subjectId,
+    subjectName: subjectById(subjectId)?.name || subjectId,
+    campus: TRACK_LABELS[track],
+    cls: `${classNo}반`,
+    room: CLASS_MAP[track]?.find((c) => c.no === classNo)?.room || '',
+    track,
+    classNo,
+    dates: [],
+    dateLabel: '전체 조회',
+    custom: true,
+  }
+}
+
+// 담당 단위 우선, 아니면 전체 조회 단위로 해석
+export const resolveUnit = (key) => unitByKey(key) || customUnit(key)
 
 // 단위 표시명: "데이터 분석을 위한 Python 이해 — 울산 4반 · 7/15~7/16"
 export const unitLabel = (u) => `${u.subjectName} — ${u.campus} ${u.cls} · ${u.dateLabel}`

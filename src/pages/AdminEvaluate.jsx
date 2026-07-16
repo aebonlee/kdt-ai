@@ -9,7 +9,7 @@ import { subjectById, subjects } from '../data/curriculum'
 import { ExamBlock } from '../components/ExamQuiz'
 import { TRACK_LABELS, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
-import { evalUnits, unitByKey, unitLabel } from '../data/evalunits'
+import { evalUnits, unitByKey, unitLabel, customKey, resolveUnit } from '../data/evalunits'
 import { useSearchParams } from 'react-router-dom'
 import * as XLSX from 'xlsx'
 
@@ -28,17 +28,18 @@ const newRow = () => ({
 export default function AdminEvaluate() {
   const { user } = useAuth()
   const [params, setParams] = useSearchParams()
-  // 평가 단위 = 과목 × 담당 분반(강의일자) — 분반마다 개별 평가
+  // 평가 단위 = 과목 × 담당 분반(강의일자) — 분반마다 개별 평가.
+  // 담당 외 분반은 전체 조회 단위('x|' key)로 열람한다(주강사·운영 매니저용).
   const unitsWithExam = evalUnits.filter((u) => exams[u.subjectId])
-  const initUnit = unitByKey(params.get('unit')) && exams[unitByKey(params.get('unit')).subjectId]
+  const initUnit = resolveUnit(params.get('unit')) && exams[resolveUnit(params.get('unit')).subjectId]
     ? params.get('unit') : unitsWithExam[0]?.key
   const [unitKey, setUnitKey] = useState(initUnit)
   // 좌측 메뉴에서 ?unit= 이 바뀌면 동기화
   useEffect(() => {
     const q = params.get('unit')
-    if (q && unitByKey(q) && q !== unitKey) setUnitKey(q)
+    if (q && resolveUnit(q) && q !== unitKey) setUnitKey(q)
   }, [params])
-  const unit = unitByKey(unitKey) || unitsWithExam[0]
+  const unit = resolveUnit(unitKey) || unitsWithExam[0]
   const subjectId = unit?.subjectId
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(false)
@@ -149,9 +150,11 @@ export default function AdminEvaluate() {
     ])
     return { head, body }
   }
+  // 담당 단위는 평가자 이애본 고정, 전체 조회 단위는 관리자 표기
+  const evaluator = unit?.custom ? '관리자' : '이애본'
   const exportBase = () => {
     const subj = subjectById(subjectId)
-    return `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_이애본`
+    return `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_${evaluator}`
   }
 
   // 엑셀(xlsx) 내보내기
@@ -181,7 +184,7 @@ export default function AdminEvaluate() {
   td.num { text-align: center; white-space: nowrap; }
 </style></head><body>
 <h1>SKALA 4기 종합실습 평가 — ${esc(subjectById(subjectId)?.name || '')}</h1>
-<div class="sub">${esc(unit.campus)} ${esc(unit.cls)} (${esc(unit.room)}) · 강의일 ${esc(unit.dateLabel)} · 평가자: 이애본 · 출력일 ${new Date().toLocaleDateString('ko-KR')}</div>
+<div class="sub">${esc(unit.campus)} ${esc(unit.cls)} (${esc(unit.room)}) · 강의일 ${esc(unit.dateLabel)} · 평가자: ${esc(evaluator)} · 출력일 ${new Date().toLocaleDateString('ko-KR')}</div>
 <table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
 <tbody>${body.map((r) => `<tr>${r.map((v, i) => `<td class="${i >= 3 && i < 3 + criteria.length + 1 ? 'num' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>
 <script>window.onload = () => setTimeout(() => window.print(), 300)</` + `script></body></html>`)
@@ -203,7 +206,7 @@ export default function AdminEvaluate() {
     const csv = '﻿' + [head.map(esc).join(','), ...lines].join('\r\n')
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
-    a.download = `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_이애본.csv`
+    a.download = `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_${evaluator}.csv`
     a.click()
     URL.revokeObjectURL(a.href)
   }
@@ -245,8 +248,37 @@ export default function AdminEvaluate() {
         {unit && (
           <p style={{ marginTop: 10, fontSize: 13.5, fontWeight: 800, color: 'var(--navy-800)' }}>
             {unitLabel(unit)} <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>({unit.room})</span>
+            {unit.custom && <span className="chip chip-day" style={{ marginLeft: 8 }}>담당 외 분반 · 전체 조회</span>}
           </p>
         )}
+
+        {/* 전체 분반 조회 — 주강사·운영 매니저는 담당 외 분반의 평가도 확인·입력할 수 있다 */}
+        <div style={{ marginTop: 10, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--navy-700)' }}>🔍 전체 분반 조회</span>
+          <select
+            value={unit?.subjectId || ''}
+            onChange={(e) => setParams({ unit: customKey(e.target.value, unit?.track || 'gj', unit?.classNo || 1) })}
+            style={{ padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5 }}
+          >
+            {subjects.filter((s) => exams[s.id]).map((s) => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+          <select
+            value={unit ? `${unit.track}|${unit.classNo}` : ''}
+            onChange={(e) => {
+              const [t, n] = e.target.value.split('|')
+              setParams({ unit: customKey(unit.subjectId, t, Number(n)) })
+            }}
+            style={{ padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5 }}
+          >
+            {Object.entries(TRACK_LABELS).flatMap(([t, label]) =>
+              ({ gj: [1, 2, 3, 4], us: [1, 2, 3, 4], p4: [1, 2, 3, 4, 5], p5: [6, 7, 8, 9, 10] })[t].map((n) => (
+                <option key={`${t}${n}`} value={`${t}|${n}`}>{label} {n}반</option>
+              )))}
+          </select>
+          <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>담당 분반(강의일자 포함)은 좌측 메뉴에서 선택하세요.</span>
+        </div>
 
         {/* 도구줄 */}
         <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>

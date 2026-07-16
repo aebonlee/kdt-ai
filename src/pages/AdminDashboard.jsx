@@ -6,8 +6,9 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase, hasSupabase } from '../lib/supabase'
 import { TRACK_LABELS, CLASS_MAP, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
-import { evalUnits } from '../data/evalunits'
+import { evalUnits, customKey } from '../data/evalunits'
 import { exams } from '../data/exams'
+import { subjectById } from '../data/curriculum'
 
 const fmtDate = (s) => (s ? new Date(s).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }) : '-')
 
@@ -54,6 +55,16 @@ export default function AdminDashboard() {
 
   // 담당 분반의 평가 단위(과목×분반) 진행 현황
   const unitsWithExam = evalUnits.filter((u) => exams[u.subjectId])
+
+  // 담당 외 분반 평가(타 강사 입력분) — 주강사·운영 매니저가 전체를 확인한다
+  const extraEvals = Object.entries(evalCounts)
+    .map(([k, n]) => {
+      const [subjectId, track, cls] = k.split('|')
+      return { subjectId, track, classNo: Number(cls), n }
+    })
+    .filter((e) => TRACK_LABELS[e.track] && e.classNo &&
+      !unitsWithExam.some((u) => u.subjectId === e.subjectId && u.track === e.track && u.classNo === e.classNo))
+    .sort((a, b) => a.subjectId.localeCompare(b.subjectId) || a.track.localeCompare(b.track) || a.classNo - b.classNo)
 
   return (
     <section className="section">
@@ -131,6 +142,25 @@ export default function AdminDashboard() {
             )
           })}
         </div>
+
+        {/* 담당 외 분반 평가 현황 — 관리자 전체 확인 */}
+        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>전체 평가 현황 — 담당 외 분반</h2>
+        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>
+          주강사·운영 매니저는 관리자로 모든 분반의 평가 내용을 확인할 수 있습니다. 교과목 평가 화면의 "전체 분반 조회"로 임의 과목×분반도 열람됩니다.
+        </p>
+        {extraEvals.length ? (
+          <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+            {extraEvals.map((e) => (
+              <Link key={`${e.subjectId}|${e.track}|${e.classNo}`} to={`/admin/evaluate?unit=${encodeURIComponent(customKey(e.subjectId, e.track, e.classNo))}`} className="card" style={{ padding: '14px 16px' }}>
+                <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', lineHeight: 1.4 }}>{subjectById(e.subjectId)?.name || e.subjectId}</div>
+                <div style={{ marginTop: 4, fontSize: 12.5, color: 'var(--ink-soft)' }}>{classLabel(e.track, e.classNo)}</div>
+                <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: 'var(--gold)' }}>평가 입력 {e.n}명 →</div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p style={{ marginTop: 10, fontSize: 13, color: 'var(--ink-soft)' }}>담당 외 분반에 입력된 평가가 아직 없습니다.</p>
+        )}
 
         {/* 교수자 명단 (분리) */}
         <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>교수자 명단</h2>
