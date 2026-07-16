@@ -27,6 +27,7 @@ const References = lazy(() => import('./pages/References'))
 const Progress = lazy(() => import('./pages/Progress'))
 const Login = lazy(() => import('./pages/Login'))
 const Board = lazy(() => import('./pages/Board'))
+const Recommend = lazy(() => import('./pages/Recommend'))
 const BoardDetail = lazy(() => import('./pages/BoardDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Admin = lazy(() => import('./pages/Admin'))
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/board" element={<RequireAuth><Board /></RequireAuth>} />
             <Route path="/board/:id" element={<RequireAuth><BoardDetail /></RequireAuth>} />
+            <Route path="/recommend" element={<Recommend />} />
             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
 
             {/* 관리자(강사) 전용 — 수업일정표(학생 비공개)·자료실·페어링 시간표 */}

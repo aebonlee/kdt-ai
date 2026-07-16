@@ -17,6 +17,7 @@ const nav = [
   { to: '/reference', label: '참고자료' },
   { to: '/progress', label: '학습관리' },
   { to: '/board', label: '게시판' },
+  { to: '/recommend', label: '학습추천사이트' },
 ]
 
 export default function Header() {
