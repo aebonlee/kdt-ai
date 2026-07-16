@@ -20,6 +20,21 @@ export const DOCS_ROOT_FOLDER =
 // t: 표시 이름, id: 드라이브 파일ID, x: 확장자, b: 바이트
 export const docsGroups = [
   {
+    id: 'recv0716',
+    title: '[0716] 수령자료',
+    desc: '7/16 수령분 — 파이썬 Practice tips 답안 2종 · 실습 데이터(sales_100k) · 종합실습 평가 양식·작성예시 · 울산 실습 RAW · ZOOM 정보',
+    folder: 'https://drive.google.com/drive/folders/1__kGCvoPqX0MUUc99TeI2n-4BOkeEiGX',
+    files: [
+      { t: "Python Practice 3-4 tips (공식 기대답안)", id: "1uX20lOvbxGzRNrC8l8Q5sAolkXgCb5jy", x: "pdf", b: 213262, d: "2026-07-16" },
+      { t: "Python Practice 1-2 tips (공식 기대답안)", id: "1V8tmoJgLgXA5IUOQ7-aZciAwpfrX_0tM", x: "pdf", b: 208172, d: "2026-07-16" },
+      { t: "실습 데이터 sales_100k.csv (실물 100만 행 · 한글값 · 결측 포함)", id: "1WOy-8hBPNsMPXZzDRFJQW3kQmCzrhosW", x: "csv", b: 77483380, d: "2026-07-16" },
+      { t: "#(양식) 종합실습 평가_지역_과목명_(교수진 성명)", id: "12D9s8vlwupbDUdXNGw_rF1GsfGV-BF8B", x: "xlsx", b: 66818, d: "2026-07-16" },
+      { t: "종합실습 평가 작성예시 — sLLM·Fine Tuning (임성열)", id: "1Rc_zpbRtAntWG4dVhVFtqVnMpmJ6einz", x: "xlsx", b: 35950, d: "2026-07-16" },
+      { t: "실습 시행_울산_파이썬_RAW (4분반, 0716 최신)", id: "1mduiQhLnShFPCAwOzpatbNLUSbOCop95", x: "xlsx", b: 26355, d: "2026-07-16" },
+      { t: "SKALA 4기 통합 ZOOM 정보", id: "1QpexqmzrNZH01yr5MENFZfxKxISGeH3b", x: "xlsx", b: 12283, d: "2026-07-16" },
+    ],
+  },
+  {
     id: 'recv0715',
     title: '[0715] 수령자료',
     desc: '7/15 수령 신규·갱신분 — 교육환경 스크립트 v2/v3 · KDT 신판 · Prompt 교재·가이드 · 판교5층 시간표 양식',
