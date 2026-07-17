@@ -586,6 +586,13 @@ export const examplesExtra3 = {
       "code": "# [Practice 3·4 보완 안내] 배포된 sales_100k.csv 실물 확인 결과 (7/16)\n# · 실제 100만 행 × 11컬럼 (파일명의 100k보다 크다 — 성능 비교가 더 실감난다)\n# · 컬럼: order_id, order_date, region, category, product_name,\n#         quantity, unit_price, payment_method, customer_age, customer_gender, amount\n# · region·category 값은 한글! region 결측 10,000건 · category 결측 8,000건 존재\nimport pandas as pd\n\ndf = pd.read_csv('sales_100k.csv')\nprint(df.isnull().sum())          # region 10000 · category 8000 이 나오는 게 정상(파일 문제 아님)\n\nprint(df['region'].unique())      # ['인천' '부산' '서울' '광주' '울산' '경기' '대전' '대구' nan]\n\n# t-검정 그룹은 영어 'Seoul'이 아니라 한글 값으로! (영문으로 쓰면 빈 Series)\nseoul = df.loc[df['region'] == '서울', 'amount']\nbusan = df.loc[df['region'] == '부산', 'amount']\nprint(len(seoul), len(busan))     # 247558, 119425 — 값이 잡히는지 꼭 확인\n\n# 카이제곱용 payment_method 는 카드·현금·계좌이체·포인트 4종(결측 없음)",
       "note": "실물 파일 점검 결과다. ① 결측치가 일부러 심어져 있으니 isnull().sum() 출력이 0이 아니라고 당황하지 말 것(EDA 채점 포인트), ② region·category가 한글 값이므로 조건 필터와 t-검정 그룹 추출에 '서울'·'부산'처럼 한글로 써야 한다, ③ 실물이 100만 행이라 Pandas vs Polars vs DuckDB 성능 차이가 확실히 보인다."
     }
+,
+    {
+      "title": "실습교수 공유 링크 — DuckDB 공식 블로그 · 종합실습 가이드 (수업 중 공지)",
+      "lang": "text",
+      "code": "수업 중(7/16) 실습교수들이 전 분반에 공유한 자료다.\n\n[백정열 교수 — 전 분반 공지]\n· DuckDB 공식 블로그: https://duckdb.org/news/\n  Practice 3에서 쓴 DuckDB의 릴리스 소식·활용 사례가 정리된 공식 채널.\n  \"CSV에 바로 SQL\"이 어디까지 발전했는지 훑어보면 도구 선택 감이 생긴다.\n\n[조홍근 실습교수 — 울산 2반 공유]\n· 종합실습 가이드 다운로드: https://tinyurl.com/sk-python\n· 팀으로 실습하더라도 제출은 각자(개개인) 해야 한다는 점을 재강조.\n\n[수업 마무리 안내]\n· 파이썬 과목 Quiz는 구글폼으로 제출(채널 공지 링크).\n· 백정열 교수: \"10월 Vector DB 과정에서 다시 만난다 — 그때는 자신 있게 파이썬 잘 합니다!라고 해주길.\"",
+      "note": "울산 4반 외 다른 반 채널에서 공유된 자료까지 모은 것이다. 종합실습 가이드 단축링크(tinyurl.com/sk-python)는 가이드 PDF를 다시 볼 때 유용하고, DuckDB 블로그는 도구가 살아 움직이는 생태계임을 보여준다. 파이썬은 10월 Vector DB 과목의 기반이 되므로 방학처럼 쉬지 말고 Practice 코드를 한 번 더 돌려보자."
+    }
   ],
   "prompt-1": [
     {
@@ -671,6 +678,25 @@ export const examplesExtra3 = {
       "lang": "text",
       "code": "[1] Prompt Engineering — \"어떻게 말할 것인가\"\n    · 의도를 모델에게 정확히 전달하는 단계\n    · 도구: Persona(역할 부여), Few-shot(예시), CoT(단계적 사고),\n      구조화 출력(Markdown·JSON 형식 지정)\n\n[2] Context Engineering — \"무엇을, 얼마나 줄 것인가\"\n    · 판단에 필요한 자료를 주입하는 단계\n    · 도구: RAG(검색 증강), Memory(대화 기억), 문서 주입,\n      컨텍스트 윈도우 관리(요약·압축)\n\n[3] Harness Engineering — \"어떤 환경에서 일하게 할 것인가\"\n    · 모델이 작업할 환경과 권한을 제어하는 단계\n    · 도구: Tools(도구 호출), MCP(도구 연결 표준), Skills,\n      Agents, 권한 설계(무엇을 할 수 있고 없는지)\n\n[4] Loop Engineering — \"언제 멈추고, 어디서 사람이 개입하는가\"\n    · 실행 → 검증 → 수정이 반복되도록 설계하는 단계\n    · 도구: 테스트·자동 검증, Hooks, Eval(평가), 종료 조건,\n      HITL(Human-in-the-Loop, 사람 개입 지점)",
       "note": "프롬프트 한 줄에서 시작해 에이전트 시스템까지 넓혀 가는 학습 지도다. 이번 과목(1~2단계)을 익힌 뒤 RAG·AI Agent 과목이 3~4단계로 이어진다. 판교 캠퍼스 수업에서 함께 다뤄진 정리를 우리말로 풀어 실었다."
+    }
+,
+    {
+      "title": "AI 엔지니어링 4단계 지도 — Prompt · Context · Harness · Loop (실습교수 정리)",
+      "lang": "text",
+      "code": "판교 실습교수(한성훈·박영웅)가 수업 중 정리해 공유한 프레임이다.\n\n1. Prompt Engineering — \"어떻게 말해야 하는가\"\n   의도를 모델에게 정확히 전달: Persona · few-shot · CoT · 구조화(Markdown, JSON)\n\n2. Context Engineering — \"무엇을, 얼마나 제공할 것인가\"\n   판단에 필요한 자료를 주입: RAG · Memory · 문서 주입 · 컨텍스트 윈도우 관리\n\n3. Harness Engineering — \"어떤 환경에서 작업하게 할 것인가\"\n   모델이 작업할 환경과 권한을 제어: Tools · MCP · Skills · Agents · 권한 설계\n\n4. Loop Engineering — \"언제 멈추고, 어디서 사람이 개입하는가\"\n   실행→검증→수정이 반복되도록 설계: 테스트/자동 검증 · Hooks · Eval · 종료 조건 · HITL\n\n+ 함께 알아둘 용어\n· 정합성(Consistency): 데이터·시스템 상태가 서로 모순 없이 일관되게 일치하는 것\n· 무결성(Integrity): 정보가 정확하고 완전한 상태로 유지되는 것",
+      "note": "이 과목(Prompt 설계와 Context Engineering)이 4단계 중 1·2단계에 해당하고, 3단계(Harness)는 AI Agent 과목, 4단계(Loop)는 실제 서비스 운영에서 만나게 된다. 지금 배우는 내용이 전체 지도의 어디쯤인지 짚어 주는 정리라 과목 간 연결이 한눈에 들어온다."
+    },
+    {
+      "title": "LLM 호출 옵션 실전 — temperature·max_tokens 3사 비교 (윤재성 실습교수)",
+      "lang": "python",
+      "code": "# 수업 중 공유된 \"LLM 옵션 설정\" 예시 — 3사 모두 같은 개념, 이름만 다르다\n# ⚠️ API 키는 절대 코드에 적지 말고 환경 변수로! (export OPENAI_API_KEY=...)\n\n# ── OpenAI (temperature 0.0~2.0) ──\nfrom openai import OpenAI\nclient = OpenAI()                          # 환경 변수 OPENAI_API_KEY 자동 참조\nres = client.chat.completions.create(\n    model=\"gpt-4o\",\n    messages=[\n        {\"role\": \"system\", \"content\": \"당신은 냉철하고 객관적인 AI 데이터 분석가입니다.\"},\n        {\"role\": \"user\", \"content\": \"StandardScaler와 MinMaxScaler 차이를 간단히 비교해줘.\"},\n    ],\n    temperature=0.2,                       # 낮을수록 일관성↑(코드·수학), 높을수록 창의성↑\n    max_tokens=800,                        # 답변 길이 상한\n    top_p=0.95,                            # temperature와 함께 무작위성 정교 제어\n)\nprint(res.choices[0].message.content)\n\n# ── Anthropic Claude (temperature 0.0~1.0 — 범위가 다르다!) ──\n# from anthropic import Anthropic\n# client = Anthropic()                     # ANTHROPIC_API_KEY 참조\n# res = client.messages.create(model=\"claude-sonnet-4-5\", max_tokens=1024,\n#     temperature=0.2, system=\"당신은 시니어 엔지니어입니다.\",\n#     messages=[{\"role\": \"user\", \"content\": \"...\"}])\n\n# ── Google Gemini (temperature 0.0~2.0) ──\n# from google import genai\n# client = genai.Client()                  # GEMINI_API_KEY 참조\n# res = client.models.generate_content(model=\"gemini-2.5-flash\", contents=\"...\",\n#     config=genai.types.GenerateContentConfig(temperature=0.2, max_output_tokens=800))",
+      "note": "판교 8반 수업에서 공유된 3사 옵션 설정 예시를 한 파일로 재구성했다. 핵심은 ① temperature 범위가 회사마다 다르다(Claude는 최대 1.0), ② 정밀한 답(코드·수치)은 0.2 내외, 창의적인 답은 1.0 이상, ③ API 키는 반드시 환경 변수로 관리 — 코드나 채팅에 키를 붙여넣는 순간 유출 사고다."
+    },
+    {
+      "title": "임원 보고서 1페이지 압축 프롬프트 — 강제 구조화의 힘 (판교 종합실습)",
+      "lang": "text",
+      "code": "[상황] 임원에게 보고서를 요약해 보고해야 한다.\n\n[프롬프트 — 그대로 응용]\n아래 내용을 1페이지 요약으로 재구성해 줘.\n구성: 결론 1문장 + 핵심 포인트 5개 + 리스크 3개 + 다음 액션 3개\n\n[이 구조가 강력한 이유 — 실습교수 해설]\n1. 임원 커뮤니케이션 최적화 — 결론→포인트→리스크→액션이 실제 경영진 보고의\n   사고 흐름과 일치한다 (\"So What?\" 중심 구조)\n2. 강제 압축 효과 — \"1페이지 + 항목 수 제한\"이 정보 밀도를 끌어올리고\n   불필요한 설명을 걷어낸다\n3. 의사결정 지원 — 리스크와 액션이 포함되어 단순 요약이 아니라 의사결정 자료가 된다\n4. 품질 표준화 — 누구나 같은 형식으로 작성하니 보고서 편차가 줄어든다\n5. LLM 활용 적합 — 구조가 명확할수록 모델 성능이 올라간다 (bullet 요약에서 특히 효과)",
+      "note": "판교 7반 종합실습(김일한 실습교수)의 임원 보고서 프롬프트를 재구성했다. '몇 개로, 몇 페이지로'라는 강제 제약이 프롬프트 품질을 결정한다는 것이 이 실습의 교훈 — 어떤 요약 요청이든 \"결론 1 + 포인트 N + 리스크 N + 액션 N\" 틀을 씌우면 바로 실무급 산출물이 나온다."
     }
   ],
   "transformer-1": [

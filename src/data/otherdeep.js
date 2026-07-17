@@ -88,6 +88,24 @@ export const otherDeep = {
         "lang": "javascript",
         "code": "// const: 재할당 금지 — 값이 안 바뀌는 변수는 무조건 const로 선언\nconst scores = [72, 95, 60, 88, 41];\n// let: 값이 바뀌는 변수만 let (var는 함수 스코프 함정 때문에 비권장)\nlet total = 0;\n\n// forEach: 모든 요소를 순회하며 함수를 실행한다 (반환값 없음)\nscores.forEach(function (s) {\n  total = total + s;                    // 점수를 하나씩 합계에 누적\n});\nconsole.log(\"평균: \" + total / scores.length);  // 문자열은 + 로 연결\n\n// map: 모든 요소를 규칙대로 가공한 '새 배열'을 반환한다\nconst boosted = scores.map(function (s) {\n  return s + 5;                         // 전원 5점 가산점\n});\n\n// filter: 조건을 통과한 요소만 골라 '새 배열'로 반환한다\nconst passed = boosted.filter(function (s) {\n  return s >= 70;                       // 70점 이상만 합격\n});\nconsole.log(passed);                    // [77, 100, 93] 처럼 출력\n\n// 화살표 함수로 쓰면 같은 일을 한 줄로 줄일 수 있다\nconst evens = scores.filter(s => s % 2 === 0);  // 짝수 점수만 추출\n\n{\n  let inner = \"블록 안\";               // let은 이 중괄호 안에서만 존재\n}\n// console.log(inner);  // 오류! 블록 밖 접근 불가 — 이것이 블록 스코프",
         "note": "교재 7장 JavaScript 기초의 변수 선언(let·const·스코프)과 배열 반복 메서드 단원을 한 흐름으로 묶었다. forEach는 반환값이 없고 map·filter는 원본을 건드리지 않고 새 배열을 만든다는 차이가 핵심 — 이 세 메서드는 Vue에서 목록 렌더링용 데이터를 다듬을 때 매일 쓰게 된다."
+      },
+      {
+        "title": "종합실습(중고차 목록 관리) — 수업 중 정오표·평가 안내 (7/16 강사 공지)",
+        "lang": "text",
+        "code": "[종합실습 과제] 제공된 index.html · style.css · app.js의 미구현 부분을 채워\n중고차 목록 관리 화면을 완성한다.\n\n[배점] HTML 20점 · CSS 20점 · JavaScript 60점\n· HTML: 입력 폼, 검색 영역, 목록 영역 구성\n· CSS: 2열 레이아웃, 차량 카드, 반응형 구성\n· JS: 차량 등록, 입력값 검증, 수정, 수정 취소, 삭제, 검색, 판매 상태 필터\n· 색상·간격·크기는 예시 화면과 완전히 같지 않아도 됨 — 기능 동작이 기준\n· 브라우저 저장(localStorage)은 사용하지 않음 — 새로고침 시 예시 데이터로 복귀\n\n[수업 중 정오표 — 권기창 교수 공지 3건]\n1. 문제 7페이지 요구사항 7번: alert 창 → confirm 창으로 해결할 것\n2. app.js의 const maxYear = new Date().getFullYear() + 1\n   → + 1 을 제거하고 new Date().getFullYear() 로 수정\n3. 11페이지 \"이미지 준비중\"은 무시하고 구현\n\n[제출 형식] SKALA번호_반_이름_HTML.zip (예: 123_3반_홍길동_HTML.zip)",
+        "note": "판교 1~5반 종합실습에서 실시간으로 공지된 정오표와 평가 기준을 모았다. 특히 maxYear의 +1 제거는 미래 연식 차량 입력 검증이 틀어지는 원인이었고, alert→confirm은 사용자의 확인/취소 선택이 필요한 삭제 흐름 때문이다 — 요구사항의 '의도'를 읽는 연습이기도 하다."
+      },
+      {
+        "title": "Emmet 단축 입력 5규칙 — 실습교수 치트시트 (김영희 교수)",
+        "lang": "text",
+        "code": "VS Code에서 HTML 뼈대를 몇 글자로 만들어 내는 Emmet 핵심 5가지.\n\n1. !  →  Tab : HTML 기본 뼈대 (압도적 1위)\n   <!DOCTYPE html>부터 <body>까지 한 번에. lang=\"en\"은 ko로 바꿀 것.\n\n2. .클래스명 : class 있는 div\n   .card → <div class=\"card\"></div>\n   .card>img+h1+p → 카드 구조 한 번에 (#todoList처럼 #은 id)\n\n3. ul>li*4 : 자식(>)과 반복(*)\n   메뉴·목록·TodoList 등 반복 구조 필수기. ul.menu>li*4>a 로 확장 가능.\n\n4. + 와 {텍스트} : 형제 나열과 내용 채우기\n   h1{오늘 할 일}+input+button{추가}\n   → <h1>오늘 할 일</h1><input type=\"text\"><button>추가</button>\n\n5. $ : 자동 번호 매기기\n   ul>li{항목 $}*3 → 항목 1 / 항목 2 / 항목 3\n   갤러리 카드 여러 장은 section>div.photo-card$*4 식으로 응용.\n\n[종합 예시 — 한 줄이 교재 예제 6의 HTML 전체]\ndiv.todo-app>h1{📝 오늘 할 일}+div.input-row>input+button{추가}^ul#todoList>li{할 일 $}*3\n(^ 는 한 단계 위로 올라가기)",
+        "note": "판교 4반 김영희 실습교수가 수업 중 정리해 공유한 치트시트다. JSFiddle/CodePen이 숨겨주던 HTML 뼈대를 VS Code에서 직접 만들 때 Emmet이 그 다리 역할을 한다. 다섯 규칙만 손에 붙으면 마크업 작성 속도가 몇 배로 빨라진다."
+      },
+      {
+        "title": "웹 학습 참고 링크 모음 — 실습교수·수강생 공유 (7/15~16)",
+        "lang": "text",
+        "code": "[실습교수 공유]\n· 모던 자바스크립트 Deep Dive 소스: https://poiemaweb.com/\n  (김영희·김범준 교수 추천 — JS 개념을 깊게 파고들 때 표준 레퍼런스)\n· JavaScript Numbers: https://www.w3schools.com/js/js_numbers.asp (권기창 교수)\n· HTML Color Codes: https://htmlcolorcodes.com/ (권기창 교수 — CSS 색상 고를 때)\n· M1-02 HTML 실습 1 TodoList 만들기(노션): 권기창 교수 실습 문서\n· HTML+Tailwind CSS 정리(노션): 김범준 교수\n· Emmet 정리(노션): 김영희·김범준 교수\n\n[수강생 공유 — 판교 3반 정민교]\n· CodePen: https://codepen.io/\n  \"다른 사람들이 만든 컴포넌트를 뜯어보면서 공부할 수 있고, 웹에서 바로\n  코딩해볼 수 있어 리버스 엔지니어링하며 익히기 좋다\"\n\n[다음 과목 예고 — 판교 4반 김영희 교수]\n· 다음 주 월·화 이은호 교수 강의 — 공유된 교재가 수업 자료이며 Quiz는 교재 오픈북",
+        "note": "여러 반 채널에 흩어져 있던 링크를 한 카드로 모았다. poiemaweb은 JS를 제대로 파려는 사람에게 한국어 자료 중 가장 깊이 있는 레퍼런스이고, CodePen 공유는 수강생이 직접 올린 팁이라 더 값지다 — 다른 사람 코드를 뜯어보는 것이 웹 학습의 지름길이라는 건 현업에서도 통하는 방법이다."
       }
     ]
   },
