@@ -106,6 +106,18 @@ export const otherDeep = {
         "lang": "text",
         "code": "[실습교수 공유]\n· 모던 자바스크립트 Deep Dive 소스: https://poiemaweb.com/\n  (김영희·김범준 교수 추천 — JS 개념을 깊게 파고들 때 표준 레퍼런스)\n· JavaScript Numbers: https://www.w3schools.com/js/js_numbers.asp (권기창 교수)\n· HTML Color Codes: https://htmlcolorcodes.com/ (권기창 교수 — CSS 색상 고를 때)\n· M1-02 HTML 실습 1 TodoList 만들기(노션): 권기창 교수 실습 문서\n· HTML+Tailwind CSS 정리(노션): 김범준 교수\n· Emmet 정리(노션): 김영희·김범준 교수\n\n[수강생 공유 — 판교 3반 정민교]\n· CodePen: https://codepen.io/\n  \"다른 사람들이 만든 컴포넌트를 뜯어보면서 공부할 수 있고, 웹에서 바로\n  코딩해볼 수 있어 리버스 엔지니어링하며 익히기 좋다\"\n\n[다음 과목 예고 — 판교 4반 김영희 교수]\n· 다음 주 월·화 이은호 교수 강의 — 공유된 교재가 수업 자료이며 Quiz는 교재 오픈북",
         "note": "여러 반 채널에 흩어져 있던 링크를 한 카드로 모았다. poiemaweb은 JS를 제대로 파려는 사람에게 한국어 자료 중 가장 깊이 있는 레퍼런스이고, CodePen 공유는 수강생이 직접 올린 팁이라 더 값지다 — 다른 사람 코드를 뜯어보는 것이 웹 학습의 지름길이라는 건 현업에서도 통하는 방법이다."
+      },
+      {
+        "title": "종합실습 시작 파일 해부 — TODO 24개 지도 (exam_htmlcssjs.zip)",
+        "lang": "text",
+        "code": "배포된 시작 파일 3개(index.html 82줄 · style.css 198줄 · app.js 197줄)에는\n'수강생 구현 #N' TODO가 총 24개 들어 있다. 골격은 이미 제공된다.\n\n[HTML — 10개] 페이지 헤더 / 제조사 목록 / 모델명 / 연식 / 주행거리 / 가격 /\n연료 목록 / 판매 상태 목록 / 등록·취소 버튼 / 차량 검색·필터 목록\n\n[CSS — 7개] 입력·목록 영역 2열 배치 / form-row / form-row label /\nbutton-area / search-area / car-list / car-card\n\n[JS — 8개] ① 차량 등록·수정(submit) ② 카드 안 수정·삭제 버튼 처리\n③ 검색어 입력 시 목록 재출력 ④ 판매 상태 변경 시 목록 재출력\n⑤ 수정 취소 ⑥ 입력 검증 후 차량 객체 반환 ⑦ 차량 정보 수정 설정 ⑧ 차량 삭제\n\n[이미 제공되는 골격 — 먼저 읽을 것]\nconst cars = [...]        // 예시 데이터 배열\nlet editingId = null      // 수정 모드 상태\nfunction renderCars()     // 목록 그리기 (완성돼 있음)\nfunction getFilteredCars()// 검색·필터 적용 (완성돼 있음)\nfunction createCarCard()  // 카드 DOM 생성 (완성돼 있음)\n\n[공략 순서 추천] 제공된 renderCars→getFilteredCars→createCarCard를 먼저 읽고,\nHTML 폼(#1~10) → CSS 배치(#1~7) → JS는 데이터 흐름 순서(⑥검증→①등록→②버튼→\n⑦수정→⑤취소→⑧삭제→③④검색·필터)로 채우면 자연스럽다.",
+        "note": "시작 zip을 직접 열어 TODO를 전수 조사한 지도다. 백지에서 짜는 시험이 아니라 '제공된 골격을 읽고 빈칸을 채우는' 시험이므로, 완성된 render 함수들이 어떤 데이터 구조(cars 배열·editingId)를 기대하는지 먼저 파악하는 것이 최고의 공략법이다. 정오표(alert→confirm, maxYear +1 제거)와 함께 보자."
+      },
+      {
+        "title": "CSS 수업 예제 3종 — 종합 레이아웃·Flex 비교·Transition (김영희 교수 배포)",
+        "lang": "css",
+        "code": "/* 수업 중 배포된 예제 파일 3개의 핵심만 발췌 (skala-4 폴더 보관)\n   ① css_complete_example.html — 레이아웃 종합(flex·grid·position 5개 섹션)\n   ② css_flex_exe1.html — Flex Box 속성 비교 실험\n   ③ Trsnsition.html — 2D/3D 전환·애니메이션 4종 비교 */\n\n/* ③에서 — hover 전환(transition)과 자동 반복(animation)의 차이 */\n.t2d { transition: transform 0.35s; }             /* 마우스 올릴 때만 */\n.t2d:hover { transform: translateY(-8px) scale(1.07); }\n\n.t3d { transition: transform 0.5s; transform-style: preserve-3d; }\n.t3d:hover { transform: rotateY(28deg) rotateX(12deg); }  /* 3D는 perspective 필요 */\n\n.a2d { animation: move2d 1.4s ease-in-out infinite alternate; } /* 항상 반복 */\n@keyframes move2d {\n  from { transform: translateX(0) rotate(0deg); }\n  to   { transform: translateX(16px) rotate(8deg); }\n}\n\n/* 부모에 perspective를 줘야 자식의 3D 회전이 원근감 있게 보인다 */\n.wrap { display: flex; gap: 14px; flex-wrap: wrap; perspective: 600px; }",
+        "note": "판교 4반 수업에서 배포된 실습 파일 3종이다. ①은 flex-container/grid-container/position(sticky·absolute)·반응형 카드까지 한 파일에 담은 종합 레퍼런스, ②는 justify-content 등 Flex 속성을 값만 바꿔 비교하는 실험 파일, ③은 transition(이벤트 기반)과 animation(자동 반복)의 차이를 2D/3D로 보여준다. 종합실습의 car-card·2열 배치 CSS를 채울 때 ①을 옆에 두면 된다."
       }
     ]
   },
@@ -306,6 +318,12 @@ export const otherDeep = {
         "lang": "python",
         "code": "import numpy as np                            # 수치 계산\nfrom sklearn.linear_model import LogisticRegression  # 로지스틱 회귀 모델\n\n# 학습 데이터: 시험 점수(x)와 합격 여부(y: 1=합격, 0=불합격)\nx = np.array([[35], [42], [50], [55], [62], [70], [78], [85], [90]])  # 점수 9명\ny = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1])     # 60점 근처에서 합격이 갈린다\n\nmodel = LogisticRegression()                  # S자(시그모이드) 곡선을 적합하는 모델\nmodel.fit(x, y)                               # 학습: 점수와 합격의 경계를 찾는다\n\nnew = np.array([[10], [58], [65], [110]])     # 새로 예측할 점수 4명\nprob = model.predict_proba(new)[:, 1]         # 합격(클래스 1)일 확률만 추출\nprint(prob.round(3))                          # 항상 0~1 사이 확률로만 나온다\n\n# 만약 선형회귀로 풀었다면?\n# 10점 → 합격 가능성 -20%, 110점 → 120% 같은 불가능한 값이 나온다\n# 로지스틱 회귀는 시그모이드로 출력을 0~1에 가두므로\n# '합격 가능성 몇 %'라는 현실적인 답을 준다\n\npred = model.predict(new)                     # 확률 0.5를 기준으로 0/1 분류\nprint(pred)                                   # [0 0 1 1] — 58점 불합격, 65점 합격 예측",
         "note": "교재 로지스틱 회귀 단원의 도입 예제(시험 점수로 대학 합격 예측, 선형회귀의 -20%·120% 문제)를 sklearn으로 구현했다. 핵심은 종속변수가 범주형일 때는 값이 아니라 확률을 예측한다는 관점 전환이고, 값이 2개면 이항·3개 이상이면 다항 로지스틱으로 확장된다. 신용도·사용금액으로 이상거래를 가르는 교재의 실무 예시도 구조가 같다."
+      },
+      {
+        "title": "기초통계 수업 자료 안내 — 교재 2종과 오픈북 Quiz (7/16 배포)",
+        "lang": "text",
+        "code": "[배포된 교재 2종 — 판교 3·4·6~10반 채널 공유]\n· 데이터 분석 개요 및 기초통계 _ Day1 _ 박병선w.pdf (5.7MB)\n· 데이터 분석 개요 및 기초통계 _ 이은호.pdf (7.8MB)\n  → 다음 주 월·화 이은호 교수 강의의 수업 자료가 이은호판이다 (김영희 교수 안내)\n\n[Quiz 안내] 이 과목 Quiz는 교재 내에서 오픈북으로 진행될 예정 —\n교재를 미리 훑어 어디에 무엇이 있는지 '목차 감각'을 만들어 두면 유리하다.\n\n[함께 배포된 참고] SKALA_맥북 네트워크 연결.pdf (김범준 교수, 실습 환경 문제 시)",
+        "note": "판교 캠퍼스 채널들에 배포된 기초통계 수업 자료 현황이다. 같은 과목이라도 캠퍼스·반에 따라 박병선w판과 이은호판이 함께 쓰이니 자기 반 공지의 교재를 기준으로 보되, 두 판 모두 skala-4 자료 폴더와 드라이브 교재 폴더에 보관되어 있다."
       }
     ]
   },
