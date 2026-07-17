@@ -1,6 +1,7 @@
-// 종합실습 평가기준(과목 첫날) + 복습 퀴즈(과목 마지막날) 섹션
+// 종합실습 평가기준(과목 첫날) + 복습 퀴즈·추가 학습(과목 마지막날) 섹션
 import { exams, examsAlt } from '../data/exams'
 import { quizzes } from '../data/quizzes'
+import { extraStudy } from '../data/extrastudy'
 
 const H = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 const TYPE = { ox: 'O/X', choice: '4지선다', short: '단답' }
@@ -99,12 +100,44 @@ function QuizBlock({ qs }) {
   )
 }
 
+// 과목 마지막 날 — 도전 과제 + 심화 링크 (복습 퀴즈와 세트로 항상 노출)
+function ExtraStudyBlock({ x }) {
+  if (!x) return null
+  return (
+    <>
+      <h3 style={H}>
+        🚀 추가 학습 — 더 해보기{' '}
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>(과목을 내 것으로 만드는 도전 과제)</span>
+      </h3>
+      {x.challenges?.length > 0 && (
+        <div className="box box-practice" style={{ marginTop: 12 }}>
+          <div className="box-h">💪 도전 과제</div>
+          <ol>{x.challenges.map((c, i) => <li key={i}>{c}</li>)}</ol>
+        </div>
+      )}
+      {x.links?.length > 0 && (
+        <div className="box box-tips" style={{ marginTop: 12 }}>
+          <div className="box-h">🔗 심화 자료</div>
+          <ul>
+            {x.links.map((l, i) => (
+              <li key={i}>
+                <a href={l.u} target="_blank" rel="noreferrer" style={{ color: 'var(--gold)', fontWeight: 700 }}>{l.t} ↗</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </>
+  )
+}
+
 export default function ExamQuiz({ subjectId, day, totalDays }) {
   // 평가기준은 과목 첫날 + 마지막날(종합실습 평가 당일)에 노출
   const e = day === 1 || day === totalDays ? exams[subjectId] : null
   const alt = day === 1 || day === totalDays ? examsAlt[subjectId] : null
   const qs = day === totalDays ? quizzes[subjectId] : null
-  if (!e && !alt && !qs) return null
+  const extra = day === totalDays ? extraStudy[subjectId] : null
+  if (!e && !alt && !qs && !extra) return null
   return (
     <>
       <ExamBlock e={e} />
@@ -117,6 +150,7 @@ export default function ExamQuiz({ subjectId, day, totalDays }) {
         </>
       )}
       <QuizBlock qs={qs} />
+      <ExtraStudyBlock x={extra} />
     </>
   )
 }
