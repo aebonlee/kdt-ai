@@ -24,6 +24,14 @@ SKALA(SK AI Leader Academy) 4기 **이애본 강사** 학습 플랫폼. 담당 1
 - `/schedule` 수업일정표는 **학생 비공개(RequireAdmin)** — 공개 내비에 다시 넣지 말 것(대표 지시 2026-07-14)
 - 생성물(gitignore): `src/data/lectures/`, `public/practice-textbook.html`, `dist-textbook/`
 
+### 실습교안은 별도 데이터 소스가 없다 (2026-07-21 확인)
+**"강의안에 넣을까 실습교안에 넣을까"는 성립하지 않는 질문이다.** 실습교안(`public/practice-textbook.html`)은 위 데이터를 `scripts/build-textbook.mjs`가 조판한 **렌더 결과물**이다. 소스 하나에 렌더러가 둘:
+- `src/components/EtcCourse.jsx`(사이트 화면) ← `otherdeep.js`
+- `scripts/build-textbook.mjs`(실습교안) ← 같은 `otherdeep.js` + `lectures/` + `exams`·`quizzes`·`othercontent`·`otherexams`·`othersessions`
+
+→ `otherdeep`·`lectureexamples3`에 넣으면 **사이트와 실습교안에 자동으로 함께** 나온다. "실습교안에만" 넣으려면 새 데이터 파일 + 새 렌더 분기 + 스모크 페이지수 기준 변경이 필요하므로, 지시가 있어도 **구조 신설 전에 먼저 확인**할 것.
+- 자료 출처(주강사/실습교수) 구분이 필요하면 **제목 말미 괄호 표기**로 남긴다(예: `… (판교 7반 김일한 교수 자료)`). 현재 이 관례로 통일되어 있다.
+
 ## 콘텐츠 작성 규칙 (엄수)
 1. **SK 교재 원문 verbatim 금지** — 반드시 우리말 재서술(저작권). 근거 자료: `/Volumes/aebon - 데이터/skala-4/` (새 자료는 날짜별 폴더로 추가됨 — 보이면 신규분으로 분석·반영)
 2. 왕초보 실습중심 · **전 코드라인 한글 주석**(사이트가 녹색 표기)
