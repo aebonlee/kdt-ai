@@ -37,13 +37,17 @@ export const examplesExtra3 = {
       "title": "커밋 전 실수 구조대 — stash 임시보관과 --amend 고쳐쓰기",
       "lang": "bash",
       "code": "# 상황 1: 커밋을 안 했는데 다른 브랜치로 가야 할 때 — stash(임시 서랍)\ngit stash                          # 작업 중 변경을 임시 서랍에 넣고 폴더를 깨끗하게\ngit stash list                     # 서랍 목록 확인 (stash@{0} 이 방금 넣은 것)\ngit switch main                    # 이제 변경 없이 자유롭게 브랜치 이동 가능\ngit switch feature-greeting        # 원래 작업하던 브랜치로 복귀\ngit stash pop                      # 서랍에서 꺼내 이어서 작업 (목록에서도 제거)\n\n# 상황 2: 방금 커밋 메시지에 오타 — amend(마지막 커밋 고쳐쓰기)\ngit commit -m \"로긴 버튼 색상 변경\"              # 앗, '로긴' 오타!\ngit commit --amend -m \"로그인 버튼 색상 변경\"    # 마지막 커밋을 새 메시지로 교체\ngit log --oneline -1               # 메시지가 바뀌었는지 확인\n\n# 상황 3: add 를 빠뜨리고 커밋했을 때 — 파일까지 함께 amend\necho \"빠뜨린 내용\" >> hello.txt     # 커밋에 안 들어간 수정이 남아 있다\ngit add hello.txt                  # 빠뜨린 파일을 스테이징하고\ngit commit --amend --no-edit       # 메시지는 그대로, 파일만 마지막 커밋에 합치기\n\n# 주의: --amend 는 이미 push 한 커밋에는 금지 (기록이 바뀌어 팀원과 어긋난다)",
-      "note": "김성영 실습교수의 Git 종합실습 가이드 중 \"자주 하는 실수 & 해결법\" 코너를 손으로 따라 하는 실습으로 옮겼다. 커밋 안 하고 브랜치를 옮기려다 막히거나, 메시지 오타·add 누락을 발견하는 왕초보의 3대 사고를 stash 와 --amend 두 도구로 수습하는 법을 익힌다. push 이후에는 amend 를 쓰면 안 된다는 안전수칙까지가 한 세트다."
+      "note": "김성영 실습교수의 Git 종합실습 가이드 중 \"자주 하는 실수 & 해결법\" 코너를 손으로 따라 하는 실습으로 옮겼다. 커밋 안 하고 브랜치를 옮기려다 막히거나, 메시지 오타·add 누락을 발견하는 왕초보의 3대 사고를 stash 와 --amend 두 도구로 수습하는 법을 익힌다. push 이후에는 amend 를 쓰면 안 된다는 안전수칙까지가 한 세트다.",
+      "origin": "practice",
+      "source": "김성영 실습교수 — Git 수업 공유 자료"
     },
     {
       "title": "완성 프로젝트를 새 브랜치로 GitHub에 올리기 + push 오류 처방전",
       "lang": "bash",
       "code": "# 완성한 프로젝트 폴더를 통째로 '새 브랜치'에 담아 원격에 올리는 8단계\ncd ~/Desktop/my-project            # 1) 프로젝트 폴더로 이동\ngit status                         # 2) 상태 확인 (\"not a git repository\" 면 git init 먼저)\ngit switch -c html_js_css          # 3) 새 브랜치 생성과 동시에 이동 (-c = create)\ngit add .                          # 4) 프로젝트 전체를 스테이징\ngit commit -m \"Complete HTML JS CSS project\"   # 5) 커밋 생성\ngit remote -v                      # 6) 원격 연결 확인 (아무것도 안 나오면 아래로)\ngit remote add origin https://github.com/내계정/data.git   # 7) 원격 최초 연결\n\n# \"remote origin already exists\" 오류가 나면 add 대신 주소만 교체\ngit remote set-url origin https://github.com/내계정/data.git\n\ngit push -u origin html_js_css     # 8) 새 브랜치를 원격에 업로드 (-u: 다음부턴 git push 만)\n# 성공 메시지: * [new branch] html_js_css -> html_js_css\n\n# 자주 만나는 push 오류 처방전\n# \"Authentication failed\"        → 비밀번호 대신 Personal Access Token(PAT) 입력\n# \"failed to push some refs\"     → git pull --rebase origin html_js_css 후 다시 push\n# \"src refspec ... not match\"    → 커밋이 아직 없다는 뜻, add · commit 먼저\n# GitHub 웹에서 브랜치 메뉴 → html_js_css 선택 → 파일이 보이면 최종 성공",
-      "note": "김성영 실습교수 가이드의 \"종합실습 2 — 완성 프로젝트를 새 브랜치로 GitHub에 올리기\" 8단계 시나리오를 재구성했다. main 이 아닌 작업 브랜치를 push -u 로 올리는 흐름과, 초보가 반드시 한 번은 만나는 push 오류 4종의 원인별 해결 명령을 처방전 형식으로 붙였다. 오류 메시지를 보고 겁먹지 않고 대응하는 것이 이 실습의 진짜 목표다."
+      "note": "김성영 실습교수 가이드의 \"종합실습 2 — 완성 프로젝트를 새 브랜치로 GitHub에 올리기\" 8단계 시나리오를 재구성했다. main 이 아닌 작업 브랜치를 push -u 로 올리는 흐름과, 초보가 반드시 한 번은 만나는 push 오류 4종의 원인별 해결 명령을 처방전 형식으로 붙였다. 오류 메시지를 보고 겁먹지 않고 대응하는 것이 이 실습의 진짜 목표다.",
+      "origin": "practice",
+      "source": "김성영 실습교수 — Git 수업 공유 자료"
     },
     {
       "title": "Git-Flow 전략 — 브랜치 5종으로 개발부터 출시까지 흉내내기",
@@ -341,13 +345,17 @@ export const examplesExtra3 = {
       "title": "Parquet으로 저장하고 필요한 열만 골라 읽기 (예외처리 포함)",
       "lang": "python",
       "code": "import pandas as pd                    # 표(DataFrame) 처리 라이브러리\n\n# 도시별 날씨 수집이 끝났다고 가정한 표\ndf = pd.DataFrame({\n    \"도시\": [\"서울\", \"도쿄\", \"뉴욕\", \"런던\"],            # 도시 이름\n    \"기온\": [25.7, 28.1, 23.0, 24.3],                  # 현재 기온(도)\n    \"현지시각\": [\"16:46\", \"16:46\", \"03:46\", \"08:46\"],   # 각 도시의 현지 시각\n})\n\ndf.to_parquet(\"weather.parquet\")       # parquet(열 단위 압축 형식) 파일로 저장\n\ntry:                                   # 파일이 없을 수도 있으니 예외 대비\n    slim = pd.read_parquet(\"weather.parquet\", columns=[\"도시\", \"기온\"])  # 필요한 열만 읽기\n    print(slim)                        # 현지시각 없이 도시·기온 2개 열만 나온다\nexcept FileNotFoundError:              # 파일이 없으면 이 블록으로\n    print(\"weather.parquet 이 없습니다. 저장 단계를 먼저 실행하세요.\")\n\n# CSV 는 행 단위, parquet 은 열 단위 저장 — 그래서 '필요한 열만' 골라 읽을 수 있다\n# 데이터가 커질수록 읽기 속도와 파일 용량 모두 parquet 이 유리하다",
-      "note": "윤선영 실습교수의 데이터분석 Python 종합실습1 3~4번(Weather 객체를 csv·parquet 으로 저장하고 도시·기온만 읽어오기, 파일 없으면 예외처리)을 왕초보용으로 줄였다. CSV 와 달리 parquet 은 columns 인자로 필요한 열만 읽을 수 있다는 점과 FileNotFoundError 대비가 핵심이다."
+      "note": "윤선영 실습교수의 데이터분석 Python 종합실습1 3~4번(Weather 객체를 csv·parquet 으로 저장하고 도시·기온만 읽어오기, 파일 없으면 예외처리)을 왕초보용으로 줄였다. CSV 와 달리 parquet 은 columns 인자로 필요한 열만 읽을 수 있다는 점과 FileNotFoundError 대비가 핵심이다.",
+      "origin": "practice",
+      "source": "윤선영 실습교수(울산 3반) — 파이썬 실습·종합실습 배포 자료"
     },
     {
       "title": "수집→검증→저장을 한 스크립트로 — 미니 데이터 파이프라인",
       "lang": "python",
       "code": "import httpx                              # HTTP 요청 라이브러리\nimport pandas as pd                       # 표 처리\nfrom pydantic import BaseModel, ValidationError   # 데이터 검증 도구\n\nclass Product(BaseModel):                 # 상품 1건이 갖춰야 할 형태 선언\n    id: int                               # 상품 번호는 정수\n    title: str                            # 상품명은 문자열\n    price: float                          # 가격은 실수\n\nrows = []                                 # 검증을 통과한 데이터만 담을 목록\nfor i in range(1, 4):                     # 상품 1~3번을 차례로 수집\n    r = httpx.get(f\"https://fakestoreapi.com/products/{i}\", timeout=10)  # API 호출\n    try:                                  # 받은 데이터가 형태에 맞는지 검사\n        p = Product(**r.json())           # JSON 을 스키마에 통과시켜 검증\n        rows.append({\"번호\": p.id, \"제품명\": p.title, \"가격\": p.price})   # 통과분만 적재\n    except ValidationError:               # 형태가 어긋난 데이터는\n        print(i, \"번 상품 검증 실패 — 건너뜀\")   # 프로그램을 멈추지 말고 기록만 남긴다\n\ndf = pd.DataFrame(rows)                   # 검증 통과분으로 표 생성\ndf.to_csv(\"products.csv\", index=False)    # 사람이 열어 보기 좋은 CSV 로 저장\ndf.to_parquet(\"products.parquet\")         # 분석용으로 빠른 parquet 으로도 저장\nprint(\"수집→검증→저장 완료:\", len(df), \"건\")   # 파이프라인 결과 한 줄 요약",
-      "note": "윤선영 실습교수 가이드의 평가 과제(fakestoreapi 데이터 수집 → Pydantic 스키마 검증+예외처리 → CSV·Parquet 저장을 하나의 자동화 스크립트로, 배점 40점)를 축소 재현했다. 지금까지 따로 배운 httpx·Pydantic·파일 저장을 처음으로 한 흐름에 이어 붙이는 것이 포인트다. 불량 데이터 1건 때문에 전체가 죽지 않도록 건너뛰고 기록하는 습관도 함께 익힌다."
+      "note": "윤선영 실습교수 가이드의 평가 과제(fakestoreapi 데이터 수집 → Pydantic 스키마 검증+예외처리 → CSV·Parquet 저장을 하나의 자동화 스크립트로, 배점 40점)를 축소 재현했다. 지금까지 따로 배운 httpx·Pydantic·파일 저장을 처음으로 한 흐름에 이어 붙이는 것이 포인트다. 불량 데이터 1건 때문에 전체가 죽지 않도록 건너뛰고 기록하는 습관도 함께 익힌다.",
+      "origin": "practice",
+      "source": "윤선영 실습교수(울산 3반) — 파이썬 실습·종합실습 배포 자료"
     },
     {
       "title": "실습1: 매출 레코드 집계 — Counter·defaultdict·컴프리헨션 (Practice 1)",
@@ -541,13 +549,17 @@ export const examplesExtra3 = {
       "title": "업종별 매출 합계 상위 뽑고 막대그래프를 파일로 저장하기",
       "lang": "python",
       "code": "import pandas as pd                       # 표 처리\nimport matplotlib.pyplot as plt          # 그래프 그리기\n\n# 서울시 상권 추정매출을 흉내 낸 작은 표 (실전은 공공데이터 CSV 사용)\ndf = pd.DataFrame({\n    \"서비스_업종\": [\"한식\", \"카페\", \"한식\", \"편의점\", \"카페\", \"미용실\"],\n    \"당월_매출\": [820, 310, 640, 450, 280, 190],       # 단위: 만원\n    \"연령대_10\": [20, 60, 15, 90, 70, 10],             # 10대 매출\n    \"연령대_20\": [180, 140, 150, 160, 120, 60],        # 20대 매출\n    \"연령대_30\": [260, 80, 210, 120, 70, 80],          # 30대 매출\n})\n\n# 업종별로 묶어 합계 → 내림차순 정렬 → 상위 3개만 (실전은 상위 10개)\ntop = df.groupby(\"서비스_업종\")[\"당월_매출\"].sum().sort_values(ascending=False).head(3)\nprint(top)                                # 한식 1460, 카페 590, 편의점 450 순서\n\n# 연령대 3개 열의 열별 합계로 막대그래프를 그려 '파일로' 저장\nages = df[[\"연령대_10\", \"연령대_20\", \"연령대_30\"]].sum()   # 열마다 합계 1개씩\nages.plot(kind=\"bar\", title=\"age sales\")   # 합계 3개를 막대그래프로\nplt.tight_layout()                        # 글자가 잘리지 않게 여백 자동 조정\nplt.savefig(\"age_sales.png\")              # 화면 표시 대신 PNG 파일로 저장\nprint(\"age_sales.png 저장 완료\")           # 보고서에 바로 붙일 이미지 완성",
-      "note": "윤선영 실습교수의 종합실습2 3~4번(서비스 업종별 당월 매출 합계를 내림차순 상위 10개로 뽑고, 연령대 3개 칼럼 합계로 bar 그래프를 그려 파일 저장)을 축소한 것이다. groupby 뒤에 sort_values 와 head 를 이어 붙여 상위 N 개를 뽑는 체인과, plt.show 대신 savefig 로 결과를 이미지 파일로 남기는 습관이 핵심이다."
+      "note": "윤선영 실습교수의 종합실습2 3~4번(서비스 업종별 당월 매출 합계를 내림차순 상위 10개로 뽑고, 연령대 3개 칼럼 합계로 bar 그래프를 그려 파일 저장)을 축소한 것이다. groupby 뒤에 sort_values 와 head 를 이어 붙여 상위 N 개를 뽑는 체인과, plt.show 대신 savefig 로 결과를 이미지 파일로 남기는 습관이 핵심이다.",
+      "origin": "practice",
+      "source": "윤선영 실습교수(울산 3반) — 파이썬 실습·종합실습 배포 자료"
     },
     {
       "title": "ColumnTransformer — 숫자 열과 글자 열을 각각 다르게 전처리해 결합",
       "lang": "python",
       "code": "import pandas as pd                                    # 표 처리\nfrom sklearn.pipeline import Pipeline                  # 처리 단계 묶기\nfrom sklearn.compose import ColumnTransformer          # 열 종류별로 다른 처리 적용\nfrom sklearn.impute import SimpleImputer               # 결측치(빈칸) 채우기\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder  # 표준화·원핫\nfrom sklearn.linear_model import LinearRegression      # 회귀 모델\n\n# 수치형 열 전용: 빈칸은 중앙값으로 채우고 → 크기를 표준화\nnum_pipe = Pipeline([(\"결측\", SimpleImputer(strategy=\"median\")),\n                     (\"스케일\", StandardScaler())])\n# 범주형 열 전용: 빈칸은 \"missing\" 글자로 채우고 → 원핫인코딩(0/1 표로 변환)\ncat_pipe = Pipeline([(\"결측\", SimpleImputer(strategy=\"constant\", fill_value=\"missing\")),\n                     (\"원핫\", OneHotEncoder(handle_unknown=\"ignore\"))])\n\n# 두 파이프라인을 '열 이름 기준'으로 하나로 결합\npre = ColumnTransformer([\n    (\"수치\", num_pipe, [\"연령대_10\", \"연령대_20\", \"연령대_30\"]),   # 숫자 열 3개는 이쪽\n    (\"범주\", cat_pipe, [\"상권_구분\"]),                             # 글자 열 1개는 저쪽\n])\n\nmodel = Pipeline([(\"전처리\", pre), (\"회귀\", LinearRegression())])   # 전처리+모델 완성\nX = pd.DataFrame({\"연령대_10\": [20, None, 15], \"연령대_20\": [180, 140, 150],\n                  \"연령대_30\": [260, 80, None], \"상권_구분\": [\"골목\", None, \"발달\"]})\ny = [820, 310, 640]                                    # 정답: 당월 매출(만원)\nmodel.fit(X, y)                                        # 빈칸이 있어도 그대로 학습된다\nprint(\"예측:\", model.predict(X).round(1))               # 학습 데이터로 예측 확인",
-      "note": "윤선영 실습교수의 종합실습2 5~6번(수치형 파이프라인 + 범주형 파이프라인을 하나로 결합해 최종 모델 파이프라인 완성, 연령대 매출로 당월 매출 예측)을 재구성했다. 기존 예제의 Pipeline 이 한 종류 전처리만 다뤘다면, 여기서는 ColumnTransformer 로 숫자 열과 글자 열에 서로 다른 전처리를 동시에 적용하는 실무 표준 패턴을 배운다. 결측치가 섞인 원본을 손대지 않고 fit 한 번으로 끝나는 것이 매력이다."
+      "note": "윤선영 실습교수의 종합실습2 5~6번(수치형 파이프라인 + 범주형 파이프라인을 하나로 결합해 최종 모델 파이프라인 완성, 연령대 매출로 당월 매출 예측)을 재구성했다. 기존 예제의 Pipeline 이 한 종류 전처리만 다뤘다면, 여기서는 ColumnTransformer 로 숫자 열과 글자 열에 서로 다른 전처리를 동시에 적용하는 실무 표준 패턴을 배운다. 결측치가 섞인 원본을 손대지 않고 fit 한 번으로 끝나는 것이 매력이다.",
+      "origin": "practice",
+      "source": "윤선영 실습교수(울산 3반) — 파이썬 실습·종합실습 배포 자료"
     },
     {
       "title": "실습3: IQR 이상치 제거 후 named aggregation 집계 (Practice 3)",
@@ -637,7 +649,9 @@ export const examplesExtra3 = {
       "title": "종합실습 2 제출 안내·채점기준 실물 — 데이터셋과 배점 (윤선영 교수 배포)",
       "lang": "text",
       "code": "[제출 구성]\n· Practice 1~4: Practice번호_내이름.py 4개 → Practice_내이름.zip\n· 종합실습 2: Test2_내이름.py + git2_내이름.py → Test2_내이름.zip\n  (git 실습 파일까지 함께 — GitHub 업로드가 채점 항목이다)\n\n[채점기준 — 100점]\n① 10점  프로그램 전체 설명(머리말) + 함수·기능 설명 주석\n② 10점  필요한 칼럼만 골라 DataFrame 생성 →\n         서비스_업종_코드_명별 당월_매출_금액 합계, 내림차순 상위 10개\n③ 20점  연령대_10/20/30_매출_금액 세 칼럼의 합계로 bar 그래프 → 파일 저장\n④ 30점  파이프라인: 수치형(결측 중간값+스케일링) + 범주형(결측 'missing'+원핫)\n         → 두 파이프라인 결합 → 최종 모델 파이프라인 완성\n⑤ 20점  모델 만들고 성능 확인\n⑥ 10점  GitHub에 올리고 캡처\n\n[실습 데이터 실물]\n· 서울시 상권분석서비스(추정매출-상권).csv — 47MB, 채널에 공유됨\n· 필요한 칼럼: 서비스_업종_코드_명 · 당월_매출_금액 · 연령대_10/20/30_매출_금액 등\n\n[종합실습 1 평가기준(참고)] 주석 20 · 오류/예외처리 20 · 코드 간결성 30 ·\n코드 완성 10 · GitHub 업로드 10 · 납기 10",
-      "note": "울산 3반 채널에 배포된 제출 안내 원문을 정리했다. 배점을 보면 ④파이프라인이 30점으로 가장 크고 ③시각화 파일 저장이 20점 — 이 두 항목이 바로 위의 '업종별 매출 상위 10 + bar 저장'과 'ColumnTransformer 파이프라인' 예제 카드다. 주석(머리말·함수 설명)과 GitHub 업로드까지 배점에 있으니 코드만 잘 짜고 20점을 흘리지 말자."
+      "note": "울산 3반 채널에 배포된 제출 안내 원문을 정리했다. 배점을 보면 ④파이프라인이 30점으로 가장 크고 ③시각화 파일 저장이 20점 — 이 두 항목이 바로 위의 '업종별 매출 상위 10 + bar 저장'과 'ColumnTransformer 파이프라인' 예제 카드다. 주석(머리말·함수 설명)과 GitHub 업로드까지 배점에 있으니 코드만 잘 짜고 20점을 흘리지 말자.",
+      "origin": "practice",
+      "source": "윤선영 실습교수(울산 3반) — 파이썬 실습·종합실습 배포 자료"
     }
   ],
   "prompt-1": [
@@ -657,7 +671,9 @@ export const examplesExtra3 = {
       "title": "맨몸 질문→3대 한계 진단→5요소 재설계 — 프롬프트 개선 사이클",
       "lang": "text",
       "code": "프롬프트는 한 번에 완성하지 않는다. 일부러 대충 물어 보고(Baseline),\n답의 문제를 진단한 뒤, 요소를 갖춰 다시 쓰는 3단계 사이클을 돈다.\n\n[1단계 Baseline] 가이드 없이 떠오르는 대로 묻고, 답을 그대로 저장해 둔다\nK-뷰티 역직구(해외 직접판매) 시장에 대해 알려줘.\n\n[2단계 진단] 초기 답변을 3가지 관점으로 비판적으로 검증한다\n- 할루시네이션: 출처 불명의 통계·낡은 트렌드가 섞여 있는가?\n- 구조화 부족: 보고서 격식 없이 줄글만 나열되어 읽기 어려운가?\n- 모호성: \"리스크 관리를 잘해야 한다\"류의 뻔한 원론뿐인가?\n\n[3단계 재설계] 5가지 요소를 명확히 분리해 프롬프트를 다시 쓴다\nRole(역할): 10년차 글로벌 커머스 시장 전략 컨설턴트\nObjective(목적): 경영진 보고용 역직구 시장 분석 + 3대 리스크 대응 전략\nContext(맥락): 한국 기업의 동남아·북미 진출 시 물류/결제/규제 상황\nConstraints(제약): 확인 안 된 수치 창작 금지, 비즈니스 톤 유지\nFormat(형식): 대주제-소주제-불릿 구조, 핵심 지표는 표로 출력\n\n[4단계 비교 기록] 초기 답변과 개선 답변을 나란히 놓고\n무엇이 좋아졌는지(구조·근거·구체성) 한 줄씩 기록하면 실습 완성",
-      "note": "윤재성 실습교수의 Prompt 설계 종합실습(크로스보더 이커머스 보고서 시나리오)의 1~4단계 진행 방식을 일반화했다. 일부러 Baseline 부터 시작해 할루시네이션·구조화 부족·모호성 3대 한계를 진단하고, Role~Format 5요소로 재설계해 전후를 비교하는 것이 원 실습의 핵심 의도다. 기존 RICE 예제가 요소를 쌓는 법이라면, 이 실습은 나쁜 답을 진단해 고치는 순환 과정을 익힌다."
+      "note": "윤재성 실습교수의 Prompt 설계 종합실습(크로스보더 이커머스 보고서 시나리오)의 1~4단계 진행 방식을 일반화했다. 일부러 Baseline 부터 시작해 할루시네이션·구조화 부족·모호성 3대 한계를 진단하고, Role~Format 5요소로 재설계해 전후를 비교하는 것이 원 실습의 핵심 의도다. 기존 RICE 예제가 요소를 쌓는 법이라면, 이 실습은 나쁜 답을 진단해 고치는 순환 과정을 익힌다.",
+      "origin": "practice",
+      "source": "윤재성 실습교수 — Prompt 설계 실습 자료"
     },
     {
       "title": "RICE 요소를 하나씩 쌓아 프롬프트 키우기 (v0→v5 실습)",
@@ -735,13 +751,17 @@ export const examplesExtra3 = {
       "title": "LLM 호출 옵션 실전 — temperature·max_tokens 3사 비교 (윤재성 실습교수)",
       "lang": "python",
       "code": "# 수업 중 공유된 \"LLM 옵션 설정\" 예시 — 3사 모두 같은 개념, 이름만 다르다\n# ⚠️ API 키는 절대 코드에 적지 말고 환경 변수로! (export OPENAI_API_KEY=...)\n\n# ── OpenAI (temperature 0.0~2.0) ──\nfrom openai import OpenAI\nclient = OpenAI()                          # 환경 변수 OPENAI_API_KEY 자동 참조\nres = client.chat.completions.create(\n    model=\"gpt-4o\",\n    messages=[\n        {\"role\": \"system\", \"content\": \"당신은 냉철하고 객관적인 AI 데이터 분석가입니다.\"},\n        {\"role\": \"user\", \"content\": \"StandardScaler와 MinMaxScaler 차이를 간단히 비교해줘.\"},\n    ],\n    temperature=0.2,                       # 낮을수록 일관성↑(코드·수학), 높을수록 창의성↑\n    max_tokens=800,                        # 답변 길이 상한\n    top_p=0.95,                            # temperature와 함께 무작위성 정교 제어\n)\nprint(res.choices[0].message.content)\n\n# ── Anthropic Claude (temperature 0.0~1.0 — 범위가 다르다!) ──\n# from anthropic import Anthropic\n# client = Anthropic()                     # ANTHROPIC_API_KEY 참조\n# res = client.messages.create(model=\"claude-sonnet-4-5\", max_tokens=1024,\n#     temperature=0.2, system=\"당신은 시니어 엔지니어입니다.\",\n#     messages=[{\"role\": \"user\", \"content\": \"...\"}])\n\n# ── Google Gemini (temperature 0.0~2.0) ──\n# from google import genai\n# client = genai.Client()                  # GEMINI_API_KEY 참조\n# res = client.models.generate_content(model=\"gemini-2.5-flash\", contents=\"...\",\n#     config=genai.types.GenerateContentConfig(temperature=0.2, max_output_tokens=800))",
-      "note": "판교 8반 수업에서 공유된 3사 옵션 설정 예시를 한 파일로 재구성했다. 핵심은 ① temperature 범위가 회사마다 다르다(Claude는 최대 1.0), ② 정밀한 답(코드·수치)은 0.2 내외, 창의적인 답은 1.0 이상, ③ API 키는 반드시 환경 변수로 관리 — 코드나 채팅에 키를 붙여넣는 순간 유출 사고다."
+      "note": "판교 8반 수업에서 공유된 3사 옵션 설정 예시를 한 파일로 재구성했다. 핵심은 ① temperature 범위가 회사마다 다르다(Claude는 최대 1.0), ② 정밀한 답(코드·수치)은 0.2 내외, 창의적인 답은 1.0 이상, ③ API 키는 반드시 환경 변수로 관리 — 코드나 채팅에 키를 붙여넣는 순간 유출 사고다.",
+      "origin": "practice",
+      "source": "윤재성 실습교수 — Prompt 설계 실습 자료"
     },
     {
       "title": "임원 보고서 1페이지 압축 프롬프트 — 강제 구조화의 힘 (판교 종합실습)",
       "lang": "text",
       "code": "[상황] 임원에게 보고서를 요약해 보고해야 한다.\n\n[프롬프트 — 그대로 응용]\n아래 내용을 1페이지 요약으로 재구성해 줘.\n구성: 결론 1문장 + 핵심 포인트 5개 + 리스크 3개 + 다음 액션 3개\n\n[이 구조가 강력한 이유 — 실습교수 해설]\n1. 임원 커뮤니케이션 최적화 — 결론→포인트→리스크→액션이 실제 경영진 보고의\n   사고 흐름과 일치한다 (\"So What?\" 중심 구조)\n2. 강제 압축 효과 — \"1페이지 + 항목 수 제한\"이 정보 밀도를 끌어올리고\n   불필요한 설명을 걷어낸다\n3. 의사결정 지원 — 리스크와 액션이 포함되어 단순 요약이 아니라 의사결정 자료가 된다\n4. 품질 표준화 — 누구나 같은 형식으로 작성하니 보고서 편차가 줄어든다\n5. LLM 활용 적합 — 구조가 명확할수록 모델 성능이 올라간다 (bullet 요약에서 특히 효과)",
-      "note": "판교 7반 종합실습(김일한 실습교수)의 임원 보고서 프롬프트를 재구성했다. '몇 개로, 몇 페이지로'라는 강제 제약이 프롬프트 품질을 결정한다는 것이 이 실습의 교훈 — 어떤 요약 요청이든 \"결론 1 + 포인트 N + 리스크 N + 액션 N\" 틀을 씌우면 바로 실무급 산출물이 나온다."
+      "note": "판교 7반 종합실습(김일한 실습교수)의 임원 보고서 프롬프트를 재구성했다. '몇 개로, 몇 페이지로'라는 강제 제약이 프롬프트 품질을 결정한다는 것이 이 실습의 교훈 — 어떤 요약 요청이든 \"결론 1 + 포인트 N + 리스크 N + 액션 N\" 틀을 씌우면 바로 실무급 산출물이 나온다.",
+      "origin": "practice",
+      "source": "김일한 실습교수(판교) — 종합실습 공유 자료"
     },
     {
       "title": "Self-Consistency 제대로 쓰기 — 가짜 SC와 진짜 SC의 갈림길",

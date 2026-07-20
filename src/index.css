@@ -677,6 +677,18 @@ ul { list-style: none; }
 .footer .accent { color: var(--gold); }
 .footer p { font-size: 14px; margin-top: 4px; }
 .footer .fine { margin-top: var(--s-5); font-size: 12px; color: rgba(255,255,255,0.5); }
+/* 하단 줄 — 좌: 안내 문구 / 우: 제작 크레딧. 좁은 화면에서는 세로로 쌓인다 */
+.footer .foot-bottom { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px var(--s-5); }
+.footer .foot-bottom .fine { margin-top: 0; }
+.footer .credit {
+  margin-top: 0; margin-left: auto; text-align: right;
+  font-size: 12px; color: rgba(255,255,255,0.42);
+  word-break: keep-all; overflow-wrap: break-word;
+}
+@media (max-width: 640px) {
+  .footer .foot-bottom { display: block; }
+  .footer .credit { margin-top: 6px; text-align: left; }
+}
 
 /* ============================================
    Dark Mode — SKALA 딥 인디고 룩

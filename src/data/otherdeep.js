@@ -119,7 +119,9 @@ export const otherDeep = {
         "title": "Emmet 단축 입력 5규칙 — 실습교수 치트시트 (김영희 교수)",
         "lang": "text",
         "code": "VS Code에서 HTML 뼈대를 몇 글자로 만들어 내는 Emmet 핵심 5가지.\n\n1. !  →  Tab : HTML 기본 뼈대 (압도적 1위)\n   <!DOCTYPE html>부터 <body>까지 한 번에. lang=\"en\"은 ko로 바꿀 것.\n\n2. .클래스명 : class 있는 div\n   .card → <div class=\"card\"></div>\n   .card>img+h1+p → 카드 구조 한 번에 (#todoList처럼 #은 id)\n\n3. ul>li*4 : 자식(>)과 반복(*)\n   메뉴·목록·TodoList 등 반복 구조 필수기. ul.menu>li*4>a 로 확장 가능.\n\n4. + 와 {텍스트} : 형제 나열과 내용 채우기\n   h1{오늘 할 일}+input+button{추가}\n   → <h1>오늘 할 일</h1><input type=\"text\"><button>추가</button>\n\n5. $ : 자동 번호 매기기\n   ul>li{항목 $}*3 → 항목 1 / 항목 2 / 항목 3\n   갤러리 카드 여러 장은 section>div.photo-card$*4 식으로 응용.\n\n[종합 예시 — 한 줄이 교재 예제 6의 HTML 전체]\ndiv.todo-app>h1{📝 오늘 할 일}+div.input-row>input+button{추가}^ul#todoList>li{할 일 $}*3\n(^ 는 한 단계 위로 올라가기)",
-        "note": "판교 4반 김영희 실습교수가 수업 중 정리해 공유한 치트시트다. JSFiddle/CodePen이 숨겨주던 HTML 뼈대를 VS Code에서 직접 만들 때 Emmet이 그 다리 역할을 한다. 다섯 규칙만 손에 붙으면 마크업 작성 속도가 몇 배로 빨라진다."
+        "note": "판교 4반 김영희 실습교수가 수업 중 정리해 공유한 치트시트다. JSFiddle/CodePen이 숨겨주던 HTML 뼈대를 VS Code에서 직접 만들 때 Emmet이 그 다리 역할을 한다. 다섯 규칙만 손에 붙으면 마크업 작성 속도가 몇 배로 빨라진다.",
+        "origin": "practice",
+        "source": "김영희 실습교수 — HTML/CSS 수업 배포 자료 (배치표 미등재 · 슬랙 호칭 근거로 유지)"
       },
       {
         "title": "웹 학습 참고 링크 모음 — 실습교수·수강생 공유 (7/15~16)",
@@ -137,7 +139,9 @@ export const otherDeep = {
         "title": "CSS 수업 예제 3종 — 종합 레이아웃·Flex 비교·Transition (김영희 교수 배포)",
         "lang": "css",
         "code": "/* 수업 중 배포된 예제 파일 3개의 핵심만 발췌 (skala-4 폴더 보관)\n   ① css_complete_example.html — 레이아웃 종합(flex·grid·position 5개 섹션)\n   ② css_flex_exe1.html — Flex Box 속성 비교 실험\n   ③ Trsnsition.html — 2D/3D 전환·애니메이션 4종 비교 */\n\n/* ③에서 — hover 전환(transition)과 자동 반복(animation)의 차이 */\n.t2d { transition: transform 0.35s; }             /* 마우스 올릴 때만 */\n.t2d:hover { transform: translateY(-8px) scale(1.07); }\n\n.t3d { transition: transform 0.5s; transform-style: preserve-3d; }\n.t3d:hover { transform: rotateY(28deg) rotateX(12deg); }  /* 3D는 perspective 필요 */\n\n.a2d { animation: move2d 1.4s ease-in-out infinite alternate; } /* 항상 반복 */\n@keyframes move2d {\n  from { transform: translateX(0) rotate(0deg); }\n  to   { transform: translateX(16px) rotate(8deg); }\n}\n\n/* 부모에 perspective를 줘야 자식의 3D 회전이 원근감 있게 보인다 */\n.wrap { display: flex; gap: 14px; flex-wrap: wrap; perspective: 600px; }",
-        "note": "판교 4반 수업에서 배포된 실습 파일 3종이다. ①은 flex-container/grid-container/position(sticky·absolute)·반응형 카드까지 한 파일에 담은 종합 레퍼런스, ②는 justify-content 등 Flex 속성을 값만 바꿔 비교하는 실험 파일, ③은 transition(이벤트 기반)과 animation(자동 반복)의 차이를 2D/3D로 보여준다. 종합실습의 car-card·2열 배치 CSS를 채울 때 ①을 옆에 두면 된다."
+        "note": "판교 4반 수업에서 배포된 실습 파일 3종이다. ①은 flex-container/grid-container/position(sticky·absolute)·반응형 카드까지 한 파일에 담은 종합 레퍼런스, ②는 justify-content 등 Flex 속성을 값만 바꿔 비교하는 실험 파일, ③은 transition(이벤트 기반)과 animation(자동 반복)의 차이를 2D/3D로 보여준다. 종합실습의 car-card·2열 배치 CSS를 채울 때 ①을 옆에 두면 된다.",
+        "origin": "practice",
+        "source": "김영희 실습교수 — HTML/CSS 수업 배포 자료 (배치표 미등재 · 슬랙 호칭 근거로 유지)"
       },
       {
         "title": "스터디 플래너 ① 목표 추가 — submit 검증과 상태 갱신",
@@ -399,19 +403,27 @@ export const otherDeep = {
       },
       {
         "term": "비용함수(Cost/MSE)는 왜 U자 곡선이 되는가 (판교 7반 김일한 교수 자료)",
-        "desc": "회귀에서 기울기 w를 하나 정하면 예측값이 정해지고, 실제값과의 차이(오차)도 정해집니다. 이 오차를 제곱해서 평균낸 값이 비용(cost)이고 흔히 MSE라고 부릅니다. 제곱하는 이유는 오차가 위로 나든 아래로 나든 똑같이 벌점을 주기 위해서이고, 덤으로 크게 틀린 예측에 더 큰 벌점이 붙습니다. w를 아주 작은 값부터 큰 값까지 조금씩 바꿔가며 cost를 찍어보면 그릇을 엎어놓은 듯한 U자 곡선이 나타나는데, 이 그릇의 가장 밑바닥에 해당하는 w가 바로 우리가 찾는 최적의 기울기입니다. 회귀 학습이란 결국 이 U자 골짜기의 바닥을 찾아가는 일입니다."
+        "desc": "회귀에서 기울기 w를 하나 정하면 예측값이 정해지고, 실제값과의 차이(오차)도 정해집니다. 이 오차를 제곱해서 평균낸 값이 비용(cost)이고 흔히 MSE라고 부릅니다. 제곱하는 이유는 오차가 위로 나든 아래로 나든 똑같이 벌점을 주기 위해서이고, 덤으로 크게 틀린 예측에 더 큰 벌점이 붙습니다. w를 아주 작은 값부터 큰 값까지 조금씩 바꿔가며 cost를 찍어보면 그릇을 엎어놓은 듯한 U자 곡선이 나타나는데, 이 그릇의 가장 밑바닥에 해당하는 w가 바로 우리가 찾는 최적의 기울기입니다. 회귀 학습이란 결국 이 U자 골짜기의 바닥을 찾아가는 일입니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       },
       {
         "term": "경사하강법 — 미분한 기울기와 학습률로 w와 b를 조금씩 고치기 (판교 7반 김일한 교수 자료)",
-        "desc": "비용 곡선의 바닥을 한 번에 찾는 대신, 아무 데서나 출발해 한 걸음씩 내려가는 방법이 경사하강법입니다. 지금 서 있는 자리에서 곡선의 접선 기울기(미분값)를 구하면 어느 쪽이 오르막인지 알 수 있고, 그 반대 방향으로 가면 내리막입니다. 갱신 규칙은 간단히 말해 새로운 w는 지금의 w에서 학습률 곱하기 기울기를 빼는 것이며, 절편 b도 같은 방식으로 함께 고칩니다. 학습률은 한 걸음의 보폭인데, 너무 크면 골짜기를 뛰어넘어 발산하고 너무 작으면 도착하기 전에 반복이 끝나버립니다. 바닥에 가까울수록 기울기가 0에 가까워져 걸음폭이 저절로 줄어드는 것이 이 방법의 묘미입니다."
+        "desc": "비용 곡선의 바닥을 한 번에 찾는 대신, 아무 데서나 출발해 한 걸음씩 내려가는 방법이 경사하강법입니다. 지금 서 있는 자리에서 곡선의 접선 기울기(미분값)를 구하면 어느 쪽이 오르막인지 알 수 있고, 그 반대 방향으로 가면 내리막입니다. 갱신 규칙은 간단히 말해 새로운 w는 지금의 w에서 학습률 곱하기 기울기를 빼는 것이며, 절편 b도 같은 방식으로 함께 고칩니다. 학습률은 한 걸음의 보폭인데, 너무 크면 골짜기를 뛰어넘어 발산하고 너무 작으면 도착하기 전에 반복이 끝나버립니다. 바닥에 가까울수록 기울기가 0에 가까워져 걸음폭이 저절로 줄어드는 것이 이 방법의 묘미입니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       },
       {
         "term": "공분산과 상관계수 — 최소제곱 회귀계수 공식의 뿌리 (판교 7반 김일한 교수 자료)",
-        "desc": "공분산은 두 변수가 각자의 평균에서 얼마나 벗어났는지(편차)를 서로 곱해서 평균낸 값입니다. 두 변수가 함께 커지고 함께 작아지면 곱이 양수로 쌓여 공분산이 양수가 되고, 반대로 움직이면 음수가 되며, 방향이 뒤죽박죽이면 양수와 음수가 상쇄되어 0에 가까워집니다. 다만 공분산은 단위에 휘둘려서 kg으로 재느냐 g으로 재느냐에 따라 값이 통째로 달라지므로, 각 변수의 표준편차로 나누어 -1에서 1 사이로 표준화한 것이 상관계수입니다. 중요한 점은 단순선형회귀의 기울기 추정식이 정확히 x와 y의 편차곱 합을 x의 편차제곱 합으로 나눈 형태, 즉 공분산을 x의 분산으로 나눈 값이라는 것입니다. 상관을 이해하면 회귀계수가 어디서 튀어나온 숫자인지 저절로 풀립니다."
+        "desc": "공분산은 두 변수가 각자의 평균에서 얼마나 벗어났는지(편차)를 서로 곱해서 평균낸 값입니다. 두 변수가 함께 커지고 함께 작아지면 곱이 양수로 쌓여 공분산이 양수가 되고, 반대로 움직이면 음수가 되며, 방향이 뒤죽박죽이면 양수와 음수가 상쇄되어 0에 가까워집니다. 다만 공분산은 단위에 휘둘려서 kg으로 재느냐 g으로 재느냐에 따라 값이 통째로 달라지므로, 각 변수의 표준편차로 나누어 -1에서 1 사이로 표준화한 것이 상관계수입니다. 중요한 점은 단순선형회귀의 기울기 추정식이 정확히 x와 y의 편차곱 합을 x의 편차제곱 합으로 나눈 형태, 즉 공분산을 x의 분산으로 나눈 값이라는 것입니다. 상관을 이해하면 회귀계수가 어디서 튀어나온 숫자인지 저절로 풀립니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       },
       {
         "term": "다중선형회귀에서 변수를 늘리기 전에 점검할 것들 — 다중공선성과 VIF (판교 7반 김일한 교수 자료)",
-        "desc": "독립변수를 여러 개 넣으면 설명력은 올라가는 것처럼 보이지만, 변수끼리 서로 너무 닮아 있으면 문제가 생깁니다. 예를 들어 키(cm)와 키(inch)를 함께 넣으면 두 변수 중 누가 얼마나 기여했는지 모델이 판단할 수 없어 회귀계수가 크게 흔들리고 부호까지 뒤집히기도 하는데, 이를 다중공선성이라 합니다. 진단은 상관계수 히트맵으로 눈으로 보고, 숫자로는 VIF(분산팽창계수)를 계산해 보통 10을 넘으면 위험 신호로 봅니다. 조치는 겹치는 변수 중 하나를 빼거나 두 변수를 합쳐 새 지표를 만드는 것입니다. 이 밖에도 잔차의 독립성(더빈-왓슨), 등분산성, 잔차 정규성, 영향점(쿡의 거리)까지 함께 살펴야 안심하고 계수를 해석할 수 있습니다."
+        "desc": "독립변수를 여러 개 넣으면 설명력은 올라가는 것처럼 보이지만, 변수끼리 서로 너무 닮아 있으면 문제가 생깁니다. 예를 들어 키(cm)와 키(inch)를 함께 넣으면 두 변수 중 누가 얼마나 기여했는지 모델이 판단할 수 없어 회귀계수가 크게 흔들리고 부호까지 뒤집히기도 하는데, 이를 다중공선성이라 합니다. 진단은 상관계수 히트맵으로 눈으로 보고, 숫자로는 VIF(분산팽창계수)를 계산해 보통 10을 넘으면 위험 신호로 봅니다. 조치는 겹치는 변수 중 하나를 빼거나 두 변수를 합쳐 새 지표를 만드는 것입니다. 이 밖에도 잔차의 독립성(더빈-왓슨), 등분산성, 잔차 정규성, 영향점(쿡의 거리)까지 함께 살펴야 안심하고 계수를 해석할 수 있습니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       }
     ],
     "examples": [
@@ -509,25 +521,33 @@ export const otherDeep = {
         "title": "비용함수 곡선 그려보기 — w를 바꿔가며 cost의 U자 확인 (판교 7반 김일한 교수 자료)",
         "lang": "python",
         "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# 아주 단순한 데이터: y가 x와 똑같으므로 정답 기울기는 1이다\nx_data = np.array([1, 2, 3])\ny_data = np.array([1, 2, 3])\n\n# 기울기 w를 넣으면 그 w의 비용(MSE)을 돌려주는 함수\ndef mse(x, y, w):\n    hx = w * x                      # 예측값: 기울기 w를 곱한 값\n    return np.sum((hx - y) ** 2) / len(x)   # 오차를 제곱해서 평균낸다\n\n# w를 -3부터 5까지 50개로 촘촘히 나누어 비용을 계산한다\nw_list = np.linspace(-3, 5, 50)\ncost_list = [mse(x_data, y_data, w) for w in w_list]\n\n# 몇 개만 숫자로 확인해 본다\nfor w in [-1, 0, 1, 2, 3]:\n    print(\"w =\", w, \"일 때 cost =\", round(mse(x_data, y_data, w), 3))\n\n# 곡선을 그리면 w=1 지점이 바닥인 U자 모양이 나온다\nplt.plot(w_list, cost_list, \"ro\")\nplt.xlabel(\"w\")                     # 가로축은 기울기 후보\nplt.ylabel(\"cost\")                  # 세로축은 그 기울기의 오차 크기\nplt.show()",
-        "note": "비용함수를 공식으로만 보면 막막하지만, w를 바꿔가며 점을 찍어보면 골짜기가 눈에 바로 보입니다. w가 1일 때 cost가 정확히 0이 되는 것을 확인하면 학습의 목표가 무엇인지 한 번에 이해됩니다."
+        "note": "비용함수를 공식으로만 보면 막막하지만, w를 바꿔가며 점을 찍어보면 골짜기가 눈에 바로 보입니다. w가 1일 때 cost가 정확히 0이 되는 것을 확인하면 학습의 목표가 무엇인지 한 번에 이해됩니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       },
       {
         "title": "경사하강법 직접 구현 — w와 b를 반복해서 갱신하기 (판교 7반 김일한 교수 자료)",
         "lang": "python",
         "code": "import numpy as np\n\n# 공부시간 x와 점수 y, 실제 관계는 y = 2x + 1 이다\nx = np.array([1, 2, 3, 4, 5])\ny = np.array([3, 5, 7, 9, 11])\n\nw = 10.0            # 기울기 초기값: 일부러 엉뚱한 값에서 출발\nb = 10.0            # 절편 초기값\nlearning_rate = 0.01   # 한 걸음의 보폭(학습률)\nn = len(x)\n\nfor epoch in range(2000):\n    hx = w * x + b                          # 현재 w, b로 예측\n    cost = np.sum((hx - y) ** 2) / n        # 오차를 제곱해서 평균낸 비용\n    grad_w = np.sum((hx - y) * 2 * x) / n   # w 방향의 접선 기울기\n    grad_b = np.sum((hx - y) * 2) / n       # b 방향의 접선 기울기\n    w = w - learning_rate * grad_w          # 오르막 반대로 한 걸음\n    b = b - learning_rate * grad_b          # 절편도 같은 방식으로 이동\n    if epoch % 400 == 0:                    # 400번마다 진행 상황 출력\n        print(epoch, \"cost:\", round(cost, 4), \"w:\", round(w, 4), \"b:\", round(b, 4))\n\nprint(\"최종 w =\", round(w, 3), \" 최종 b =\", round(b, 3))\nprint(\"공부시간 7시간 예측 점수 =\", round(w * 7 + b, 2))",
-        "note": "sklearn이나 statsmodels가 내부에서 하는 일을 열 줄 남짓으로 직접 재현한 코드입니다. cost가 줄어들면서 w가 2, b가 1에 수렴하는 과정을 보면 학습이 마법이 아님을 알 수 있고, 학습률을 0.1로 키우면 발산하는 것도 직접 실험해 볼 수 있습니다."
+        "note": "sklearn이나 statsmodels가 내부에서 하는 일을 열 줄 남짓으로 직접 재현한 코드입니다. cost가 줄어들면서 w가 2, b가 1에 수렴하는 과정을 보면 학습이 마법이 아님을 알 수 있고, 학습률을 0.1로 키우면 발산하는 것도 직접 실험해 볼 수 있습니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       },
       {
         "title": "최소제곱 공식으로 회귀계수 손계산 — 공분산·상관계수와 이어보기 (판교 7반 김일한 교수 자료)",
         "lang": "python",
         "code": "import numpy as np\n\nX = np.array([1, 2, 3, 4, 5])          # 공부시간\nY = np.array([50, 55, 65, 70, 80])     # 시험점수\n\nX_bar = np.mean(X)                     # X의 평균\nY_bar = np.mean(Y)                     # Y의 평균\n\ndev_x = X - X_bar                      # X의 편차: 평균에서 얼마나 벗어났나\ndev_y = Y - Y_bar                      # Y의 편차\n\nSxx = np.sum(dev_x ** 2)               # X 편차의 제곱합 (분산의 재료)\nSxy = np.sum(dev_x * dev_y)            # 편차끼리의 곱의 합 (공분산의 재료)\n\nbeta1 = Sxy / Sxx                      # 기울기 = 공분산 나누기 X의 분산\nbeta0 = Y_bar - beta1 * X_bar          # 절편 = Y평균 빼기 기울기 곱하기 X평균\n\nprint(\"기울기 beta1 =\", round(beta1, 3))\nprint(\"절편   beta0 =\", round(beta0, 3))\n\ncov = np.mean(dev_x * dev_y)                       # 공분산: 편차곱의 평균\ncorr = cov / (np.std(X) * np.std(Y))               # 상관계수: 표준편차로 나눠 표준화\nprint(\"공분산 =\", round(cov, 3), \" 상관계수 =\", round(corr, 3))\n\nY_hat = beta0 + beta1 * X                          # 직접 구한 식으로 예측\nfor a, b, p in zip(X, Y, Y_hat):\n    print(\"X =\", a, \" 실제 =\", b, \" 예측 =\", round(p, 2))",
-        "note": "OLS가 돌려주는 coef 값이 사실은 편차곱의 합을 편차제곱의 합으로 나눈 나눗셈 한 번이라는 사실을 눈으로 확인하는 실습입니다. 같은 재료(편차의 곱)에서 공분산과 상관계수도 함께 나오므로, 상관과 회귀가 한 뿌리임을 체감할 수 있습니다."
+        "note": "OLS가 돌려주는 coef 값이 사실은 편차곱의 합을 편차제곱의 합으로 나눈 나눗셈 한 번이라는 사실을 눈으로 확인하는 실습입니다. 같은 재료(편차의 곱)에서 공분산과 상관계수도 함께 나오므로, 상관과 회귀가 한 뿌리임을 체감할 수 있습니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       },
       {
         "title": "다중공선성 진단 — VIF로 겹치는 변수 찾아내기 (판교 7반 김일한 교수 자료)",
         "lang": "python",
         "code": "import numpy as np\nimport pandas as pd\nimport statsmodels.api as sm\nfrom statsmodels.stats.outliers_influence import variance_inflation_factor\n\nnp.random.seed(0)\nn = 100\n\nX1 = np.random.normal(50, 10, n)                       # 기본 변수\nX2 = X1 * 0.9 + np.random.normal(0, 2, n)              # X1과 거의 같은 변수(일부러 겹치게)\nX3 = np.random.normal(100, 20, n)                      # X1과 무관한 독립적 변수\ny = 3 * X1 + 2 * X3 + np.random.normal(0, 15, n)       # 정답에는 X2가 들어있지 않다\n\ndf = pd.DataFrame({\"X1\": X1, \"X2\": X2, \"X3\": X3})\nprint(\"상관계수 행렬\")\nprint(df.corr().round(3))                              # X1과 X2의 상관이 1에 가깝게 나온다\n\n# VIF 계산: 값이 10을 넘으면 다중공선성 위험 신호로 본다\nvif = pd.DataFrame()\nvif[\"변수\"] = df.columns\nvif[\"VIF\"] = [variance_inflation_factor(df.values, i) for i in range(df.shape[1])]\nprint(vif)\n\n# 겹치는 X2를 그대로 넣고 회귀하면 계수가 불안정해진다\nmodel_all = sm.OLS(y, sm.add_constant(df)).fit()\nprint(\"X2 포함 계수:\", model_all.params.round(3).to_dict())\n\n# X2를 빼고 다시 적합하면 원래 정답인 3과 2에 가깝게 복원된다\nmodel_drop = sm.OLS(y, sm.add_constant(df[[\"X1\", \"X3\"]])).fit()\nprint(\"X2 제외 계수:\", model_drop.params.round(3).to_dict())",
-        "note": "정답을 알고 있는 가짜 데이터를 만들어 다중공선성의 해악을 직접 눈으로 보는 실습입니다. 겹치는 변수를 넣었을 때 계수가 엉뚱하게 흔들리다가 제거하면 참값으로 돌아오는 것을 확인하면, 변수는 많이 넣을수록 좋다는 오해가 깔끔하게 정리됩니다."
+        "note": "정답을 알고 있는 가짜 데이터를 만들어 다중공선성의 해악을 직접 눈으로 보는 실습입니다. 겹치는 변수를 넣었을 때 계수가 엉뚱하게 흔들리다가 제거하면 참값으로 돌아오는 것을 확인하면, 변수는 많이 넣을수록 좋다는 오해가 깔끔하게 정리됩니다.",
+        "origin": "practice",
+        "source": "김일한 실습교수(판교 7반) — 회귀 실습 노트북 13종"
       }
     ]
   },

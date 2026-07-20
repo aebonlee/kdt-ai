@@ -166,6 +166,27 @@ function renderExamples(list, heading, icon) {
   return h
 }
 
+// ── 실습교수 보충자료 ──────────────────────────────────────
+// origin: 'practice' = 실습교수(반별 투입 강사) 작성분. 판정 근거는 adminschedule.js —
+// authors(과목 교안 저자)=주강사, lineup에만 등장=실습교수. 필드가 없으면 주강사 계열로 본다.
+// 화면·데이터에서는 기존과 동일하게 노출되고, 실습교안에서만 과목 말미로 묶어 조판한다.
+const isPractice = (x) => x?.origin === 'practice'
+const notPractice = (x) => !isPractice(x)
+
+// source는 대표가 인용 관계를 되짚기 위한 관리자용 메타정보다(학생 대상 정보 아님).
+function renderPracticeSupplement(concepts = [], examples = []) {
+  if (!concepts.length && !examples.length) return ''
+  const sources = [...new Set([...concepts, ...examples].map((x) => x.source).filter(Boolean))]
+  let h = `<h4 class="sec">🧩 실습교수 보충자료</h4>`
+  if (sources.length) h += `<p class="note thin">출처 — ${sources.map((s) => esc(s)).join(' / ')}</p>`
+  if (concepts.length) {
+    h += `<div class="concepts">` +
+      concepts.map((k) => `<dl class="concept"><dt>${esc(k.term)}</dt><dd>${escNl(k.desc)}</dd></dl>`).join('') + `</div>`
+  }
+  if (examples.length) h += renderExamples(examples, '따라하기 실습', '💻').replace(/^<h4 class="sec">[^<]*<\/h4>/, '')
+  return h
+}
+
 async function renderDay(subj, dayIdx) {
   const day = subj.days[dayIdx]
   const dnum = dayIdx + 1
@@ -218,8 +239,8 @@ async function renderDay(subj, dayIdx) {
       one.detail.labs.map((lab) => `<div class="box tips"><div class="box-h">${esc(lab.title)}</div><ol>` +
         lab.steps.map((s) => `<li>${esc(s)}</li>`).join('') + `</ol></div>`).join('') + `</div>`
   }
-  // 실습 예제 + 실전 소스
-  h += renderExamples(one.examples, '실습 예제', '💻')
+  // 실습 예제 + 실전 소스 (실습교수 작성분은 과목 말미 보충자료 소절로 분리)
+  h += renderExamples((one.examples || []).filter(notPractice), '실습 예제', '💻')
   h += renderExamples(one.realCodes, '실전 소스', '🛠')
   // 과제
   if (one.detail?.homework?.length) {
@@ -234,7 +255,12 @@ async function renderDay(subj, dayIdx) {
       h += `<p class="note">※ 같은 과목이라도 담당교수에 따라 평가 체계가 다를 수 있습니다. 기본안과 함께 참고하세요.</p>`
     }
   }
-  if (dnum === subj.days.length) h += renderQuiz(subj.id)
+  if (dnum === subj.days.length) {
+    h += renderQuiz(subj.id)
+    // 과목 말미 — 이 과목 전 일차에 흩어져 있는 실습교수 작성분을 한곳에 모은다
+    const supp = subj.days.flatMap((_, i) => (dd[`${subj.id}-${i + 1}`]?.examples || []).filter(isPractice))
+    h += renderPracticeSupplement([], supp)
+  }
   h += `</section>`
   return h
 }
@@ -250,15 +276,17 @@ function renderEtcCourseBlock(id, c) {
       <div class="sh-meta"><span class="chip code">참고</span><span class="chip cat">${esc(c.category)}</span><span class="chip day">${c.hours}시간</span></div>
     </div>` +
     `<h4 class="sec">📖 주요 학습내용</h4><div class="card etc-card"><ul class="dot">${(c.topics || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>` +
-    (deep.concepts?.length
+    ((deep.concepts || []).filter(notPractice).length
       ? `<h4 class="sec">📚 핵심 개념</h4><div class="concepts">` +
-        deep.concepts.map((k) => `<dl class="concept"><dt>${esc(k.term)}</dt><dd>${escNl(k.desc)}</dd></dl>`).join('') + `</div>`
+        (deep.concepts || []).filter(notPractice).map((k) => `<dl class="concept"><dt>${esc(k.term)}</dt><dd>${escNl(k.desc)}</dd></dl>`).join('') + `</div>`
       : '') +
-    (deep.examples?.length ? renderExamples(deep.examples, '따라하기 실습', '💻') : '') +
+    renderExamples((deep.examples || []).filter(notPractice), '따라하기 실습', '💻') +
     (otherExams[id]
       ? renderExam(id, otherExams[id]) + `<p class="note">※ 타 강사 진행 과목의 평가기준 — 평가 방향을 미리 파악하는 참고자료입니다.</p>`
       : '') +
-    (c.tip ? `<p class="note">🔗 ${escNl(c.tip)}</p>` : '')
+    (c.tip ? `<p class="note">🔗 ${escNl(c.tip)}</p>` : '') +
+    // 과목 말미 — 실습교수 작성분(개념·실습)을 한곳에 모은다
+    renderPracticeSupplement((deep.concepts || []).filter(isPractice), (deep.examples || []).filter(isPractice))
 }
 
 // 개요 페이지 — 안내 + 분반별 일정표 + 11월 이후

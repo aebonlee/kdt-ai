@@ -19,7 +19,12 @@ export default function Footer() {
           담당 지역: {course.regions.map((r) => `${r.name} ${r.klass}`.trim()).join(' · ')} · 문의:{' '}
           {course.contact}
         </p>
-        <p className="fine">SKALA 4기 학습자용 커리큘럼 안내 페이지 · 강사 담당 일정 기준</p>
+        <div className="foot-bottom">
+          <p className="fine">SKALA 4기 학습자용 커리큘럼 안내 페이지 · 강사 담당 일정 기준</p>
+          <p className="credit">
+            이 사이트는 Ph.D Aebon의 기획과 판단을 Claude Code가 구현하는 human-in-the-loop 협업으로 제작되었습니다.
+          </p>
+        </div>
       </div>
     </footer>
   )
