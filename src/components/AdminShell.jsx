@@ -16,6 +16,9 @@ const ITEMS = [
   { to: '/subjects', label: '과목별 안내', icon: '📘' },
   { to: '/admin/students', label: '학생 명단', icon: '👥' },
   { to: '/admin/teams', label: '팀별 명단', icon: '🧩' },
+  // 기타 — 학생 자가평가 진도 화면. 학습자에게는 의미가 없어 공개 메뉴에서 내렸고,
+  // 개발해 둔 기능이라 관리자 쪽에 보존만 한다.
+  { to: '/progress', label: '학습관리 (기타)', icon: '🗂️' },
 ]
 
 export default function AdminShell({ children }) {

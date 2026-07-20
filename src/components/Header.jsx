@@ -14,7 +14,6 @@ const nav = [
   { to: '/textbook', label: '실습교안' },
   { to: '/team', label: '팀 프로젝트' },
   { to: '/reference', label: '참고자료' },
-  { to: '/progress', label: '학습관리' },
   { to: '/board', label: '게시판' },
   { to: '/recommend', label: '학습추천사이트' },
 ]

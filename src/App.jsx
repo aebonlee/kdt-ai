@@ -66,7 +66,7 @@ export default function App() {
             <Route path="/lectures/:date" element={<RequireAuth><Lectures /></RequireAuth>} />
             <Route path="/team" element={<RequireAuth><TeamProject /></RequireAuth>} />
             <Route path="/reference" element={<RequireAuth><References /></RequireAuth>} />
-            <Route path="/progress" element={<RequireAuth><Progress /></RequireAuth>} />
+            <Route path="/progress" element={<RequireAdmin><AdminShell><Progress /></AdminShell></RequireAdmin>} />
             <Route path="/day/:date" element={<RequireAuth><DayDetail /></RequireAuth>} />
             <Route path="/textbook" element={<RequireAuth><Textbook /></RequireAuth>} />
 

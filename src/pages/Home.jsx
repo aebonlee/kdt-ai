@@ -52,7 +52,6 @@ export default function Home() {
               { to: '/lectures', t: '강의안', d: '날짜별 8시간 강의안 · 시간표·실습' },
               { to: '/team', t: '팀 프로젝트', d: '팀 프로젝트 수행 전 과정 가이드' },
               { to: '/reference', t: '참고자료', d: '과목별 공식 문서·자료 모음' },
-              { to: '/progress', t: '학습관리', d: '이해도 자가평가로 진도율 체크' },
             ].map((c) => (
               <Link key={c.t + c.to} to={c.to} className="card">
                 <h3 style={{ fontSize: 16, fontWeight: 800, color: 'var(--navy-800)' }}>{c.t}</h3>

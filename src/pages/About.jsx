@@ -27,7 +27,6 @@ const PLATFORM = [
   { num: '03', title: '참고자료', desc: '과목별 공식 문서 · 자료 모음', link: '/reference' },
   { num: '04', title: '선수학습자료', desc: '파이썬 · Git · SQL 등 기초 19주제', link: '/prep' },
   { num: '05', title: '팀 프로젝트', desc: '팀 프로젝트 수행 전 과정 가이드', link: '/team' },
-  { num: '06', title: '학습관리', desc: '이해도 자가평가로 진도율 체크', link: '/progress' },
 ]
 
 export default function About() {

@@ -90,9 +90,6 @@ export default function Dashboard() {
               <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 8 }}>
                 {doneCount} / {totalDays}일 이해 완료{student ? ` · ${classLabel(profile.track, profile.class_no)} 일정 기준` : ''}
               </p>
-              <Link to="/progress" className="section-link" style={{ display: 'inline-block', marginTop: 10 }}>
-                학습관리로 →
-              </Link>
             </div>
 
             <div className="card" style={{ gridColumn: 'span 2' }}>
