@@ -121,7 +121,7 @@ export const otherDeep = {
         "code": "VS Code에서 HTML 뼈대를 몇 글자로 만들어 내는 Emmet 핵심 5가지.\n\n1. !  →  Tab : HTML 기본 뼈대 (압도적 1위)\n   <!DOCTYPE html>부터 <body>까지 한 번에. lang=\"en\"은 ko로 바꿀 것.\n\n2. .클래스명 : class 있는 div\n   .card → <div class=\"card\"></div>\n   .card>img+h1+p → 카드 구조 한 번에 (#todoList처럼 #은 id)\n\n3. ul>li*4 : 자식(>)과 반복(*)\n   메뉴·목록·TodoList 등 반복 구조 필수기. ul.menu>li*4>a 로 확장 가능.\n\n4. + 와 {텍스트} : 형제 나열과 내용 채우기\n   h1{오늘 할 일}+input+button{추가}\n   → <h1>오늘 할 일</h1><input type=\"text\"><button>추가</button>\n\n5. $ : 자동 번호 매기기\n   ul>li{항목 $}*3 → 항목 1 / 항목 2 / 항목 3\n   갤러리 카드 여러 장은 section>div.photo-card$*4 식으로 응용.\n\n[종합 예시 — 한 줄이 교재 예제 6의 HTML 전체]\ndiv.todo-app>h1{📝 오늘 할 일}+div.input-row>input+button{추가}^ul#todoList>li{할 일 $}*3\n(^ 는 한 단계 위로 올라가기)",
         "note": "판교 4반 김영희 실습교수가 수업 중 정리해 공유한 치트시트다. JSFiddle/CodePen이 숨겨주던 HTML 뼈대를 VS Code에서 직접 만들 때 Emmet이 그 다리 역할을 한다. 다섯 규칙만 손에 붙으면 마크업 작성 속도가 몇 배로 빨라진다.",
         "origin": "practice",
-        "source": "김영희 실습교수 — HTML/CSS 수업 배포 자료 (배치표 미등재 · 슬랙 호칭 근거로 유지)"
+        "source": "김영희 실습교수 — HTML/CSS 수업 배포 자료 (2026-07-21 대표 확인)"
       },
       {
         "title": "웹 학습 참고 링크 모음 — 실습교수·수강생 공유 (7/15~16)",
@@ -141,7 +141,7 @@ export const otherDeep = {
         "code": "/* 수업 중 배포된 예제 파일 3개의 핵심만 발췌 (skala-4 폴더 보관)\n   ① css_complete_example.html — 레이아웃 종합(flex·grid·position 5개 섹션)\n   ② css_flex_exe1.html — Flex Box 속성 비교 실험\n   ③ Trsnsition.html — 2D/3D 전환·애니메이션 4종 비교 */\n\n/* ③에서 — hover 전환(transition)과 자동 반복(animation)의 차이 */\n.t2d { transition: transform 0.35s; }             /* 마우스 올릴 때만 */\n.t2d:hover { transform: translateY(-8px) scale(1.07); }\n\n.t3d { transition: transform 0.5s; transform-style: preserve-3d; }\n.t3d:hover { transform: rotateY(28deg) rotateX(12deg); }  /* 3D는 perspective 필요 */\n\n.a2d { animation: move2d 1.4s ease-in-out infinite alternate; } /* 항상 반복 */\n@keyframes move2d {\n  from { transform: translateX(0) rotate(0deg); }\n  to   { transform: translateX(16px) rotate(8deg); }\n}\n\n/* 부모에 perspective를 줘야 자식의 3D 회전이 원근감 있게 보인다 */\n.wrap { display: flex; gap: 14px; flex-wrap: wrap; perspective: 600px; }",
         "note": "판교 4반 수업에서 배포된 실습 파일 3종이다. ①은 flex-container/grid-container/position(sticky·absolute)·반응형 카드까지 한 파일에 담은 종합 레퍼런스, ②는 justify-content 등 Flex 속성을 값만 바꿔 비교하는 실험 파일, ③은 transition(이벤트 기반)과 animation(자동 반복)의 차이를 2D/3D로 보여준다. 종합실습의 car-card·2열 배치 CSS를 채울 때 ①을 옆에 두면 된다.",
         "origin": "practice",
-        "source": "김영희 실습교수 — HTML/CSS 수업 배포 자료 (배치표 미등재 · 슬랙 호칭 근거로 유지)"
+        "source": "김영희 실습교수 — HTML/CSS 수업 배포 자료 (2026-07-21 대표 확인)"
       },
       {
         "title": "스터디 플래너 ① 목표 추가 — submit 검증과 상태 갱신",
