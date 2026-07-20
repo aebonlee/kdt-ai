@@ -31,7 +31,7 @@ export const docsGroups = [
   },
   {
     id: 'curriculum',
-    title: '커리큘럼 (과목 구성)',
+    title: '커리큘럼(과목구성)',
     desc: '4기 전체 과목 구성표',
     files: [
       { t: '(0602 수정) 4기 커리큘럼 — AI캠퍼스·K-뉴딜', id: '1TC2rhbrQhbPEVjaHkQfy2IdBZfGBzCQU', x: 'xlsx', b: 36050, d: '2026-06-30' },
@@ -88,7 +88,7 @@ export const docsGroups = [
   },
   {
     id: 'practice',
-    title: '종합실습교재 (전임·실습교수 업로드)',
+    title: '종합실습교재 업로드(전임/실습교수)',
     desc: '전임·실습교수가 작성한 종합실습 가이드',
     files: [
       { t: "종합실습가이드_Prompt 설계·Context Engineering (윤재성)", id: "1_MF8A8PGJzzalioKpkZXNywbsbzUtnrA", x: "pdf", b: 616234, d: "2026-07-15" },
@@ -239,8 +239,8 @@ export const docsGroups = [
   },
   {
     id: 'common',
-    title: '공통 안내',
-    desc: '실습교수 오리엔테이션과 통합 ZOOM 정보',
+    title: '실습교수 공통 자료',
+    desc: '드라이브 최상위에 있는 공통 파일 — 실습교수 오리엔테이션·통합 ZOOM 정보',
     files: [
       { t: "SKALA 4기 통합 ZOOM 정보", id: "1QpexqmzrNZH01yr5MENFZfxKxISGeH3b", x: "xlsx", b: 12283, d: "2026-07-16" },
       { t: 'SKALA 4기 실습교수 Orientation', id: '19MR3VcYmY4zDkFWrTd11ddPZeKfTI7ak', x: 'pdf', b: 4996755, d: '2026-06-30' },
