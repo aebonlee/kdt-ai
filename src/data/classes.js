@@ -40,6 +40,14 @@ export const CLASS_MAP = {
 }
 
 // "판교 5층 7반" 같은 표시 문자열
+// 층까지 드러내는 짧은 표기 — 판교는 4층 1~5반 / 5층 6~10반이라 반 번호만으로는 헷갈린다.
+// 예: '5층 7반' · '4층 2반' · '울산 4반' · '광주 3반'
+export const classShort = (track, classNo) => {
+  if (!track) return classNo ? `${classNo}반` : ''
+  const floor = track === 'p4' ? '4층' : track === 'p5' ? '5층' : TRACK_LABELS[track] || track
+  return classNo ? `${floor} ${classNo}반` : floor
+}
+
 export const classLabel = (track, classNo) => {
   if (!track) return ''
   const label = TRACK_LABELS[track] || track

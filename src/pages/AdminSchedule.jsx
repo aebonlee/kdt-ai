@@ -203,7 +203,7 @@ export default function AdminSchedule() {
                           {p.lineup.map((x) => (
                             <span
                               key={x.cls}
-                              title={`${x.cls} ${x.room}`}
+                              title={`${p.campus} ${x.cls} · ${x.room} · ${x.name}`}
                               style={{
                                 display: 'inline-block', marginRight: 6, padding: '2px 9px', borderRadius: 999, fontSize: 12,
                                 fontWeight: x.me ? 900 : 600,

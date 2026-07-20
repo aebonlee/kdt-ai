@@ -22,12 +22,12 @@ export const EVAL_RECORDS = [
     closedAt: '2026-07-20',           // 최종 마감일
     students: 33,                      // 평가 대상 인원
     submittedTo: '백정열 전임교수 (슬랙 DM) · 구글드라이브 종합실습평가 폴더',
-    folder: 'https://drive.google.com/drive/folders/138nuNOmKLNo3DcIT-KqvreTBlrNkfNqW',
+    folder: 'https://drive.google.com/drive/folders/1m8V1JPAbd06woqbCqmesQIZNbMN6pPRt',  // 교과목평가_울산4반_파이썬_0720
     files: [
       { t: '실습 시행_울산_파이썬_RAW (운영진 원본 양식 정본)', id: '130a5v1NA70GyO-ebkupXgwScQsOo7RCf', x: 'xlsx', b: 19742 },
-      { t: 'SKALA4기_울산4반_성적표 (33명 × 6과제 요약)', id: '1KU-Oj2hx3lxIl1K5V1fGqSBc-q9401U0', x: 'xlsx', b: 12183 },
-      { t: '울산4반_채점상세 (항목별 점수 + 우수사항·보완사항)', id: '1NG0ysg76TR3DNQj2eqqIHeTBOWiRdGiD', x: 'xlsx', b: 24330 },
-      { t: '00_안내 (채점 기준·특이사항 요약)', id: '1IHMSierpwyo47chCoraBJaWdGWjDjfj7', x: 'txt', b: 1398 },
+      { t: 'SKALA4기_울산4반_성적표 (33명 × 6과제 요약)', id: '131p-GtDlP-apnNeSUS8deNEISycOF2xs', x: 'xlsx', b: 12183 },
+      { t: '울산4반_채점상세 (항목별 점수 + 우수사항·보완사항)', id: '1aEU_wbuLUbTZCZKgp-0_JJiPv2pdUfEB', x: 'xlsx', b: 24330 },
+      { t: '00_안내 (채점 기준·특이사항 요약)', id: '13U5wMqxHE0on0rL9Vm1mXRSf9j-ZiVPR', x: 'txt', b: 1398 },
     ],
     notes: [
       '과제 6건 채점 — Practice 1~4, 종합실습 1·2.',

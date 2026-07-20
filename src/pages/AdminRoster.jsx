@@ -213,6 +213,12 @@ export default function AdminRoster() {
               </table>
             </div>
 
+            {students.length === 0 && (
+              <p className="card" style={{ marginTop: 14, padding: 16, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                아직 학생 가입이 없습니다. 아래 분반 탭은 18개 분반 구조를 보여주며, 학생이 가입하면 해당 분반에 채워집니다.
+              </p>
+            )}
+
             {/* 분반 탭 — 18개 분반을 상단에서 골라 본다(아래로 길게 내려가지 않게) */}
             <div style={{ marginTop: 22, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {byClass.map((c) => {
