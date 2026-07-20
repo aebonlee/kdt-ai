@@ -8,6 +8,7 @@ import { TRACK_LABELS, CLASS_MAP, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
 import { evalUnits, customKey } from '../data/evalunits'
 import { exams } from '../data/exams'
+import { mergeInstructors } from '../utils/people'
 import { subjectById } from '../data/curriculum'
 
 const fmtDate = (s) => (s ? new Date(s).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }) : '-')
@@ -34,7 +35,10 @@ export default function AdminDashboard() {
   }, [])
 
   const students = profiles.filter((p) => p.role === 'student')
-  const instructors = profiles.filter((p) => p.role === 'instructor')
+  // 교수자는 같은 사람이 여러 번 가입한 사례가 있어 동일인으로 접어 센다.
+  const instructorRows = profiles.filter((p) => p.role === 'instructor')
+  const instructors = mergeInstructors(instructorRows)
+  const dupAccounts = instructorRows.length - instructors.length
   // 소속 확인이 오래됐거나 없는 학생(14일 기준) — 재확인 대상
   const staleCount = students.filter((p) => !p.confirmed_at ||
     Date.now() - new Date(p.confirmed_at).getTime() > 14 * 24 * 60 * 60 * 1000).length
@@ -82,7 +86,7 @@ export default function AdminDashboard() {
         <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 }}>
           {[
             ['가입 학생', `${students.length}명`],
-            ['교수자', `${instructors.length}명`],
+            ['교수자', `${instructors.length}명${dupAccounts ? ` (계정 ${instructorRows.length})` : ''}`],
             ['활성 분반', `${classes.filter((c) => c.members.length).length}개`],
             ['평가 단위(과목×분반)', `${unitsWithExam.length}건`],
             ['소속 재확인 대상', `${staleCount}명`],
@@ -164,7 +168,7 @@ export default function AdminDashboard() {
 
         {/* 교수자 명단 (분리) */}
         <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>교수자 명단</h2>
-        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>교수자로 가입한 계정입니다(학생 명단과 분리 관리).</p>
+        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>{'교수자로 가입한 계정입니다(학생 명단과 분리 관리). 같은 사람이 여러 번 가입한 경우 한 줄로 합쳐 보여줍니다.'}</p>
         <div style={{ marginTop: 10, overflowX: 'auto', border: '1px solid var(--line)', borderRadius: 12 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 480 }}>
             <thead>
@@ -177,8 +181,22 @@ export default function AdminDashboard() {
             <tbody>
               {instructors.map((p, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid var(--line)' }}>
-                  <td style={{ padding: '8px 12px', fontWeight: 700 }}>{p.name || '-'}</td>
-                  <td style={{ padding: '8px 12px', color: 'var(--ink-soft)' }}>{p.email}</td>
+                  <td style={{ padding: '8px 12px', fontWeight: 700 }}>
+                    {p.name || '-'}
+                    {p.accountCount > 1 && (
+                      <span title={`계정 ${p.accountCount}개를 동일인으로 합침`} style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: 'var(--navy-700)', background: 'var(--navy-50)', borderRadius: 999, padding: '1px 7px' }}>
+                        계정 {p.accountCount}
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ padding: '8px 12px', color: 'var(--ink-soft)' }}>
+                    {p.email}
+                    {p.accountCount > 1 && (
+                      <div style={{ fontSize: 11.5, marginTop: 2, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                        {p.accounts.filter((a) => a.email !== p.email).map((a) => a.email).join(' · ')}
+                      </div>
+                    )}
+                  </td>
                   <td style={{ padding: '8px 12px' }}>{fmtDate(p.created_at)}</td>
                   <td style={{ padding: '8px 12px' }}>{fmtDate(p.confirmed_at)}</td>
                 </tr>
