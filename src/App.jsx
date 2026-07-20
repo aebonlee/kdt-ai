@@ -59,7 +59,7 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/about/guide" element={<AboutGuide />} />
             <Route path="/about/instructor" element={<InstructorIntro />} />
-            <Route path="/tracks" element={<RequireAdmin><Tracks /></RequireAdmin>} />
+            <Route path="/tracks" element={<RequireAdmin><AdminShell><Tracks /></AdminShell></RequireAdmin>} />
             <Route path="/prep" element={<Prep />} />
             <Route path="/prep/:id" element={<PrepDetail />} />
             <Route path="/lectures" element={<RequireAuth><Lectures /></RequireAuth>} />
@@ -78,8 +78,8 @@ export default function App() {
             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
 
             {/* 관리자(강사) 전용 — 수업일정표(학생 비공개)·자료실·페어링 시간표 */}
-            <Route path="/schedule" element={<RequireAdmin><Schedule /></RequireAdmin>} />
-            <Route path="/subjects" element={<RequireAdmin><Subjects /></RequireAdmin>} />
+            <Route path="/schedule" element={<RequireAdmin><AdminShell><Schedule /></AdminShell></RequireAdmin>} />
+            <Route path="/subjects" element={<RequireAdmin><AdminShell><Subjects /></AdminShell></RequireAdmin>} />
             <Route path="/admin" element={<RequireAdmin><AdminShell><Admin /></AdminShell></RequireAdmin>} />
             <Route path="/admin/teams" element={<RequireAdmin><AdminShell><AdminTeams /></AdminShell></RequireAdmin>} />
             <Route path="/admin/schedule" element={<RequireAdmin><AdminShell><AdminSchedule /></AdminShell></RequireAdmin>} />

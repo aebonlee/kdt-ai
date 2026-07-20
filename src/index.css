@@ -125,32 +125,6 @@ ul { list-style: none; }
 .admin-caret { font-size: 9px; opacity: 0.85; margin-left: 1px; }
 
 /* 강사 관리 풍선메뉴(팝오버) */
-.admin-menu { position: relative; display: inline-flex; }
-.admin-pop {
-  position: absolute; top: calc(100% + 10px); right: 0; z-index: 300;
-  width: 232px; padding: 8px;
-  background: var(--bg-white); color: var(--ink);
-  border: 1px solid var(--line); border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(14,17,82,0.18);
-}
-.admin-pop-arrow {
-  position: absolute; top: -6px; right: 20px; width: 12px; height: 12px;
-  background: var(--bg-white); border-left: 1px solid var(--line); border-top: 1px solid var(--line);
-  transform: rotate(45deg);
-}
-.admin-pop-title {
-  font-size: 11px; font-weight: 800; letter-spacing: 0.3px;
-  color: var(--ink-soft); padding: 4px 8px 8px;
-}
-.admin-pop-item {
-  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
-  padding: 9px 8px; border-radius: 8px; cursor: pointer;
-  background: transparent; border: 0; color: inherit;
-}
-.admin-pop-item:hover { background: var(--navy-50); }
-.admin-pop-ico { font-size: 18px; flex: 0 0 auto; }
-.admin-pop-label { display: block; font-size: 13.5px; font-weight: 700; color: var(--navy-800); }
-.admin-pop-desc { display: block; font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
 
 /* ── Navbar ── */
 .navbar {
@@ -763,7 +737,6 @@ ul { list-style: none; }
   .session-row { flex-direction: column; align-items: flex-start; gap: 4px; }
   .brand-logo img { height: 18px; }
 }
-
 
 /* ── 관리자 셸 — 좌측 세로 메뉴 + 넓은 콘텐츠(최대 1600px) ── */
 .admin-shell {
