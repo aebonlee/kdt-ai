@@ -59,7 +59,7 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/about/guide" element={<AboutGuide />} />
             <Route path="/about/instructor" element={<InstructorIntro />} />
-            <Route path="/tracks" element={<RequireAuth><Tracks /></RequireAuth>} />
+            <Route path="/tracks" element={<RequireAdmin><Tracks /></RequireAdmin>} />
             <Route path="/prep" element={<Prep />} />
             <Route path="/prep/:id" element={<PrepDetail />} />
             <Route path="/lectures" element={<RequireAuth><Lectures /></RequireAuth>} />

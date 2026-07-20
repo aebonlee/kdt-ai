@@ -8,6 +8,7 @@ const ITEMS = [
   { icon: '🧩', label: '팀별 명단', desc: '프로젝트 팀 편성', to: '/admin/teams' },
   { icon: '📂', label: '자료실', desc: '강의자료(구글드라이브)', to: '/admin' },
   { icon: '📅', label: '수업일정표', desc: '월별 타임라인 · 분반별', to: '/schedule' },
+  { icon: '🧭', label: '과정별 안내', desc: '트랙별 과정 구성 한눈에', to: '/tracks' },
   { icon: '📘', label: '과목별 안내', desc: '담당 과목 일자별 학습 내용', to: '/subjects' },
   { icon: '🗓️', label: '페어링 시간표', desc: '내 강의일 · 주강사 짝', to: '/admin/schedule' },
   { icon: '📝', label: '교과목 평가', desc: '종합실습 평가 입력 · CSV', to: '/admin/evaluate' },
