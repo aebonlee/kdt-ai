@@ -528,6 +528,12 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "import tracemalloc\n\n# 일반 클래스는 속성을 __dict__ 라는 사전에 담아 자유롭게 늘릴 수 있다\nclass NoSlots:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n# __slots__ 를 선언하면 지정한 속성만 고정 자리에 저장한다\nclass WithSlots:\n    __slots__ = (\"x\", \"y\")  # 여기 적힌 이름 외의 속성은 아예 만들 수 없다\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n# 느낌이 아니라 실제 측정으로 차이를 확인한다\ndef peak_kb(cls, n=10000):\n    tracemalloc.start()\n    objs = [cls(i, i) for i in range(n)]\n    peak = tracemalloc.get_traced_memory()[1]  # 최고 사용량\n    tracemalloc.stop()\n    print(cls.__name__, len(objs), \"개 ->\", round(peak / 1024, 2), \"KB\")\n\npeak_kb(NoSlots)\npeak_kb(WithSlots)\n\n# 대신 유연성은 사라진다 - 없는 속성을 붙이면 즉시 오류가 난다\ntry:\n    WithSlots(1, 2).z = 3\nexcept AttributeError as e:\n    print(\"슬롯에 없는 속성이라 거부됨:\", e)",
       "note": "이전 기수 교재 8장(객체지향)의 __slots__ 와 메모리 측정 단원을 재구성했다. 현행 교안의 dataclass 카드가 \"구조를 깔끔하게\"에 초점을 둔다면 이쪽은 \"같은 구조를 싸게\"에 해당한다. 속성이 고정된 경량 객체를 대량 생성할 때만 쓰고, 동적으로 속성을 붙여야 하면 쓰지 않는 것이 판단 기준이다."
+    },
+    {
+      "title": "제출 파일명 규칙 갱신 — 캠퍼스명·반이 앞에 붙는다 (교재 최신본 기준)",
+      "lang": "text",
+      "code": "[변경 사항] 교재 갱신본에서 제출 파일명 규칙이 바뀌었다.\n  구본:  이름_실습명.zip            예) 홍길동_day1종합실습.zip\n  신본:  캠퍼스명_반_이름_실습명.zip  예) 서울_1반_홍길동_day1종합실습.zip\n\n  Practice 개별 파일도 같은 원칙이다.\n  신본:  캠퍼스명_반_이름.py 로 제출\n\n[왜 바뀌었나]\n  4기는 울산·판교·광주 여러 캠퍼스에서 같은 과목이 동시에 진행된다.\n  이름만 적으면 동명이인이 섞이거나 어느 반 제출물인지 구분되지 않아\n  채점 단계에서 파일을 되돌려보내는 일이 생긴다.\n  앞에 캠퍼스와 반을 붙이면 정렬만 해도 반별로 묶인다.\n\n[작성 예시]\n  울산_3반_김민수_day1종합실습.zip\n  판교_7반_이서연_day2종합실습.zip\n  광주_2반_박지훈.py\n\n[주의 — 반별 안내가 우선한다]\n  이 규칙은 교재 공식본 기준이다. 실제 운영에서는 담당 실습교수가\n  다른 규칙을 안내하는 경우가 있다. 예를 들어 울산 배포본에서는\n  Practice 4종을 Practice번호_내이름.py 로 만들어 Practice_내이름.zip 으로 묶고,\n  종합실습 2는 Test2_내이름.zip 형태로 안내된 바 있다.\n  → 충돌하면 담당 실습교수의 채널 공지를 따르고, 없으면 교재 규칙을 따른다.\n\n[제출 전 30초 점검]\n  □ 파일명에 캠퍼스명·반·이름이 순서대로 들어갔는가\n  □ 확장자가 맞는가 (Practice는 .py / 종합실습은 .zip)\n  □ zip 안에 불필요한 폴더(__pycache__, .ipynb_checkpoints)가 섞이지 않았는가\n  □ 압축을 풀었을 때 파일이 바로 나오는가 (폴더가 이중으로 감싸지지 않았는가)",
+      "note": "교재 갱신본에서 실제로 달라진 것은 제출 규칙·API 전환·데이터 링크 세 가지뿐이고, 그중 이 항목만 새로 반영한다. 파일명 규칙은 내용과 무관해 보이지만 채점 파이프라인에서 되돌려보내는 사유 1순위라 실제로는 감점과 직결된다. 캠퍼스가 여러 곳인 기수에서만 생기는 문제라 이전 기수 자료를 참고했다면 특히 놓치기 쉽다."
     }
   ],
   "python-2": [

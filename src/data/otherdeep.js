@@ -238,6 +238,18 @@ export const otherDeep = {
       {
         "term": "PostgreSQL의 고유 기능 — 표준 SQL에서 한 걸음 더",
         "desc": "같은 SQL이라도 PostgreSQL에서만 편해지는 기능들이 있다. SERIAL은 자동 증가 정수 컬럼을 한 단어로 만들어 주고, JSONB는 JSON을 파싱된 이진 형태로 저장해 내부 키까지 인덱싱·검색할 수 있게 한다. ARRAY 타입은 한 칸에 여러 값을 담고 UNNEST로 다시 행으로 펼치며, LATERAL JOIN은 오른쪽 서브쿼리가 왼쪽 행의 값을 참조할 수 있게 해 행마다 다른 조건의 조회를 가능하게 한다. MATERIALIZED VIEW는 뷰의 결과를 실제로 저장해 두어 무거운 집계를 즉시 읽게 해 준다(대신 REFRESH가 필요하다). 인덱스도 B-Tree 하나가 아니라 용도별로 나뉘어 — 일반 비교는 B-Tree, JSONB·배열·전문검색은 GIN, 기하·범위 데이터는 GiST, 아주 큰 시계열 테이블에는 블록 요약만 저장해 가벼운 BRIN을 쓴다."
+      },
+      {
+        "term": "SELECT 논리적 처리 순서 — 쓰는 순서와 실행 순서는 다르다 (최진철 교수 교재)",
+        "desc": "우리가 SQL을 쓸 때는 SELECT를 맨 앞에 적지만, DBMS가 실제로 처리하는 순서는 FROM으로 대상 테이블을 잡고, WHERE로 행을 거르고, GROUP BY로 묶고, HAVING으로 그룹을 거른 뒤, 그제서야 SELECT로 열과 별칭을 만들고, ORDER BY로 정렬하고, LIMIT으로 개수를 자릅니다.\n즉 작성 순서 1번인 SELECT가 실행 순서로는 5번째입니다.\n이 순서를 모르면 왜 별칭이 WHERE에서 안 먹히는지 설명할 수 없습니다. SELECT에서 만든 별칭은 실행 5단계에 태어나는데 WHERE는 2단계라 그 이름이 아직 존재하지 않기 때문입니다.\n반대로 ORDER BY는 6단계라 별칭을 그대로 쓸 수 있습니다.\n교재는 이를 한국어 어순에 빗대 \"어디서 - 거르고 - 고른다\"로 기억하라고 안내합니다."
+      },
+      {
+        "term": "파일시스템의 한계와 DBMS 3대 기능 — DB를 왜 쓰는가 (최진철 교수 교재)",
+        "desc": "데이터를 그냥 파일로 저장하던 시절에는 네 가지 문제가 반복됐습니다.\n첫째 데이터 구조가 프로그램에 종속돼 구조를 바꾸면 코드를 같이 고쳐야 했고, 둘째 파일마다 같은 값이 중복 저장돼 서로 값이 어긋났고, 셋째 값이 규칙에 맞는지를 애플리케이션이 매번 직접 검사해야 했고, 넷째 여러 사람이 동시에 고칠 때 통제가 어렵고 장애가 나면 수동 복구뿐이었습니다.\nDBMS는 이 넷을 각각 논리·물리 데이터 독립성, 통합 관리를 통한 중복 최소화, 제약조건 기반 무결성 보장, 트랜잭션과 로그 기반 자동 복구로 해결합니다.\n뒤에서 배우는 정규화·제약조건·트랜잭션·WAL은 전부 이 네 가지 한계에 대한 답이라는 관점으로 묶어 보면 전체 흐름이 하나로 연결됩니다."
+      },
+      {
+        "term": "DBMS 방언 차이 — 같은 일을 제품마다 다르게 쓴다 (최진철 교수 교재)",
+        "desc": "표준 SQL이 있어도 제품마다 표기가 갈리는 지점이 있어서, 실무에서 코드를 옮길 때 이 부분이 먼저 깨집니다.\n행 제한은 PostgreSQL과 MySQL이 LIMIT, Oracle은 ROWNUM 또는 FETCH FIRST, SQL Server는 TOP을 씁니다.\n문자열 연결은 PostgreSQL과 Oracle이 두 개의 세로줄 연산자, MySQL은 CONCAT 함수, SQL Server는 더하기 기호입니다. 자동 증가 키는 SERIAL 또는 IDENTITY, AUTO_INCREMENT, SEQUENCE로 갈립니다.\nLIKE의 대소문자 처리도 PostgreSQL과 Oracle은 항상 구분하는 반면 MySQL과 SQL Server는 콜레이션 설정을 따라가서 기본값이 무시 쪽입니다.\nDDL의 되돌리기도 다릅니다. PostgreSQL은 DROP이나 TRUNCATE를 트랜잭션 안에서 되돌릴 수 있지만 Oracle과 MySQL은 실행 즉시 자동 커밋돼 복구가 안 되므로, 실무는 못 되돌린다고 가정하고 다루는 편이 안전합니다."
       }
     ],
     "examples": [
@@ -294,6 +306,24 @@ export const otherDeep = {
         "lang": "text",
         "code": "[0] 설치 여부 먼저 확인 — 파이썬 1일차 환경구성 스크립트로 PostgreSQL 17이 이미 깔렸을 수 있다\n  터미널에서:  postgres -V\n  버전이 나오면 다시 설치할 필요 없다.\n\n[1] postgres 계정 비밀번호가 없어 접속이 안 될 때\n  터미널에서 psql에 먼저 붙는다\n    psql postgres\n  프롬프트가 바뀌면 비밀번호를 지정한다\n    ALTER USER postgres PASSWORD 'your_password';\n  빠져나온다\n    \\q\n  이제 DBeaver 연결 설정에 사용자 postgres / 비밀번호 your_password 를 입력하면 붙는다.\n\n[2] DBeaver에 내가 만든 데이터베이스가 안 보일 때 (가장 많이 막히는 지점)\n  증상: CREATE DATABASE telecom; 으로 만들었는데 목록에 postgres만 보인다\n  원인: DBeaver 기본 설정이 접속한 DB 하나만 표시하도록 되어 있다\n  해결: 연결 우클릭 → Edit Connection → PostgreSQL 탭 → \"Show all databases\" 체크 → 저장 후 재연결\n\n[3] DBeaver를 한글 화면으로 쓰고 싶을 때\n  DBeaver Community → Preferences → User Interface → Language → Korean 선택\n\n[4] 수업 운영 (울산캠퍼스 기준)\n  · 교재: tinyurl.com/sk-database → \"수강생 배포용 교재 모음\" (3일 과정 내내 사용)\n  · 1일차 테스트: QUIZ + 코드분석, 17:45~18:00 진행\n    - 링크는 17:40~17:45 사이에 채널 공유\n    - 접속 시 gmail 계정 정보 입력 필수\n  · Day1 퀴즈 제출 마감 18:00 — 시간 초과 시 대폭 감점, 제출 후 수정 불가",
         "note": "스마트 데이터베이스 첫날 실습에서 실제로 나온 막힘 지점과 해결책을 모았다. DBeaver의 \"Show all databases\"는 특히 원인을 짐작하기 어려운 항목이라 — 쿼리는 성공했는데 화면에만 안 보이니 DB 생성이 실패한 줄 오해하기 쉽다 — 만든 DB가 안 보이면 무조건 이 설정부터 확인하는 것이 빠르다."
+      },
+      {
+        "title": "처리 순서 체감 — 별칭은 WHERE에서 왜 안 되고 ORDER BY에서는 되는가 (최진철 교수 교재)",
+        "lang": "sql",
+        "code": "-- 실패하는 쿼리: SELECT에서 만든 별칭을 WHERE에서 바로 쓴다\n-- WHERE는 실행 2단계, 별칭은 실행 5단계에 생기므로 이름이 아직 없다\nSELECT plan_name, monthly_fee * 12 AS yearly_fee\nFROM plan\nWHERE yearly_fee > 600000;   -- 오류: column yearly_fee does not exist\n\n-- 해결 1: WHERE에는 별칭이 아니라 계산식을 그대로 다시 적는다\nSELECT plan_name, monthly_fee * 12 AS yearly_fee\nFROM plan\nWHERE monthly_fee * 12 > 600000\nORDER BY yearly_fee DESC;    -- ORDER BY는 실행 6단계라 별칭 사용 가능\n\n-- 해결 2: 인라인 뷰로 별칭을 먼저 확정한 뒤 바깥에서 거른다\nSELECT plan_name, yearly_fee\nFROM (\n  SELECT plan_name, monthly_fee * 12 AS yearly_fee\n  FROM plan\n) AS t                       -- 안쪽이 먼저 끝나 별칭이 실체가 된다\nWHERE yearly_fee > 600000\nORDER BY yearly_fee DESC\nLIMIT 5;                     -- LIMIT은 실행 7단계, 정렬 뒤에 잘린다\n\n-- 그룹 필터도 같은 원리: WHERE는 행을, HAVING은 묶인 그룹을 거른다\nSELECT data_gb, count(*) AS cnt, avg(monthly_fee) AS avg_fee\nFROM plan\nWHERE monthly_fee > 0        -- 2단계: 묶기 전에 행을 먼저 거른다\nGROUP BY data_gb             -- 3단계: 데이터 용량별로 묶는다\nHAVING count(*) >= 2         -- 4단계: 묶은 결과를 거른다\nORDER BY avg_fee DESC;       -- 6단계: 마지막에 정렬한다",
+        "note": "별칭 오류는 초급자가 가장 자주 만나는 에러인데, 원인이 문법이 아니라 처리 순서라는 점이 핵심입니다.\n해결 1은 짧지만 계산식이 중복되고, 해결 2는 길지만 식이 한 곳에만 있어 유지보수가 낫습니다.\nWHERE와 HAVING을 헷갈릴 때도 같은 순서표를 떠올리면 바로 정리됩니다."
+      },
+      {
+        "title": "제약조건으로 잘못된 값을 입구에서 막기 — CHECK·DEFAULT·UNIQUE (최진철 교수 교재)",
+        "lang": "sql",
+        "code": "-- 시드 데이터를 보호하려고 연습용 테이블은 별도 스키마에 만든다\nCREATE SCHEMA IF NOT EXISTS lab;\n\n-- 요금제 연습 테이블: 타입 + 제약을 함께 정의해 품질을 입구에서 보장\nCREATE TABLE lab.plan_practice (\n  plan_id     integer PRIMARY KEY,              -- 중복 금지 + 빈값 금지\n  plan_name   varchar(40) NOT NULL UNIQUE,      -- 빈값 금지 + 중복 금지\n  monthly_fee integer NOT NULL\n                CHECK (monthly_fee >= 0),       -- 음수 요금 자체를 차단\n  data_gb     integer NOT NULL DEFAULT 0\n                CHECK (data_gb >= -1),          -- -1은 무제한 약속값\n  status      varchar(10) NOT NULL DEFAULT :active_default\n                CHECK (status IN (:s1, :s2, :s3)),  -- 허용값만 통과\n  created_at  timestamp NOT NULL DEFAULT now()  -- 누락 시 현재시각 자동\n);\n\n-- 정상 입력: DEFAULT가 status와 created_at을 알아서 채운다\nINSERT INTO lab.plan_practice (plan_id, plan_name, monthly_fee, data_gb)\nVALUES (1, :name_a, 39000, 10);\n\n-- 위반 관찰 1: 음수 요금 -> CHECK 제약 위반으로 거부된다\nINSERT INTO lab.plan_practice (plan_id, plan_name, monthly_fee)\nVALUES (2, :name_b, -1000);\n\n-- 위반 관찰 2: 요금제명 중복 -> UNIQUE 제약 위반으로 거부된다\nINSERT INTO lab.plan_practice (plan_id, plan_name, monthly_fee)\nVALUES (3, :name_a, 55000);\n\n-- 실제로 무엇이 막았는지 제약 목록으로 확인한다 (contype: p키 u유일 c검사)\nSELECT conname, contype FROM pg_constraint WHERE conrelid = 'lab.plan_practice'::regclass;",
+        "note": "PK는 중복과 빈값을 둘 다 막고, UNIQUE는 중복만, NOT NULL은 빈값만 막는다는 역할 분담을 먼저 잡아야 합니다.\nCHECK는 잘못된 값을 막고 DEFAULT는 누락을 합리적 기본값으로 채우는 짝이라, 둘을 함께 쓰면 입력 시점부터 품질이 확보됩니다.\n문자열 리터럴은 실습 시 콜론 자리표시자 대신 작은따옴표로 직접 넣어 실행하세요."
+      },
+      {
+        "title": "울산 분반 운영 차이 — 배포 자료 대조 메모 (최진철 교수 교재)",
+        "lang": "text",
+        "code": "[대조 결과 요약]\n통합본 성격의 강의 덱과 울산 배포용 5종을 맞대어 본 결과,\n커리큘럼 자체의 차이는 발견되지 않았습니다. 다만 문서 계층이 다릅니다.\n\n1) 커리큘럼 - 동일\n   3일 과정, 2026-07-20(월) ~ 07-22(수)\n   Day1 설계의 기초 / Day2 관계형 데이터 탐험 / Day3 성능의 예술\n   각 Day 4교시 편성(Day3는 3교시 + 마무리) + 종합 실습\n   교재는 T1 핵심 / T2 심화 / T3 확장 / T4 실습 네 트랙\n   T2 심화와 T3 확장은 3일차 과정 종료 시에 배포\n\n2) 실습 데이터 - 동일\n   통신(telecom) 도메인 단일, seed 스크립트 4개\n   00_schema.sql   테이블 4종 생성\n   01_seed_core.sql 고객 500 / 가입 800 / 사용로그 약 9만\n   03_account.sql   계좌 4행, Day2 트랜잭션 동시성 전용\n   02_seed_bulk.sql 사용로그 약 300만, Day3 당일에만 적재\n   적재 순서 원칙: 00 -> 01 (Day1), +03 (Day2), +02 (Day3)\n   대용량을 미리 넣으면 Day1~2 조회가 느려지므로 순서 준수\n   조회/적재/ERD는 public, DDL/DML 연습은 lab 스키마로 분리\n\n3) 문서 계층 - 여기서 차이가 난다\n   통합본 덱은 T1 본문(강의 이론)만 담고 있고,\n   종합실습 과제/평가/제출 규정에 대한 언급이 전혀 없습니다.\n   반면 울산 배포용에는 운영 문서가 별도로 붙어 있습니다.\n   - 02 과정안내: 3일 일정표, 사전 준비물, 트랙 연계표\n   - 04 종합실습가이드: 과제 전문, 평가 배점, 제출 규정\n   - 05 실습데이터가이드: 5단계 적재 절차와 트러블슈팅 10종\n   또한 통합본 용어집에는 강사 전용 자료에만 나오는 약어가\n   포함돼 있어, 통합본은 강사 마스터 계열,\n   울산 5종은 수강생 배포본 계열로 보입니다.\n\n4) 평가 체계 - 울산 배포본에서만 확인됨\n   총 200점 = 개인 100 + 조별 100\n   A 퀴즈와 코드분석 60점: Day별 20점, 매일 17:45~18:00 15분\n                          회당 퀴즈 15 + 코드해석 5\n   B 개인 과제 40점: 정규화 워크시트 20 + 단일 테이블 조회 20\n   C 조별 과제 100점: 실무 SQL 6문항 60 + 종합 튜닝 40\n                      Day2 4문항 + Day3 2문항, 팀 공통 100%\n   루브릭 4축: 정확성 / 효율성 / 가독성 / 증빙\n\n5) 제출 규정\n   제출처: 반별 담당 교수님 Slack DM\n   형식: 작성 도구는 자유, 최종 산출물은 PDF로 변환\n   파일명 개인: [반][번호][이름][DAYn][과제명].pdf\n   파일명 조별: [반][x조][DAYn][과제명].pdf\n   마감: Day1~3 종합실습 모두 Day3 종료일까지, 이후는 평가 제외\n   감점: 쿼리 없이 결과만 제출, 불필요 컬럼 과다, 문항 누락\n   Day3는 EXPLAIN before/after 캡처가 없으면 개선 증명 불가로 감점\n\n[운영 시 주의]\n실습 도구는 DBeaver로 통일합니다.\npgAdmin이 PostgreSQL 설치 시 함께 깔리지만 본 과정에서는 쓰지 않습니다.\nPostgreSQL 버전은 17로 고정합니다.\n포트는 5432가 기본이나 설치 값에 따라 5433이 될 수 있어,\n접속이 거부되면 설치 때 지정한 포트를 먼저 확인해야 합니다.",
+        "note": "분반별로 배우는 내용이 달라지는 것이 아니라, 배포되는 문서의 층위가 다릅니다.\n수강생 질문이 과제 배점이나 제출 형식으로 들어오면 이론 덱이 아니라 종합실습 가이드 쪽을 근거로 답해야 합니다.\n제출 마감이 Day별이 아니라 3일차 종료일 일괄이라는 점은 특히 오해가 잦으니 초반에 짚어 주는 편이 좋습니다."
       }
     ]
   },
