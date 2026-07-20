@@ -167,7 +167,10 @@ export default function AdminDashboard() {
         )}
 
         {/* 교수자 명단 (분리) */}
-        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>교수자 명단</h2>
+        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>
+          교수자 명단
+          <Link to="/admin/roster" style={{ marginLeft: 10, fontSize: 12.5, fontWeight: 700 }}>가입명부 전체 보기 →</Link>
+        </h2>
         <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>{'교수자로 가입한 계정입니다(학생 명단과 분리 관리). 같은 사람이 여러 번 가입한 경우 한 줄로 합쳐 보여줍니다.'}</p>
         <div style={{ marginTop: 10, overflowX: 'auto', border: '1px solid var(--line)', borderRadius: 12 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 480 }}>

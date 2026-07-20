@@ -14,6 +14,7 @@ const ITEMS = [
   { to: '/schedule', label: '수업일정표', icon: '📅' },
   { to: '/tracks', label: '과정별 안내', icon: '🧭' },
   { to: '/subjects', label: '과목별 안내', icon: '📘' },
+  { to: '/admin/roster', label: '가입명부', icon: '📋' },
   { to: '/admin/students', label: '학생 명단', icon: '👥' },
   { to: '/admin/teams', label: '팀별 명단', icon: '🧩' },
   // 기타 — 학생 자가평가 진도 화면. 학습자에게는 의미가 없어 공개 메뉴에서 내렸고,
