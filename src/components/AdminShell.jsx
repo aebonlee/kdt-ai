@@ -16,7 +16,6 @@ const GROUPS = [
     label: '공통 메뉴',
     items: [
       { to: '/admin/main', label: '관리자 대시보드', icon: '🏠', end: true },
-      { to: '/schedule', label: '수업일정표', icon: '📅' },
       { to: '/tracks', label: '과정별 안내', icon: '🧭' },
       { to: '/subjects', label: '과목별 안내', icon: '📘' },
       { to: '/admin', label: '자료실', icon: '📂', end: true },
@@ -26,6 +25,7 @@ const GROUPS = [
     id: 'mine',
     label: '담당강사 메뉴',
     items: [
+      { to: '/schedule', label: '수업일정표', icon: '📅' },
       { to: '/admin/schedule', label: '페어링 시간표', icon: '🗓️' },
       { to: '/admin/evaluate', label: '교과목 평가', icon: '📝' },
       { to: '/admin/roster', label: '가입명부', icon: '📋' },
