@@ -492,6 +492,12 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# [종합실습 1 보완 안내] 기존 API가 유료화되어 countries.dev 로 진행한다 (강사 공지 7/15)\n#  · 국가 단건 조회: https://countries.dev/alpha/{코드}  — alpha-2(KR) / alpha-3(KOR) 모두, 대소문자 무관\n#  · 문서: https://countries.dev/docs  (응답 포맷 · 에러코드 · 요청 제한은 docs 하위 참조)\n#  · Git 커밋은 최종 1회로 제출 (여러 번 나누는 건 실무에서!)\nimport requests\n\ndef get_country(code):\n    \"\"\"국가 코드(KR·KOR 등)로 국가 정보를 조회한다\"\"\"\n    url = \"https://countries.dev/alpha/\" + code        # 엔드포인트에 코드만 바꿔 끼운다\n    try:\n        r = requests.get(url, timeout=5)               # timeout 필수\n        r.raise_for_status()                           # 잘못된 코드면 4xx → 예외\n        return r.json()                                # dict 로 변환\n    except requests.RequestException as e:             # 네트워크·HTTP 오류 통합 처리\n        print(\"조회 실패:\", code, \"-\", e)\n        return None\n\nkr = get_country(\"KR\")                                 # alpha-2 코드 (KOR 도 동일 결과)\nif kr:\n    print(kr[\"name\"], kr[\"flag\"])                      # Korea (Republic of) 🇰🇷\n    print(\"수도:\", kr[\"capital\"])                      # Seoul\n    print(\"인구:\", format(kr[\"population\"], \",\"))      # 51,780,579\n    print(\"통화:\", kr[\"currencies\"][0][\"code\"])        # KRW — 리스트 안의 dict 주의!\n    print(\"시간대:\", kr[\"timezones\"])                  # ['UTC+09:00']\n\n# 응답 주요 필드: name·capital·population·region·currencies(리스트)·languages(리스트)·borders·flag\n# 여러 나라 수집: [\"KR\",\"US\",\"JP\",\"DE\"] 를 반복 조회 → 종합실습의 비동기(httpx) 수집으로 확장",
       "note": "실제 응답을 확인하고 쓴 예제다 — currencies·languages 는 '리스트 안에 dict'라 [0]으로 먼저 꺼내야 한다. 잘못된 코드를 넣으면 4xx가 오므로 raise_for_status 예외 처리가 평가(오류/예외 35점)와 직결된다."
+    },
+    {
+      "title": "실습 데이터 파일 정정 안내 — Practice1 json 대신 Practice2 json (7/20 공지)",
+      "lang": "text",
+      "code": "[정정] Python_Practice1_Data.json 파일은 JSON 로딩 시 오류가 납니다.\n  → Python_Practice2_Data.json (약 8.2KB)으로 대체해서 실습하세요.\n\n[확인 방법] 파일이 정상인지 먼저 검사한 뒤 본 실습으로 넘어가면 시간을 아낀다\nimport json\n\ntry:\n    # 인코딩을 명시해야 한글 데이터에서 깨짐·오류가 나지 않는다\n    with open(\"Python_Practice2_Data.json\", encoding=\"utf-8\") as f:\n        data = json.load(f)\n    # 최상위 자료형과 개수를 먼저 확인해 구조를 파악한다\n    print(type(data), len(data))\n    # 첫 레코드의 키 목록을 보면 어떤 필드가 있는지 바로 보인다\n    print(data[0].keys() if isinstance(data, list) else list(data)[:5])\nexcept json.JSONDecodeError as e:\n    # 어느 줄·어느 위치에서 깨졌는지 알려 준다 — 파일 손상 여부 판별의 핵심\n    print(\"JSON 형식 오류:\", e.lineno, e.colno, e.msg)\nexcept FileNotFoundError:\n    print(\"파일 경로를 확인하세요. 노트북과 같은 폴더에 두는 것이 가장 간단합니다.\")\n\n[실습 진행 구조 — 광주 1~4반 기준]\n  Practice 1 (오전) → Practice 2 (오후) → 종합 실습 1 (마감 전)\n  · 각 실습은 채널의 해당 안내 메시지에 \"댓글(스레드)로 코드 제출\"\n  · 제출 마감은 익일 오전 9시\n  · 수정본은 기존 댓글을 고치지 말고 새 댓글로 추가 게시할 것\n\n[참고 자료]\n  · 파이썬 입문 교재 소스코드 모음: github.com/comstudy21joon/python\n  · 점프 투 파이썬 (문법이 아직 낯설다면): wikidocs.net/book/1",
+      "note": "Practice 1 데이터 파일이 손상돼 있어 실습 자체가 시작되지 않는 사고가 있었고, 대체 파일로 진행하라는 공지가 나왔다. 남의 데이터 파일을 받아 쓸 때는 본 실습 코드를 짜기 전에 json.load를 한 번 감싸서 열어 보는 습관이 시간을 가장 크게 아껴 준다 — JSONDecodeError는 깨진 줄·열 번호까지 알려 주므로 파일 문제인지 내 코드 문제인지 즉시 갈린다."
     }
   ],
   "python-2": [
@@ -572,8 +578,7 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# [Practice 4 - 후반부] sklearn Pipeline 훈련·저장·재로딩 + Plotly HTML\n# 설명: ColumnTransformer+Pipeline으로 전처리와 모델을 한 덩어리로\n#       학습·평가·저장·재로딩하고, Plotly 막대 차트를 HTML로 저장한다\n# 변경내역: v1.0 최초 작성\nimport pandas as pd\nimport joblib                                   # 모델 파일 저장/불러오기\nimport plotly.express as px                     # 인터랙티브 차트\nfrom sklearn.pipeline import Pipeline           # 전처리+모델 묶음\nfrom sklearn.compose import ColumnTransformer   # 열별로 다른 전처리\nfrom sklearn.preprocessing import OneHotEncoder # 글자 열을 숫자로\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\n\ntry:\n    df = pd.read_csv('sales_100k.csv')\nexcept FileNotFoundError:\n    raise SystemExit('sales_100k.csv가 필요합니다 — 실습 3을 먼저 실행하세요')\n\n# 목표(y): 중앙값보다 큰 고액 거래인지 예측, 입력(X): 지역·카테고리\ny = (df['amount'] > df['amount'].median()).astype(int)\nX = df[['region', 'category']]\n\n# 1) 전처리 + 모델을 Pipeline 하나로 — 따로따로 실행하면 -20\npre = ColumnTransformer([('cat', OneHotEncoder(), ['region', 'category'])])\npipe = Pipeline([('pre', pre),                              # 1단계: 인코딩\n                 ('model', LogisticRegression(max_iter=500))])  # 2단계: 분류\n\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=0)\npipe.fit(X_tr, y_tr)                            # 전처리+학습이 한 번에\nprint('정확도:', round(pipe.score(X_te, y_te), 3))\n\n# 2) joblib 저장 + 재로딩 — dump 없이 학습만 하면 -20\njoblib.dump(pipe, 'sales_model.joblib')         # 파이프라인 통째로 저장\nloaded = joblib.load('sales_model.joblib')      # 다시 불러와서\nprint('재로딩 예측:', loaded.predict(X_te.head(3)).tolist())   # 그대로 예측 가능\n\n# 3) Plotly 막대 차트를 HTML로 저장 — fig.show()만 하면 -20\ntop = df.groupby(['region', 'category'], as_index=False)['amount'].sum()\nfig = px.bar(top, x='region', y='amount', color='category',\n             title='Region x Category Total Sales')\nfig.write_html('sales_bar.html')                # 브라우저로 열리는 파일 제출\nprint('sales_bar.html 저장 완료')",
       "note": "Practice 4의 3·4번 문제 풀이다. 전처리와 모델을 따로 실행하면 Pipeline 미사용 -20, joblib.dump() 없이 학습만 하면 -20, Plotly를 fig.show()로 화면 출력만 하고 write_html()을 안 부르면 또 -20이다. ColumnTransformer를 Pipeline 1단계로 넣으면 재로딩한 모델이 전처리까지 그대로 재현한다는 점이 이 실습의 핵심이다."
-    }
-,
+    },
     {
       "title": "종합실습 2 데이터 링크 수정 — Stack Overflow 설문 CSV (보완 안내)",
       "lang": "python",
@@ -585,15 +590,13 @@ export const examplesExtra3 = {
       "lang": "python",
       "code": "# [Practice 3·4 보완 안내] 배포된 sales_100k.csv 실물 확인 결과 (7/16)\n# · 실제 100만 행 × 11컬럼 (파일명의 100k보다 크다 — 성능 비교가 더 실감난다)\n# · 컬럼: order_id, order_date, region, category, product_name,\n#         quantity, unit_price, payment_method, customer_age, customer_gender, amount\n# · region·category 값은 한글! region 결측 10,000건 · category 결측 8,000건 존재\nimport pandas as pd\n\ndf = pd.read_csv('sales_100k.csv')\nprint(df.isnull().sum())          # region 10000 · category 8000 이 나오는 게 정상(파일 문제 아님)\n\nprint(df['region'].unique())      # ['인천' '부산' '서울' '광주' '울산' '경기' '대전' '대구' nan]\n\n# t-검정 그룹은 영어 'Seoul'이 아니라 한글 값으로! (영문으로 쓰면 빈 Series)\nseoul = df.loc[df['region'] == '서울', 'amount']\nbusan = df.loc[df['region'] == '부산', 'amount']\nprint(len(seoul), len(busan))     # 247558, 119425 — 값이 잡히는지 꼭 확인\n\n# 카이제곱용 payment_method 는 카드·현금·계좌이체·포인트 4종(결측 없음)",
       "note": "실물 파일 점검 결과다. ① 결측치가 일부러 심어져 있으니 isnull().sum() 출력이 0이 아니라고 당황하지 말 것(EDA 채점 포인트), ② region·category가 한글 값이므로 조건 필터와 t-검정 그룹 추출에 '서울'·'부산'처럼 한글로 써야 한다, ③ 실물이 100만 행이라 Pandas vs Polars vs DuckDB 성능 차이가 확실히 보인다."
-    }
-,
+    },
     {
       "title": "실습교수 공유 링크 — DuckDB 공식 블로그 · 종합실습 가이드 (수업 중 공지)",
       "lang": "text",
       "code": "수업 중(7/16) 실습교수들이 전 분반에 공유한 자료다.\n\n[백정열 교수 — 전 분반 공지]\n· DuckDB 공식 블로그: https://duckdb.org/news/\n  Practice 3에서 쓴 DuckDB의 릴리스 소식·활용 사례가 정리된 공식 채널.\n  \"CSV에 바로 SQL\"이 어디까지 발전했는지 훑어보면 도구 선택 감이 생긴다.\n\n[조홍근 실습교수 — 울산 2반 공유]\n· 종합실습 가이드 다운로드: https://tinyurl.com/sk-python\n· 팀으로 실습하더라도 제출은 각자(개개인) 해야 한다는 점을 재강조.\n\n[수업 마무리 안내]\n· 파이썬 과목 Quiz는 구글폼으로 제출(채널 공지 링크).\n· 백정열 교수: \"10월 Vector DB 과정에서 다시 만난다 — 그때는 자신 있게 파이썬 잘 합니다!라고 해주길.\"",
       "note": "울산 4반 외 다른 반 채널에서 공유된 자료까지 모은 것이다. 종합실습 가이드 단축링크(tinyurl.com/sk-python)는 가이드 PDF를 다시 볼 때 유용하고, DuckDB 블로그는 도구가 살아 움직이는 생태계임을 보여준다. 파이썬은 10월 Vector DB 과목의 기반이 되므로 방학처럼 쉬지 말고 Practice 코드를 한 번 더 돌려보자."
-    }
-,
+    },
     {
       "title": "종합실습 2 제출 안내·채점기준 실물 — 데이터셋과 배점 (윤선영 교수 배포)",
       "lang": "text",
@@ -685,8 +688,7 @@ export const examplesExtra3 = {
       "lang": "text",
       "code": "[1] Prompt Engineering — \"어떻게 말할 것인가\"\n    · 의도를 모델에게 정확히 전달하는 단계\n    · 도구: Persona(역할 부여), Few-shot(예시), CoT(단계적 사고),\n      구조화 출력(Markdown·JSON 형식 지정)\n\n[2] Context Engineering — \"무엇을, 얼마나 줄 것인가\"\n    · 판단에 필요한 자료를 주입하는 단계\n    · 도구: RAG(검색 증강), Memory(대화 기억), 문서 주입,\n      컨텍스트 윈도우 관리(요약·압축)\n\n[3] Harness Engineering — \"어떤 환경에서 일하게 할 것인가\"\n    · 모델이 작업할 환경과 권한을 제어하는 단계\n    · 도구: Tools(도구 호출), MCP(도구 연결 표준), Skills,\n      Agents, 권한 설계(무엇을 할 수 있고 없는지)\n\n[4] Loop Engineering — \"언제 멈추고, 어디서 사람이 개입하는가\"\n    · 실행 → 검증 → 수정이 반복되도록 설계하는 단계\n    · 도구: 테스트·자동 검증, Hooks, Eval(평가), 종료 조건,\n      HITL(Human-in-the-Loop, 사람 개입 지점)",
       "note": "프롬프트 한 줄에서 시작해 에이전트 시스템까지 넓혀 가는 학습 지도다. 이번 과목(1~2단계)을 익힌 뒤 RAG·AI Agent 과목이 3~4단계로 이어진다. 판교 캠퍼스 수업에서 함께 다뤄진 정리를 우리말로 풀어 실었다."
-    }
-,
+    },
     {
       "title": "AI 엔지니어링 4단계 지도 — Prompt · Context · Harness · Loop (실습교수 정리)",
       "lang": "text",

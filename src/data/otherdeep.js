@@ -50,6 +50,26 @@ export const otherDeep = {
       {
         "term": "var·let·const와 스코프",
         "desc": "let과 const는 ES6에서 도입된 선언 방식으로 중괄호 블록 안에서만 살아 있는 블록 스코프를 가지며, 같은 스코프에서 재선언할 수 없다. const는 재할당까지 금지라 기본은 const로 선언하고 값이 바뀌는 변수만 let을 쓴다. var는 함수 스코프에 호이스팅 시 초기화까지 되어 선언 전에 접근해도 오류가 안 나는 함정이 있어 현대 JavaScript에서는 권장하지 않는다."
+      },
+      {
+        "term": "브라우저 렌더링 4단계",
+        "desc": "브라우저는 서버에서 받은 HTML을 네 단계로 화면에 그린다 — ① 파싱: HTML을 읽어 DOM 트리를, CSS를 읽어 CSSOM을 만든다 ② 렌더 트리: DOM과 CSSOM을 합쳐 실제로 화면에 그릴 요소만 추린다 ③ 레이아웃: 각 요소의 위치와 크기(박스)를 계산한다 ④ 페인트: 색·글자·테두리 같은 픽셀을 실제로 칠한다. HTML을 쓴 순서와 구조가 그대로 화면 구조가 되고, script 태그는 파싱을 멈춰 세우므로 보통 body 닫는 태그 직전에 두거나 defer를 붙인다. 2일 과정에서 배우는 HTML(구조)·CSS(표현)·JS(동작)는 이 렌더링 과정에 그대로 대응한다."
+      },
+      {
+        "term": "URL의 6가지 구성 요소",
+        "desc": "URL은 웹 자원의 위치를 가리키는 주소이며 스킴·호스트·포트·경로·쿼리·프래그먼트로 나뉜다. 스킴은 사용할 프로토콜(http, https, file), 호스트는 서버의 도메인 이름 또는 IP, 포트는 서버 포트 번호(http는 80, https는 443이 기본이라 보통 생략), 경로는 서버 안에서 자원이 놓인 위치, 쿼리는 물음표 뒤에 key=value 형태로 붙는 추가 정보, 프래그먼트는 샵 기호 뒤에 붙어 문서 안의 특정 위치를 가리킨다. 도메인 이름은 DNS를 거쳐 실제 IP 주소로 바뀐 뒤 접속이 이뤄진다."
+      },
+      {
+        "term": "Promise 3상태와 async/await",
+        "desc": "Promise는 비동기 작업이 성공하거나 실패할 때 결과를 알려주겠다고 약속하는 객체로, 대기(Pending)·이행(Fulfilled)·거부(Rejected) 세 상태를 가진다. async를 함수 앞에 붙이면 그 함수는 항상 Promise를 반환하고, await는 async 함수 안에서만 쓰여 Promise가 처리될 때까지 잠시 멈춘다. 실패는 try/catch로 잡아 화면에 대체 문구를 띄운다. 함정 하나 — fetch는 404 응답도 통신 자체는 성공으로 보기 때문에 반드시 response.ok로 HTTP 상태를 따로 확인해야 한다."
+      },
+      {
+        "term": "이벤트 버블링·캡처링과 이벤트 위임",
+        "desc": "버블링은 이벤트가 자식에서 부모 방향으로 퍼지는 기본 동작이고, 캡처링은 반대로 부모에서 자식 방향이며 addEventListener의 세 번째 인자를 true로 주면 쓴다. 이 성질을 이용해 자식마다 리스너를 다는 대신 부모에 리스너 하나만 걸고 event.target으로 대상을 판별하는 방식이 이벤트 위임이다. event.target.closest('.item')은 자신을 포함해 가장 가까운 조상 중 일치하는 요소를, event.target.matches('.btn')은 그 요소가 선택자와 맞는지를 알려 준다. 목록 항목이 100개여도 리스너는 목록 하나면 충분하고, 렌더링으로 새로 만들어진 요소도 다시 등록할 필요 없이 그대로 동작한다."
+      },
+      {
+        "term": "localStorage와 상태 기반 렌더링",
+        "desc": "localStorage는 브라우저에 데이터를 영구 저장하는 빌트인 객체로 setItem(key, value)·getItem(key)·removeItem(key)·clear()를 쓴다. 문자열만 저장되므로 객체나 배열은 JSON.stringify로 넣고 JSON.parse로 꺼낸다. 여기서 더 중요한 원칙은 상태 기반 렌더링이다 — 화면은 항상 상태(예: goals 배열)를 그린 결과여야 하며, DOM을 직접 고쳐서 화면만 바꾸면 상태와 화면이 어긋난다. 상태를 바꾼 직후 save()와 render()를 호출하는 순서를 습관으로 굳히면 새로고침 시 목록이 사라지는 사고가 사라진다."
       }
     ],
     "examples": [
@@ -118,6 +138,42 @@ export const otherDeep = {
         "lang": "css",
         "code": "/* 수업 중 배포된 예제 파일 3개의 핵심만 발췌 (skala-4 폴더 보관)\n   ① css_complete_example.html — 레이아웃 종합(flex·grid·position 5개 섹션)\n   ② css_flex_exe1.html — Flex Box 속성 비교 실험\n   ③ Trsnsition.html — 2D/3D 전환·애니메이션 4종 비교 */\n\n/* ③에서 — hover 전환(transition)과 자동 반복(animation)의 차이 */\n.t2d { transition: transform 0.35s; }             /* 마우스 올릴 때만 */\n.t2d:hover { transform: translateY(-8px) scale(1.07); }\n\n.t3d { transition: transform 0.5s; transform-style: preserve-3d; }\n.t3d:hover { transform: rotateY(28deg) rotateX(12deg); }  /* 3D는 perspective 필요 */\n\n.a2d { animation: move2d 1.4s ease-in-out infinite alternate; } /* 항상 반복 */\n@keyframes move2d {\n  from { transform: translateX(0) rotate(0deg); }\n  to   { transform: translateX(16px) rotate(8deg); }\n}\n\n/* 부모에 perspective를 줘야 자식의 3D 회전이 원근감 있게 보인다 */\n.wrap { display: flex; gap: 14px; flex-wrap: wrap; perspective: 600px; }",
         "note": "판교 4반 수업에서 배포된 실습 파일 3종이다. ①은 flex-container/grid-container/position(sticky·absolute)·반응형 카드까지 한 파일에 담은 종합 레퍼런스, ②는 justify-content 등 Flex 속성을 값만 바꿔 비교하는 실험 파일, ③은 transition(이벤트 기반)과 animation(자동 반복)의 차이를 2D/3D로 보여준다. 종합실습의 car-card·2열 배치 CSS를 채울 때 ①을 옆에 두면 된다."
+      },
+      {
+        "title": "스터디 플래너 ① 목표 추가 — submit 검증과 상태 갱신",
+        "lang": "javascript",
+        "code": "// 폼의 submit 이벤트를 받아 새 목표를 배열에 추가한다\nform.addEventListener(\"submit\", (event) => {\n  // 폼 기본 동작(페이지 새로고침)을 막는다 — 안 막으면 화면이 깜빡인다\n  event.preventDefault();\n  // 입력값 앞뒤 공백을 제거해 공백만 입력한 경우를 걸러낸다\n  const title = input.value.trim();\n  if (title === \"\") {\n    // 에러 문구를 보이게 하고 입력칸으로 커서를 되돌린 뒤 여기서 중단\n    errorEl.hidden = false;\n    input.focus();\n    return;\n  }\n  // 정상 입력이면 에러 문구를 숨긴다\n  errorEl.hidden = true;\n  // 상태 배열에 목표 객체를 추가 — id는 현재 시각(ms)으로 고유값을 만든다\n  goals.push({\n    id: Date.now(),\n    title: title,\n    category: category.value,\n    done: false,\n  });\n  // 입력칸을 비우고, 저장한 뒤, 화면을 다시 그린다 (이 3단 순서가 핵심)\n  input.value = \"\";\n  save();\n  render();\n});",
+        "note": "2일 완성 교재의 플래너 실습 4단계다. preventDefault·trim 검증·상태 추가·save+render라는 네 동작이 한 핸들러에 모여 있어, 이후 모든 기능(토글·삭제·필터)이 같은 패턴을 반복한다. id에 Date.now()를 쓰는 이유는 삭제·토글 시 배열에서 대상을 찾을 고유 키가 필요하기 때문이다."
+      },
+      {
+        "title": "스터디 플래너 ② 이벤트 위임으로 토글·삭제·필터 한 번에",
+        "lang": "javascript",
+        "code": "// 목록 전체에 리스너를 딱 하나만 건다 — 항목이 몇 개든 이것으로 충분\nlistEl.addEventListener(\"click\", (event) => {\n  // 클릭 지점에서 가장 가까운 항목(li.item)을 거슬러 찾는다\n  const li = event.target.closest(\".item\");\n  // 목록 여백을 클릭한 경우엔 li가 없으므로 무시한다\n  if (!li) return;\n  // data-id 속성에 저장해 둔 목표 id를 숫자로 변환\n  const id = Number(li.dataset.id);\n\n  // 눌린 대상이 체크박스면 완료 상태를 토글한다\n  if (event.target.matches(\".item-check\")) {\n    const goal = goals.find((g) => g.id === id);\n    goal.done = event.target.checked;\n    save();\n    render();\n  }\n\n  // 눌린 대상이 삭제 버튼이면 해당 id만 빼고 새 배열을 만든다\n  if (event.target.matches(\".item-del\")) {\n    goals = goals.filter((g) => g.id !== id);\n    save();\n    render();\n  }\n});\n\n// 필터 탭도 똑같은 위임 패턴 — 탭 묶음에 리스너 하나\ntabsEl.addEventListener(\"click\", (event) => {\n  const tab = event.target.closest(\".tab\");\n  if (!tab) return;\n  // 상태 변수만 바꾸고 화면 갱신은 render에 맡긴다\n  filter = tab.dataset.filter; // \"all\" 또는 \"active\" 또는 \"done\"\n  // 눌린 탭에만 활성 클래스를 남긴다\n  document.querySelectorAll(\".tab\").forEach((t) => {\n    t.classList.toggle(\"is-active\", t === tab);\n  });\n  render();\n});\n\n// 현재 필터에 맞는 목표만 걸러 돌려주는 함수\nfunction visible() {\n  if (filter === \"active\") return goals.filter((g) => !g.done);\n  if (filter === \"done\") return goals.filter((g) => g.done);\n  return goals;\n}",
+        "note": "항목마다 리스너를 달면 나중에 추가한 항목만 클릭이 안 되는 전형적인 버그가 난다 — 렌더링으로 DOM이 새로 만들어지기 때문이다. 부모 한 곳에 위임하면 재등록이 필요 없다. closest는 '어느 항목인가', matches는 '무슨 버튼을 눌렀나'를 나눠 판별하는 역할 분담으로 외워 두면 편하다."
+      },
+      {
+        "title": "스터디 플래너 ③ 상태를 화면으로 — render와 XSS 방어",
+        "lang": "javascript",
+        "code": "// 화면 그리기는 오직 이 함수 하나에서만 한다 (상태 기반 렌더링)\nfunction render() {\n  // 현재 필터를 통과한 목표만 가져온다\n  const items = visible();\n  // 목록을 비우고 처음부터 다시 그린다\n  listEl.innerHTML = \"\";\n  items.forEach((goal) => {\n    const li = document.createElement(\"li\");\n    // 완료 여부에 따라 취소선 클래스를 붙인다\n    li.className = goal.done ? \"item is-done\" : \"item\";\n    // 이벤트 위임에서 쓸 id를 data 속성에 심어 둔다\n    li.dataset.id = goal.id;\n    // 사용자 입력은 escapeHtml을 거쳐서 넣는다 — 그대로 innerHTML에 넣으면 위험\n    li.innerHTML =\n      \"<span class=\\\"item-text\\\">\" + escapeHtml(goal.title) + \"</span>\" +\n      \"<span class=\\\"badge\\\">\" + goal.category + \"</span>\";\n    listEl.appendChild(li);\n  });\n  // 목록이 비었을 때만 안내 문구를 보여 준다\n  emptyEl.hidden = items.length > 0;\n  // 진행률 표시 갱신\n  updateProgress();\n}\n\n// 사용자 입력에 섞인 특수문자를 안전한 표기로 바꾼다\nfunction escapeHtml(text) {\n  // 빈 요소를 하나 만들어 텍스트로만 넣으면\n  const div = document.createElement(\"div\");\n  // 브라우저가 태그로 해석하지 않고 문자 그대로 보관해 준다\n  div.textContent = text;\n  // 안전하게 변환된 문자열을 다시 꺼내 쓴다\n  return div.innerHTML;\n}",
+        "note": "화면은 언제나 상태(goals)를 그린 결과여야 한다는 원칙이 이 함수에 담겨 있다. 사용자가 입력한 글자를 innerHTML에 그대로 넣으면 script 태그가 실행되는 XSS 취약점이 생기므로, textContent를 쓰거나 escapeHtml을 반드시 거쳐야 한다 — 최종 과제 평가에도 명시된 항목이다."
+      },
+      {
+        "title": "스터디 플래너 ④ fetch·async/await·localStorage",
+        "lang": "javascript",
+        "code": "// 오늘의 팁을 JSON 파일에서 비동기로 불러온다\nasync function loadTip() {\n  const tipEl = document.getElementById(\"tip\");\n  try {\n    // await는 응답이 올 때까지 이 줄에서 잠시 멈춘다\n    const response = await fetch(\"data/tips.json\");\n    // 404도 fetch는 성공으로 보기 때문에 상태를 직접 확인해야 한다\n    if (!response.ok) throw new Error(\"HTTP \" + response.status);\n    // 응답 본문을 JSON 객체로 변환 (이것도 비동기라 await)\n    const tips = await response.json();\n    // 오늘 날짜를 팁 개수로 나눈 나머지 → 날마다 다른 팁이 나온다\n    const today = new Date().getDate() % tips.length;\n    tipEl.textContent = tips[today];\n  } catch (error) {\n    // 실패해도 화면이 비지 않도록 대체 문구를 보여 준다\n    tipEl.textContent = \"팁을 불러오지 못했습니다.\";\n    console.error(error);\n  }\n}\n\n// 저장 키는 한 곳에 상수로 모아 오타를 막는다\nconst STORAGE_KEY = \"skala-planner\";\n// 시작할 때 저장된 목록을 먼저 읽어 상태를 채운다\nlet goals = load();\nlet filter = \"all\";\n\nfunction load() {\n  // localStorage에는 문자열만 들어가므로 꺼낼 때 JSON.parse로 되돌린다\n  const saved = localStorage.getItem(STORAGE_KEY);\n  return saved ? JSON.parse(saved) : [];\n}\n\nfunction save() {\n  // 배열을 문자열로 바꿔서 저장 — 이 호출을 빠뜨리면 새로고침 시 목록이 사라진다\n  localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));\n}",
+        "note": "fetch의 response.ok 확인과 try/catch 대체 문구는 실무에서 그대로 쓰이는 최소 방어 코드다. localStorage는 문자열 전용이라는 점, 그리고 상태를 바꾼 직후 save를 부르는 습관 두 가지만 지키면 저장 관련 사고는 거의 나지 않는다."
+      },
+      {
+        "title": "최종 제출 과제 — 스터디 플래너 확장(F5~F7) 힌트",
+        "lang": "javascript",
+        "code": "// [출발점] 기능을 붙이기 전에 goal 객체의 필드부터 늘리는 것이 순서다\ngoals.push({\n  id: Date.now(),\n  title: title,\n  category: category.value,\n  due: dueInput.value, // F5: input type=\"date\"가 주는 \"2026-07-31\" 형식 문자열\n  done: false,\n});\n\n// [F6] 검색 — 기존 visible() 결과에 조건을 하나 더 얹는다\nconst keyword = searchInput.value.trim();\n// includes로 제목에 검색어가 들어있는 목표만 남긴다\nlist = list.filter((g) => g.title.includes(keyword));\n\n// [F7] 분류별 남은 개수 — reduce로 집계한다\n// 완료되지 않은 목표만 골라, 카테고리를 key로 개수를 누적\nconst rest = goals.filter((g) => !g.done).reduce((acc, g) => {\n  acc[g.category] = (acc[g.category] || 0) + 1;\n  return acc;\n}, {});\n// 결과 예시: { HTML: 2, CSS: 1, JS: 3 }\n\n// [F5 지난 목표 강조] 오늘보다 마감일이 이르면 상태 클래스를 붙인다\nconst today = new Date().toISOString().slice(0, 10); // \"2026-07-20\"\nli.classList.toggle(\"is-overdue\", Boolean(goal.due) && goal.due < today && !goal.done);",
+        "note": "과제는 2일간 만든 플래너를 출발점으로 삼되 새 문법을 배울 필요는 없다 — 폼, Flexbox/Grid, 미디어 쿼리, 배열 메서드, 이벤트 위임, localStorage만으로 충분히 해결된다. 막히면 F5는 2·3장(폼 태그·classList), F6은 7·8장(filter·includes·input 이벤트), F7은 7장(reduce)으로 돌아가 그 코드를 먼저 다시 실행해 보는 것이 가장 빠른 길이다."
+      },
+      {
+        "title": "최종 제출 과제 — 요구사항·제출 규격·루브릭·자주 하는 실수",
+        "lang": "text",
+        "code": "[시나리오] 수업에서 만든 스터디 플래너에 운영진 요청을 반영한다\n- 목표에 마감일이 있으면 좋겠다\n- 목표가 쌓이면 검색이 필요하다\n- 분류별로 몇 개 남았는지 요약을 보여 달라\n- 휴대폰에서도 볼 수 있어야 한다\n\n[필수 기능] F1~F4는 수업에서 만든 것, F5~F7이 새로 추가할 부분\nF1 목표 추가 — 빈 값·공백만 입력은 거부하고 에러 메시지 표시\nF2 완료 토글·삭제 — 이벤트 위임으로 리스너는 목록에 하나만\nF3 필터·진행률 — 전체 / 진행중 / 완료, 완료 비율 표시\nF4 localStorage 저장 — 새로고침해도 목록이 유지될 것\nF5 마감일 입력 — input type=\"date\" 추가, 지난 목표는 시각적으로 강조\nF6 검색 — 입력한 글자가 포함된 목표만 실시간으로 걸러 보이기\nF7 분류별 요약 — HTML / CSS / JS 각각 남은 개수를 집계해 표시\n\n[화면·품질 요구]\n구조: 시맨틱 태그로 구성(header/main/section/footer), 모든 입력에 label 연결(for+id 또는 aria-label)\n스타일: 색·간격은 :root의 CSS 변수로 정의해 재사용, 클래스명은 하이픈 규칙(goal-item, btn-primary)\n레이아웃: Flexbox 또는 Grid로 배치 — 요소를 띄우는 편법 금지\n반응형: 375px에서 가로 스크롤이 없고 조작 가능할 것\n동작: 콘솔에 빨간 오류가 없을 것\n보안: 사용자 입력을 innerHTML에 그대로 넣지 말 것 — textContent 또는 escapeHtml\n\n[제출물] 폴더 이름은 \"이름_스터디플래너\" 형식 (예: 홍길동_스터디플래너)\n홍길동_스터디플래너/\n  index.html          구조\n  css/style.css       스타일(CSS 변수·레이아웃·반응형)\n  js/app.js           동작(이벤트·렌더링·저장)\n  data/tips.json      오늘의 팁 데이터\n  README.md           ① 구현 기능 목록 ② 실행 방법 ③ 어려웠던 점과 해결 ④ 미완성 항목\nzip으로 압축해 제출하며 node_modules 같은 불필요한 폴더는 넣지 않는다.\n\n[평가 루브릭] 완벽한 디자인보다 요구 기능의 완성이 우선\n기능 완성도 40 — F1~F7이 실제로 동작하는가 (F5~F7에 가중치)\nHTML 구조   15 — 시맨틱 태그·label 연결·유효한 마크업\nCSS 품질    15 — CSS 변수 활용·Flex/Grid 레이아웃·일관된 클래스명\n반응형      10 — 375px에서 가로 스크롤 없이 사용 가능\nJS 품질     15 — 이벤트 위임·상태 기반 렌더링·콘솔 오류 없음\nREADME       5 — 구현 기능·실행 방법·어려웠던 점이 적혀 있는가\n※ 배점은 과정 운영에 따라 조정될 수 있으니 각 반 실습교수님 안내를 우선한다.\n\n[자주 하는 실수 5가지]\n1. 요소가 null이라 오류 → script가 DOM보다 먼저 실행됨. body 끝에 두거나 defer\n2. 새로고침하면 목록이 사라짐 → save() 호출 누락. 상태를 바꾼 직후 반드시 저장\n3. 추가 버튼을 누르면 화면이 깜빡임 → submit 기본 동작. event.preventDefault()\n4. 새로 추가한 항목만 클릭이 안 됨 → 요소마다 리스너를 달았기 때문. 이벤트 위임으로\n5. 모바일에서 가로 스크롤 발생 → 고정 px 폭 사용·min-width 누락. min-width: 0 확인\n제출 전 개발자도구 콘솔을 열고 빨간 오류가 없는지 반드시 확인할 것.",
+        "note": "2일 완성 교재(260717)의 최종 과제 장을 요구사항·제출 규격·루브릭·실수 목록으로 정리했다. 배점이 기능 완성도 40점에 몰려 있으므로 디자인을 다듬기 전에 F5~F7을 먼저 동작시키는 순서가 유리하고, 반응형 375px과 콘솔 무오류는 확인만 하면 확보되는 25점이라 마지막에 반드시 점검할 항목이다."
       }
     ]
   },
@@ -174,6 +230,14 @@ export const otherDeep = {
       {
         "term": "OLTP vs OLAP — 쓰기 중심과 읽기 중심은 설계가 다르다",
         "desc": "OLTP(운영계)는 주문·결제처럼 짧은 트랜잭션이 초당 수천 건 쏟아지는 쓰기 중심 부하라 정규화(3NF)를 유지해 갱신 이상을 막고, OLAP(분석계)은 수억 행을 훑는 집계 읽기 중심이라 JOIN을 줄이는 반정규화와 컬럼 기반 저장(Columnstore)이 유리하다. 인덱스 전략도 부하 성격에 따라 달라지므로, 운영 DB에서 무거운 분석 쿼리를 직접 돌리는 대신 데이터 웨어하우스로 분리하는 것이 정석이다.\n동시성 제어 방식 선택도 같은 논리다 — 충돌이 드문 읽기 위주 작업은 버전 컬럼으로 커밋 시점에 충돌만 감지하는 낙관적 Lock, 은행 이체·좌석 예매처럼 충돌이 잦은 쓰기 집약 작업은 SELECT ... FOR UPDATE로 미리 잠그는 비관적 Lock이 적합하다. 클라우드 관리형 DB는 백업·복구·확장을 대신해 주지만, OLTP/OLAP 구분과 권한 설계는 여전히 사용자의 몫이다."
+      },
+      {
+        "term": "SQLD 시험 구조와 준비 전략",
+        "desc": "SQLD(SQL 개발자)는 60문항을 90분 안에 풀어 100점 만점에 70점 이상이면 합격하는 자격시험이다. 출제 비중은 데이터 모델링 20%, SQL 기본과 활용 40%, SQL 고급 기능과 성능 40%로 나뉘어, 앞의 모델링보다 실제 쿼리 작성·튜닝 쪽 배점이 압도적으로 크다. 자주 틀리는 지점은 세 가지로 압축된다 — COUNT(*)와 COUNT(컬럼)의 차이(후자는 NULL을 세지 않는다), SELECT에 쓴 컬럼을 GROUP BY에 넣지 않아 생기는 오류, 그리고 NULL이 섞인 연산 결과가 통째로 NULL이 되는 문제다. 실습 환경을 PostgreSQL로 잡아 두면 문제를 눈으로 읽는 대신 직접 돌려 확인할 수 있어 이 세 함정이 몸에 남는다."
+      },
+      {
+        "term": "PostgreSQL의 고유 기능 — 표준 SQL에서 한 걸음 더",
+        "desc": "같은 SQL이라도 PostgreSQL에서만 편해지는 기능들이 있다. SERIAL은 자동 증가 정수 컬럼을 한 단어로 만들어 주고, JSONB는 JSON을 파싱된 이진 형태로 저장해 내부 키까지 인덱싱·검색할 수 있게 한다. ARRAY 타입은 한 칸에 여러 값을 담고 UNNEST로 다시 행으로 펼치며, LATERAL JOIN은 오른쪽 서브쿼리가 왼쪽 행의 값을 참조할 수 있게 해 행마다 다른 조건의 조회를 가능하게 한다. MATERIALIZED VIEW는 뷰의 결과를 실제로 저장해 두어 무거운 집계를 즉시 읽게 해 준다(대신 REFRESH가 필요하다). 인덱스도 B-Tree 하나가 아니라 용도별로 나뉘어 — 일반 비교는 B-Tree, JSONB·배열·전문검색은 GIN, 기하·범위 데이터는 GiST, 아주 큰 시계열 테이블에는 블록 요약만 저장해 가벼운 BRIN을 쓴다."
       }
     ],
     "examples": [
@@ -218,6 +282,18 @@ export const otherDeep = {
         "lang": "sql",
         "code": "-- 1) 민감 컬럼을 뺀 뷰: 보여줄 것만 골라 담는다\nCREATE OR REPLACE VIEW v_customer_public AS   -- 뷰 = 저장된 SELECT문\nSELECT cust_id, name, join_date               -- 전화번호·식별번호 컬럼은 제외\nFROM customer;                                -- 원본 테이블은 그대로 둔다\n\n-- 2) 읽기 전용 역할(ROLE)을 만들고 필요한 권한만 부여 (최소 권한 원칙)\nCREATE ROLE app_reader NOLOGIN;               -- 로그인 불가 — 권한 묶음 용도\nGRANT SELECT ON v_customer_public TO app_reader;  -- 이 뷰의 SELECT만 허용\n\n-- 3) 실제 접속 계정을 만들어 역할을 상속\nCREATE ROLE app_user LOGIN PASSWORD 'secret'; -- 로그인 가능한 사용자 계정\nGRANT app_reader TO app_user;                 -- 역할 부여: 뷰 조회만 가능해진다\n\n-- app_user로 접속해 보면?\n-- SELECT * FROM v_customer_public;   → 성공 (허용된 뷰)\n-- SELECT * FROM customer;            → 권한 오류 (원본 접근 차단)\n-- DELETE FROM v_customer_public;     → 권한 오류 (SELECT만 허용)\n\n-- 4) 행 단위 보안(RLS): 같은 테이블에서 자기 데이터만 보이게\nALTER TABLE orders ENABLE ROW LEVEL SECURITY; -- 테이블에 RLS 켜기\nCREATE POLICY my_orders ON orders             -- 정책 이름 지정\n  FOR SELECT                                  -- 조회에 적용\n  USING (customer_id =                        -- 행의 고객 id가\n         current_setting('app.customer_id')::int);  -- 세션에 설정된 내 id와 같을 때만 보임",
         "note": "백정열 교재 14장(View의 권한 제어 용도)과 30장(사용자·역할·권한, RLS)을 하나의 시나리오로 연결했다. 권한은 사용자에게 직접 주지 않고 역할로 묶어 부여하는 것, 애플리케이션 계정에 관리자 권한을 주지 않는 것이 최소 권한 원칙의 실천이다. RLS는 멀티테넌시(한 테이블에 여러 고객 데이터)에서 행 자체를 격리하는 마지막 방어선이다."
+      },
+      {
+        "title": "PostgreSQL 실습 10단계 — 정규화부터 인덱스 튜닝까지 (SQLD 대비)",
+        "lang": "sql",
+        "code": "-- 1) 정규화(1NF): 한 칸에 여러 전화번호를 넣지 말고 테이블을 분리한다\nCREATE TABLE employee (\n  emp_id   SERIAL PRIMARY KEY,          -- 자동 증가 정수 (PostgreSQL 고유)\n  emp_name VARCHAR(50) NOT NULL,\n  dept     VARCHAR(50)\n);\n\nCREATE TABLE employee_phone (\n  phone_id     SERIAL PRIMARY KEY,\n  emp_id       INT REFERENCES employee(emp_id),  -- 외래키로 사원과 연결\n  phone_number VARCHAR(20)\n);\n\n-- 2) 조회: ILIKE는 대소문자를 구분하지 않는 LIKE (PostgreSQL 고유)\nSELECT * FROM employee WHERE emp_name ILIKE '%kim%';\n\n-- 3) JOIN: 분리한 두 테이블을 다시 합쳐 본다\nSELECT e.emp_name, p.phone_number\nFROM employee e\nJOIN employee_phone p ON e.emp_id = p.emp_id;\n\n-- 4) GROUP BY: 부서별 인원수. SELECT에 쓴 dept는 반드시 GROUP BY에도 있어야 한다\nSELECT dept, COUNT(*) AS headcount\nFROM employee\nGROUP BY dept\nHAVING COUNT(*) >= 2;                   -- 집계 결과에 대한 조건은 HAVING\n\n-- 5) 서브쿼리: 전화번호를 하나도 등록하지 않은 사원 찾기\nSELECT emp_name FROM employee e\nWHERE NOT EXISTS (\n  SELECT 1 FROM employee_phone p WHERE p.emp_id = e.emp_id\n);\n\n-- 6) CTE(WITH): 쿼리를 이름 붙인 단계로 나눠 읽기 쉽게 만든다\nWITH dept_count AS (\n  SELECT dept, COUNT(*) AS cnt FROM employee GROUP BY dept\n)\nSELECT * FROM dept_count WHERE cnt > 1;\n\n-- 7) 윈도우 함수: 사원별로 전화번호에 순번을 매긴다\n--    PARTITION BY로 사원마다 번호를 1부터 새로 시작한다\nSELECT emp_id, phone_number,\n       ROW_NUMBER() OVER (PARTITION BY emp_id ORDER BY phone_id) AS seq\nFROM employee_phone;\n\n-- 8) CHECK 제약: 정규표현식으로 전화번호 형식을 DB가 직접 검사하게 한다\nALTER TABLE employee_phone\n  ADD CONSTRAINT chk_phone CHECK (phone_number ~ '^010-[0-9]{4}-[0-9]{4}$');\n\n-- 9) 트랜잭션: 잘못 지웠을 때 되돌릴 수 있다\nBEGIN;\nDELETE FROM employee WHERE dept = 'temp';\nROLLBACK;                               -- 취소. 확정하려면 COMMIT\n\n-- 10) 인덱스와 실행계획: 만들기 전후를 반드시 비교한다\nCREATE INDEX idx_employee_dept ON employee(dept);\nEXPLAIN ANALYZE SELECT * FROM employee WHERE dept = 'AI';\n-- Seq Scan(전체 훑기)이 Index Scan으로 바뀌고 실행 시간이 줄었는지 확인",
+        "note": "SQLD 학습자료의 실습 흐름을 PostgreSQL 문법으로 재구성했다. 1NF 분리에서 시작해 조회·조인·집계·서브쿼리·CTE·윈도우 함수로 올라간 뒤 제약·트랜잭션·인덱스로 마무리하는 순서라, 각 단계가 앞 단계의 결과물 위에서 돌아가 개념이 끊기지 않는다. 특히 10단계의 EXPLAIN ANALYZE Before/After 비교는 튜닝을 감이 아니라 측정으로 하는 습관의 출발점이다."
+      },
+      {
+        "title": "실습 환경 트러블슈팅 — PostgreSQL 비밀번호와 DBeaver 설정 (7/20)",
+        "lang": "text",
+        "code": "[0] 설치 여부 먼저 확인 — 파이썬 1일차 환경구성 스크립트로 PostgreSQL 17이 이미 깔렸을 수 있다\n  터미널에서:  postgres -V\n  버전이 나오면 다시 설치할 필요 없다.\n\n[1] postgres 계정 비밀번호가 없어 접속이 안 될 때\n  터미널에서 psql에 먼저 붙는다\n    psql postgres\n  프롬프트가 바뀌면 비밀번호를 지정한다\n    ALTER USER postgres PASSWORD 'your_password';\n  빠져나온다\n    \\q\n  이제 DBeaver 연결 설정에 사용자 postgres / 비밀번호 your_password 를 입력하면 붙는다.\n\n[2] DBeaver에 내가 만든 데이터베이스가 안 보일 때 (가장 많이 막히는 지점)\n  증상: CREATE DATABASE telecom; 으로 만들었는데 목록에 postgres만 보인다\n  원인: DBeaver 기본 설정이 접속한 DB 하나만 표시하도록 되어 있다\n  해결: 연결 우클릭 → Edit Connection → PostgreSQL 탭 → \"Show all databases\" 체크 → 저장 후 재연결\n\n[3] DBeaver를 한글 화면으로 쓰고 싶을 때\n  DBeaver Community → Preferences → User Interface → Language → Korean 선택\n\n[4] 수업 운영 (울산캠퍼스 기준)\n  · 교재: tinyurl.com/sk-database → \"수강생 배포용 교재 모음\" (3일 과정 내내 사용)\n  · 1일차 테스트: QUIZ + 코드분석, 17:45~18:00 진행\n    - 링크는 17:40~17:45 사이에 채널 공유\n    - 접속 시 gmail 계정 정보 입력 필수\n  · Day1 퀴즈 제출 마감 18:00 — 시간 초과 시 대폭 감점, 제출 후 수정 불가",
+        "note": "스마트 데이터베이스 첫날 실습에서 실제로 나온 막힘 지점과 해결책을 모았다. DBeaver의 \"Show all databases\"는 특히 원인을 짐작하기 어려운 항목이라 — 쿼리는 성공했는데 화면에만 안 보이니 DB 생성이 실패한 줄 오해하기 쉽다 — 만든 DB가 안 보이면 무조건 이 설정부터 확인하는 것이 빠르다."
       }
     ]
   },
@@ -274,6 +350,14 @@ export const otherDeep = {
       {
         "term": "로지스틱 회귀 — 확률로 답하는 회귀",
         "desc": "시험 점수로 합격 '가능성'을 선형회귀로 예측하면 10점에서 -20%, 110점에서 120% 같은 불가능한 값이 나온다. 로지스틱 회귀는 S자 모양의 시그모이드 곡선으로 출력을 0~1 사이에 가둬, 결과를 확률로 해석할 수 있게 만든 회귀다. 종속변수가 연속형이면 선형회귀, 합격/불합격·정상/이상거래처럼 범주형(명목형)이면 로지스틱 회귀 — 이것이 두 기법을 가르는 기준이다.\n종속변수 값이 2개면 이항 로지스틱(대출 가능/불가), 3개 이상이면 다항 로지스틱(승인/거절/보류)으로 나뉜다. 교재의 예시처럼 개인 신용도와 사용금액으로 이상거래 여부를 예측하는 문제가 전형적인 활용이며, 담당 과목의 분류(Classification) 모델로 이어지는 다리 역할을 한다."
+      },
+      {
+        "term": "정규성 검정과 등분산 검정은 다르다",
+        "desc": "두 개념이 자주 뒤섞이는데 목적이 다르다. 정규성 검정은 데이터가 정규분포를 따르는지 보는 것이고, 등분산 검정(레빈 검정, Levene)은 비교하려는 두 집단의 퍼짐 정도(분산)가 비슷한지를 보는 것이다. 등분산 검정을 먼저 하는 이유는 그 결과에 따라 t-검정의 방식을 고르기 위해서다 — p값이 0.05 이상이면 등분산이 성립한다고 보고 일반 t-검정을, 0.05 미만이면 등분산이 깨진 것으로 보고 웰치(Welch) t-검정(equal_var=False)을 쓴다. 수업 실습에서 레빈 검정만 수행한 것은 검정 방식을 고르기 위한 절차였고 정규성 검정은 생략한 것이다."
+      },
+      {
+        "term": "회귀 summary 판독과 평가지표 고르기",
+        "desc": "OLS 결과표는 위에서부터 이렇게 읽는다 — R-squared는 모델이 데이터를 설명하는 비율, Adj. R-squared는 독립변수가 2개 이상일 때 변수 개수를 감안해 보정한 값이라 변수를 여럿 쓸 때는 이쪽을 본다. const의 coef는 모든 독립변수가 0일 때의 기준값이고, 각 변수의 coef는 다른 변수를 고정했을 때 그 변수 1단위 변화가 예측값에 주는 영향이다. P>|t|는 그 변수가 의미 있는지를 알려 주며 0.05 미만인 변수만 남기고 나머지는 빼고 다시 돌린다. 예측 성능 지표는 용도가 갈린다 — R2는 예측용으로 쓸 거면 0.8 이상을 권하고, MSE는 오차를 제곱해 단위가 원래 값과 달라지므로 보고서에 쓰지 않고 최적값을 찾는 계산 과정에만 쓴다. 보고용으로는 단위가 그대로 유지되는 MAE를 권하며, RMSE는 큰 오차에 더 민감해 이상치가 있을 때 MAE와 눈에 띄게 다른 값이 나온다 — 두 값의 차이 자체가 이상치 존재의 신호다."
       }
     ],
     "examples": [
@@ -324,6 +408,24 @@ export const otherDeep = {
         "lang": "text",
         "code": "[배포된 교재 2종 — 판교 3·4·6~10반 채널 공유]\n· 데이터 분석 개요 및 기초통계 _ Day1 _ 박병선w.pdf (5.7MB)\n· 데이터 분석 개요 및 기초통계 _ 이은호.pdf (7.8MB)\n  → 다음 주 월·화 이은호 교수 강의의 수업 자료가 이은호판이다 (김영희 교수 안내)\n\n[Quiz 안내] 이 과목 Quiz는 교재 내에서 오픈북으로 진행될 예정 —\n교재를 미리 훑어 어디에 무엇이 있는지 '목차 감각'을 만들어 두면 유리하다.\n\n[함께 배포된 참고] SKALA_맥북 네트워크 연결.pdf (김범준 교수, 실습 환경 문제 시)",
         "note": "판교 캠퍼스 채널들에 배포된 기초통계 수업 자료 현황이다. 같은 과목이라도 캠퍼스·반에 따라 박병선w판과 이은호판이 함께 쓰이니 자기 반 공지의 교재를 기준으로 보되, 두 판 모두 skala-4 자료 폴더와 드라이브 교재 폴더에 보관되어 있다."
+      },
+      {
+        "title": "회귀분석 실습 전 과정 — 적재부터 EDA·가설검정·OLS까지 (판교 8반 시퀀스)",
+        "lang": "python",
+        "code": "# 1) 필요한 라이브러리를 한 번에 불러온다\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nimport statsmodels.api as sm       # OLS 회귀와 결과표(summary)를 제공\nfrom scipy import stats            # 등분산 검정, t-검정\n\n# 2) 구글 드라이브를 연결하고 데이터를 읽는다 (Colab 기준)\nfrom google.colab import drive\ndrive.mount(\"/content/drive\")\ndf = pd.read_csv(\"/content/drive/MyDrive/data/insurance.csv\")\n\n# 3) 구조부터 파악한다 — 행·열 개수, 자료형, 결측치 순서로\nprint(df.shape)          # (행, 열)\ndf.info()                # 컬럼별 자료형과 non-null 개수\nprint(df.isna().sum())   # 컬럼별 결측치 개수\n\n# 4) IQR 방식으로 이상치를 찾는다\ndef detect_outliers_iqr(data, column):\n    # 1사분위(25%)와 3사분위(75%)를 구한다\n    q1 = data[column].quantile(0.25)\n    q3 = data[column].quantile(0.75)\n    iqr = q3 - q1                  # 사분위 범위\n    lower = q1 - 1.5 * iqr         # 이 아래면 이상치 후보\n    upper = q3 + 1.5 * iqr         # 이 위면 이상치 후보\n    # 범위를 벗어난 행만 골라 돌려준다\n    return data[(data[column] < lower) | (data[column] > upper)]\n\nfor col in [\"age\", \"bmi\", \"children\", \"expenses\"]:\n    print(col, len(detect_outliers_iqr(df, col)), \"건\")\n\n# 5) EDA — 분포는 히스토그램, 이상치는 박스플롯을 나란히 본다\nfig, axes = plt.subplots(1, 2, figsize=(12, 4))\nsns.histplot(df[\"expenses\"], kde=True, ax=axes[0])   # 분포 모양\nsns.boxplot(x=df[\"expenses\"], ax=axes[1])            # 이상치 위치\nplt.show()\n# 범주형은 개수를 세어 불균형 여부를 확인한다\nsns.countplot(x=\"smoker\", data=df)\nplt.show()\n\n# 6) 가설검정 — 흡연 여부에 따라 의료비 평균이 다른가\n#    귀무가설: 두 집단의 평균은 같다 / 대립가설: 다르다\nsmoker = df[df[\"smoker\"] == \"yes\"][\"expenses\"]\nnonsmoker = df[df[\"smoker\"] == \"no\"][\"expenses\"]\n# 먼저 등분산인지 확인한다 (레빈 검정)\nlev = stats.levene(smoker, nonsmoker)\nprint(\"levene p =\", lev.pvalue)\n# p가 0.05 미만이면 등분산이 아니므로 웰치 t-검정을 쓴다\nequal_var = lev.pvalue >= 0.05\nprint(stats.ttest_ind(smoker, nonsmoker, equal_var=equal_var))\n\n# 7) 범주형을 숫자로 바꾼다 — drop_first로 기준 범주 하나를 뺀다(더미 함정 회피)\ndf_encoded = pd.get_dummies(\n    df, columns=[\"sex\", \"smoker\", \"region\"], drop_first=True\n).astype(float)\n\n# 8) 상관관계 히트맵으로 어떤 변수가 타깃과 관련 있는지 훑는다\ncorr_matrix = df_encoded.corr()\nsns.heatmap(corr_matrix, annot=True, fmt=\".2f\", cmap=\"coolwarm\")\nplt.show()\n\n# 9) OLS 회귀 — statsmodels는 상수항을 직접 넣어 줘야 한다\ny = df_encoded[\"expenses\"]\nX = df_encoded.drop(columns=[\"expenses\"])\nX_with_constant = sm.add_constant(X)\nmodel = sm.OLS(y, X_with_constant).fit()\nprint(model.summary())\n\n# 10) P>|t|가 0.05를 넘는 변수(예: sex_male, region_northwest)를 빼고 다시 적합한다\nX2 = X.drop(columns=[\"sex_male\", \"region_northwest\"])\nmodel2 = sm.OLS(y, sm.add_constant(X2)).fit()\nprint(model2.summary())",
+        "note": "판교 8반 회귀분석 실습에서 순서대로 진행된 흐름을 하나로 이어 붙였다. 핵심은 순서 그 자체다 — 구조 파악 → 결측·이상치 → 시각적 EDA → 가설검정 → 인코딩 → 상관 확인 → 회귀 → 변수 정리 재적합. 이 순서를 건너뛰고 바로 모델부터 돌리면 왜 그런 계수가 나왔는지 설명할 근거가 없어져 보고서를 쓸 수 없다. 사용 데이터는 insurance.csv이며, 다중공선성 예시가 필요하면 day.csv의 temp와 atemp(상관 0.99)를 함께 보면 좋다."
+      },
+      {
+        "title": "Colab 준비 — 한글 폰트 즉시 적용과 드라이브 마운트",
+        "lang": "python",
+        "code": "# [Colab] 그래프의 한글이 네모(두부)로 깨지는 문제를 런타임 재시작 없이 해결한다\n# 1) 나눔 폰트를 설치한다 (-qq는 설치 로그를 줄여 준다)\n!apt-get -qq install -y fonts-nanum\n\nimport matplotlib.pyplot as plt\nimport matplotlib.font_manager as fm\n\n# 2) 방금 설치한 폰트 파일을 matplotlib 폰트 목록에 직접 등록한다\n#    이 한 줄 덕분에 런타임을 다시 시작하지 않아도 바로 인식된다\nfm.fontManager.addfont(\"/usr/share/fonts/truetype/nanum/NanumGothic.ttf\")\n\n# 3) 기본 글꼴을 나눔고딕으로 지정한다\nplt.rc(\"font\", family=\"NanumGothic\")\n\n# 4) 한글 폰트를 쓰면 음수 기호가 깨지므로 유니코드 마이너스를 끈다\nplt.rcParams[\"axes.unicode_minus\"] = False\n\n# 확인 — 제목에 한글이 제대로 나오면 성공\nplt.title(\"한글 제목 표시 확인 -1.5\")\nplt.plot([0, 1], [0, -1.5])\nplt.show()\n\n# [로컬 환경] Colab이 아니라 내 컴퓨터에서 돌린다면 OS별로 폰트 이름이 다르다\n# 윈도우:  plt.rc(\"font\", family=\"Malgun Gothic\")\n# 맥:      plt.rc(\"font\", family=\"AppleGothic\")\n\n# [드라이브 연결] 실습 데이터를 구글 드라이브에 두고 읽는 방식\nfrom google.colab import drive\n# 실행하면 권한 승인 창이 뜨고, 승인하면 /content/drive 아래에 내 드라이브가 붙는다\ndrive.mount(\"/content/drive\")\n\nimport pandas as pd\n# MyDrive 아래 경로를 그대로 쓰면 된다 (폴더·파일명에 공백이 있으면 따옴표 안에 그대로)\ndf = pd.read_csv(\"/content/drive/MyDrive/data/insurance.csv\")\nprint(df.head())",
+        "note": "기초통계 실습에서 가장 많이 막히는 두 지점이 한글 깨짐과 데이터 경로다. 폰트는 addfont로 직접 등록하면 런타임 재시작이 필요 없어 수업 흐름이 끊기지 않고, unicode_minus를 끄지 않으면 음수 축 라벨만 따로 깨져 원인을 찾기 어려워진다. 드라이브를 마운트해 두면 세션이 끊겨도 파일을 다시 업로드할 필요가 없다."
+      },
+      {
+        "title": "기초통계 종합실습 — 과제 구성과 제출 규격 (7/20 안내)",
+        "lang": "text",
+        "code": "[종합실습 과제 — LinearRegression Base code를 출발점으로]\n  Task 1. Baseline Model의 회귀분석 결과를 해석한다\n  Task 2. Baseline 모델을 개선한다\n  Task 3. 통계적으로 유의하지 않은 변수를 제거하고 다시 평가한다\n\n[채점 관점 — 반드시 기억할 것]\n  \"정답 자체보다 왜 그렇게 판단했는지의 과정을 중심으로 정리한다\"\n  · 즉 R2가 몇이라는 숫자보다, 어떤 근거로 변수를 뺐고 그 결과 무엇이 좋아졌는지의 서술이 점수를 만든다\n  · 수행보고서 양식은 자유\n\n[제출 파일명 규칙]\n  · 수행보고서: 기초통계_6반_홍길동\n  · 코드(선택): 실습_LinearRegression_홍길동.ipynb\n  · 반에 따라 다른 규칙이 안내되기도 한다 —\n    예) 고유번호_반_이름_데이터 분석개요 및 기초통계.zip (익일 오후 quiz 제출 시 함께)\n  · 최종 파일명·마감은 각 반 실습교수님 안내를 우선한다\n\n[보고서에 넣으면 좋은 문장 뼈대]\n  1. 데이터 개요: 행 N개·열 M개, 결측치 처리 방식, 이상치 판단 기준(IQR)\n  2. 탐색 결과: 타깃과 상관이 높았던 변수와 그 이유(도메인 해석 한 줄)\n  3. Baseline 결과: Adj. R-squared 값과 유의하지 않았던 변수 목록(P>|t| 기준)\n  4. 개선 과정: 무엇을 왜 바꿨는가 (변수 제거 · 인코딩 변경 · 이상치 처리)\n  5. 개선 결과: 지표 Before/After 비교 — 보고용은 MAE, 이상치 영향 확인은 RMSE 병기\n  6. 한계와 다음 단계: 설명하지 못한 부분과 추가로 모으고 싶은 변수",
+        "note": "과제의 배점 무게가 \"판단 과정\"에 실려 있다는 점이 이 안내의 핵심이다. 지표를 올리는 것보다 왜 그 변수를 뺐는지(P>|t| 근거), 왜 그 지표를 골랐는지(MAE는 보고용·MSE는 계산용)를 문장으로 남기는 쪽이 점수와 실무 역량 둘 다에 유리하다. Before/After를 표로 나란히 놓는 것만으로도 개선 과정이 한눈에 전달된다."
       }
     ]
   },
