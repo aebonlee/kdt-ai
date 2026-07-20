@@ -20,6 +20,17 @@ export const DOCS_ROOT_FOLDER =
 // t: 표시 이름, id: 드라이브 파일ID, x: 확장자, b: 바이트
 export const docsGroups = [
   {
+    id: 'recv0721',
+    title: '[0721] 수령자료',
+    desc: '7/20 오후 갱신된 교육생 교재 폴더의 신규분 중 이미지 전용 PDF 3종 — 텍스트 추출이 되지 않아 강의안 그라운딩에서 제외했고, 여기서 원문 열람만 제공합니다(기초통계 Day1·Day2 · HTML/CSS/JavaScript)',
+    folder: 'https://drive.google.com/drive/folders/14bdM3GFiGyUXJAk0S0dACeYtWnNpqVyo',
+    files: [
+      { t: "데이터 분석 개요 및 기초통계 Day1 (박병선) — 91쪽 이미지 PDF", id: "1jsmGGRrFNjPmleJBVikNhDgneG5phdUc", x: "pdf", b: 5996327, d: "2026-07-15" },
+      { t: "데이터 분석 개요 및 기초통계 Day2 (박병선) — 59쪽 이미지 PDF", id: "1jBurUHKSQNhBbiEs8KtGycCjOziLUzLl", x: "pdf", b: 3855412, d: "2026-07-19" },
+      { t: "HTML, CSS, JavaScript (권기창) — 196쪽 이미지 PDF", id: "1CdYUbo5LqWiDUkoLwLOV9udZYmRrkwv8", x: "pdf", b: 13070192, d: "2026-07-15" },
+    ],
+  },
+  {
     id: 'recv0716',
     title: '[0716] 수령자료',
     desc: '7/16 수령분 — 파이썬 Practice tips 답안 2종 · 실습 데이터(sales_100k) · 종합실습 평가 양식·작성예시 · 울산 실습 RAW · ZOOM 정보',
