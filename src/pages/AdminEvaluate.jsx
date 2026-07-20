@@ -1,431 +1,194 @@
-// 교과목 종합실습 평가 자동화 (관리자 전용)
-// 평가기준은 사이트에 수록된 exams.js(= 수령 종합실습평가 xlsx와 정합 검증 완료)를 그대로 사용하고,
-// 입력·내보내기 형식은 원본 평가지의 "평가결과" 시트(고유번호·성명·항목별·점수·판단근거·보완사항·비고)를 따른다.
-import { useEffect, useMemo, useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { supabase, hasSupabase } from '../lib/supabase'
-import { exams } from '../data/exams'
-import { subjectById, subjects } from '../data/curriculum'
-import { ExamBlock } from '../components/ExamQuiz'
-import { TRACK_LABELS, classLabel } from '../data/classes'
-import { ROSTERS } from '../data/rosters'
-import { evalUnits, unitByKey, unitLabel, customKey, resolveUnit } from '../data/evalunits'
+// 교과목 평가 기록 (관리자 전용) — 기록 보관소.
+//
+// 웹에서 점수를 입력하지 않는다(2026-07-21 대표 확정).
+// 평가는 슬랙으로 제출을 받아 로컬에서 엑셀로 집계하는 흐름이 이미 자리 잡았고,
+// 사이트는 "무엇을 언제 평가해 어디에 남겼는지"를 보는 역할만 한다.
+// 산출물 엑셀은 구글드라이브에 평가 건별 구분 폴더로 두고 여기서 링크로 연다.
+//
+// 이전 버전(웹 점수 입력 + skala_evaluations 저장 + XLSX 내보내기)은 git 이력에 있다.
+import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import * as XLSX from 'xlsx'
+import { evalUnits } from '../data/evalunits'
+import { exams } from '../data/exams'
+import { subjectById } from '../data/curriculum'
+import { recordFor, EVAL_RECORDS } from '../data/evalrecords'
+import { DOCS_ROOT_FOLDER, drivePreview, driveView, driveDownload } from '../data/docs'
 
-// 배점 문자열("20점")에서 숫자 추출 — 숫자 없으면 상한 없음
-const maxOf = (points) => {
-  const m = /(\d+)/.exec(points || '')
-  return m ? Number(m[1]) : null
-}
-
-const newRow = () => ({
-  id: null, _key: Math.random().toString(36).slice(2),
-  student_name: '', student_no: '', track: null, class_no: null, profile_id: null,
-  scores: {}, note_basis: '', note_improve: '', _dirty: true,
-})
+const fmtBytes = (b) => (!b ? '' : b > 1e6 ? `${(b / 1e6).toFixed(1)}MB` : `${Math.round(b / 1e3)}KB`)
+const fmtDate = (d) => (d ? `${Number(d.slice(5, 7))}/${Number(d.slice(8, 10))}` : '-')
 
 export default function AdminEvaluate() {
-  const { user } = useAuth()
   const [params, setParams] = useSearchParams()
-  // 평가 단위 = 과목 × 담당 분반(강의일자) — 분반마다 개별 평가.
-  // 담당 외 분반은 전체 조회 단위('x|' key)로 열람한다(주강사·운영 매니저용).
-  const unitsWithExam = evalUnits.filter((u) => exams[u.subjectId])
-  const initUnit = resolveUnit(params.get('unit')) && exams[resolveUnit(params.get('unit')).subjectId]
-    ? params.get('unit') : unitsWithExam[0]?.key
-  const [unitKey, setUnitKey] = useState(initUnit)
-  // 좌측 메뉴에서 ?unit= 이 바뀌면 동기화
-  useEffect(() => {
-    const q = params.get('unit')
-    if (q && resolveUnit(q) && q !== unitKey) setUnitKey(q)
-  }, [params])
-  const unit = resolveUnit(unitKey) || unitsWithExam[0]
-  const subjectId = unit?.subjectId
-  const [rows, setRows] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [msg, setMsg] = useState('')
-  const [showRubric, setShowRubric] = useState(false)
+  const units = useMemo(() => evalUnits.filter((u) => exams[u.subjectId]), [])
+  const active = params.get('unit') || units[0]?.key
+  const unit = units.find((u) => u.key === active) || units[0]
+  const rec = unit ? recordFor(unit.key) : null
+  const [preview, setPreview] = useState(null)
 
-  const exam = exams[subjectId]
-  const criteria = exam?.criteria || []
-  const totalMax = criteria.reduce((a, c) => a + (maxOf(c.points) || 0), 0)
-
-  // 평가 단위(과목×분반) 전환 시 해당 분반 저장분만 로드
-  useEffect(() => {
-    if (!hasSupabase || !unit) return
-    setLoading(true); setMsg('')
-    supabase.from('skala_evaluations').select('*')
-      .eq('subject_id', unit.subjectId).eq('track', unit.track).eq('class_no', unit.classNo)
-      .order('created_at')
-      .then(({ data, error }) => {
-        if (error) { setMsg('불러오기 실패: ' + error.message + ' — skala_evaluations 테이블(SQL) 실행 여부를 확인하세요.'); setRows([]) }
-        else setRows((data || []).map((r) => ({ ...r, _key: r.id, _dirty: false })))
-      })
-      .finally(() => setLoading(false))
-  }, [unitKey])
-
-  // 등록 학생 불러오기(소속 분반 온보딩 완료자) — 이미 행에 있는 학생은 건너뜀
-  const loadStudents = async () => {
-    const { data, error } = await supabase
-      .from('skala_profiles').select('user_id,name,email,track,class_no')
-      .eq('role', 'student').eq('track', unit.track).eq('class_no', unit.classNo)
-    if (error) { setMsg('학생 명단 로드 실패: ' + error.message); return }
-    const existing = new Set(rows.map((r) => r.profile_id).filter(Boolean))
-    const added = (data || [])
-      .filter((p) => !existing.has(p.user_id))
-      .map((p) => ({ ...newRow(), student_name: p.name || p.email || '', track: p.track, class_no: p.class_no, profile_id: p.user_id }))
-    if (!added.length) { setMsg('추가할 신규 등록 학생이 없습니다.'); return }
-    setRows((prev) => [...prev, ...added])
-    setMsg(`등록 학생 ${added.length}명을 불러왔습니다. 점수 입력 후 저장하세요.`)
-  }
-
-  // 자리배치표 명단 프리셋 불러오기 — 이미 있는 고유번호/성명은 건너뜀
-  const unitRoster = Object.values(ROSTERS).find((r) => r.track === unit?.track && r.class_no === unit?.classNo)
-  const loadRoster = (rosterKey) => {
-    const r = ROSTERS[rosterKey]
-    if (!r) return
-    const existNo = new Set(rows.map((x) => x.student_no).filter(Boolean))
-    const existName = new Set(rows.map((x) => x.student_name.trim()).filter(Boolean))
-    const added = r.students
-      .filter((st) => !existNo.has(st.no) && !existName.has(st.name))
-      .map((st) => ({ ...newRow(), student_no: st.no, student_name: st.name, track: r.track, class_no: r.class_no }))
-    if (!added.length) { setMsg(`${r.label} 명단이 이미 모두 추가되어 있습니다.`); return }
-    setRows((prev) => [...prev, ...added])
-    setMsg(`${r.label} 명단 ${added.length}명 추가 (자리배치표 기준 · ${r.manager} 제외). 저장 전 성명 오탈자를 확인하세요.`)
-  }
-
-  const patchRow = (key, patch) =>
-    setRows((prev) => prev.map((r) => (r._key === key ? { ...r, ...patch, _dirty: true } : r)))
-
-  const setScore = (key, item, value, max) => {
-    let v = value === '' ? '' : Number(value)
-    if (v !== '' && max != null && v > max) v = max
-    if (v !== '' && v < 0) v = 0
-    setRows((prev) => prev.map((r) =>
-      r._key === key ? { ...r, scores: { ...r.scores, [item]: v }, _dirty: true } : r))
-  }
-
-  const totalOf = (r) => criteria.reduce((a, c) => a + (Number(r.scores?.[c.item]) || 0), 0)
-
-  const removeRow = async (r) => {
-    if (!confirm(`${r.student_name || '이 행'} 평가를 삭제할까요?`)) return
-    if (r.id) await supabase.from('skala_evaluations').delete().eq('id', r.id)
-    setRows((prev) => prev.filter((x) => x._key !== r._key))
-  }
-
-  const saveAll = async () => {
-    const dirty = rows.filter((r) => r._dirty && r.student_name.trim())
-    if (!dirty.length) { setMsg('저장할 변경이 없습니다. (성명이 비어 있는 행은 저장되지 않습니다)'); return }
-    setSaving(true); setMsg('')
-    const payload = dirty.map(({ _key, _dirty, id, ...r }) => ({
-      ...(id ? { id } : {}), ...r, subject_id: subjectId,
-      track: r.track || unit.track, class_no: r.class_no || unit.classNo,
-      updated_at: new Date().toISOString(),
-    }))
-    const { data, error } = await supabase.from('skala_evaluations').upsert(payload).select()
-    setSaving(false)
-    if (error) { setMsg('저장 실패: ' + error.message); return }
-    // 반환 id 를 행에 반영
-    setRows((prev) => {
-      const saved = [...(data || [])]
-      return prev.map((r) => {
-        if (!r._dirty || !r.student_name.trim()) return r
-        const hit = r.id ? saved.find((s) => s.id === r.id) : saved.find((s) => s.student_name === r.student_name && !prev.some((p) => p.id === s.id))
-        return hit ? { ...r, id: hit.id, _dirty: false } : r
-      })
-    })
-    setMsg(`저장 완료 — ${payload.length}명 (${new Date().toLocaleTimeString('ko-KR')})`)
-  }
-
-  // 공통: 내보낼 표 데이터(헤더+행)
-  const exportTable = () => {
-    const head = ['훈련생 고유번호', '성명', '분반',
-      ...criteria.map((c, i) => `평가항목 ${i + 1}. ${c.item}${maxOf(c.points) != null ? ` (${maxOf(c.points)}점)` : ''}`),
-      `점수 합계${totalMax ? ` (/${totalMax})` : ''}`, '판단근거', '보완사항', '비고']
-    const body = rows.filter((r) => r.student_name.trim()).map((r) => [
-      r.student_no || '', r.student_name, classLabel(r.track, r.class_no),
-      ...criteria.map((c) => r.scores?.[c.item] ?? ''),
-      totalOf(r), r.note_basis || '', r.note_improve || '', '',
-    ])
-    return { head, body }
-  }
-  // 담당 단위는 평가자 이애본 고정, 전체 조회 단위는 관리자 표기
-  const evaluator = unit?.custom ? '관리자' : '이애본'
-  const exportBase = () => {
-    const subj = subjectById(subjectId)
-    return `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_${evaluator}`
-  }
-
-  // 엑셀(xlsx) 내보내기
-  const exportXlsx = () => {
-    const { head, body } = exportTable()
-    const ws = XLSX.utils.aoa_to_sheet([head, ...body])
-    ws['!cols'] = head.map((h, i) => ({ wch: i < 2 ? 12 : i === 2 ? 12 : i < 3 + criteria.length ? 14 : 22 }))
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, '평가결과')
-    XLSX.writeFile(wb, exportBase() + '.xlsx')
-  }
-
-  // PDF 저장 — 인쇄용 창(브라우저 인쇄 → PDF 저장, 한글 폰트 안전)
-  const exportPdf = () => {
-    const { head, body } = exportTable()
-    const esc = (v) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    const w = window.open('', '_blank')
-    if (!w) { setMsg('팝업이 차단되었습니다 — 팝업 허용 후 다시 시도하세요.'); return }
-    w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${esc(exportBase())}</title>
-<style>
-  @page { size: A4 landscape; margin: 12mm; }
-  body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; color: #1c2033; }
-  h1 { font-size: 15pt; margin: 0 0 2mm; } .sub { font-size: 9.5pt; color: #555; margin-bottom: 5mm; }
-  table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
-  th, td { border: 1px solid #999; padding: 4px 6px; text-align: left; vertical-align: top; }
-  th { background: #eef0fa; font-weight: 800; }
-  td.num { text-align: center; white-space: nowrap; }
-</style></head><body>
-<h1>SKALA 4기 종합실습 평가 — ${esc(subjectById(subjectId)?.name || '')}</h1>
-<div class="sub">${esc(unit.campus)} ${esc(unit.cls)} (${esc(unit.room)}) · 강의일 ${esc(unit.dateLabel)} · 평가자: ${esc(evaluator)} · 출력일 ${new Date().toLocaleDateString('ko-KR')}</div>
-<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
-<tbody>${body.map((r) => `<tr>${r.map((v, i) => `<td class="${i >= 3 && i < 3 + criteria.length + 1 ? 'num' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>
-<script>window.onload = () => setTimeout(() => window.print(), 300)</` + `script></body></html>`)
-    w.document.close()
-  }
-
-  // 실습 제출 평가표 — 수업 결과 평가 취합 양식(2026-07-16 수령분)과 동일 레이아웃.
-  // 캠퍼스·반·조·이름은 명단 기준으로 채우고, 제출일·점수 칸은 비워 내려받아 취합에 쓴다.
-  const PRACTICE_COLS = ['Practice 1', 'Practice 2', '종합실습1', 'Practice 3', 'Practice 4', '종합실습2']
-  const exportPracticeSheet = () => {
-    if (!unitRoster) return
-    const campus = unit.campus.replace(/ \d층$/, '') // "판교 5층" → "판교" (양식의 캠퍼스 표기)
-    const head = ['캠퍼스', '반', '조', '이름', '사진', ...PRACTICE_COLS.flatMap((c) => [c, '제출일', '점수'])]
-    const body = unitRoster.students.map((st) => [
-      campus, unit.classNo, st.team ?? '', st.name, '', ...PRACTICE_COLS.flatMap(() => ['', '', '']),
-    ])
-    const ws = XLSX.utils.aoa_to_sheet([head, ...body])
-    ws['!cols'] = head.map((h, i) => ({ wch: i === 3 ? 10 : i < 5 ? 7 : /제출일/.test(h) ? 11 : /점수/.test(h) ? 7 : 13 }))
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, '실습 제출 평가')
-    XLSX.writeFile(wb, `SKALA4기_실습제출평가표_${unit.campus}${unit.cls}.xlsx`)
-  }
-
-  // CSV 내보내기 — 원본 평가지 "평가결과" 시트 컬럼 그대로
-  const exportCsv = () => {
-    const subj = subjectById(subjectId)
-    const esc = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"'
-    const head = ['훈련생 고유번호', '성명', '분반',
-      ...criteria.map((c, i) => `평가항목 ${i + 1}. ${c.item}${maxOf(c.points) != null ? ` (${maxOf(c.points)}점)` : ''}`),
-      `점수 합계${totalMax ? ` (/${totalMax})` : ''}`, '판단근거', '보완사항', '비고']
-    const lines = rows.filter((r) => r.student_name.trim()).map((r) => [
-      esc(r.student_no), esc(r.student_name), esc(classLabel(r.track, r.class_no)),
-      ...criteria.map((c) => esc(r.scores?.[c.item] ?? '')),
-      esc(totalOf(r)), esc(r.note_basis), esc(r.note_improve), esc(''),
-    ].join(','))
-    const csv = '﻿' + [head.map(esc).join(','), ...lines].join('\r\n')
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
-    a.download = `SKALA4기_종합실습평가_${subj?.name || subjectId}_${unit.campus}${unit.cls}_${unit.dateLabel.replace(/\//g, '')}_${evaluator}.csv`
-    a.click()
-    URL.revokeObjectURL(a.href)
-  }
-
-  const doneCount = rows.filter((r) => r.student_name.trim() && criteria.every((c) => r.scores?.[c.item] !== undefined && r.scores?.[c.item] !== '')).length
-  const hasDirty = rows.some((r) => r._dirty && r.student_name.trim())
-
-  // 미저장 변경이 있으면 이탈 경고
-  useEffect(() => {
-    if (!hasDirty) return
-    const onLeave = (e) => { e.preventDefault(); e.returnValue = '' }
-    window.addEventListener('beforeunload', onLeave)
-    return () => window.removeEventListener('beforeunload', onLeave)
-  }, [hasDirty])
-
-  // 고유번호순 정렬
-  const sortRows = () => setRows((prev) => [...prev].sort((a, b) =>
-    (a.student_no || '\uffff').localeCompare(b.student_no || '\uffff') || a.student_name.localeCompare(b.student_name)))
-
-  // 통계(입력 완료자 기준)
-  const totals = rows.filter((r) => r.student_name.trim()).map(totalOf).filter((t) => t > 0)
-  const stats = totals.length ? {
-    avg: (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1),
-    max: Math.max(...totals), min: Math.min(...totals),
-  } : null
+  const doneKeys = useMemo(() => new Set(EVAL_RECORDS.map((r) => r.key)), [])
+  const done = units.filter((u) => doneKeys.has(u.key)).length
 
   return (
-    <section className="section">
-      <div className="container">
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 999, background: 'var(--navy-100)', color: 'var(--navy-700)', fontSize: 12, fontWeight: 800 }}>
-          🔒 관리자 전용 · {user?.email}
-        </div>
-        <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>교과목 평가</h1>
-        <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14, lineHeight: 1.7 }}>
-          사이트에 수록된 종합실습 평가기준(수령 평가지와 정합 검증 완료) 그대로 점수를 입력하고,
-          원본 평가지의 "평가결과" 시트 형식 CSV로 내보냅니다. 저장은 Supabase(관리자 전용)에 기록됩니다.
+    <div className="section">
+      <div className="container" style={{ maxWidth: 1400 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 900, color: 'var(--navy-800)' }}>교과목 평가 기록</h1>
+        <p style={{ marginTop: 6, fontSize: 13.5, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+          평가는 슬랙으로 제출을 받아 엑셀로 집계합니다.
+          이 화면은 완료된 평가의 산출물을 과목·분반별로 보관하는 기록입니다.
         </p>
+
+        <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 }}>
+          {[
+            ['평가 단위', `${units.length}건`],
+            ['완료', `${done}건`],
+            ['남은 평가', `${units.length - done}건`],
+          ].map(([l, v]) => (
+            <div key={l} className="card" style={{ padding: '14px 16px' }}>
+              <p style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{l}</p>
+              <p style={{ fontSize: 20, fontWeight: 900, color: 'var(--navy-800)', marginTop: 4 }}>{v}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* 평가 단위 탭 — 과목 × 분반 */}
+        <div style={{ marginTop: 20, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {units.map((u) => {
+            const on = u.key === unit?.key
+            const ok = doneKeys.has(u.key)
+            return (
+              <button
+                key={u.key} type="button"
+                onClick={() => setParams({ unit: u.key })}
+                title={`${u.subjectName} · ${u.campus} ${u.cls}`}
+                style={{
+                  cursor: 'pointer', padding: '6px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 800,
+                  whiteSpace: 'nowrap',
+                  border: `1px solid ${on ? 'var(--navy-800)' : 'var(--line)'}`,
+                  background: on ? 'var(--navy-800)' : 'transparent',
+                  color: on ? '#fff' : 'var(--ink-soft)',
+                }}
+              >
+                {ok && <span style={{ marginRight: 4, color: on ? '#b8f5d0' : '#0E7A5F' }}>✓</span>}
+                {u.subjectName} <span style={{ opacity: 0.75, fontWeight: 600 }}>{u.campus} {u.cls}</span>
+              </button>
+            )
+          })}
+        </div>
 
         {unit && (
-          <p style={{ marginTop: 10, fontSize: 13.5, fontWeight: 800, color: 'var(--navy-800)' }}>
-            {unitLabel(unit)} <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>({unit.room})</span>
-            {unit.custom && <span className="chip chip-day" style={{ marginLeft: 8 }}>담당 외 분반 · 전체 조회</span>}
-          </p>
-        )}
+          <div style={{ marginTop: 20 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--navy-800)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+              {unit.subjectName}
+              <span style={{ marginLeft: 8, fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>
+                {unit.campus} {unit.cls} · {unit.room} · {unit.dateLabel}
+              </span>
+            </h2>
 
-        {/* 전체 분반 조회 — 주강사·운영 매니저는 담당 외 분반의 평가도 확인·입력할 수 있다 */}
-        <div style={{ marginTop: 10, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--navy-700)' }}>🔍 전체 분반 조회</span>
-          <select
-            value={unit?.subjectId || ''}
-            onChange={(e) => setParams({ unit: customKey(e.target.value, unit?.track || 'gj', unit?.classNo || 1) })}
-            style={{ padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5 }}
-          >
-            {subjects.filter((s) => exams[s.id]).map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
-          <select
-            value={unit ? `${unit.track}|${unit.classNo}` : ''}
-            onChange={(e) => {
-              const [t, n] = e.target.value.split('|')
-              setParams({ unit: customKey(unit.subjectId, t, Number(n)) })
-            }}
-            style={{ padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5 }}
-          >
-            {Object.entries(TRACK_LABELS).flatMap(([t, label]) =>
-              ({ gj: [1, 2, 3, 4], us: [1, 2, 3, 4], p4: [1, 2, 3, 4, 5], p5: [6, 7, 8, 9, 10] })[t].map((n) => (
-                <option key={`${t}${n}`} value={`${t}|${n}`}>{label} {n}반</option>
-              )))}
-          </select>
-          <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>담당 분반(강의일자 포함)은 좌측 메뉴에서 선택하세요.</span>
-        </div>
+            {!rec && (
+              <div className="card" style={{ marginTop: 12, padding: 18 }}>
+                <p style={{ fontWeight: 800, color: 'var(--navy-800)' }}>아직 평가 기록이 없습니다.</p>
+                <p style={{ marginTop: 6, fontSize: 13.5, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                  과목이 끝나면 슬랙 제출물을 엑셀로 집계한 뒤, 드라이브에 평가 건별 구분 폴더를 만들어 올리고
+                  <code style={{ margin: '0 4px' }}>src/data/evalrecords.js</code>에 한 건 추가하면 여기에 나타납니다.
+                </p>
+                <p style={{ marginTop: 8, fontSize: 12.5, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                  폴더 규칙 — <b>6. 종합실습 평가 기록 / &lt;날짜&gt; &lt;캠퍼스&gt; &lt;반&gt; &lt;과목&gt;</b>
+                </p>
+                <a href={DOCS_ROOT_FOLDER} target="_blank" rel="noreferrer" className="section-link" style={{ display: 'inline-block', marginTop: 10 }}>
+                  드라이브 열기 →
+                </a>
+              </div>
+            )}
 
-        {/* 도구줄 */}
-        <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-          <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={loadStudents}>
-            👥 등록 학생 불러오기
-          </button>
-          {unitRoster && (
-            <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }}
-              onClick={() => loadRoster(Object.keys(ROSTERS).find((k) => ROSTERS[k] === unitRoster))}>
-              📋 {unitRoster.label} 명단 불러오기
-            </button>
-          )}
-          <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={() => setRows((p) => [...p, newRow()])}>
-            + 행 추가(수기)
-          </button>
-          <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={() => setShowRubric((v) => !v)}>
-            📋 평가기준 {showRubric ? '접기' : '보기'}
-          </button>
-          <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={sortRows}>
-            ↕ 번호순 정렬
-          </button>
-          <span style={{ flex: 1 }} />
-          {stats && (
-            <span style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>
-              평균 <b style={{ color: 'var(--navy-800)' }}>{stats.avg}</b> · 최고 {stats.max} · 최저 {stats.min}
-            </span>
-          )}
-          <span style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>입력 완료 {doneCount} / {rows.length}명</span>
-          <button className="btn btn-cta" style={{ padding: '8px 18px', fontSize: 13, opacity: saving ? 0.6 : 1 }} disabled={saving} onClick={saveAll}>
-            {saving ? '저장 중…' : '💾 저장'}
-          </button>
-          <button className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }} onClick={exportXlsx}>
-            ⬇ 엑셀(xlsx)
-          </button>
-          <button className="btn btn-ghost" style={{ padding: '8px 18px', fontSize: 13 }} onClick={exportPdf}>
-            🖨 PDF 저장
-          </button>
-          {unitRoster && (
-            <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={exportPracticeSheet}
-              title="캠퍼스·반·조·이름이 채워진 실습 제출 취합 양식(Practice 1~4 · 종합실습 1~2, 제출일/점수 공란)">
-              ⬇ 실습 제출표
-            </button>
-          )}
-          <button className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }} onClick={exportCsv}>
-            CSV
-          </button>
-        </div>
-        {msg && <p style={{ marginTop: 10, fontSize: 13, color: msg.includes('실패') ? '#E5484D' : 'var(--gold)', fontWeight: 700 }}>{msg}</p>}
+            {rec && (
+              <>
+                <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+                  {[
+                    ['강의일', rec.dates.map(fmtDate).join(' · ')],
+                    ['마감', fmtDate(rec.closedAt)],
+                    ['평가 인원', `${rec.students}명`],
+                    ['산출물', `${rec.files.length}건`],
+                  ].map(([l, v]) => (
+                    <div key={l} className="card" style={{ padding: '12px 14px' }}>
+                      <p style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{l}</p>
+                      <p style={{ fontSize: 16, fontWeight: 900, color: 'var(--navy-800)', marginTop: 3 }}>{v}</p>
+                    </div>
+                  ))}
+                </div>
 
-        {/* 평가기준 참고(개발된 내용 그대로) */}
-        {showRubric && (
-          <div className="card" style={{ marginTop: 14 }}>
-            <ExamBlock e={exam} />
+                <p style={{ marginTop: 12, fontSize: 13, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                  제출처 — {rec.submittedTo}
+                </p>
+
+                <div style={{ marginTop: 12, border: '1px solid var(--line)', borderRadius: 12, overflow: 'hidden' }}>
+                  {rec.files.map((f, i) => (
+                    <div key={f.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+                      padding: '10px 14px', borderBottom: i < rec.files.length - 1 ? '1px solid var(--line)' : 'none',
+                    }}>
+                      <span style={{ flex: 1, minWidth: 200, fontSize: 13.5, fontWeight: 700, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                        {f.t}
+                      </span>
+                      <span style={{ fontSize: 11.5, color: 'var(--ink-soft)' }}>{f.x?.toUpperCase()} {fmtBytes(f.b)}</span>
+                      <button type="button" onClick={() => setPreview(preview === f.id ? null : f.id)}
+                        style={{ cursor: 'pointer', fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 7, border: '1px solid var(--line)', background: 'transparent', color: 'var(--navy-700)' }}>
+                        {preview === f.id ? '닫기' : '미리보기'}
+                      </button>
+                      <a href={driveView(f.id)} target="_blank" rel="noreferrer" style={{ fontSize: 12, fontWeight: 700 }}>새 탭</a>
+                      <a href={driveDownload(f.id)} style={{ fontSize: 12, fontWeight: 700 }}>받기</a>
+                    </div>
+                  ))}
+                </div>
+
+                {preview && (
+                  <iframe
+                    title="평가 산출물 미리보기" src={drivePreview(preview)}
+                    style={{ marginTop: 12, width: '100%', height: 640, border: '1px solid var(--line)', borderRadius: 12 }}
+                  />
+                )}
+
+                <a href={rec.folder} target="_blank" rel="noreferrer" className="section-link" style={{ display: 'inline-block', marginTop: 12 }}>
+                  드라이브 폴더 열기 →
+                </a>
+
+                {rec.notes?.length > 0 && (
+                  <>
+                    <h3 style={{ marginTop: 22, fontSize: 15, fontWeight: 900, color: 'var(--navy-800)' }}>기록</h3>
+                    <ul style={{ marginTop: 8, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.75 }}>
+                      {rec.notes.map((n, i) => (
+                        <li key={i} style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{n}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </>
+            )}
+
+            {exams[unit.subjectId] && (
+              <details style={{ marginTop: 22 }}>
+                <summary style={{ cursor: 'pointer', fontSize: 14, fontWeight: 800, color: 'var(--navy-800)' }}>
+                  평가 기준 보기 — {subjectById(unit.subjectId)?.name || unit.subjectName}
+                </summary>
+                <div style={{ marginTop: 10, fontSize: 13.5, lineHeight: 1.8 }}>
+                  {exams[unit.subjectId].criteria?.map((c, i) => (
+                    <div key={i} style={{ padding: '8px 0', borderBottom: '1px solid var(--line)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                      <b>{c.item}</b> {c.points && <span style={{ color: 'var(--accent)' }}>{c.points}</span>}
+                      {c.desc && <div style={{ color: 'var(--ink-soft)', fontSize: 12.5, marginTop: 2 }}>{c.desc}</div>}
+                    </div>
+                  ))}
+                  {exams[unit.subjectId].notes?.length > 0 && (
+                    <ul style={{ marginTop: 10, paddingLeft: 18, fontSize: 12.5, color: 'var(--ink-soft)' }}>
+                      {exams[unit.subjectId].notes.map((n, i) => (
+                        <li key={i} style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{n}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </details>
+            )}
           </div>
         )}
-
-        {/* 입력 그리드 */}
-        <div style={{ marginTop: 16, overflowX: 'auto', border: '1px solid var(--line)', borderRadius: 12 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5, minWidth: 760 + criteria.length * 90 }}>
-            <thead>
-              <tr style={{ background: 'var(--navy-50)' }}>
-                {['고유번호', '성명', '분반',
-                  ...criteria.map((c) => `${c.item}${maxOf(c.points) != null ? ` (${maxOf(c.points)})` : ''}`),
-                  `합계${totalMax ? `/${totalMax}` : ''}`, '판단근거', '보완사항', ''].map((h, i) => (
-                  <th key={i} style={{ textAlign: 'left', padding: '8px 10px', color: 'var(--navy-700)', fontWeight: 800, whiteSpace: i > 2 && i < 3 + criteria.length ? 'normal' : 'nowrap', minWidth: i > 2 && i < 3 + criteria.length ? 96 : undefined, borderBottom: '1px solid var(--line)', fontSize: 11.5, lineHeight: 1.4 }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={7 + criteria.length} style={{ padding: 20, textAlign: 'center', color: 'var(--ink-soft)' }}>불러오는 중…</td></tr>
-              ) : rows.length === 0 ? (
-                <tr><td colSpan={7 + criteria.length} style={{ padding: 24, textAlign: 'center', color: 'var(--ink-soft)' }}>
-                  "등록 학생 불러오기" 또는 "행 추가"로 평가할 학생을 추가하세요.
-                </td></tr>
-              ) : rows.map((r) => (
-                <tr key={r._key} style={{ borderBottom: '1px solid var(--line)', background: r._dirty ? 'rgba(63,81,255,0.04)' : 'transparent' }}>
-                  <td style={{ padding: '6px 8px' }}>
-                    <input value={r.student_no || ''} onChange={(e) => patchRow(r._key, { student_no: e.target.value })} placeholder="0000"
-                      style={{ width: 72, padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5 }} />
-                  </td>
-                  <td style={{ padding: '6px 8px' }}>
-                    <input value={r.student_name} onChange={(e) => patchRow(r._key, { student_name: e.target.value })} placeholder="성명"
-                      style={{ width: 90, padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5, fontWeight: 700 }} />
-                  </td>
-                  <td style={{ padding: '6px 8px', whiteSpace: 'nowrap' }}>
-                    <select value={r.track ? `${r.track}|${r.class_no || ''}` : ''} onChange={(e) => {
-                      const [t, n] = e.target.value.split('|')
-                      patchRow(r._key, { track: t || null, class_no: n ? Number(n) : null })
-                    }} style={{ padding: '6px 6px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12 }}>
-                      <option value="">-</option>
-                      {Object.entries(TRACK_LABELS).flatMap(([t, label]) =>
-                        ({ gj: [1,2,3,4], us: [1,2,3,4], p4: [1,2,3,4,5], p5: [6,7,8,9,10] })[t].map((n) => (
-                          <option key={`${t}${n}`} value={`${t}|${n}`}>{label} {n}반</option>
-                        )))}
-                    </select>
-                  </td>
-                  {criteria.map((c) => {
-                    const max = maxOf(c.points)
-                    return (
-                      <td key={c.item} style={{ padding: '6px 6px' }}>
-                        <input type="number" min={0} max={max ?? undefined} value={r.scores?.[c.item] ?? ''} title={c.desc}
-                          onChange={(e) => setScore(r._key, c.item, e.target.value, max)}
-                          style={{ width: 76, padding: '6px 6px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12.5, textAlign: 'center' }} />
-                      </td>
-                    )
-                  })}
-                  <td style={{ padding: '6px 8px', fontWeight: 900, color: 'var(--gold)', whiteSpace: 'nowrap' }}>{totalOf(r)}</td>
-                  <td style={{ padding: '6px 8px' }}>
-                    <input value={r.note_basis || ''} onChange={(e) => patchRow(r._key, { note_basis: e.target.value })} placeholder="점수 판단 근거"
-                      style={{ width: 170, padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12 }} />
-                  </td>
-                  <td style={{ padding: '6px 8px' }}>
-                    <input value={r.note_improve || ''} onChange={(e) => patchRow(r._key, { note_improve: e.target.value })} placeholder="보완사항"
-                      style={{ width: 170, padding: '6px 8px', borderRadius: 8, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--ink)', fontSize: 12 }} />
-                  </td>
-                  <td style={{ padding: '6px 8px' }}>
-                    <button onClick={() => removeRow(r)} title="행 삭제" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#E5484D', fontWeight: 800 }}>✕</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <p style={{ marginTop: 12, fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.7 }}>
-          · 점수는 항목별 배점을 넘지 않게 자동 제한됩니다. 파란 배경 행은 저장 전 변경분입니다.<br />
-          · CSV는 엑셀에서 바로 열리며(BOM 포함), 원본 평가지의 평가결과 시트에 붙여넣기 좋게 같은 순서로 내보냅니다.
-        </p>
       </div>
-    </section>
+    </div>
   )
 }

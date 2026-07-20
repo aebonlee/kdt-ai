@@ -20,6 +20,7 @@ function rosterFor(track, classNo) {
 
 export default function AdminRoster() {
   const [tab, setTab] = useState('staff')
+  const [cls, setCls] = useState(null)   // 선택된 분반 키 (track+no). null = 첫 분반
   const [rows, setRows] = useState([])
   const [err, setErr] = useState('')
   const [loading, setLoading] = useState(true)
@@ -212,12 +213,35 @@ export default function AdminRoster() {
               </table>
             </div>
 
-            {/* 분반별 상세 */}
-            {byClass.filter((c) => c.joined.length || c.roster).map((c) => {
+            {/* 분반 탭 — 18개 분반을 상단에서 골라 본다(아래로 길게 내려가지 않게) */}
+            <div style={{ marginTop: 22, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {byClass.map((c) => {
+                const k = `${c.track}${c.no}`
+                const on = (cls || `${byClass[0].track}${byClass[0].no}`) === k
+                return (
+                  <button
+                    key={k} type="button" onClick={() => setCls(k)}
+                    style={{
+                      cursor: 'pointer', padding: '6px 11px', borderRadius: 999, fontSize: 12.5, fontWeight: 800,
+                      whiteSpace: 'nowrap',
+                      border: `1px solid ${on ? 'var(--navy-800)' : 'var(--line)'}`,
+                      background: on ? 'var(--navy-800)' : 'transparent',
+                      color: on ? '#fff' : 'var(--ink-soft)',
+                    }}
+                  >
+                    {c.label}
+                    <span style={{ marginLeft: 5, opacity: .75, fontWeight: 600 }}>{c.joined.length}</span>
+                    {c.missing.length > 0 && <span style={{ marginLeft: 4, color: on ? '#ffd7d7' : '#c00' }}>●</span>}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* 선택 분반 상세 */}
+            {byClass.filter((c) => `${c.track}${c.no}` === (cls || `${byClass[0].track}${byClass[0].no}`)).map((c) => {
               const shown = c.joined.filter(match)
-              if (kw && !shown.length && !c.missing.some((m) => (m.name || '').toLowerCase().includes(kw))) return null
               return (
-                <div key={`d${c.track}${c.no}`} style={{ marginTop: 22 }}>
+                <div key={`d${c.track}${c.no}`} style={{ marginTop: 18 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 900, color: 'var(--navy-800)' }}>
                     {c.label} <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink-soft)' }}>
                       {c.room} · 가입 {c.joined.length}명{c.roster ? ` / 명단 ${c.roster.students.length}명` : ''}
