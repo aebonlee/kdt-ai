@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { myPairings, partnerCounts, instructorDays, scheduleAlerts, PAIRING_SOURCE } from '../data/adminschedule'
+import { myPairings, partnerCounts, instructorDays, scheduleAlerts, PAIRING_SOURCE, isLeadAuthor } from '../data/adminschedule'
 import { subjectById } from '../data/curriculum'
 
 // 캠퍼스 배지 색 — Schedule.jsx 지역 배지와 동일 계열
@@ -227,13 +227,28 @@ export default function AdminSchedule() {
 
         {/* ── 병행 동료 빈도 ── */}
         <h2 style={{ marginTop: 34, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>병행 동료 강사 빈도</h2>
-        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>내 강의일에 같은 캠퍼스에서 함께 강의한 날 수 (전체 {partnerCounts.length}명)</p>
+        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+          내 강의일에 같은 캠퍼스에서 함께 강의한 날 수 (전체 {partnerCounts.length}명).
+          연한 파랑 배경은 주강사(과목 교안 저자)입니다.
+        </p>
         <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {partnerCounts.map((p) => (
-            <span key={p.name} style={{ padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, border: '1px solid var(--line-strong)', background: 'var(--bg-white)', color: 'var(--navy-700)' }}>
-              {p.name} <b style={{ color: 'var(--gold)' }}>{p.days}일</b>
-            </span>
-          ))}
+          {partnerCounts.map((p) => {
+            const lead = isLeadAuthor(p.name)   // 주강사(교안 저자) — 연한 파랑 배경으로 구분
+            return (
+              <span
+                key={p.name}
+                title={lead ? '주강사 (과목 교안 저자)' : '실습교수'}
+                style={{
+                  padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700,
+                  border: `1px solid ${lead ? 'var(--navy-200, #c7d2fe)' : 'var(--line-strong)'}`,
+                  background: lead ? 'var(--navy-50)' : 'var(--bg-white)',
+                  color: 'var(--navy-700)',
+                }}
+              >
+                {p.name} <b style={{ color: 'var(--gold)' }}>{p.days}일</b>
+              </span>
+            )
+          })}
         </div>
 
         {/* ── 강사별 전체 강의 일수 ── */}

@@ -4,6 +4,10 @@ import { modeOf } from '../data/lecturemodes'
 import { otherCourses } from '../data/othercontent'
 import { etcMonthlyDigest, otherPeriods } from '../data/othersessions'
 import Sentences from '../components/Sentences'
+import { myPairings } from '../data/adminschedule'
+
+// 강의일자 -> 반·강의실 (반별 시간표 판독본). curriculum 세션에는 호수가 없어 날짜로 잇는다.
+const ROOM_BY_DATE = new Map(myPairings.map((p) => [p.date, { cls: p.cls, room: p.room }]))
 
 const regionClass = (r, k) => (r === '광주' ? 'gwangju' : r === '울산' ? 'ulsan' : k === '4층' ? 'pangyo3' : 'pangyo')
 // 실라버스 방식 배지 색상 (이론/실습/종합실습)
@@ -47,7 +51,13 @@ export default function Subjects() {
                         <span className="date">{s.date.slice(5)} ({s.weekday})</span>
                         <span className={`chip chip-region ${regionClass(s.region, s.klass)}`}>
                           {s.region} {s.klass}
+                          {ROOM_BY_DATE.get(s.date) && ` ${ROOM_BY_DATE.get(s.date).cls}`}
                         </span>
+                        {ROOM_BY_DATE.get(s.date) && (
+                          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--ink-soft)' }}>
+                            {ROOM_BY_DATE.get(s.date).room}
+                          </span>
+                        )}
                         {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
                         <span className="title">{d?.title}</span>
                       </span>

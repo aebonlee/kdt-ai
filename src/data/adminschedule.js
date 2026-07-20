@@ -160,6 +160,11 @@ export const myPairings = [
 ]
 
 // 병행 동료 강사 빈도(참고)
+// 주강사(과목 교안 저자) 명단 — myPairings 의 authors 합집합.
+// 실습교수와 구분하는 근거는 이 필드다(파일명·호칭 추측이 아니라 배정표 데이터).
+export const LEAD_AUTHORS = [...new Set(myPairings.flatMap((p) => p.authors || []))].sort()
+export const isLeadAuthor = (name) => LEAD_AUTHORS.includes(name)
+
 export const partnerCounts = [{"name": "김경난", "days": 25}, {"name": "장경희", "days": 10}, {"name": "임성열", "days": 10}, {"name": "김성영", "days": 10}, {"name": "박창렴", "days": 10}, {"name": "백정열", "days": 9}, {"name": "이상희", "days": 8}, {"name": "강병호", "days": 7}, {"name": "배기주", "days": 6}, {"name": "박보경", "days": 6}, {"name": "김준범", "days": 6}, {"name": "이현민", "days": 6}, {"name": "최찬영", "days": 5}, {"name": "한성훈", "days": 5}, {"name": "조홍근", "days": 5}, {"name": "김일한", "days": 5}, {"name": "양성호", "days": 4}, {"name": "박병선", "days": 3}, {"name": "우재남", "days": 3}, {"name": "김범준", "days": 3}, {"name": "권기창", "days": 3}, {"name": "하만석", "days": 3}, {"name": "조재형", "days": 3}, {"name": "류홍걸", "days": 3}, {"name": "허진경", "days": 3}, {"name": "윤선영", "days": 2}, {"name": "윤재성", "days": 2}, {"name": "차가을", "days": 2}, {"name": "이은호", "days": 2}, {"name": "정윤석", "days": 1}, {"name": "박영웅", "days": 1}]
 
 
