@@ -41,12 +41,43 @@ from public.skala_progress
 on conflict (user_id) do nothing;
 
 -- ── ③ 종합실습 평가 기록 (관리자 입력분) ──
+--    ⚠️ kdt_evaluations 가 초기 setup SQL 버그로 skala 와 컬럼이 다르게 만들어졌다면
+--       (evaluator_id/bigint id) 데이터가 없을 때 원본 스키마로 재생성한다.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='kdt_evaluations' and column_name='evaluator_id'
+  ) and not exists (select 1 from public.kdt_evaluations limit 1) then
+    drop table public.kdt_evaluations;
+  end if;
+end $$;
+
+create table if not exists public.kdt_evaluations (
+  id           uuid primary key default gen_random_uuid(),
+  subject_id   text not null,
+  student_name text not null,
+  student_no   text default '',
+  track        text,
+  class_no     int,
+  profile_id   uuid,
+  scores       jsonb not null default '{}'::jsonb,
+  note_basis   text default '',
+  note_improve text default '',
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+create index if not exists kdt_evaluations_subject_idx on public.kdt_evaluations(subject_id, track, class_no);
+alter table public.kdt_evaluations enable row level security;
+drop policy if exists "kdt_evaluations_admin_all" on public.kdt_evaluations;
+create policy "kdt_evaluations_admin_all" on public.kdt_evaluations for all using (public.kdt_is_admin()) with check (public.kdt_is_admin());
+
 insert into public.kdt_evaluations
-  (subject_id, track, class_no, student_name, student_no, scores, note_basis, note_improve, evaluator_id, updated_at)
+  (id, subject_id, student_name, student_no, track, class_no, profile_id, scores, note_basis, note_improve, created_at, updated_at)
 select
-  subject_id, track, class_no, student_name, student_no, scores, note_basis, note_improve, evaluator_id, updated_at
+  id, subject_id, student_name, student_no, track, class_no, profile_id, scores, note_basis, note_improve, created_at, updated_at
 from public.skala_evaluations
-on conflict do nothing;
+on conflict (id) do nothing;
 
 -- ── ④ 게시판 글·댓글 (원하면 함께 이관) ──
 insert into public.kdt_posts
