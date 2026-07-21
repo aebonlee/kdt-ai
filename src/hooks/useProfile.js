@@ -78,9 +78,16 @@ export function needsReconfirm(profile) {
 }
 
 // 프로필이 실질 정보를 갖췄는지 (학생: 트랙+반 / 교수자: 담당 분반 1개 이상)
+// 담당 분반 선택이 필요한 직책 — 나머지(전임교수·책임매니저)는 분반 없이도 완성
+const TITLE_NEEDS_CLASSES = new Set(['practice_professor', 'class_manager'])
+
 export function isProfileComplete(profile) {
   if (!profile) return false
-  if (profile.role === 'instructor') return (profile.teach_classes || []).length > 0
+  if (profile.role === 'instructor') {
+    if (!profile.title) return false                       // 직책 미선택
+    if (!TITLE_NEEDS_CLASSES.has(profile.title)) return true // 전임교수·책임매니저
+    return (profile.teach_classes || []).length > 0        // 분반 필요 직책
+  }
   return !!profile.track && !!profile.class_no
 }
 

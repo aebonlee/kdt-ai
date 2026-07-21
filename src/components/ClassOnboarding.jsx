@@ -4,9 +4,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { TRACK_LABELS, CLASS_MAP, classLabel } from '../data/classes'
+import { TITLES } from '../config/roles'
 import {
   useProfile, loadProfile, saveProfile, reconfirmProfile, needsReconfirm, isProfileComplete,
 } from '../hooks/useProfile'
+
+// 교수자 직책 선택지 — roles.js TITLES 와 코드 일치.
+// 담당 분반 선택이 필요한 직책: 분반담당매니저 · 실습교수(반별 실습 지도)
+const TITLE_OPTIONS = [
+  { code: 'lead_professor', label: '전임교수', desc: '과목 교안 저자(주강사)', needsClasses: false },
+  { code: 'practice_professor', label: '실습교수', desc: '반별 실습 지도', needsClasses: true },
+  { code: 'chief_manager', label: '책임매니저', desc: '운영 총괄', needsClasses: false },
+  { code: 'class_manager', label: '분반담당매니저', desc: '특정 분반 운영 담당', needsClasses: true },
+]
+const titleNeedsClasses = (code) => TITLE_OPTIONS.find((o) => o.code === code)?.needsClasses
 
 // 다른 화면(학습관리 등)에서 모달을 다시 열 수 있게 하는 간단한 오프너
 let opener = null
@@ -21,6 +32,7 @@ export default function ClassOnboarding() {
   const { status, profile } = useProfile()
   const [open, setOpen] = useState(false)
   const [role, setRole] = useState('student')
+  const [title, setTitle] = useState('') // 교수자 직책 코드
   const [track, setTrack] = useState('')
   const [classNo, setClassNo] = useState(null)
   const [teach, setTeach] = useState([]) // [{track, no}]
@@ -43,6 +55,7 @@ export default function ClassOnboarding() {
   useEffect(() => {
     if (!profile) return
     setRole(profile.role || 'student')
+    setTitle(profile.title || '')
     setTrack(profile.track || '')
     setClassNo(profile.class_no || null)
     setTeach(profile.teach_classes || [])
@@ -53,16 +66,21 @@ export default function ClassOnboarding() {
 
   const canSave = useMemo(() => {
     if (!checked) return false
-    if (role === 'instructor') return teach.length > 0
+    if (role === 'instructor') {
+      if (!title) return false
+      // 담당 분반이 필요한 직책은 분반을 골라야 한다
+      return titleNeedsClasses(title) ? teach.length > 0 : true
+    }
     return !!track && !!classNo
-  }, [checked, role, track, classNo, teach])
+  }, [checked, role, title, track, classNo, teach])
 
   if (!user || status === 'unavailable' || status === 'idle' || status === 'loading') return null
 
   // ── 재확인 배너 (정보는 있으나 확인이 오래됨) ──
   if (!open && reconfirm) {
+    const teachLabel = (profile.teach_classes || []).map((t) => classLabel(t.track, t.no)).join(', ')
     const label = profile.role === 'instructor'
-      ? `교수자 · 담당 ${profile.teach_classes.map((t) => classLabel(t.track, t.no)).join(', ')}`
+      ? [profile.title ? TITLES[profile.title]?.label : '교수자', teachLabel && `담당 ${teachLabel}`].filter(Boolean).join(' · ')
       : classLabel(profile.track, profile.class_no)
     return (
       <div style={{
@@ -96,9 +114,15 @@ export default function ClassOnboarding() {
 
   const onSave = async () => {
     setSaving(true); setErr('')
+    const now = new Date().toISOString()
     const patch = role === 'instructor'
-      ? { role, track: null, class_no: null, teach_classes: teach, confirmed_at: new Date().toISOString() }
-      : { role, track, class_no: classNo, teach_classes: [], confirmed_at: new Date().toISOString() }
+      ? {
+          role, title,
+          // 담당 분반이 필요 없는 직책(전임교수·책임매니저)은 분반을 비운다
+          teach_classes: titleNeedsClasses(title) ? teach : [],
+          track: null, class_no: null, confirmed_at: now,
+        }
+      : { role, title: null, track, class_no: classNo, teach_classes: [], confirmed_at: now }
     const { error } = await saveProfile(user, patch)
     setSaving(false)
     if (error) setErr('저장에 실패했습니다: ' + error.message)
@@ -167,27 +191,51 @@ export default function ClassOnboarding() {
           </>
         ) : (
           <>
-            <div style={{ marginTop: 16, fontSize: 13, fontWeight: 800, color: 'var(--navy-700)' }}>
-              담당 분반 <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>(복수 선택 가능)</span>
+            {/* 직책 선택 */}
+            <div style={{ marginTop: 16, fontSize: 13, fontWeight: 800, color: 'var(--navy-700)' }}>직책</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8, marginTop: 8 }}>
+              {TITLE_OPTIONS.map((o) => {
+                const on = title === o.code
+                const t = TITLES[o.code]
+                return (
+                  <button key={o.code} onClick={() => { setTitle(o.code); if (!o.needsClasses) setTeach([]) }} style={{
+                    textAlign: 'left', padding: '10px 12px', borderRadius: 10, cursor: 'pointer',
+                    border: `1.5px solid ${on ? t.color : 'var(--line-strong)'}`,
+                    background: on ? 'var(--navy-50)' : 'var(--bg-white)',
+                  }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 800, color: on ? t.color : 'var(--navy-800)' }}>{o.label}</div>
+                    <div style={{ fontSize: 11.5, color: 'var(--ink-soft)', marginTop: 2 }}>{o.desc}</div>
+                  </button>
+                )
+              })}
             </div>
-            {Object.entries(TRACK_LABELS).map(([t, label]) => (
-              <div key={t} style={{ marginTop: 10 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-soft)' }}>{label}</div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
-                  {CLASS_MAP[t].map((c) => {
-                    const on = teach.some((x) => x.track === t && x.no === c.no)
-                    return (
-                      <button key={c.no} onClick={() => toggleTeach(t, c.no)} style={{
-                        padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
-                        border: `1.5px solid ${on ? 'var(--gold)' : 'var(--line-strong)'}`,
-                        background: on ? 'var(--gold)' : 'var(--bg-white)',
-                        color: on ? '#fff' : 'var(--navy-700)',
-                      }}>{c.no}반</button>
-                    )
-                  })}
+
+            {/* 담당 분반 — 분반이 필요한 직책에서만 */}
+            {title && titleNeedsClasses(title) && (
+              <>
+                <div style={{ marginTop: 16, fontSize: 13, fontWeight: 800, color: 'var(--navy-700)' }}>
+                  담당 분반 <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>(복수 선택 가능 · 판교는 4층 1~5반 / 5층 6~10반)</span>
                 </div>
-              </div>
-            ))}
+                {Object.entries(TRACK_LABELS).map(([t, label]) => (
+                  <div key={t} style={{ marginTop: 10 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-soft)' }}>{label}</div>
+                    <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                      {CLASS_MAP[t].map((c) => {
+                        const on = teach.some((x) => x.track === t && x.no === c.no)
+                        return (
+                          <button key={c.no} onClick={() => toggleTeach(t, c.no)} style={{
+                            padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
+                            border: `1.5px solid ${on ? 'var(--gold)' : 'var(--line-strong)'}`,
+                            background: on ? 'var(--gold)' : 'var(--bg-white)',
+                            color: on ? '#fff' : 'var(--navy-700)',
+                          }}>{c.no}반 <span style={{ fontWeight: 600, fontSize: 11, opacity: 0.8 }}>{c.room}</span></button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
           </>
         )}
 
@@ -196,7 +244,7 @@ export default function ClassOnboarding() {
           <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} style={{ marginTop: 3, width: 16, height: 16 }} />
           <span>
             {role === 'instructor'
-              ? <>선택한 담당 분반(<b>{teach.length ? teach.map((t) => classLabel(t.track, t.no)).join(', ') : '미선택'}</b>)이 맞음을 확인합니다.</>
+              ? <>직책 <b>{title ? TITLES[title].label : '미선택'}</b>{titleNeedsClasses(title) && <> · 담당 분반 <b>{teach.length ? teach.map((t) => classLabel(t.track, t.no)).join(', ') : '미선택'}</b></>}이(가) 맞음을 확인합니다.</>
               : <>소속 분반(<b>{track && classNo ? classLabel(track, classNo) : '미선택'}</b>)이 맞음을 확인합니다.</>}
           </span>
         </label>
