@@ -4,7 +4,8 @@ import { course } from '../data/course'
 import ThemeToggle from './ThemeToggle'
 import AuthButtons from './AuthButtons'
 import { useAuth } from '../contexts/AuthContext'
-import { isAdmin } from '../config/admin'
+import { canAccessAdmin } from '../config/admin'
+import { useProfile } from '../hooks/useProfile'
 import AdminMenu from './AdminMenu'
 
 const nav = [
@@ -20,7 +21,8 @@ const nav = [
 
 export default function Header() {
   const { user } = useAuth()
-  const admin = isAdmin(user)
+  const { profile } = useProfile()
+  const admin = canAccessAdmin(user, profile)
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
 

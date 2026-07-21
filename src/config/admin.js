@@ -7,5 +7,15 @@ export const ADMIN_EMAILS = [
   'humanaiphd@gmail.com', // 임성렬 (주강사, 2026-07-16 추가)
 ]
 
-export const isAdmin = (user) =>
+// 이메일 화이트리스트 판정 — 프로필 로드 전에도 동작하는 동기 함수.
+export const isAllowlisted = (user) =>
   !!user && ADMIN_EMAILS.includes((user.email || '').toLowerCase())
+
+// 하위호환 별칭.
+export const isAdmin = isAllowlisted
+
+// 대시보드 등 관리자 화면 접근 가능 여부 —
+// 이메일 화이트리스트 OR 교수자로 가입(role=instructor)한 계정 전원(2026-07-21 대표 지시).
+// profile 이 아직 로드되지 않았으면 화이트리스트만으로 우선 판정한다.
+export const canAccessAdmin = (user, profile) =>
+  isAllowlisted(user) || profile?.role === 'instructor'

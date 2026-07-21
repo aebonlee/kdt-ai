@@ -13,6 +13,7 @@ import { myPairings } from '../data/adminschedule'
 import { exams } from '../data/exams'
 import { isEvaluated } from '../data/evalrecords'
 import { mergeInstructors, mergePeople } from '../utils/people'
+import { TITLES, resolveTitle } from '../config/roles'
 
 const KST = () => {
   // 브라우저 로컬이 KST가 아닐 수 있어 Asia/Seoul 로 오늘 날짜(YYYY-MM-DD)를 구한다
@@ -85,6 +86,18 @@ export default function AdminDashboard() {
 
   const staleCount = students.filter((p) => !p.confirmed_at ||
     Date.now() - new Date(p.confirmed_at).getTime() > 14 * 24 * 60 * 60 * 1000).length
+
+  // 직책 배지 — 이메일/DB title 로 판정
+  const TitleBadge = ({ p }) => {
+    const code = resolveTitle({ email: p.email }, p)
+    if (!code) return null
+    const t = TITLES[code]
+    return (
+      <span style={{ marginLeft: 6, fontSize: 10.5, fontWeight: 800, color: '#fff', background: t.color, borderRadius: 999, padding: '1px 8px', whiteSpace: 'nowrap' }}>
+        {t.label}
+      </span>
+    )
+  }
 
   const SessionChip = ({ s }) => (
     <Link to={`/day/${s.date}`} className="card" style={{ padding: '12px 14px', display: 'block' }}>
@@ -236,6 +249,7 @@ export default function AdminDashboard() {
                 <tr key={i} style={{ borderBottom: '1px solid var(--line)' }}>
                   <td style={{ padding: '8px 12px', fontWeight: 700, whiteSpace: 'nowrap' }}>
                     {p.name || '-'}
+                    <TitleBadge p={p} />
                     {p.accountCount > 1 && (
                       <span title={`계정 ${p.accountCount}개를 동일인으로 합침`} style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: 'var(--navy-700)', background: 'var(--navy-50)', borderRadius: 999, padding: '1px 7px' }}>
                         계정 {p.accountCount}
