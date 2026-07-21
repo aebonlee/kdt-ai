@@ -1,74 +1,100 @@
-// 관리자 대시보드 — 분반별 가입 현황 · 교수자 명단(분리) · 과목×분반 평가 진행 현황.
-// 관리 풍선 메뉴의 허브 역할(기존 메뉴는 그대로 유지).
-import { useEffect, useState } from 'react'
+// 관리자 대시보드 — 담당강사 허브.
+//   ① 오늘·이번 주 내 강의 일정   ② 과목 종료일 = 평가 필요 알림
+//   ③ 담당 강의 평가 기록 현황     ④ 분반별 가입 현황 · 교수자 명단
+// 평가는 슬랙 제출 → 엑셀 집계 흐름이라(대표 확정), 여기서는 '무엇을 평가해야/했나'만 본다.
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase, hasSupabase } from '../lib/supabase'
-import { TRACK_LABELS, CLASS_MAP, classLabel } from '../data/classes'
+import { CLASS_MAP, classLabel, classShort } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
-import { evalUnits, customKey } from '../data/evalunits'
+import { evalUnits } from '../data/evalunits'
+import { myPairings } from '../data/adminschedule'
 import { exams } from '../data/exams'
-import { mergeInstructors } from '../utils/people'
-import { subjectById } from '../data/curriculum'
+import { isEvaluated } from '../data/evalrecords'
+import { mergeInstructors, mergePeople } from '../utils/people'
 
-const fmtDate = (s) => (s ? new Date(s).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }) : '-')
+const KST = () => {
+  // 브라우저 로컬이 KST가 아닐 수 있어 Asia/Seoul 로 오늘 날짜(YYYY-MM-DD)를 구한다
+  const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date())
+  const g = (t) => p.find((x) => x.type === t).value
+  return `${g('year')}-${g('month')}-${g('day')}`
+}
+const fmtDate = (s) => (s ? `${Number(s.slice(5, 7))}/${Number(s.slice(8, 10))}` : '-')
+const WD = ['일', '월', '화', '수', '목', '금', '토']
+const wdOf = (d) => WD[new Date(d + 'T00:00:00+09:00').getDay()]
 
 export default function AdminDashboard() {
   const { user } = useAuth()
   const [profiles, setProfiles] = useState([])
-  const [evalCounts, setEvalCounts] = useState({}) // `${subject}|${track}|${class}` → n
   const [err, setErr] = useState('')
+  const today = useMemo(KST, [])
 
   useEffect(() => {
     if (!hasSupabase) return
     supabase.from('skala_profiles').select('name,email,role,track,class_no,confirmed_at,created_at').order('created_at')
       .then(({ data, error }) => (error ? setErr(error.message) : setProfiles(data || [])))
-    supabase.from('skala_evaluations').select('subject_id,track,class_no')
-      .then(({ data }) => {
-        const m = {}
-        for (const r of data || []) {
-          const k = `${r.subject_id}|${r.track}|${r.class_no}`
-          m[k] = (m[k] || 0) + 1
-        }
-        setEvalCounts(m)
-      })
   }, [])
 
-  const students = profiles.filter((p) => p.role === 'student')
-  // 교수자는 같은 사람이 여러 번 가입한 사례가 있어 동일인으로 접어 센다.
+  const students = useMemo(() => mergePeople(profiles.filter((p) => p.role === 'student')), [profiles])
+  const instructors = useMemo(() => mergeInstructors(profiles.filter((p) => p.role === 'instructor')), [profiles])
   const instructorRows = profiles.filter((p) => p.role === 'instructor')
-  const instructors = mergeInstructors(instructorRows)
   const dupAccounts = instructorRows.length - instructors.length
-  // 소속 확인이 오래됐거나 없는 학생(14일 기준) — 재확인 대상
+
+  // ── 담당 세션을 날짜순으로 정리 ──
+  const sessions = useMemo(() => [...myPairings].sort((a, b) => a.date.localeCompare(b.date)), [])
+  const todaySessions = sessions.filter((s) => s.date === today)
+  // 이번 주(월~일) 범위
+  const weekRange = useMemo(() => {
+    const d = new Date(today + 'T00:00:00+09:00')
+    const dow = (d.getDay() + 6) % 7 // 월=0
+    const mon = new Date(d); mon.setDate(d.getDate() - dow)
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6)
+    const iso = (x) => x.toISOString().slice(0, 10)
+    return [iso(mon), iso(sun)]
+  }, [today])
+  const weekSessions = sessions.filter((s) => s.date >= weekRange[0] && s.date <= weekRange[1])
+  const nextSession = sessions.find((s) => s.date > today)
+
+  // ── 평가 필요 알림: 과목×분반의 마지막 강의일 = 평가 마감 트리거 ──
+  const unitsWithExam = useMemo(() => evalUnits.filter((u) => exams[u.subjectId]), [])
+  const evalStatus = useMemo(() => unitsWithExam.map((u) => {
+    const last = u.dates[u.dates.length - 1]
+    const done = isEvaluated(u.key)
+    // 강의 끝났는데 기록 없음 = 평가 필요
+    const needed = !done && last <= today
+    const upcoming = !done && last > today
+    return { u, last, done, needed, upcoming }
+  }), [unitsWithExam, today])
+  const needEval = evalStatus.filter((e) => e.needed).sort((a, b) => a.last.localeCompare(b.last))
+  const doneEval = evalStatus.filter((e) => e.done)
+
+  // ── 분반별 가입 현황 ──
+  const classes = useMemo(() => {
+    const out = []
+    for (const [track, list] of Object.entries(CLASS_MAP)) {
+      for (const c of list) {
+        const members = students.filter((s) => s.track === track && s.class_no === c.no)
+        const roster = Object.values(ROSTERS).find((r) => r.track === track && r.class_no === c.no)
+        const isMine = evalUnits.some((u) => u.track === track && u.classNo === c.no)
+        if (members.length || roster || isMine) out.push({ track, no: c.no, room: c.room, members, roster, isMine })
+      }
+    }
+    return out.sort((a, b) => (b.isMine - a.isMine) || (b.members.length - a.members.length))
+  }, [students])
+
   const staleCount = students.filter((p) => !p.confirmed_at ||
     Date.now() - new Date(p.confirmed_at).getTime() > 14 * 24 * 60 * 60 * 1000).length
 
-  // 분반별 그룹 (가입 학생 + 명단 프리셋 정원)
-  const classes = []
-  for (const [track, list] of Object.entries(CLASS_MAP)) {
-    for (const c of list) {
-      const members = students.filter((s) => s.track === track && s.class_no === c.no)
-      const roster = Object.values(ROSTERS).find((r) => r.track === track && r.class_no === c.no)
-      const isMine = evalUnits.some((u) => u.track === track && u.classNo === c.no)
-      if (members.length || roster || isMine) {
-        classes.push({ track, no: c.no, room: c.room, members, roster, isMine })
-      }
-    }
-  }
-  classes.sort((a, b) => (b.isMine - a.isMine) || (b.members.length - a.members.length))
-
-  // 담당 분반의 평가 단위(과목×분반) 진행 현황
-  const unitsWithExam = evalUnits.filter((u) => exams[u.subjectId])
-
-  // 담당 외 분반 평가(타 강사 입력분) — 주강사·운영 매니저가 전체를 확인한다
-  const extraEvals = Object.entries(evalCounts)
-    .map(([k, n]) => {
-      const [subjectId, track, cls] = k.split('|')
-      return { subjectId, track, classNo: Number(cls), n }
-    })
-    .filter((e) => TRACK_LABELS[e.track] && e.classNo &&
-      !unitsWithExam.some((u) => u.subjectId === e.subjectId && u.track === e.track && u.classNo === e.classNo))
-    .sort((a, b) => a.subjectId.localeCompare(b.subjectId) || a.track.localeCompare(b.track) || a.classNo - b.classNo)
+  const SessionChip = ({ s }) => (
+    <Link to={`/day/${s.date}`} className="card" style={{ padding: '12px 14px', display: 'block' }}>
+      <div style={{ fontSize: 12.5, color: 'var(--ink-soft)', fontWeight: 700 }}>{fmtDate(s.date)} ({wdOf(s.date)})</div>
+      <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', marginTop: 3, lineHeight: 1.35, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{s.subject}</div>
+      <div style={{ fontSize: 12.5, color: 'var(--accent)', fontWeight: 700, marginTop: 4 }}>
+        {classShort(s.campus.includes('4층') ? 'p4' : s.campus.includes('5층') ? 'p5' : s.campus === '울산' ? 'us' : 'gj', Number.parseInt(s.cls, 10))} · {s.room}
+      </div>
+    </Link>
+  )
 
   return (
     <section className="section">
@@ -77,101 +103,125 @@ export default function AdminDashboard() {
           🔒 관리자 전용 · {user?.email}
         </div>
         <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--navy-800)', marginTop: 12 }}>관리자 대시보드</h1>
-        <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14 }}>
-          분반별 가입 현황과 담당 강의 평가 진행 상황입니다. 세부 화면은 상단 관리 메뉴에서 그대로 이동할 수 있습니다.
+        <p style={{ color: 'var(--ink-soft)', marginTop: 6, fontSize: 14, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+          오늘 {fmtDate(today)} ({wdOf(today)}) 기준 — 내 강의 일정과 과목별 평가 진행 상황입니다.
         </p>
         {err && <p style={{ marginTop: 8, fontSize: 13, color: '#E5484D' }}>프로필 로드 실패: {err}</p>}
 
+        {/* ① 오늘 일정 */}
+        <h2 style={{ marginTop: 26, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>오늘 내 강의</h2>
+        {todaySessions.length ? (
+          <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
+            {todaySessions.map((s) => <SessionChip key={s.date + s.cls} s={s} />)}
+          </div>
+        ) : (
+          <p style={{ marginTop: 8, fontSize: 13.5, color: 'var(--ink-soft)' }}>
+            오늘은 담당 강의가 없습니다.{nextSession && ` 다음 강의는 ${fmtDate(nextSession.date)} (${wdOf(nextSession.date)}) ${nextSession.subject} · ${nextSession.campus} ${nextSession.cls}.`}
+          </p>
+        )}
+
+        {/* ② 평가 필요 알림 */}
+        {needEval.length > 0 && (
+          <div className="card" style={{ marginTop: 22, padding: '16px 18px', borderLeft: '4px solid #E5484D' }}>
+            <h2 style={{ fontSize: 16, fontWeight: 900, color: '#c0362f' }}>평가가 필요한 과목 {needEval.length}건</h2>
+            <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+              강의가 끝났는데 평가 기록이 아직 없습니다. 슬랙 제출물을 엑셀로 집계한 뒤 교과목 평가에 등록하세요.
+            </p>
+            <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {needEval.map((e) => (
+                <Link key={e.u.key} to={`/admin/evaluate?unit=${encodeURIComponent(e.u.key)}`}
+                  style={{ padding: '7px 12px', borderRadius: 10, fontSize: 12.5, fontWeight: 800, background: 'rgba(229,72,77,0.08)', color: '#c0362f', border: '1px solid rgba(229,72,77,0.25)' }}>
+                  {e.u.subjectName} · {e.u.campus} {e.u.cls} <span style={{ opacity: 0.7 }}>({fmtDate(e.last)} 종료)</span> →
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 요약 */}
-        <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 }}>
+        <div style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 }}>
           {[
+            ['평가 완료', `${doneEval.length} / ${unitsWithExam.length}건`],
+            ['평가 대기', `${needEval.length}건`, needEval.length ? '#c0362f' : undefined],
             ['가입 학생', `${students.length}명`],
             ['교수자', `${instructors.length}명${dupAccounts ? ` (계정 ${instructorRows.length})` : ''}`],
-            ['활성 분반', `${classes.filter((c) => c.members.length).length}개`],
-            ['평가 단위(과목×분반)', `${unitsWithExam.length}건`],
-            ['소속 재확인 대상', `${staleCount}명`],
-          ].map(([label, val]) => (
+            ['소속 재확인', `${staleCount}명`],
+          ].map(([label, val, color]) => (
             <div key={label} className="card" style={{ padding: '14px 16px' }}>
               <div style={{ fontSize: 12, color: 'var(--ink-soft)', fontWeight: 700 }}>{label}</div>
-              <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--navy-800)', marginTop: 4 }}>{val}</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: color || 'var(--navy-800)', marginTop: 4 }}>{val}</div>
             </div>
           ))}
         </div>
 
-        {/* 분반별 관리 */}
-        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>분반별 현황</h2>
-        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>★ = 내 담당 강의가 있는 분반 · 정원은 자리배치표 명단 기준</p>
-        <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
-          {classes.map((c) => (
-            <div key={`${c.track}${c.no}`} className="card" style={{ padding: '16px 18px', borderLeft: c.isMine ? '3px solid var(--gold)' : undefined }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-                <h3 style={{ fontSize: 15.5, fontWeight: 800, color: 'var(--navy-800)' }}>
-                  {c.isMine ? '★ ' : ''}{classLabel(c.track, c.no)}
-                </h3>
-                <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{c.room}{c.roster ? ` · 정원 ${c.roster.students.length}명` : ''}</span>
-              </div>
-              <div style={{ marginTop: 6, fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>
-                가입 {c.members.length}명{c.roster ? ` / ${c.roster.students.length}명` : ''}
-              </div>
-              {c.members.length > 0 && (
-                <details style={{ marginTop: 8 }}>
-                  <summary style={{ cursor: 'pointer', fontSize: 12.5, color: 'var(--navy-600)', fontWeight: 700 }}>가입자 명단 보기</summary>
-                  <ul style={{ marginTop: 6, fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.8 }}>
-                    {c.members.map((m, i) => (
-                      <li key={i}>{m.name || '(이름 미입력)'} <span style={{ fontSize: 11 }}>&lt;{m.email}&gt;</span> · 확인 {fmtDate(m.confirmed_at)}</li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-            </div>
-          ))}
-        </div>
+        {/* ③ 이번 주 일정 */}
+        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>
+          이번 주 일정
+          <span style={{ marginLeft: 8, fontSize: 12.5, fontWeight: 600, color: 'var(--ink-soft)' }}>{fmtDate(weekRange[0])} ~ {fmtDate(weekRange[1])}</span>
+          <Link to="/schedule" style={{ marginLeft: 10, fontSize: 12.5, fontWeight: 700 }}>전체 일정표 →</Link>
+        </h2>
+        {weekSessions.length ? (
+          <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
+            {weekSessions.map((s) => <SessionChip key={s.date + s.cls} s={s} />)}
+          </div>
+        ) : (
+          <p style={{ marginTop: 8, fontSize: 13.5, color: 'var(--ink-soft)' }}>이번 주 담당 강의가 없습니다.</p>
+        )}
 
-        {/* 과목×분반 평가 현황 */}
-        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>담당 강의 평가 현황</h2>
-        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>과목 × 담당 분반(강의일자) 단위로 개별 평가합니다. 카드를 누르면 해당 평가로 이동합니다.</p>
+        {/* ④ 담당 강의 평가 현황 */}
+        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>
+          담당 강의 평가 현황
+          <Link to="/admin/evaluate" style={{ marginLeft: 10, fontSize: 12.5, fontWeight: 700 }}>교과목 평가 →</Link>
+        </h2>
+        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+          과목 × 담당 분반(강의일자) 단위. ✓ = 평가 기록 완료 · ● = 강의 종료·평가 대기 · ○ = 강의 예정
+        </p>
         <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
-          {unitsWithExam.map((u) => {
-            const done = evalCounts[`${u.subjectId}|${u.track}|${u.classNo}`] || 0
-            const roster = Object.values(ROSTERS).find((r) => r.track === u.track && r.class_no === u.classNo)
-            const total = roster?.students.length
+          {evalStatus.sort((a, b) => a.last.localeCompare(b.last)).map((e) => {
+            const mark = e.done ? '✓' : e.needed ? '●' : '○'
+            const color = e.done ? '#0E7A5F' : e.needed ? '#c0362f' : 'var(--ink-soft)'
             return (
-              <Link key={u.key} to={`/admin/evaluate?unit=${encodeURIComponent(u.key)}`} className="card" style={{ padding: '14px 16px' }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', lineHeight: 1.4 }}>{u.subjectName}</div>
-                <div style={{ marginTop: 4, fontSize: 12.5, color: 'var(--ink-soft)' }}>{u.campus} {u.cls} · {u.dateLabel}</div>
-                <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: done ? 'var(--gold)' : 'var(--ink-soft)' }}>
-                  {done ? `평가 입력 ${done}명${total ? ` / ${total}명` : ''}` : '미시작'} →
+              <Link key={e.u.key} to={`/admin/evaluate?unit=${encodeURIComponent(e.u.key)}`} className="card"
+                style={{ padding: '14px 16px', borderLeft: `3px solid ${color}` }}>
+                <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', lineHeight: 1.4, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{e.u.subjectName}</div>
+                <div style={{ marginTop: 4, fontSize: 12.5, color: 'var(--ink-soft)' }}>{e.u.campus} {e.u.cls} · {e.u.dateLabel}</div>
+                <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color }}>
+                  <span style={{ marginRight: 4 }}>{mark}</span>
+                  {e.done ? '평가 완료' : e.needed ? '평가 대기' : `${fmtDate(e.last)} 종료 예정`} →
                 </div>
               </Link>
             )
           })}
         </div>
 
-        {/* 담당 외 분반 평가 현황 — 관리자 전체 확인 */}
-        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>전체 평가 현황 — 담당 외 분반</h2>
-        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>
-          주강사·운영 매니저는 관리자로 모든 분반의 평가 내용을 확인할 수 있습니다. 교과목 평가 화면의 "전체 분반 조회"로 임의 과목×분반도 열람됩니다.
-        </p>
-        {extraEvals.length ? (
-          <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
-            {extraEvals.map((e) => (
-              <Link key={`${e.subjectId}|${e.track}|${e.classNo}`} to={`/admin/evaluate?unit=${encodeURIComponent(customKey(e.subjectId, e.track, e.classNo))}`} className="card" style={{ padding: '14px 16px' }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', lineHeight: 1.4 }}>{subjectById(e.subjectId)?.name || e.subjectId}</div>
-                <div style={{ marginTop: 4, fontSize: 12.5, color: 'var(--ink-soft)' }}>{classLabel(e.track, e.classNo)}</div>
-                <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color: 'var(--gold)' }}>평가 입력 {e.n}명 →</div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p style={{ marginTop: 10, fontSize: 13, color: 'var(--ink-soft)' }}>담당 외 분반에 입력된 평가가 아직 없습니다.</p>
-        )}
+        {/* ⑤ 분반별 현황 */}
+        <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>
+          분반별 가입 현황
+          <Link to="/admin/roster" style={{ marginLeft: 10, fontSize: 12.5, fontWeight: 700 }}>가입명부 →</Link>
+        </h2>
+        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>★ = 내 담당 강의가 있는 분반 · 정원은 자리배치표 명단 기준</p>
+        <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+          {classes.map((c) => (
+            <div key={`${c.track}${c.no}`} className="card" style={{ padding: '14px 16px', borderLeft: c.isMine ? '3px solid var(--gold)' : undefined }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)' }}>{c.isMine ? '★ ' : ''}{classLabel(c.track, c.no)}</h3>
+                <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{c.room}</span>
+              </div>
+              <div style={{ marginTop: 6, fontSize: 13, fontWeight: 700, color: c.roster && c.members.length < c.roster.students.length ? 'var(--ink-soft)' : 'var(--gold)' }}>
+                가입 {c.members.length}명{c.roster ? ` / 정원 ${c.roster.students.length}명` : ''}
+              </div>
+            </div>
+          ))}
+        </div>
 
-        {/* 교수자 명단 (분리) */}
+        {/* ⑥ 교수자 명단 */}
         <h2 style={{ marginTop: 30, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>
           교수자 명단
-          <Link to="/admin/roster" style={{ marginLeft: 10, fontSize: 12.5, fontWeight: 700 }}>가입명부 전체 보기 →</Link>
+          <Link to="/admin/roster" style={{ marginLeft: 10, fontSize: 12.5, fontWeight: 700 }}>가입명부 전체 →</Link>
         </h2>
-        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)' }}>{'교수자로 가입한 계정입니다(학생 명단과 분리 관리). 같은 사람이 여러 번 가입한 경우 한 줄로 합쳐 보여줍니다.'}</p>
+        <p style={{ marginTop: 4, fontSize: 13, color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+          교수자로 가입한 계정입니다(학생과 분리 관리). 같은 사람이 여러 번 가입한 경우 한 줄로 합쳐 보여줍니다.
+        </p>
         <div style={{ marginTop: 10, overflowX: 'auto', border: '1px solid var(--line)', borderRadius: 12 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 480 }}>
             <thead>
@@ -184,7 +234,7 @@ export default function AdminDashboard() {
             <tbody>
               {instructors.map((p, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid var(--line)' }}>
-                  <td style={{ padding: '8px 12px', fontWeight: 700 }}>
+                  <td style={{ padding: '8px 12px', fontWeight: 700, whiteSpace: 'nowrap' }}>
                     {p.name || '-'}
                     {p.accountCount > 1 && (
                       <span title={`계정 ${p.accountCount}개를 동일인으로 합침`} style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: 'var(--navy-700)', background: 'var(--navy-50)', borderRadius: 999, padding: '1px 7px' }}>
@@ -192,10 +242,10 @@ export default function AdminDashboard() {
                       </span>
                     )}
                   </td>
-                  <td style={{ padding: '8px 12px', color: 'var(--ink-soft)' }}>
+                  <td style={{ padding: '8px 12px', color: 'var(--ink-soft)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
                     {p.email}
                     {p.accountCount > 1 && (
-                      <div style={{ fontSize: 11.5, marginTop: 2, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                      <div style={{ fontSize: 11.5, marginTop: 2 }}>
                         {p.accounts.filter((a) => a.email !== p.email).map((a) => a.email).join(' · ')}
                       </div>
                     )}
