@@ -11,10 +11,12 @@ export default function Home() {
         <div className="container hero-grid">
           <div>
             <span className="eyebrow">{course.subtitle} · {course.cohort}</span>
+            {/* 태그라인 — SK 공식 톤(로고 위 얇은 한 줄) */}
+            <p className="hero-tagline">AI 시대, 미래 인재로 성장하는 길</p>
             <h1 className="hero-title">
               SKALA <span className="accent">4기</span>
             </h1>
-            {/* SK 핵심가치 응원 메시지(대표 확정 문안) — 키워드 강조 + 해설, 모바일은 자동 줄바꿈 */}
+            {/* SK 핵심가치(정본 문안 유지) — 미니멀 라인형: 키워드 강조 + 해설 */}
             <div className="hero-values">
               {[
                 { k: '패기', d: '우리는 스스로 도전하고 두려움 없이 실행한다.', c: '#7C8CFF' },
