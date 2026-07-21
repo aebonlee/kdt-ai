@@ -27,9 +27,14 @@ export function AuthProvider({ children }) {
       return
     }
     try {
+      // 로그인 후 이 사이트(현재 origin)로 정확히 복귀시킨다.
+      // ⚠️ 이 redirectTo 가 Supabase Auth의 Redirect URLs 화이트리스트에
+      //    등록돼 있어야 한다. 없으면 Supabase가 Site URL(www.dreamitbiz.com)로
+      //    강제 리다이렉트한다 → 대시보드에 https://kdt-ai.dreamitbiz.com/** 추가 필요.
+      const base = window.location.origin + import.meta.env.BASE_URL
       const { error } = await supabase.auth.signInWithOAuth({
         provider, // 'google' | 'kakao'
-        options: { redirectTo: window.location.origin + import.meta.env.BASE_URL },
+        options: { redirectTo: base.endsWith('/') ? base : base + '/' },
       })
       if (error) alert('로그인에 실패했습니다: ' + error.message)
     } catch (e) {

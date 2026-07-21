@@ -14,9 +14,7 @@ export default function Login() {
     <section className="section login-section">
       <div className="container login-wrap">
         <div className="login-card">
-          <span className="login-logo">
-            <img src="/brandLogo.png" alt="SKALA" width={228} height={56} />
-          </span>
+          <span className="login-logo login-logo-text"><b>DreamIT</b> Biz</span>
           <h1 className="login-title">로그인</h1>
           <p className="login-sub">게시판·대시보드 이용을 위해 로그인하세요.</p>
 
@@ -34,7 +32,7 @@ export default function Login() {
           </div>
 
           <p className="login-consent">
-            로그인 시 SKALA 4기 학습 안내 서비스 이용에 동의하는 것으로 간주됩니다.
+            로그인 시 DreamIT Biz 학습지원 서비스 이용에 동의하는 것으로 간주됩니다.
           </p>
         </div>
       </div>
