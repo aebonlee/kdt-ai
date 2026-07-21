@@ -5057,7 +5057,7 @@ components:
       properties:
         title: { type: string }   <span class="cmt"># 제목</span>
         content: { type: string } <span class="cmt"># 본문</span></code></pre></div><p class="note">💡 평가 포인트는 적절한 HTTP Method, Path/Query/Body 명확화, 에러코드(400/401/404) 정의, $ref 로 공통 스키마 재사용이다. 요청/응답 필드는 앞서 만든 DBML(ERD)과 반드시 일치해야 한다.</p></div><div class="ex"><div class="ex-h">실전 스키마 분석 — 평가 기록 테이블과 RLS(행 수준 보안) <span class="lang">(sql)</span></div><div class="code-wrap"><button type="button" class="wrap-btn" aria-label="줄바꿈/가로 전환">↔ 가로</button><button type="button" class="copy-btn" aria-label="코드 복사">복사</button><pre class="code"><code><span class="cmt">-- 이 학습 사이트가 실제로 쓰는 '교과목 평가 기록' 테이블 설계다</span>
-create table if not exists skala_evaluations (      <span class="cmt">-- if not exists: 여러 번 실행해도 안전(멱등)</span>
+create table if not exists kdt_evaluations (      <span class="cmt">-- if not exists: 여러 번 실행해도 안전(멱등)</span>
   id           uuid primary key default gen_random_uuid(),  <span class="cmt">-- 행마다 자동 고유 ID</span>
   subject_id   text not null,                      <span class="cmt">-- 어떤 과목의 평가인지</span>
   student_name text not null,                      <span class="cmt">-- 학생 성명(필수)</span>
@@ -5070,20 +5070,20 @@ create table if not exists skala_evaluations (      <span class="cmt">-- if not 
 );
 
 <span class="cmt">-- RLS(Row Level Security): '행 단위'로 접근을 통제하는 스위치를 켠다</span>
-alter table skala_evaluations enable row level security;
+alter table kdt_evaluations enable row level security;
 
 <span class="cmt">-- 정책을 갈아끼울 때는 drop 후 create — 재실행해도 42710(중복) 에러가 안 난다</span>
-drop policy if exists "evaluations_admin_all" on skala_evaluations;
-create policy "evaluations_admin_all" on skala_evaluations
+drop policy if exists "evaluations_admin_all" on kdt_evaluations;
+create policy "evaluations_admin_all" on kdt_evaluations
   for all                                          <span class="cmt">-- select/insert/update/delete 전부</span>
-  using (skala_is_admin())                         <span class="cmt">-- 읽을 때: 관리자만</span>
-  with check (skala_is_admin());                   <span class="cmt">-- 쓸 때도: 관리자만</span></code></pre></div><p class="note">💡 성적처럼 민감한 데이터는 서버(RLS)가 지켜야 한다 — 프런트에서 화면만 가리는 것은 보안이 아니다. jsonb 컬럼은 평가 항목이 과목마다 달라도 테이블 구조를 바꾸지 않게 해 주는 실전 요령이다.</p></div><div class="ex"><div class="ex-h">React에서 Supabase CRUD — 조회 필터와 업서트 패턴 <span class="lang">(javascript)</span></div><div class="code-wrap"><button type="button" class="wrap-btn" aria-label="줄바꿈/가로 전환">↔ 가로</button><button type="button" class="copy-btn" aria-label="코드 복사">복사</button><pre class="code"><code><span class="cmt">// 이 사이트의 평가 화면이 실제로 쓰는 데이터 연동 패턴(요약본)</span>
+  using (kdt_is_admin())                         <span class="cmt">-- 읽을 때: 관리자만</span>
+  with check (kdt_is_admin());                   <span class="cmt">-- 쓸 때도: 관리자만</span></code></pre></div><p class="note">💡 성적처럼 민감한 데이터는 서버(RLS)가 지켜야 한다 — 프런트에서 화면만 가리는 것은 보안이 아니다. jsonb 컬럼은 평가 항목이 과목마다 달라도 테이블 구조를 바꾸지 않게 해 주는 실전 요령이다.</p></div><div class="ex"><div class="ex-h">React에서 Supabase CRUD — 조회 필터와 업서트 패턴 <span class="lang">(javascript)</span></div><div class="code-wrap"><button type="button" class="wrap-btn" aria-label="줄바꿈/가로 전환">↔ 가로</button><button type="button" class="copy-btn" aria-label="코드 복사">복사</button><pre class="code"><code><span class="cmt">// 이 사이트의 평가 화면이 실제로 쓰는 데이터 연동 패턴(요약본)</span>
 import { supabase } from '../lib/supabase'          <span class="cmt">// 프로젝트 공용 클라이언트 1개만 만든다</span>
 
 <span class="cmt">// 1) 조회 — 과목+분반으로 좁혀서 필요한 행만 가져온다</span>
 async function loadEvaluations(subjectId, track, classNo) {
   const { data, error } = await supabase
-    .from('skala_evaluations')                      <span class="cmt">// 테이블 선택</span>
+    .from('kdt_evaluations')                      <span class="cmt">// 테이블 선택</span>
     .select('*')                                    <span class="cmt">// 전체 컬럼</span>
     .eq('subject_id', subjectId)                    <span class="cmt">// WHERE subject_id = ...</span>
     .eq('track', track)                             <span class="cmt">// 분반 스코프까지 걸어야 화면이 섞이지 않는다</span>
@@ -5096,7 +5096,7 @@ async function loadEvaluations(subjectId, track, classNo) {
 <span class="cmt">// 2) 저장 — upsert: id가 있으면 UPDATE, 없으면 INSERT를 한 번에</span>
 async function saveEvaluations(rows) {
   const { data, error } = await supabase
-    .from('skala_evaluations')
+    .from('kdt_evaluations')
     .upsert(rows)                                   <span class="cmt">// 여러 행을 한 번에 저장(왕복 1회)</span>
     .select()                                       <span class="cmt">// 저장 결과(새 id 포함)를 돌려받는다</span>
   return { data, error }
