@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { course } from '../data/course'
 import Sentences from '../components/Sentences'
 import HeroVisual from '../components/HeroVisual'
+import CurriculumFlow from '../components/CurriculumFlow'
 
 export default function Home() {
   return (
@@ -68,33 +69,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SKALA 전체 커리큘럼 흐름도 */}
+      {/* 전체 커리큘럼 흐름도 — 다크 배경에 맞춘 SVG */}
       <section className="section">
         <div className="container">
           <div className="section-head">
             <span className="eyebrow">Overview</span>
-            <h2>SKALA 4기 전체 커리큘럼</h2>
+            <h2>전체 커리큘럼</h2>
             <p>
-              <Sentences text={`SK AI Leader Academy 4기 과정 전체 흐름입니다. 본 사이트는 이 중 ${course.instructor} 강사 담당 과목을 다룹니다.`} />
+              <Sentences text={`AI 실무 전 과정의 흐름입니다. 본 사이트는 이 중 ${course.instructor} 강사 담당 과목을 다룹니다.`} />
             </p>
           </div>
-          <div
-            style={{
-              background: '#fff',
-              border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
-              padding: 'var(--s-6)',
-            }}
-          >
-            <img
-              src="/curriculum_graph.png"
-              alt="SKALA 4기 전체 커리큘럼 흐름도"
-              width={2364}
-              height={890}
-              loading="lazy"
-              decoding="async"
-              style={{ width: '100%', height: 'auto', display: 'block' }}
-            />
+          <div className="card" style={{ padding: 'var(--s-6)', overflowX: 'auto' }}>
+            <CurriculumFlow />
           </div>
         </div>
       </section>
