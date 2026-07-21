@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { isAdmin } from '../config/admin'
 import { useProfile } from '../hooks/useProfile'
 import { classLabel } from '../data/classes'
+import { openClassOnboarding } from './ClassOnboarding'
 
 const nameOf = (user) =>
   user?.user_metadata?.name || user?.user_metadata?.full_name || user?.user_metadata?.nickname || user?.email || '사용자'
@@ -34,11 +35,20 @@ export default function AuthButtons() {
         {nameOf(user)}
         {isAdmin(user) ? ' (강사)' : ''}
       </span>
-      {belong && (
-        <span style={{ padding: '2px 9px', borderRadius: 999, background: 'rgba(255,255,255,0.16)', fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap' }}>
-          {belong}
-        </span>
-      )}
+      {/* 소속 배지 — 클릭하면 내 정보(소속·직책) 수정 모달을 연다.
+          소속이 없으면 '소속 설정' 안내를 눌러 최초 입력한다. */}
+      <button
+        type="button"
+        onClick={() => openClassOnboarding()}
+        title="내 정보(소속·직책) 확인·수정"
+        style={{
+          padding: '2px 10px', borderRadius: 999, background: 'rgba(255,255,255,0.16)',
+          fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer',
+          border: '1px solid rgba(255,255,255,0.25)', color: 'inherit', fontFamily: 'inherit',
+        }}
+      >
+        {belong || '소속 설정'} ✎
+      </button>
       <button
         onClick={signOut}
         style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontFamily: 'inherit', fontSize: 12, textDecoration: 'underline' }}
