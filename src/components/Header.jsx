@@ -55,7 +55,7 @@ export default function Header() {
         <div className="container nav-wrapper">
           <Link to="/" className="brand">
             <span className="brand-logo">
-              <img src="/brandLogo.png" alt="SKALA" width={228} height={56} />
+              <img src="/kv_brandLogo.png" alt="SKALA" width={228} height={56} />
             </span>
             <span className="brand-sep" />
             <span className="brand-sub">{course.cohort} · {course.instructor} 강사</span>

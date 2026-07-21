@@ -10,11 +10,11 @@ export default function Home() {
       <section className="hero">
         <div className="container hero-grid">
           <div>
-            <span className="eyebrow">{course.subtitle} · {course.cohort}</span>
-            {/* 태그라인 — SK 공식 톤(로고 위 얇은 한 줄) */}
-            <p className="hero-tagline">AI 시대, 미래 인재로 성장하는 길</p>
+            {/* SK 공식 SKALA 키비주얼 — 태그라인 'AI 시대, 미래 인재로 성장하는 길' +
+                SKALA + SK AI Leader Academy 가 이미지에 모두 포함됨 */}
             <h1 className="hero-title">
-              SKALA <span className="accent">4기</span>
+              <img className="hero-title-img" src="/hero_title.png" alt="AI 시대, 미래 인재로 성장하는 길 — SKALA · SK AI Leader Academy" width={676} height={324} />
+              <span className="hero-cohort">4기</span>
             </h1>
             {/* SK 핵심가치(정본 문안 유지) — 미니멀 라인형: 키워드 강조 + 해설 */}
             <div className="hero-values">
