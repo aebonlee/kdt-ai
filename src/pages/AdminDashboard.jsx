@@ -13,7 +13,9 @@ import { myPairings } from '../data/adminschedule'
 import { exams } from '../data/exams'
 import { isEvaluated } from '../data/evalrecords'
 import { mergeInstructors, mergePeople } from '../utils/people'
-import { TITLES, resolveTitle } from '../config/roles'
+import { TITLES, resolveTitle, titleLabel } from '../config/roles'
+import { useProfile } from '../hooks/useProfile'
+import { openClassOnboarding } from '../components/ClassOnboarding'
 
 const KST = () => {
   // 브라우저 로컬이 KST가 아닐 수 있어 Asia/Seoul 로 오늘 날짜(YYYY-MM-DD)를 구한다
@@ -27,6 +29,7 @@ const wdOf = (d) => WD[new Date(d + 'T00:00:00+09:00').getDay()]
 
 export default function AdminDashboard() {
   const { user } = useAuth()
+  const { profile: myProfile } = useProfile()
   const [profiles, setProfiles] = useState([])
   const [err, setErr] = useState('')
   const today = useMemo(KST, [])
@@ -120,6 +123,23 @@ export default function AdminDashboard() {
           오늘 {fmtDate(today)} ({wdOf(today)}) 기준 — 내 강의 일정과 과목별 평가 진행 상황입니다.
         </p>
         {err && <p style={{ marginTop: 8, fontSize: 13, color: '#E5484D' }}>프로필 로드 실패: {err}</p>}
+
+        {/* 내 정보 — 본인 소속/직책 확인·수정 */}
+        <div className="card" style={{ marginTop: 16, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ fontSize: 12, color: 'var(--ink-soft)', fontWeight: 700 }}>내 정보</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--navy-800)', marginTop: 3, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+              {myProfile ? (
+                myProfile.role === 'instructor'
+                  ? <>{titleLabel(user, myProfile) || '교수자'}{(myProfile.teach_classes || []).length > 0 && <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}> · 담당 {myProfile.teach_classes.map((t) => classLabel(t.track, t.no)).join(', ')}</span>}</>
+                  : myProfile.track ? <>{classLabel(myProfile.track, myProfile.class_no)} <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>· 학생</span></> : '소속 미설정'
+              ) : '소속 정보가 아직 없습니다'}
+            </div>
+          </div>
+          <button className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }} onClick={() => openClassOnboarding()}>
+            내 정보 수정
+          </button>
+        </div>
 
         {/* ① 오늘 일정 */}
         <h2 style={{ marginTop: 26, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>오늘 내 강의</h2>
