@@ -220,7 +220,11 @@ export default function AdminDashboard() {
             const color = e.done ? '#0E7A5F' : e.needed ? '#c0362f' : 'var(--ink-soft)'
             return (
               <Link key={e.u.key} to={`/admin/evaluate?unit=${encodeURIComponent(e.u.key)}`} className="card"
-                style={{ padding: '14px 16px', borderLeft: `3px solid ${color}` }}>
+                style={{
+                  padding: '14px 16px', borderLeft: `3px solid ${color}`,
+                  // 평가 완료 카드는 연한 그린 배경으로 강조
+                  background: e.done ? 'rgba(14,122,95,0.08)' : undefined,
+                }}>
                 <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', lineHeight: 1.4, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{e.u.subjectName}</div>
                 <div style={{ marginTop: 4, fontSize: 12.5, color: 'var(--ink-soft)' }}>{e.u.campus} {e.u.cls} · {e.u.dateLabel}</div>
                 <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 800, color }}>
