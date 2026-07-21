@@ -40,7 +40,7 @@ export default function Header() {
       <div className="topbar">
         <div className="container">
           <span className="topbar-tag">
-            {course.subtitle} · {course.cohort}
+            DreamIT Biz · AI 실무 교육
           </span>
           <span className="topbar-right">
             {/* 강사(최고 관리자) 로그인 시에만 띠줄에 관리 풍선메뉴 노출 */}
@@ -54,11 +54,11 @@ export default function Header() {
       <header className="navbar">
         <div className="container nav-wrapper">
           <Link to="/" className="brand">
-            <span className="brand-logo">
-              <img src="/kv_brandLogo.png" alt="SKALA" width={228} height={56} />
+            <span className="brand-logo brand-logo-text">
+              <b>DreamIT</b> Biz
             </span>
             <span className="brand-sep" />
-            <span className="brand-sub">{course.cohort} · {course.instructor} 강사</span>
+            <span className="brand-sub">AI 실무 교육 · {course.instructor}</span>
           </Link>
 
           {/* 모바일 햄버거 토글 */}

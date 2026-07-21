@@ -684,7 +684,7 @@ print(resp.choices[0].message.content)`,
   {
     id: 'java-spring',
     name: 'Java · SpringBoot',
-    tag: 'SKALA 연계',
+    tag: '과정 연계',
     level: 3,   // 난이도 1하 2중 3상
     weight: 2,  // 중요도 1~3
     desc: 'SKALA 4기의 Java·SpringBoot·REST API 과목은 별도 강사가 진행합니다. 담당 과목인 Spring AI·모델 서빙의 선수 기반이 되므로, 여기서는 핵심 흐름만 미리 익혀둡니다.',
@@ -728,7 +728,7 @@ public class TodoController {
   {
     id: 'kubernetes',
     name: '쿠버네티스 · DevOps',
-    tag: 'SKALA 연계',
+    tag: '과정 연계',
     level: 3,   // 난이도 1하 2중 3상
     weight: 2,  // 중요도 1~3
     desc: 'SKALA 4기의 Cloud 과목(컨테이너·쿠버네티스·DevOps·Agile/MSA)은 별도 강사가 진행합니다. 담당 과목인 모델 서빙·AIOps 를 실제 운영으로 확장하는 후속 단계로, 큰 그림만 잡아둡니다.',

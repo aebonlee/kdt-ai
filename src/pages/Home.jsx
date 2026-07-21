@@ -10,19 +10,23 @@ export default function Home() {
       <section className="hero">
         <div className="container hero-grid">
           <div>
-            {/* SK 공식 SKALA 키비주얼 — 태그라인 'AI 시대, 미래 인재로 성장하는 길' +
-                SKALA + SK AI Leader Academy 가 이미지에 모두 포함됨 */}
+            {/* DreamIT Biz 다크 IDE 히어로 — 텍스트 타이틀 + 코드 프롬프트 톤 */}
+            <p className="hero-mono">$ dreamitbiz --learn ai</p>
             <h1 className="hero-title">
-              <img className="hero-title-img" src="/hero_title.png" alt="AI 시대, 미래 인재로 성장하는 길 — SKALA · SK AI Leader Academy" width={676} height={324} />
-              <span className="hero-cohort">4기</span>
+              <span className="ht-line">AI 실무를</span>
+              <span className="ht-line">코드로 배우다</span>
             </h1>
-            {/* SK 핵심가치(정본 문안 유지) — 미니멀 라인형: 키워드 강조 + 해설 */}
+            <p className="hero-lead">
+              DreamIT Biz 학습지원 — 강의안·실습교안부터 팀 프로젝트까지,
+              현장에서 바로 쓰는 AI 실무 커리큘럼을 한곳에서.
+            </p>
+            {/* 학습 트랙 요약 — 라인형 */}
             <div className="hero-values">
               {[
-                { k: '패기', d: '우리는 스스로 도전하고 두려움 없이 실행한다.', c: '#7C8CFF' },
-                { k: '실력 · 전문성', d: '우리는 AI로 기술에 신뢰를 더한다.', c: '#4DD8C7' },
-                { k: '소통 · 협력', d: '소통은 신뢰를 만들고, 협력이 성과를 만든다.', c: '#FFB65C' },
-                { k: '자발적 · 의욕적 SUPEX 추구', d: '우리는 최고를 상상하고 AI와 함께 혁신한다.', c: '#B78CFF' },
+                { k: '강의안', d: '날짜별 8시간 자립 강의 블록', c: 'var(--a1)' },
+                { k: '실습교안', d: '복사–붙여넣기로 바로 도는 실습', c: 'var(--a2)' },
+                { k: '팀 프로젝트', d: '수행 전 과정 가이드', c: '#c678dd' },
+                { k: '평가·피드백', d: '과목별 기준으로 성장 점검', c: '#61afef' },
               ].map((v, i) => (
                 <div key={v.k} className="hero-value" style={{ '--hv-accent': v.c, animationDelay: `${0.15 + i * 0.13}s` }}>
                   <span className="hv-key"><span className="hv-dot" />{v.k}</span>

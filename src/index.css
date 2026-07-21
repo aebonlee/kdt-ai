@@ -1,6 +1,8 @@
 /* ============================================
-   SKALA 4기 — Editorial Navy Design
-   (data.dreamitbiz.com 디자인 시스템 이식)
+   DreamIT Biz — kdt-ai 다크 IDE 디자인
+   (rest06 드림아이티비즈 IT교육 플랫폼 디자인 언어 이식)
+   토큰 레이어만 다크로 재정의 → 전 페이지가 다크로 전환.
+   --navy-* 스케일은 텍스트(고)/배경(저) 양용이라 의미를 반전한다.
    ============================================ */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -10,63 +12,75 @@
   --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
   --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
 
-  /* ── SKALA 브랜드 팔레트 (공식 사이트 기준) ──
-     딥 인디고 #0E1152, 일렉트릭 인디고 액센트 #3F51FF,
-     그라데이션 #6C4DFF→#3F51FF, 라이트 인디고 텍스트 #ACBEFF */
-  --skala-indigo: #0E1152;
-  --skala-dark:   #111827;
-  --accent-2:     #6C4DFF;
-  --light-indigo: #ACBEFF;
+  /* ── rest06 다크 팔레트 ──
+     배경 #0a0b10 · 서피스 #0c0e15 · 패널 #12141c
+     액센트1 시안 #22d3ee · 액센트2 라임 #a3e635 · 텍스트 #e8eaf0 */
+  --bg-page:   #0a0b10;   /* 페이지 최하단 배경 */
+  --a1:        #22d3ee;   /* 시안 (프라이머리 액센트) */
+  --a2:        #a3e635;   /* 라임 (세컨더리 액센트) */
 
-  --navy-900: #0E1152;
-  --navy-800: #1B1F5B;
-  --navy-700: #2A2F77;
-  --navy-600: #3A3F8C;
-  --navy-500: #5A60A8;
-  --navy-400: #8A8FC4;
-  --navy-300: #B8BCE0;
-  --navy-200: #DDE0F2;
-  --navy-100: #EEF0FA;
-  --navy-50:  #F7F8FD;
-  --gold:     #3F51FF;
-  --azure:    #2563EB; /* 토요일 달력 헤더·PrepDetail 소제목 (미정의로 색 깨지던 것 정의) */
+  --skala-indigo: #0c0e15; /* 다크 서피스(브랜드칩·히어로·토픽바) */
+  --skala-dark:   #0a0b10;
+  --accent-2:     #a3e635;
+  --light-indigo: #c4c9d8;
 
-  /* 지역·층 색 구분 (판교5층 / 판교4층 / 광주 / 울산) */
-  --pangyo:  #3F51FF;  /* 판교 5층 — 인디고 */
-  --pangyo3: #0D9488;  /* 판교 4층 — 틸 */
-  --gwangju: #E0892F;  /* 광주 — 앰버 */
-  --ulsan:   #9333EA;  /* 울산 — 퍼플 */
+  /* navy 스케일 반전 — 900=가장 밝음(텍스트), 50=가장 어두움(배경) */
+  --navy-900: #f2f4f8;
+  --navy-800: #e8eaf0;  /* 본문 텍스트 */
+  --navy-700: #c4c9d8;
+  --navy-600: #9aa0b4;
+  --navy-500: #7c8298;  /* 뮤트 텍스트 */
+  --navy-400: #5d6478;
+  --navy-300: #3a3f4e;  /* 강한 라인 */
+  --navy-200: #222634;  /* 라인 */
+  --navy-100: #12141c;  /* 패널 */
+  --navy-50:  #0c0e15;  /* 서피스(가장 어두움) */
+  --gold:     #22d3ee;  /* 프라이머리 액센트 = 시안 */
+  --azure:    #61afef;
+
+  /* 지역·층 색 구분 — 다크 배경에서 잘 보이는 톤으로 */
+  --pangyo:  #22d3ee;  /* 판교 5층 — 시안 */
+  --pangyo3: #2dd4bf;  /* 판교 4층 — 틸 */
+  --gwangju: #fbbf24;  /* 광주 — 앰버 */
+  --ulsan:   #c678dd;  /* 울산 — 퍼플 */
 
   --ink: var(--navy-800);
   --ink-soft: var(--navy-500);
-  --ink-surface: var(--navy-800);
-  --ink-surface-hover: var(--navy-900);
+  --ink-surface: #12141c;         /* 버튼·푸터·토픽바 배경(살짝 뜬 다크) */
+  --ink-surface-hover: #1a1e2a;
   --line: var(--navy-200);
   --line-strong: var(--navy-300);
 
-  --bg-white: #FFFFFF;
+  --bg-white: #12141c;            /* '흰 카드' 자리 = 다크 패널 */
 
-  --shadow-sm: 0 1px 3px rgba(15, 27, 51, 0.06);
-  --shadow-md: 0 4px 6px rgba(15, 27, 51, 0.06), 0 2px 4px rgba(15, 27, 51, 0.04);
-  --shadow-lg: 0 10px 25px rgba(15, 27, 51, 0.08), 0 4px 10px rgba(15, 27, 51, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
 
   --nav-height: 72px;
-  --container-max: 1450px;  /* 데스크톱 기준 1450 (2026-07-15 대표 지시, 기존 1180) */
-  --radius: 4px;
+  --container-max: 1450px;
+  --radius: 8px;
 
-  --hero-bg: linear-gradient(135deg, #1B2A4A 0%, #0F1B33 50%, #0A1428 100%);
+  --hero-bg: radial-gradient(900px 520px at 82% 12%, rgba(34,211,238,0.12), transparent 60%),
+             radial-gradient(760px 460px at 4% 96%, rgba(163,230,53,0.10), transparent 60%),
+             #0a0b10;
   --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html { scroll-behavior: smooth; font-size: 16px; overflow-x: clip; }
 
 body {
-  font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+  font-family: 'Pretendard', 'Space Grotesk', system-ui, -apple-system, sans-serif;
   color: var(--ink);
-  background: var(--bg-white);
+  background: var(--bg-page);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
+::selection { background: var(--a2); color: #0a0b10; }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--bg-page); }
+::-webkit-scrollbar-thumb { background: #222634; border-radius: 8px; border: 2px solid var(--bg-page); }
+::-webkit-scrollbar-thumb:hover { background: #2e3344; }
 
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
@@ -207,17 +221,23 @@ ul { list-style: none; }
   display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(40px, 5.5vw, 88px); align-items: center;
   position: relative;
 }
-/* 히어로 타이틀 = SK 공식 SKALA 키비주얼 이미지(태그라인+SKALA+서브타이틀) + 4기 배지 */
+/* DreamIT Biz 다크 히어로 — 코드 프롬프트 + 텍스트 타이틀 */
+.hero-mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: clamp(13px, 1.4vw, 15px); font-weight: 600; letter-spacing: 0;
+  color: var(--a1); margin-bottom: var(--s-4);
+}
+.hero-mono::after { content: '_'; animation: dib-blink 1.1s steps(1) infinite; margin-left: 2px; }
+@keyframes dib-blink { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
 .hero-title {
-  display: flex; align-items: flex-end; gap: 14px;
-  margin: var(--s-2) 0 var(--s-6); line-height: 1;
+  display: flex; flex-direction: column; gap: 2px;
+  font-size: clamp(40px, 6vw, 72px); font-weight: 800; line-height: 1.04;
+  letter-spacing: -0.03em; color: var(--navy-900); margin-bottom: var(--s-5);
 }
-.hero-title-img {
-  width: clamp(300px, 42vw, 480px); height: auto; display: block;
-}
-.hero-cohort {
-  font-size: clamp(28px, 3.8vw, 44px); font-weight: 800; letter-spacing: -0.02em;
-  color: #6C8BFF; padding-bottom: clamp(4px, 0.9vw, 10px); white-space: nowrap;
+.hero-title .ht-line:last-child {
+  background: linear-gradient(100deg, var(--a1), var(--a2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  width: fit-content;
 }
 .hero-lead { font-size: 17px; line-height: 1.7; color: rgba(221, 227, 255, 0.82); max-width: 520px; margin-bottom: var(--s-7); }
 
@@ -800,3 +820,12 @@ mark.hl { background: linear-gradient(transparent 52%, rgba(255, 213, 74, 0.55) 
 [data-theme="dark"] mark.hl { background: linear-gradient(transparent 52%, rgba(255, 213, 74, 0.28) 52%); }
 b.rich-b { color: var(--navy-800); font-weight: 800; }
 u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* ── DreamIT Biz 텍스트 로고 (kdt-ai) ── */
+.brand-logo-text {
+  padding: 8px 14px; font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+  color: #fff; line-height: 1;
+}
+.brand-logo-text b { font-weight: 900; }
+.foot-brand { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+.foot-brand b { font-weight: 900; }

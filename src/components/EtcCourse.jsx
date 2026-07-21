@@ -48,7 +48,7 @@ export default function EtcCourse({ courseId }) {
 
       <div className="mode-note" style={{ marginTop: 14 }}>
         <span className="mode-desc">
-          이 과목은 SKALA 4기에서 <b>별도 강사</b>가 진행합니다. 이애본 강사 담당 강의의 앞뒤에 배우는 내용이므로,
+          이 과목은 <b>별도 강사</b>가 진행합니다. 이애본 강사 담당 강의의 앞뒤에 배우는 내용이므로,
           아래 학습내용을 참고해 예습·복습하면 과정 흐름이 이어집니다.
         </span>
       </div>

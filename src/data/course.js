@@ -1,10 +1,10 @@
-// 과정 메타 정보 — SKALA 4기 / 이애본 강사 담당 강의 기준
+// 과정 메타 정보 — DreamIT Biz 학습지원 / 이애본 강사 담당 강의 기준
 export const course = {
-  title: 'SKALA',
-  subtitle: 'SK AI Leader Academy',
+  title: 'DreamIT Biz',
+  subtitle: 'AI 실무 교육',
   cohort: '4기',
   instructor: 'Ph.D 이애본',
-  tagline: 'SKALA 4기 담당 강의 — 과목·일자별 학습 커리큘럼',
+  tagline: '과목·일자별 학습 커리큘럼',
 
   // ── 교육 Overview ──
   overview: {

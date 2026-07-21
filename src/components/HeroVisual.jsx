@@ -52,7 +52,7 @@ export default function HeroVisual() {
 
   return (
     <div ref={wrapRef} className="hero-visual" aria-hidden="true">
-      <svg viewBox="0 0 460 420" width="100%" role="img" aria-label="SKALA AI 학습 여정 일러스트">
+      <svg viewBox="0 0 460 420" width="100%" role="img" aria-label="DreamIT Biz AI 학습 여정 일러스트">
         <defs>
           <linearGradient id="hvCore" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#6C4DFF" />
@@ -130,7 +130,7 @@ export default function HeroVisual() {
                 <circle cx={x} cy={y} r="4" fill="#ACBEFF" className="hv-twinkle" style={{ animationDelay: `${i * 0.4}s` }} />
               </g>
             ))}
-            <text x="230" y="286" textAnchor="middle" fontSize="15" fontWeight="900" fill="#DDE3FF" letterSpacing="3">SKALA</text>
+            <text x="230" y="286" textAnchor="middle" fontSize="15" fontWeight="900" fill="#DDE3FF" letterSpacing="2">DreamIT</text>
           </g>
         </g>
       </svg>

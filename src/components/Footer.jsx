@@ -4,9 +4,9 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="container">
-        <img src="/brandLogo.png" alt="SKALA" width={228} height={56} style={{ height: 24, width: 'auto', marginBottom: 12 }} />
+        <div className="foot-brand"><b>DreamIT</b> Biz</div>
         <h4>
-          4기 · {course.instructor} 강사
+          AI 실무 교육 · {course.instructor}
         </h4>
         <p>
           {course.subtitle} — {course.tagline}
@@ -20,7 +20,7 @@ export default function Footer() {
           {course.contact}
         </p>
         <div className="foot-bottom">
-          <p className="fine">SKALA 4기 학습자용 커리큘럼 안내 페이지 · 강사 담당 일정 기준</p>
+          <p className="fine">DreamIT Biz 학습지원 — AI 실무 교육 커리큘럼</p>
           <p className="credit">
             이 사이트는 Ph.D Aebon의 기획과 판단을 Claude Code가 구현하는 human-in-the-loop 협업으로 제작되었습니다.
           </p>
