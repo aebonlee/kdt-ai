@@ -7,6 +7,7 @@ import { supabase, hasSupabase } from '../lib/supabase'
 import { TRACK_LABELS, CLASS_MAP, classLabel } from '../data/classes'
 import { ROSTERS } from '../data/rosters'
 import { mergePeople, mergeInstructors } from '../utils/people'
+import { TITLES, resolveTitle } from '../config/roles'
 
 const fmtDate = (v) => (v ? new Date(v).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' }) : '-')
 const norm = (s) => (s || '').replace(/\s+/g, '')
@@ -29,7 +30,7 @@ export default function AdminRoster() {
   useEffect(() => {
     if (!hasSupabase) { setLoading(false); return }
     supabase.from('skala_profiles')
-      .select('user_id,name,email,role,track,class_no,confirmed_at,created_at')
+      .select('*')
       .order('created_at')
       .then(({ data, error }) => {
         if (error) setErr(error.message)
@@ -140,6 +141,12 @@ export default function AdminRoster() {
                     <tr key={i} style={{ borderBottom: '1px solid var(--line)' }}>
                       <td style={{ padding: '8px 12px', fontWeight: 700, whiteSpace: 'nowrap' }}>
                         {p.name || '-'}
+                        {(() => {
+                          const code = resolveTitle({ email: p.email }, p)
+                          if (!code) return null
+                          const t = TITLES[code]
+                          return <span style={{ marginLeft: 6, fontSize: 10.5, fontWeight: 800, color: '#fff', background: t.color, borderRadius: 999, padding: '1px 8px' }}>{t.label}</span>
+                        })()}
                         {p.accountCount > 1 && (
                           <span title={`계정 ${p.accountCount}개를 동일인으로 합침`} style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: 'var(--navy-700)', background: 'var(--navy-50)', borderRadius: 999, padding: '1px 7px' }}>
                             계정 {p.accountCount}
