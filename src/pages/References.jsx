@@ -1,4 +1,5 @@
 import { refGroups, refImages } from '../data/resources'
+import CurriculumFlow from '../components/CurriculumFlow'
 
 export default function References() {
   return (
@@ -16,6 +17,16 @@ export default function References() {
 
       <section className="section">
         <div className="container">
+          {/* 전체 커리큘럼 흐름도 — 다크 배경에 맞춘 SVG */}
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 12 }}>
+              전체 커리큘럼 흐름도
+            </h2>
+            <div className="card" style={{ padding: 'var(--s-6)', overflowX: 'auto' }}>
+              <CurriculumFlow />
+            </div>
+          </div>
+
           {/* 이미지 자료 */}
           {refImages.map((img) => (
             <div key={img.src} style={{ marginBottom: 32 }}>
