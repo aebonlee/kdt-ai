@@ -55,11 +55,21 @@ export async function saveProfile(user, patch) {
     updated_at: new Date().toISOString(),
     ...patch,
   }
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('skala_profiles')
     .upsert(row, { onConflict: 'user_id' })
     .select()
     .maybeSingle()
+  // title 컬럼이 아직 생성되지 않은 환경(supabase/2026-07-21_title.sql 미실행)에서는
+  // title 없이 한 번 더 시도해 저장 자체가 막히지 않게 한다.
+  if (error && /['"]?title['"]? column/i.test(error.message || '')) {
+    const { title, ...rest } = row
+    ;({ data, error } = await supabase
+      .from('skala_profiles')
+      .upsert(rest, { onConflict: 'user_id' })
+      .select()
+      .maybeSingle())
+  }
   if (!error) set({ status: 'ready', profile: data })
   return { data, error }
 }
