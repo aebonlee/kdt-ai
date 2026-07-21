@@ -7,6 +7,22 @@
 --       kdt_ 에 이미 입력한 값이 있으면 그것을 우선 보존.
 -- ═══════════════════════════════════════════════════════════
 
+-- ── ⓪ 선(先)교정: kdt_progress.completed 가 text[] 로 잘못 만들어진 경우 jsonb 로 변경 ──
+--    (초기 setup SQL 버그 — skala_progress.completed 는 jsonb 이므로 맞춰야 이관됨)
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='kdt_progress'
+      and column_name='completed' and data_type='ARRAY'
+  ) then
+    alter table public.kdt_progress
+      alter column completed drop default,
+      alter column completed type jsonb using to_jsonb(completed),
+      alter column completed set default '[]'::jsonb;
+  end if;
+end $$;
+
 -- ── ① 회원 프로필 (소속·직책·담당분반·확인시각) ──
 insert into public.kdt_profiles
   (user_id, name, email, role, title, track, class_no, teach_classes, confirmed_at, created_at, updated_at)

@@ -76,7 +76,7 @@ create policy "kdt_comments_write" on public.kdt_comments for insert with check 
 -- ── 학습 진도 ──
 create table if not exists public.kdt_progress (
   user_id    uuid primary key references auth.users(id) on delete cascade,
-  completed  text[] default '{}',
+  completed  jsonb default '[]'::jsonb,
   user_name  text,
   updated_at timestamptz default now()
 );
