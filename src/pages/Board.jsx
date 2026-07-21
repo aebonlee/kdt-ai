@@ -103,7 +103,7 @@ export default function Board() {
             <div className="box box-tips" style={{ marginBottom: 16 }}>
               <div className="box-h">불러오지 못했습니다</div>
               <p style={{ fontSize: 13, color: 'var(--ink-soft)' }}>
-                {err} — Supabase 테이블(skala_posts) 설정이 필요할 수 있습니다.
+                {err} — Supabase 테이블(kdt_posts) 설정이 필요할 수 있습니다.
               </p>
             </div>
           )}

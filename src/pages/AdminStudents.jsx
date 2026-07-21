@@ -1,4 +1,4 @@
-// 학생 명단 (관리자 전용) — 소속 프로필(skala_profiles) × 학습 진도(skala_progress) 통합 뷰.
+// 학생 명단 (관리자 전용) — 소속 프로필(kdt_profiles) × 학습 진도(kdt_progress) 통합 뷰.
 // 분반 필터·검색·재확인 필요 표시·CSV 내보내기. 교수자는 관리자 대시보드에서 분리 관리.
 import { useEffect, useMemo, useState } from 'react'
 import { supabase, hasSupabase } from '../lib/supabase'
@@ -19,12 +19,12 @@ export default function AdminStudents() {
 
   useEffect(() => {
     if (!hasSupabase) return
-    supabase.from('skala_profiles')
+    supabase.from('kdt_profiles')
       .select('user_id,name,email,track,class_no,confirmed_at,created_at')
       .eq('role', 'student').order('created_at')
       // 같은 사람이 여러 번 가입한 경우 접어서 센다(이메일 아이디 일치 기준).
       .then(({ data, error }) => (error ? setErr(error.message) : setStudents(mergePeople(data || []))))
-    supabase.from('skala_progress').select('user_id,completed,updated_at')
+    supabase.from('kdt_progress').select('user_id,completed,updated_at')
       .then(({ data }) => {
         const m = {}
         for (const r of data || []) m[r.user_id] = { days: (r.completed || []).length, at: r.updated_at }

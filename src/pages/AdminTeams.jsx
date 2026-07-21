@@ -8,7 +8,7 @@ const fmt = (s) => (s ? new Date(s).toLocaleDateString('ko-KR', { month: '2-digi
 const pctOf = (r) => Math.round(((r?.completed?.length ?? 0) / totalSessions) * 100)
 
 export default function AdminTeams() {
-  const [rows, setRows] = useState(null) // skala_progress 전체
+  const [rows, setRows] = useState(null) // kdt_progress 전체
   const [err, setErr] = useState('')
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function AdminTeams() {
 
         {err && (
           <p style={{ marginTop: 20, color: '#E5484D', fontSize: 14 }}>
-            불러오기 오류: {err} (skala_progress 테이블·RLS 관리자 조회 권한 확인)
+            불러오기 오류: {err} (kdt_progress 테이블·RLS 관리자 조회 권한 확인)
           </p>
         )}
         {!rows && !err && <p style={{ marginTop: 20, color: 'var(--ink-soft)' }}>불러오는 중…</p>}

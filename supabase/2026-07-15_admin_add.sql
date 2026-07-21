@@ -1,5 +1,5 @@
 -- 관리자 추가(안보람) — 이 스니펫만 SQL Editor에서 실행 (멱등)
-create or replace function public.skala_is_admin()
+create or replace function public.kdt_is_admin()
 returns boolean language sql stable as $$
   select coalesce(auth.jwt() ->> 'email', '') = any (array[
     'aebon@kyonggi.ac.kr',   -- 이애본 · 구글

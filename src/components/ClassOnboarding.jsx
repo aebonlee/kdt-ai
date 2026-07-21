@@ -25,7 +25,7 @@ export function openClassOnboarding() {
   if (opener) opener()
 }
 
-const SNOOZE_KEY = 'skala-onboarding-snooze'
+const SNOOZE_KEY = 'kdt-onboarding-snooze'
 
 export default function ClassOnboarding() {
   const { user } = useAuth()

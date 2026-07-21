@@ -2,7 +2,7 @@
 // 일자(session date)별 "이해 완료" 여부를 저장한다. (출결과 무관, 학습 이해도 자가체크)
 import { useSyncExternalStore } from 'react'
 
-const KEY = 'skala-progress'
+const KEY = 'kdt-progress'
 const listeners = new Set()
 
 function load() {

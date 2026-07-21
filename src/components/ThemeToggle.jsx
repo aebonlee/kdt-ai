@@ -9,7 +9,7 @@ export default function ThemeToggle() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
     try {
-      localStorage.setItem('skala-theme', dark ? 'dark' : 'light')
+      localStorage.setItem('kdt-theme', dark ? 'dark' : 'light')
     } catch {
       /* ignore */
     }

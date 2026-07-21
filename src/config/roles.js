@@ -11,7 +11,7 @@
 //   practice_professor 실습교수      — 반별 실습 지도 (instructor 기본값)
 //
 // 직책은 세 곳에서 온다(우선순위 순):
-//   1) skala_profiles.title 컬럼 (DB, 나중에 부여 — 없어도 동작)
+//   1) kdt_profiles.title 컬럼 (DB, 나중에 부여 — 없어도 동작)
 //   2) 아래 TITLE_BY_EMAIL 매핑 (알려진 사람)
 //   3) role=instructor 이면 '실습교수', 관리자 화이트리스트면 '운영'
 

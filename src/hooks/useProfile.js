@@ -1,4 +1,4 @@
-// 소속 분반 프로필(skala_profiles) — 공유 스토어.
+// 소속 분반 프로필(kdt_profiles) — 공유 스토어.
 // 헤더 배지·온보딩 모달·학습관리가 같은 상태를 본다.
 // 테이블 미생성(42P01) 등 오류 시에는 조용히 비활성화(status: 'unavailable')되어 사이트 이용을 막지 않는다.
 import { useSyncExternalStore } from 'react'
@@ -28,19 +28,19 @@ export async function loadProfile(user) {
   set({ status: 'loading', userId: user.id })
   try {
     const { data, error } = await supabase
-      .from('skala_profiles')
+      .from('kdt_profiles')
       .select('*')
       .eq('user_id', user.id)
       .maybeSingle()
     if (error) {
       // 테이블 미생성(42P01) 포함 — 기능만 끄고 사이트는 정상 동작
-      console.warn('[skala_profiles] 조회 실패:', error.message)
+      console.warn('[kdt_profiles] 조회 실패:', error.message)
       set({ status: 'unavailable', profile: null })
       return
     }
     set({ status: 'ready', profile: data || null })
   } catch (e) {
-    console.warn('[skala_profiles] 조회 예외:', e)
+    console.warn('[kdt_profiles] 조회 예외:', e)
     set({ status: 'unavailable', profile: null })
   }
 }
@@ -56,7 +56,7 @@ export async function saveProfile(user, patch) {
     ...patch,
   }
   let { data, error } = await supabase
-    .from('skala_profiles')
+    .from('kdt_profiles')
     .upsert(row, { onConflict: 'user_id' })
     .select()
     .maybeSingle()
@@ -65,7 +65,7 @@ export async function saveProfile(user, patch) {
   if (error && /['"]?title['"]? column/i.test(error.message || '')) {
     const { title, ...rest } = row
     ;({ data, error } = await supabase
-      .from('skala_profiles')
+      .from('kdt_profiles')
       .upsert(rest, { onConflict: 'user_id' })
       .select()
       .maybeSingle())

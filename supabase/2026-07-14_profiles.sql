@@ -6,7 +6,7 @@
 -- 프로필 행은 로그인 후 클라이언트가 직접 upsert 합니다.
 -- ============================================================
 
-create table if not exists public.skala_profiles (
+create table if not exists public.kdt_profiles (
   user_id     uuid primary key references auth.users(id) on delete cascade,
   email       text,
   name        text,
@@ -21,17 +21,17 @@ create table if not exists public.skala_profiles (
   updated_at  timestamptz not null default now()
 );
 
-alter table public.skala_profiles enable row level security;
+alter table public.kdt_profiles enable row level security;
 
 -- 본인 행만 읽기/쓰기, 관리자(강사)는 전체 열람 — 재실행 안전하게 drop 후 생성
-drop policy if exists "profiles_self_select" on public.skala_profiles;
-create policy "profiles_self_select" on public.skala_profiles
-  for select using (auth.uid() = user_id or public.skala_is_admin());
+drop policy if exists "profiles_self_select" on public.kdt_profiles;
+create policy "profiles_self_select" on public.kdt_profiles
+  for select using (auth.uid() = user_id or public.kdt_is_admin());
 
-drop policy if exists "profiles_self_insert" on public.skala_profiles;
-create policy "profiles_self_insert" on public.skala_profiles
+drop policy if exists "profiles_self_insert" on public.kdt_profiles;
+create policy "profiles_self_insert" on public.kdt_profiles
   for insert with check (auth.uid() = user_id);
 
-drop policy if exists "profiles_self_update" on public.skala_profiles;
-create policy "profiles_self_update" on public.skala_profiles
+drop policy if exists "profiles_self_update" on public.kdt_profiles;
+create policy "profiles_self_update" on public.kdt_profiles
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);

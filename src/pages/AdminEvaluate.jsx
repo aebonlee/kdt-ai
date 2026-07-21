@@ -5,7 +5,7 @@
 // 사이트는 "무엇을 언제 평가해 어디에 남겼는지"를 보는 역할만 한다.
 // 산출물 엑셀은 구글드라이브에 평가 건별 구분 폴더로 두고 여기서 링크로 연다.
 //
-// 이전 버전(웹 점수 입력 + skala_evaluations 저장 + XLSX 내보내기)은 git 이력에 있다.
+// 이전 버전(웹 점수 입력 + kdt_evaluations 저장 + XLSX 내보내기)은 git 이력에 있다.
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { evalUnits } from '../data/evalunits'

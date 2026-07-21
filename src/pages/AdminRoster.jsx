@@ -29,7 +29,7 @@ export default function AdminRoster() {
 
   useEffect(() => {
     if (!hasSupabase) { setLoading(false); return }
-    supabase.from('skala_profiles')
+    supabase.from('kdt_profiles')
       .select('*')
       .order('created_at')
       .then(({ data, error }) => {

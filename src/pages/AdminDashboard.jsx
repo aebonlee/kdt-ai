@@ -36,7 +36,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!hasSupabase) return
-    supabase.from('skala_profiles').select('*').order('created_at')
+    supabase.from('kdt_profiles').select('*').order('created_at')
       .then(({ data, error }) => (error ? setErr(error.message) : setProfiles(data || [])))
   }, [])
 

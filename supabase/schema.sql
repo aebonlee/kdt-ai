@@ -8,7 +8,7 @@ create extension if not exists pgcrypto;
 
 -- 관리자(강사) 이메일 판별 — 로그인 이메일 기준
 -- ⚠️ 실제 강사 로그인 이메일로 교체/추가하세요. (프론트 src/config/admin.js 와 동일하게)
-create or replace function public.skala_is_admin()
+create or replace function public.kdt_is_admin()
 returns boolean language sql stable as $$
   select coalesce(auth.jwt() ->> 'email', '') = any (array[
     'aebon@kyonggi.ac.kr',   -- 구글 로그인
@@ -17,7 +17,7 @@ returns boolean language sql stable as $$
 $$;
 
 -- ── 게시글 (Q&A / 공지) ──
-create table if not exists public.skala_posts (
+create table if not exists public.kdt_posts (
   id          uuid primary key default gen_random_uuid(),
   type        text not null check (type in ('qna', 'notice')),
   title       text not null,
@@ -26,49 +26,49 @@ create table if not exists public.skala_posts (
   author_name text,
   created_at  timestamptz not null default now()
 );
-alter table public.skala_posts enable row level security;
+alter table public.kdt_posts enable row level security;
 
-create policy "posts_read"   on public.skala_posts for select using (auth.uid() is not null);
-create policy "posts_insert" on public.skala_posts for insert
-  with check (auth.uid() = author_id and (type = 'qna' or public.skala_is_admin()));
-create policy "posts_update" on public.skala_posts for update
-  using (auth.uid() = author_id or public.skala_is_admin());
-create policy "posts_delete" on public.skala_posts for delete
-  using (auth.uid() = author_id or public.skala_is_admin());
+create policy "posts_read"   on public.kdt_posts for select using (auth.uid() is not null);
+create policy "posts_insert" on public.kdt_posts for insert
+  with check (auth.uid() = author_id and (type = 'qna' or public.kdt_is_admin()));
+create policy "posts_update" on public.kdt_posts for update
+  using (auth.uid() = author_id or public.kdt_is_admin());
+create policy "posts_delete" on public.kdt_posts for delete
+  using (auth.uid() = author_id or public.kdt_is_admin());
 
 -- ── 댓글 ──
-create table if not exists public.skala_comments (
+create table if not exists public.kdt_comments (
   id          uuid primary key default gen_random_uuid(),
-  post_id     uuid not null references public.skala_posts(id) on delete cascade,
+  post_id     uuid not null references public.kdt_posts(id) on delete cascade,
   body        text not null,
   author_id   uuid not null default auth.uid(),
   author_name text,
   created_at  timestamptz not null default now()
 );
-alter table public.skala_comments enable row level security;
+alter table public.kdt_comments enable row level security;
 
-create policy "comments_read"   on public.skala_comments for select using (auth.uid() is not null);
-create policy "comments_insert" on public.skala_comments for insert with check (auth.uid() = author_id);
-create policy "comments_delete" on public.skala_comments for delete
-  using (auth.uid() = author_id or public.skala_is_admin());
+create policy "comments_read"   on public.kdt_comments for select using (auth.uid() is not null);
+create policy "comments_insert" on public.kdt_comments for insert with check (auth.uid() = author_id);
+create policy "comments_delete" on public.kdt_comments for delete
+  using (auth.uid() = author_id or public.kdt_is_admin());
 
 -- ── 학습 진도 (자가평가 동기화) ──
-create table if not exists public.skala_progress (
+create table if not exists public.kdt_progress (
   user_id    uuid primary key default auth.uid(),
   user_name  text,
   completed  jsonb default '[]'::jsonb,   -- 이해 완료한 날짜 문자열 배열
   updated_at timestamptz default now()
 );
-alter table public.skala_progress enable row level security;
+alter table public.kdt_progress enable row level security;
 
 -- 본인 진도는 읽기/쓰기, 강사는 전체 읽기
-create policy "progress_select" on public.skala_progress for select
-  using (auth.uid() = user_id or public.skala_is_admin());
-create policy "progress_insert" on public.skala_progress for insert with check (auth.uid() = user_id);
-create policy "progress_update" on public.skala_progress for update using (auth.uid() = user_id);
+create policy "progress_select" on public.kdt_progress for select
+  using (auth.uid() = user_id or public.kdt_is_admin());
+create policy "progress_insert" on public.kdt_progress for insert with check (auth.uid() = user_id);
+create policy "progress_update" on public.kdt_progress for update using (auth.uid() = user_id);
 
-create index if not exists idx_skala_posts_type on public.skala_posts (type, created_at desc);
-create index if not exists idx_skala_comments_post on public.skala_comments (post_id, created_at);
+create index if not exists idx_kdt_posts_type on public.kdt_posts (type, created_at desc);
+create index if not exists idx_kdt_comments_post on public.kdt_comments (post_id, created_at);
 -- ============================================================
 -- SKALA 4기 — 소속 분반 프로필 (2026-07-14 추가분)
 -- ⚠️ 이 파일만 실행하세요 (schema.sql 전체 재실행 금지 — 기존 정책과 충돌).
@@ -77,7 +77,7 @@ create index if not exists idx_skala_comments_post on public.skala_comments (pos
 -- 프로필 행은 로그인 후 클라이언트가 직접 upsert 합니다.
 -- ============================================================
 
-create table if not exists public.skala_profiles (
+create table if not exists public.kdt_profiles (
   user_id     uuid primary key references auth.users(id) on delete cascade,
   email       text,
   name        text,
@@ -92,17 +92,17 @@ create table if not exists public.skala_profiles (
   updated_at  timestamptz not null default now()
 );
 
-alter table public.skala_profiles enable row level security;
+alter table public.kdt_profiles enable row level security;
 
 -- 본인 행만 읽기/쓰기, 관리자(강사)는 전체 열람 — 재실행 안전하게 drop 후 생성
-drop policy if exists "profiles_self_select" on public.skala_profiles;
-create policy "profiles_self_select" on public.skala_profiles
-  for select using (auth.uid() = user_id or public.skala_is_admin());
+drop policy if exists "profiles_self_select" on public.kdt_profiles;
+create policy "profiles_self_select" on public.kdt_profiles
+  for select using (auth.uid() = user_id or public.kdt_is_admin());
 
-drop policy if exists "profiles_self_insert" on public.skala_profiles;
-create policy "profiles_self_insert" on public.skala_profiles
+drop policy if exists "profiles_self_insert" on public.kdt_profiles;
+create policy "profiles_self_insert" on public.kdt_profiles
   for insert with check (auth.uid() = user_id);
 
-drop policy if exists "profiles_self_update" on public.skala_profiles;
-create policy "profiles_self_update" on public.skala_profiles
+drop policy if exists "profiles_self_update" on public.kdt_profiles;
+create policy "profiles_self_update" on public.kdt_profiles
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);

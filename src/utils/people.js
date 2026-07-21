@@ -29,7 +29,7 @@ const emailToLead = (() => {
 
 /**
  * 같은 사람의 프로필 행들을 하나로 접는다.
- * @param {Array} rows  skala_profiles 행 (name·email·created_at·confirmed_at 등)
+ * @param {Array} rows  kdt_profiles 행 (name·email·created_at·confirmed_at 등)
  * @param {{byName?: boolean}} opts  byName=true 면 이름 일치도 동일인으로 본다(교수자용)
  * @returns {Array} 대표 행 + accounts(전체 계정 목록) + accountCount
  */
