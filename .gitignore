@@ -1,0 +1,21 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.env
+.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 강의 데이터 분할 생성물(prebuild/predev 로 자동 생성)
+src/data/lectures/
+
+# 배포용 강의안 교재(PDF/HTML) — npm run textbook 으로 재생성
+dist-textbook/
+
+# "실습교안" 정적 페이지 — prebuild/predev 가 자동 생성
+public/practice-textbook.html
+.env.local*
+docs/
