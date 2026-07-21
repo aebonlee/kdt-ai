@@ -79,10 +79,54 @@ select
 from public.skala_evaluations
 on conflict (id) do nothing;
 
--- ── ④ 게시판 글·댓글 (원하면 함께 이관) ──
+-- ── ④ 게시판 글·댓글 ──
+--    ⚠️ kdt_posts/comments 가 초기 setup 버그로 id=bigint/is_pinned 등
+--       원본(uuid, is_pinned 없음)과 다르게 만들어졌다면 비어 있을 때 재생성.
+do $$
+begin
+  if exists (select 1 from information_schema.columns
+             where table_schema='public' and table_name='kdt_posts'
+               and column_name='id' and data_type in ('bigint','integer'))
+     and not exists (select 1 from public.kdt_posts limit 1) then
+    drop table if exists public.kdt_comments;   -- FK 때문에 먼저
+    drop table public.kdt_posts;
+  end if;
+end $$;
+
+create table if not exists public.kdt_posts (
+  id          uuid primary key default gen_random_uuid(),
+  type        text not null check (type in ('qna', 'notice')),
+  title       text not null,
+  body        text default '',
+  author_id   uuid not null default auth.uid(),
+  author_name text,
+  created_at  timestamptz not null default now()
+);
+alter table public.kdt_posts enable row level security;
+drop policy if exists "kdt_posts_read"  on public.kdt_posts;
+drop policy if exists "kdt_posts_write" on public.kdt_posts;
+create policy "kdt_posts_read"  on public.kdt_posts for select using (true);
+create policy "kdt_posts_write" on public.kdt_posts for insert with check (auth.uid() = author_id);
+create policy "kdt_posts_own"   on public.kdt_posts for update using (auth.uid() = author_id or public.kdt_is_admin());
+create policy "kdt_posts_del"   on public.kdt_posts for delete using (auth.uid() = author_id or public.kdt_is_admin());
+
+create table if not exists public.kdt_comments (
+  id          uuid primary key default gen_random_uuid(),
+  post_id     uuid not null references public.kdt_posts(id) on delete cascade,
+  body        text not null,
+  author_id   uuid not null default auth.uid(),
+  author_name text,
+  created_at  timestamptz not null default now()
+);
+alter table public.kdt_comments enable row level security;
+drop policy if exists "kdt_comments_read"  on public.kdt_comments;
+drop policy if exists "kdt_comments_write" on public.kdt_comments;
+create policy "kdt_comments_read"  on public.kdt_comments for select using (true);
+create policy "kdt_comments_write" on public.kdt_comments for insert with check (auth.uid() = author_id);
+
 insert into public.kdt_posts
-  (id, type, title, body, author_id, author_name, is_pinned, created_at)
-select id, type, title, body, author_id, author_name, is_pinned, created_at
+  (id, type, title, body, author_id, author_name, created_at)
+select id, type, title, body, author_id, author_name, created_at
 from public.skala_posts
 on conflict (id) do nothing;
 
