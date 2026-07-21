@@ -102,8 +102,13 @@ export default function AdminDashboard() {
     )
   }
 
-  const SessionChip = ({ s }) => (
-    <Link to={`/day/${s.date}`} className="card" style={{ padding: '12px 14px', display: 'block' }}>
+  const SessionChip = ({ s, highlight }) => (
+    <Link to={`/day/${s.date}`} className="card" style={{
+      padding: '12px 14px', display: 'block',
+      // 오늘 강의는 연한 파랑 배경으로 강조
+      background: highlight ? 'var(--navy-50)' : undefined,
+      borderColor: highlight ? 'var(--accent)' : undefined,
+    }}>
       <div style={{ fontSize: 12.5, color: 'var(--ink-soft)', fontWeight: 700 }}>{fmtDate(s.date)} ({wdOf(s.date)})</div>
       <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy-800)', marginTop: 3, lineHeight: 1.35, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{s.subject}</div>
       <div style={{ fontSize: 12.5, color: 'var(--accent)', fontWeight: 700, marginTop: 4 }}>
@@ -145,7 +150,7 @@ export default function AdminDashboard() {
         <h2 style={{ marginTop: 26, fontSize: 18, fontWeight: 900, color: 'var(--navy-800)' }}>오늘 내 강의</h2>
         {todaySessions.length ? (
           <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
-            {todaySessions.map((s) => <SessionChip key={s.date + s.cls} s={s} />)}
+            {todaySessions.map((s) => <SessionChip key={s.date + s.cls} s={s} highlight />)}
           </div>
         ) : (
           <p style={{ marginTop: 8, fontSize: 13.5, color: 'var(--ink-soft)' }}>
@@ -195,7 +200,7 @@ export default function AdminDashboard() {
         </h2>
         {weekSessions.length ? (
           <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
-            {weekSessions.map((s) => <SessionChip key={s.date + s.cls} s={s} />)}
+            {weekSessions.map((s) => <SessionChip key={s.date + s.cls} s={s} highlight={s.date === today} />)}
           </div>
         ) : (
           <p style={{ marginTop: 8, fontSize: 13.5, color: 'var(--ink-soft)' }}>이번 주 담당 강의가 없습니다.</p>
