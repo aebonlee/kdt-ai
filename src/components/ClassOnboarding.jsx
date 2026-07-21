@@ -13,6 +13,7 @@ import {
 // 담당 분반 선택이 필요한 직책: 분반담당매니저 · 실습교수(반별 실습 지도)
 const TITLE_OPTIONS = [
   { code: 'lead_professor', label: '전임교수', desc: '과목 교안 저자(주강사)', needsClasses: false },
+  { code: 'lead_practice', label: '실습교수 총괄', desc: '실습교수진 총괄 책임', needsClasses: false },
   { code: 'practice_professor', label: '실습교수', desc: '반별 실습 지도', needsClasses: true },
   { code: 'chief_manager', label: '책임매니저', desc: '운영 총괄', needsClasses: false },
   { code: 'class_manager', label: '분반담당매니저', desc: '특정 분반 운영 담당', needsClasses: true },

@@ -5,6 +5,7 @@
 //   구글드라이브 권한으로 별도 이중 보호된다([[docs.js]] 주석).
 //
 // 직책(title) 종류:
+//   lead_practice    실습교수 총괄    — 실습교수진 총괄 책임
 //   chief_manager    책임매니저      — 운영 총괄
 //   class_manager    분반담당매니저   — 특정 분반 운영 담당
 //   lead_professor   전임교수        — 과목 교안 저자(주강사)
@@ -16,6 +17,7 @@
 //   3) role=instructor 이면 '실습교수', 관리자 화이트리스트면 '운영'
 
 export const TITLES = {
+  lead_practice: { label: '실습교수 총괄', short: '총괄', color: '#22d3ee', group: 'professor' },
   chief_manager: { label: '책임매니저', short: '책임', color: '#7C3AED', group: 'manager' },
   class_manager: { label: '분반담당매니저', short: '분반매니저', color: '#9333EA', group: 'manager' },
   lead_professor: { label: '전임교수', short: '전임', color: '#0E7A5F', group: 'professor' },
@@ -24,6 +26,7 @@ export const TITLES = {
 
 // 알려진 계정의 직책 매핑 — 이메일(로컬파트 기준으로도 매칭)
 export const TITLE_BY_EMAIL = {
+  '2woorin@gmail.com': 'lead_practice',       // 실습교수 총괄 책임자 (2026-07-21)
   'boraborami@gmail.com': 'chief_manager',   // 안보람 (운영 총괄)
   'humanaiphd@gmail.com': 'lead_professor',  // 임성열 (전임교수·주강사)
   'aebon@kyonggi.ac.kr': 'practice_professor', // 이애본 (실습교수 — 본인, 사이트 관리자)
