@@ -1,4 +1,7 @@
 import { refGroups, refImages } from '../data/resources'
+import { course } from '../data/course'
+import Sentences from '../components/Sentences'
+import CurriculumFlow from '../components/CurriculumFlow'
 
 export default function References() {
   return (
@@ -13,6 +16,22 @@ export default function References() {
           </p>
         </div>
       </div>
+
+      {/* 전체 커리큘럼 흐름도 — 메인(Home)과 동일 구조로 배치 */}
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
+            <span className="eyebrow">Overview</span>
+            <h2>전체 커리큘럼</h2>
+            <p>
+              <Sentences text={`AI 실무 전 과정의 흐름입니다. 본 사이트는 이 중 ${course.instructor} 강사 담당 과목을 다룹니다.`} />
+            </p>
+          </div>
+          <div className="card" style={{ padding: 'var(--s-6)', overflowX: 'auto' }}>
+            <CurriculumFlow />
+          </div>
+        </div>
+      </section>
 
       <section className="section">
         <div className="container">
