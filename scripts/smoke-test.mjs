@@ -99,6 +99,11 @@ if (existsSync(join(dist, 'practice-textbook.html'))) {
   assert(altSecs === Object.keys(examsAlt).length, `실습교안 전임교수 평가안 ${altSecs}`)
   assert(!pt.includes('&amp;lt;') && !pt.includes('&amp;gt;'), '이중 이스케이프 없음')
   assert(pt.includes('class="copy-btn"') && pt.includes('class="cmt"'), '복사 버튼·녹색 주석 존재')
+  // 인라인 스크립트 문법 유효성 — 깨지면 좌측 네비 등 전체 JS가 죽는다(회귀 방지)
+  const scriptM = pt.match(/<script>([\s\S]*?)<\/script>/)
+  let jsOk = false
+  try { if (scriptM) { new Function(scriptM[1]); jsOk = true } } catch (e) { jsOk = e.message }
+  assert(jsOk === true, '실습교안 인라인 스크립트 문법 유효' + (jsOk !== true ? ` — ${jsOk}` : ''))
 }
 
 // ── 결과 ────────────────────────────────────────────────────

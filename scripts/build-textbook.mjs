@@ -849,7 +849,7 @@ document.addEventListener('click', function (e) {
   if (codeEl) {
     var lcs = codeEl.querySelectorAll('.lc');
     text = lcs.length
-      ? Array.prototype.map.call(lcs, function (el) { return el.textContent; }).join('\n')
+      ? Array.prototype.map.call(lcs, function (el) { return el.textContent; }).join('\\n')
       : codeEl.innerText;
   } else {
     var pre = btn.parentElement.querySelector('pre.code');
