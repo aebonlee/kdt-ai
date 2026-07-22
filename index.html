@@ -7,13 +7,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script>
-      // 테마 초기화 (깜빡임 방지) — 기본 라이트, 저장값 우선
+      // 테마 초기화 (깜빡임 방지) — 기본 다크(디자인 기본), 저장값 우선
+      // ⚠ 키는 ThemeToggle 저장 키와 반드시 동일('kdt-theme')해야 유지된다.
       (function () {
         try {
-          var t = localStorage.getItem('skala-theme') || 'light'
+          var t = localStorage.getItem('kdt-theme') || 'dark'
           document.documentElement.setAttribute('data-theme', t)
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light')
+          document.documentElement.setAttribute('data-theme', 'dark')
         }
       })()
     </script>

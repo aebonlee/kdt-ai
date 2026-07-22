@@ -807,3 +807,58 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   body.has-sidenav main,
   body.has-sidenav .footer { padding-left: 228px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   라이트 테마 — :root(다크)의 시맨틱 토큰을 라이트로 재정의(재역전).
+   설계: 히어로·토픽바(브랜드칩)·푸터·버튼 등 '다크 크롬'은 라이트에서도
+   어둡게 유지하고, 그 위 텍스트만 밝게 오버라이드한다.
+   → 페이지 배경·카드·본문 텍스트·라인만 밝게 뒤집힌다(대비 안전).
+   ⚠ 기본 테마는 다크. 이 블록은 [data-theme="light"] 일 때만 적용.
+   ═══════════════════════════════════════════════════════════════ */
+:root[data-theme="light"] {
+  --bg-page: #f4f6fb;
+  --navy-900: #0e1424;   /* 가장 진한 텍스트 */
+  --navy-800: #1b2337;   /* 본문 텍스트 */
+  --navy-700: #33405c;
+  --navy-600: #4b5878;
+  --navy-500: #6a7593;   /* 뮤트 텍스트 */
+  --navy-400: #98a2bd;
+  --navy-300: #cbd3e4;   /* 강한 라인 */
+  --navy-200: #e2e7f1;   /* 라인 */
+  --navy-100: #ffffff;   /* 패널 */
+  --navy-50:  #eef2f9;   /* 서피스 */
+  --gold: #0e7490;       /* 액센트 — 라이트 대비용 딥 틸(시안 대체) */
+  --azure: #2563eb;
+  --ink: var(--navy-800);
+  --ink-soft: var(--navy-500);
+  --line: var(--navy-200);
+  --line-strong: var(--navy-300);
+  --bg-white: #ffffff;   /* '카드' = 흰색 */
+  --shadow-sm: 0 1px 3px rgba(16,24,40,0.06);
+  --shadow-md: 0 6px 16px rgba(16,24,40,0.10);
+  --shadow-lg: 0 16px 40px rgba(16,24,40,0.16);
+  /* --ink-surface / --skala-indigo / --hero-bg 는 오버라이드하지 않는다(다크 유지) */
+}
+
+/* 카드 — 흰 배경에 맞춰 라인·그림자를 라이트 톤으로 */
+[data-theme="light"] .card { border-color: var(--line);
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04), 0 4px 14px rgba(16,24,40,0.06); }
+[data-theme="light"] .card:hover { border-color: var(--gold);
+  box-shadow: 0 8px 24px rgba(16,24,40,0.12); }
+[data-theme="light"] .login-card { background: #fff; box-shadow: var(--shadow-lg); }
+
+/* 다크 히어로 위 텍스트 — 라이트 모드에서도 밝게 유지(히어로는 다크 유지) */
+[data-theme="light"] .hero-title { color: #f2f4f8; }
+[data-theme="light"] .hero-lead { color: #c4c9d8; }
+[data-theme="light"] .hv-desc,
+[data-theme="light"] .metric-label { color: #aab2c8; }
+[data-theme="light"] .metric-num .unit { color: var(--a1); }
+
+/* 다크 배경 버튼 글자 보정 */
+[data-theme="light"] .btn-primary { color: #f2f4f8; }
+[data-theme="light"] .btn-ghost { color: var(--navy-700); border-color: var(--line-strong); }
+
+/* 스크롤바·세로 메뉴 hover 라이트 톤 */
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #c7cfe0; border-color: var(--bg-page); }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #aeb8cf; }
+[data-theme="light"] .sidenav-link:hover { background: #eef2f9; color: var(--navy-900); }
