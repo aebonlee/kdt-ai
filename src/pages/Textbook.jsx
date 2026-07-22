@@ -264,15 +264,20 @@ export default function Textbook() {
     <div className="textbook-page">
       <div className="page-header-ed">
         <div className="container" style={{ position: 'relative' }}>
-          <button
-            type="button"
-            className="btn btn-primary tb-print-btn"
-            onClick={() => window.print()}
-            title="현재 과목을 인쇄 / PDF로 저장"
-            style={{ position: 'absolute', top: 0, right: 'var(--s-5)', fontSize: 13, padding: '9px 18px' }}
-          >
-            🖨 인쇄 · PDF 저장
-          </button>
+          <div className="tb-print-box" style={{ position: 'absolute', top: 0, right: 'var(--s-5)', textAlign: 'right', maxWidth: 260 }}>
+            <button
+              type="button"
+              className="btn btn-primary tb-print-btn"
+              onClick={() => window.print()}
+              title="현재 과목을 인쇄 / PDF로 저장"
+              style={{ fontSize: 13, padding: '9px 18px' }}
+            >
+              🖨 인쇄 · PDF 저장
+            </button>
+            <p className="tb-print-hint" style={{ margin: '7px 0 0', fontSize: 11.5, color: 'var(--ink-soft)', lineHeight: 1.55, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+              💡 인쇄 미리보기에서 <b>&ldquo;배경 그래픽&rdquo;</b> 옵션을 켜면 코드·배지 색이 함께 나옵니다.
+            </p>
+          </div>
           <span className="eyebrow">Textbook</span>
           <h1>실습교안</h1>
           <p>

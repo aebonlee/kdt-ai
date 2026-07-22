@@ -875,7 +875,7 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   }
   html, body, .textbook-page, .section, .container { background: #ffffff !important; color: #1b2337 !important; }
   /* 앱 크롬·인쇄버튼·사이드바 숨김, 콘텐츠 전체폭 */
-  .topbar, .navbar, .footer, .theme-toggle, .tb-print-btn { display: none !important; }
+  .topbar, .navbar, .footer, .theme-toggle, .tb-print-btn, .tb-print-box { display: none !important; }
   .page-header-ed { padding: 10px 0 0 !important; background: none !important; }
   .textbook-page .eyebrow, .textbook-page .page-header-ed p { display: none !important; }
   .textbook-page .side-nav { display: none !important; }
