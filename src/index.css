@@ -859,3 +859,21 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 [data-theme="light"] .chip-cat,
 [data-theme="light"] .chip-day { background: var(--navy-50); border-color: var(--line); color: var(--navy-700); }
 /* 코드 칩(8-2 등)·코드블록은 라이트에서도 다크 유지(가독성·관례) */
+
+/* ── 인쇄(PDF 저장) — 실습교안 인쇄 버튼(window.print) → 앱 크롬 숨기고 콘텐츠만 A4로 ── */
+@media print {
+  .topbar, .navbar, .footer, .theme-toggle, .tb-print-btn { display: none !important; }
+  .page-header-ed { padding: 10px 0 0 !important; background: none !important; }
+  .textbook-page .eyebrow, .textbook-page .page-header-ed p { display: none !important; }
+  .textbook-page .side-nav { display: none !important; }
+  .textbook-page .layout-side { display: block !important; }
+  .textbook-page .section { padding: 0 !important; }
+  .container { max-width: none !important; padding: 0 12px !important; }
+  /* 코드·배지 색 유지 + 코드 줄바꿈(페이지 폭에서 잘리지 않게) */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .codeblock, .codeblock .lc { white-space: pre-wrap !important; }
+  /* 페이지 나눔에서 카드·코드·개념·표가 잘리지 않게 */
+  .card, .box, .concept, .codewrap, .plan-row, .detail-meta { break-inside: avoid; page-break-inside: avoid; }
+  h2, h3, h4 { break-after: avoid; }
+  @page { margin: 12mm; }
+}

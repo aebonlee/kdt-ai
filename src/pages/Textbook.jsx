@@ -261,14 +261,23 @@ export default function Textbook() {
   const pickTab = (t) => { setTab(t); setActiveId(t === 'etc' ? etcEntries[0].id : mainSubjects[0].id) }
 
   return (
-    <div>
+    <div className="textbook-page">
       <div className="page-header-ed">
-        <div className="container">
+        <div className="container" style={{ position: 'relative' }}>
+          <button
+            type="button"
+            className="btn btn-primary tb-print-btn"
+            onClick={() => window.print()}
+            title="현재 과목을 인쇄 / PDF로 저장"
+            style={{ position: 'absolute', top: 0, right: 'var(--s-5)', fontSize: 13, padding: '9px 18px' }}
+          >
+            🖨 인쇄 · PDF 저장
+          </button>
           <span className="eyebrow">Textbook</span>
           <h1>실습교안</h1>
           <p>
             <span style={{ display: 'block' }}>담당 18과목의 일차별 강의안·실습·예제·평가기준·복습퀴즈를 한 곳에서 봅니다.</span>
-            <span style={{ display: 'block' }}>좌측에서 과목을 선택하면 해당 과목만 불러옵니다.</span>
+            <span style={{ display: 'block' }}>좌측에서 과목을 선택하면 해당 과목만 불러옵니다. (인쇄 버튼으로 PDF 저장)</span>
           </p>
         </div>
       </div>
