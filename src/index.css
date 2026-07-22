@@ -695,6 +695,7 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   background: #0d1230; color: #e6e9f5; border-radius: var(--radius);
   padding: 16px 14px; overflow-x: auto; margin: 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.65;
+  font-weight: 700;  /* 소스코드 볼드체 */
 }
 .codeblock code { display: block; }
 /* 줄번호 거터 + 코드 본문(라인 단위 flex) */
@@ -702,7 +703,7 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 .codeblock .ln {
   flex: 0 0 auto; min-width: 2.2em; text-align: right;
   padding-right: 12px; margin-right: 12px;
-  color: #5a6597; opacity: 0.85; user-select: none;
+  color: #5a6597; opacity: 0.85; user-select: none; font-weight: 400;  /* 줄번호는 일반 두께 */
   border-right: 1px solid rgba(255,255,255,0.09);
 }
 .codeblock .lc { flex: 1 1 auto; white-space: pre; }

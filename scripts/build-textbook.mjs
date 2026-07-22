@@ -29,10 +29,60 @@ const LINE_TOKEN = {
   javascript: '//', js: '//', jsx: '//', ts: '//', typescript: '//', java: '//',
   c: '//', cpp: '//', go: '//', kotlin: '//', swift: '//', sql: '--',
 }
-function codeSegs(line, lang) {
+// 키워드(파이썬 + JS/TS 합집합) — 사이트 CodeBlock.jsx 와 동일
+const CODE_KW = new Set([
+  'import', 'from', 'as', 'def', 'class', 'return', 'if', 'elif', 'else', 'for', 'while',
+  'break', 'continue', 'in', 'not', 'and', 'or', 'is', 'None', 'True', 'False', 'with',
+  'try', 'except', 'finally', 'raise', 'lambda', 'yield', 'global', 'nonlocal', 'pass',
+  'assert', 'del', 'async', 'await',
+  'const', 'let', 'var', 'function', 'export', 'default', 'new', 'this', 'typeof',
+  'instanceof', 'of', 'catch', 'throw', 'switch', 'case', 'null', 'undefined', 'true',
+  'false', 'void', 'delete', 'extends', 'super', 'static',
+])
+const isIdStart = (ch) => /[A-Za-z_$]/.test(ch)
+const isId = (ch) => /[A-Za-z0-9_$]/.test(ch)
+// 코드 조각(주석 제외)을 토큰으로 스캔 → [{t, cls}]
+function scanCode(text) {
+  const out = []
+  let i = 0
+  const n = text.length
+  const push = (t, cls) => { if (t) out.push({ t, cls }) }
+  while (i < n) {
+    const ch = text[i]
+    if (ch === '"' || ch === "'" || ch === '`') {
+      let j = i + 1
+      while (j < n && text[j] !== ch) { if (text[j] === '\\') j++; j++ }
+      push(text.slice(i, Math.min(j + 1, n)), 'str'); i = j + 1; continue
+    }
+    if (ch >= '0' && ch <= '9') {
+      let j = i + 1
+      while (j < n && /[0-9._a-fA-FxX]/.test(text[j])) j++
+      push(text.slice(i, j), 'num'); i = j; continue
+    }
+    if (isIdStart(ch)) {
+      let j = i + 1
+      while (j < n && isId(text[j])) j++
+      const word = text.slice(i, j)
+      let k = j
+      while (k < n && (text[k] === ' ' || text[k] === '\t')) k++
+      push(word, CODE_KW.has(word) ? 'kw' : (text[k] === '(' ? 'fn' : 'var')); i = j; continue
+    }
+    let j = i + 1
+    while (j < n) {
+      const c = text[j]
+      if (c === '"' || c === "'" || c === '`' || isIdStart(c) || (c >= '0' && c <= '9')) break
+      j++
+    }
+    push(text.slice(i, j), null); i = j
+  }
+  return out
+}
+// 한 줄 → 토큰 배열(주석 분리 후 코드부 스캔)
+function tokenizeLine(line, lang) {
   if (lang === 'html' || lang === 'vue' || lang === 'xml' || lang === 'svg') {
     const a = line.indexOf('<!--')
-    if (a !== -1) return [{ t: line.slice(0, a) }, { t: line.slice(a), c: true }]
+    if (a !== -1) return [...scanCode(line.slice(0, a)), { t: line.slice(a), cls: 'cmt' }]
+    return scanCode(line)
   }
   const tok = LINE_TOKEN[lang]
   if (tok) {
@@ -40,19 +90,21 @@ function codeSegs(line, lang) {
       if (line.startsWith(tok, i)) {
         const before = i === 0 ? '' : line[i - 1]
         if (i === 0 || before === ' ' || before === '\t') {
-          return [{ t: line.slice(0, i) }, { t: line.slice(i), c: true }]
+          return [...scanCode(line.slice(0, i)), { t: line.slice(i), cls: 'cmt' }]
         }
       }
     }
   }
-  return [{ t: line }]
+  return scanCode(line)
 }
-// 언어별 라인 주석을 녹색(.cmt)으로 감싸며 HTML 이스케이프
+const TCLS = { kw: 'tok-kw', fn: 'tok-fn', var: 'tok-var', str: 'tok-str', num: 'tok-num', cmt: 'cmt' }
+// 줄번호 거터 + 구문 강조(함수/변수/키워드/문자열/숫자/주석), HTML 이스케이프
 const hlCode = (code, lang) =>
-  String(code).split('\n')
-    .map((ln) => codeSegs(ln, (lang || '').toLowerCase())
-      .map((s) => (s.c ? `<span class="cmt">${esc(s.t)}</span>` : esc(s.t))).join(''))
-    .join('\n')
+  String(code).split('\n').map((ln, i) => {
+    const inner = tokenizeLine(ln, (lang || '').toLowerCase())
+      .map((s) => (s.cls ? `<span class="${TCLS[s.cls]}">${esc(s.t)}</span>` : esc(s.t))).join('')
+    return `<span class="cline"><span class="ln">${i + 1}</span><span class="lc">${inner}</span></span>`
+  }).join('')
 
 // 분반 반복 여부 (표지·과목 헤더 표기용)
 const bySub = {}
@@ -251,7 +303,7 @@ async function renderDay(subj, dayIdx) {
   if (dnum === 1) {
     h += renderExam(subj.id)
     if (examsAlt[subj.id]) {
-      h += renderExam(subj.id, examsAlt[subj.id], '📑 타 강사판 평가안 (참고)')
+      h += renderExam(subj.id, examsAlt[subj.id], '📑 전임교수 평가안 (참고)')
       h += `<p class="note">※ 같은 과목이라도 담당교수에 따라 평가 체계가 다를 수 있습니다. 기본안과 함께 참고하세요.</p>`
     }
   }
@@ -536,7 +588,9 @@ td.pt{width:26mm;background:#f6f7fb;font-size:9pt;white-space:nowrap;}
 .quiz-choices{margin:6px 0;padding-left:18px;font-size:9pt;}
 .quiz-ans{font-size:9.5pt;color:#1f7a4d;margin-top:4px;}
 .quiz-exp{font-size:9pt;color:var(--navy700);margin-top:4px;white-space:pre-line;}
-pre.code{background:#0f1229;color:#e6e9f5;border-radius:8px;padding:12px 14px;overflow:visible;white-space:pre-wrap;word-break:break-word;font-family:'SFMono-Regular',Consolas,monospace;font-size:8.3pt;line-height:1.55;margin:0;}
+pre.code{background:#0f1229;color:#e6e9f5;border-radius:8px;padding:12px 14px;overflow:visible;white-space:pre-wrap;word-break:break-word;font-family:'SFMono-Regular',Consolas,monospace;font-size:8.3pt;line-height:1.55;font-weight:700;margin:0;}
+pre.code code{display:block;}pre.code .cline{display:flex;}pre.code .ln{flex:0 0 auto;min-width:2em;text-align:right;padding-right:8px;margin-right:10px;color:#8a90c0;font-weight:400;user-select:none;border-right:1px solid rgba(255,255,255,.18);}pre.code .lc{flex:1 1 auto;min-width:0;}
+pre.code .tok-kw{color:#c586c0;}pre.code .tok-fn{color:#dcdcaa;}pre.code .tok-var{color:#9cdcfe;}pre.code .tok-str{color:#ce9178;}pre.code .tok-num{color:#d19a66;}
 p.note{margin:6px 0 0;font-size:9pt;color:var(--soft);line-height:1.6;}
 `
 
@@ -714,7 +768,9 @@ td.pt{width:150px;background:var(--surface-2);font-size:13px;white-space:nowrap;
 .copy-btn:focus-visible{outline:2px solid var(--light-indigo);outline-offset:1px;}
 .copy-btn.done{background:var(--gold);color:#1c1400;border-color:var(--gold);}
 pre.code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:16px 18px;overflow-x:auto;
-  white-space:pre;font-family:'SFMono-Regular',ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.62;margin:0;}
+  white-space:pre;font-family:'SFMono-Regular',ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.62;font-weight:700;margin:0;}
+pre.code code{display:block;}pre.code .cline{display:flex;}pre.code .ln{flex:0 0 auto;min-width:2.2em;text-align:right;padding-right:10px;margin-right:12px;color:#8a90c0;font-weight:400;user-select:none;border-right:1px solid rgba(255,255,255,.14);}pre.code .lc{flex:1 1 auto;min-width:0;}
+pre.code .tok-kw{color:#c586c0;}pre.code .tok-fn{color:#dcdcaa;}pre.code .tok-var{color:#9cdcfe;}pre.code .tok-str{color:#ce9178;}pre.code .tok-num{color:#d19a66;}
 p.note{margin:8px 0 0;font-size:13px;color:var(--soft);line-height:1.65;white-space:pre-line;}
 @media (max-width:820px){
   .tb{grid-template-columns:minmax(0,1fr);}          /* 단일 컬럼: 사이드바는 드로어로 분리 */
@@ -787,8 +843,18 @@ document.addEventListener('click', function (e) {
 document.addEventListener('click', function (e) {
   var btn = e.target.closest('.copy-btn');
   if (!btn) return;
-  var pre = btn.parentElement.querySelector('pre.code code') || btn.parentElement.querySelector('pre.code');
-  var text = pre ? pre.innerText : '';
+  var codeEl = btn.parentElement.querySelector('pre.code code');
+  // 줄번호(.ln)는 제외하고 코드 본문(.lc)만 복사 — 원본 코드만 클립보드로.
+  var text = '';
+  if (codeEl) {
+    var lcs = codeEl.querySelectorAll('.lc');
+    text = lcs.length
+      ? Array.prototype.map.call(lcs, function (el) { return el.textContent; }).join('\n')
+      : codeEl.innerText;
+  } else {
+    var pre = btn.parentElement.querySelector('pre.code');
+    text = pre ? pre.innerText : '';
+  }
   var done = function () {
     btn.classList.add('done');
     var prev = btn.textContent;

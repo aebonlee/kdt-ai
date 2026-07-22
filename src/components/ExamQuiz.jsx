@@ -143,7 +143,7 @@ export default function ExamQuiz({ subjectId, day, totalDays }) {
       <ExamBlock e={e} />
       {alt && (
         <>
-          <ExamBlock e={alt} title="📑 타 강사판 평가안 (참고)" />
+          <ExamBlock e={alt} title="📑 전임교수 평가안 (참고)" />
           <p style={{ marginTop: 8, fontSize: 12.5, color: 'var(--ink-soft)' }}>
             ※ 같은 과목이라도 담당교수에 따라 평가 체계가 다를 수 있습니다. 위 기본안과 함께 평가 방향을 참고하세요.
           </p>

@@ -95,8 +95,8 @@ if (existsSync(join(dist, 'practice-textbook.html'))) {
   assert(quizSecs === Object.keys(quizzes).length, `실습교안 퀴즈 섹션 ${quizSecs}`)
   // 담당 과목 평가기준 + 담당일정 외 참고용 평가기준(otherexams)이 함께 수록된다
   assert(examSecs === Object.keys(exams).length + Object.keys(otherExams).length, `실습교안 평가기준 섹션 ${examSecs} = 담당 ${Object.keys(exams).length} + 참고 ${Object.keys(otherExams).length}`)
-  const altSecs = (pt.match(/📑 타 강사판 평가안/g) || []).length
-  assert(altSecs === Object.keys(examsAlt).length, `실습교안 타 강사판 평가안 ${altSecs}`)
+  const altSecs = (pt.match(/📑 전임교수 평가안/g) || []).length
+  assert(altSecs === Object.keys(examsAlt).length, `실습교안 전임교수 평가안 ${altSecs}`)
   assert(!pt.includes('&amp;lt;') && !pt.includes('&amp;gt;'), '이중 이스케이프 없음')
   assert(pt.includes('class="copy-btn"') && pt.includes('class="cmt"'), '복사 버튼·녹색 주석 존재')
 }
