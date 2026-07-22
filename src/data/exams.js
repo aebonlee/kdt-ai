@@ -384,7 +384,7 @@ export const examsAlt = {
   },
 
   'transformer': {
-    variant: '박병선 강사안 (미니모델 체험형)',
+    variant: '2026.07.22. 506~510 공통강의 담당 박병선 전임교수 (미니모델 체험형 평가안내)',
     purpose:
       'Transformer 기반 소규모 미니 언어모델 구현 실습으로 언어모델의 핵심 원리를 체험하는 과정을 평가한다. 모델 구현 자체보다 Transformer의 작동 원리 이해가 목적이므로, PyTorch 기본 구조와 가이드 코드를 활용해 동작 과정을 경험하도록 구성한다. 실습 환경은 Google Colab을 권장한다.',
     tasks: [
