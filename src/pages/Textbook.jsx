@@ -274,8 +274,8 @@ export default function Textbook() {
             >
               🖨 인쇄 · PDF 저장
             </button>
-            <p className="tb-print-hint" style={{ margin: '7px 0 0', fontSize: 11.5, color: 'var(--ink-soft)', lineHeight: 1.55, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
-              💡 인쇄 미리보기에서 <b>&ldquo;배경 그래픽&rdquo;</b> 옵션을 켜면 코드·배지 색이 함께 나옵니다.
+            <p className="tb-print-hint" style={{ margin: '7px 0 0', fontSize: 12, fontWeight: 700, color: 'var(--navy-700)', lineHeight: 1.5, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+              💡 인쇄 미리보기에서 &ldquo;배경 그래픽&rdquo; 옵션을 켜면<br />코드·배지 색이 함께 나옵니다
             </p>
           </div>
           <span className="eyebrow">Textbook</span>
