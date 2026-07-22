@@ -1,0 +1,1 @@
+import{j as t}from"./index-BgR7k2MB.js";import"./react-vendor-DkQmGj46.js";import"./supabase-x7pv8hHy.js";function i(){return t.jsx("iframe",{title:"SKALA 4기 실습교안",src:"/practice-textbook.html",style:{display:"block",width:"100%",height:"calc(100vh - 110px)",border:0}})}export{i as default};
