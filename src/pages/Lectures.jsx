@@ -7,6 +7,7 @@ import Rich from '../components/Rich'
 import CodeBlock from '../components/CodeBlock'
 import Rating from '../components/Rating'
 import ExamQuiz from '../components/ExamQuiz'
+import { practiceGuides } from '../data/practiceGuides'
 import EtcCourse from '../components/EtcCourse'
 import { otherCourses } from '../data/othercontent'
 import { etcMonthlyDigest, otherPeriods, EVENT_LABELS } from '../data/othersessions'
@@ -564,6 +565,44 @@ export default function Lectures() {
                 </div>
               </>
             )}
+
+            {/* 종합실습 안내(전임교수 배포본) — 마지막 날, 복습퀴즈 위에 노출 */}
+            {!isRef && practiceGuides[current.subjectId] && current.day === (subj?.days?.length || 1) && (() => {
+              const g = practiceGuides[current.subjectId]
+              return (
+                <div style={{ marginTop: 28 }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '0 0 4px' }}>
+                    🧪 {g.title}
+                  </h3>
+                  <div className="box box-practice" style={{ marginTop: 12 }}>
+                    <p style={{ margin: '0 0 10px', color: 'var(--ink-soft)', fontSize: 13 }}>
+                      {g.intro} <span style={{ opacity: 0.7 }}>({g.source})</span>
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+                      {g.files.map((f) => (
+                        <a key={f.href} href={f.href} download className="btn btn-cta" style={{ fontSize: 13, padding: '8px 14px' }}>
+                          ⬇ {f.label}
+                        </a>
+                      ))}
+                    </div>
+                    {g.groups.map((grp) => (
+                      <div key={grp.h} style={{ marginTop: 12 }}>
+                        <div className="box-h" style={{ marginBottom: 6 }}>{grp.h}</div>
+                        {grp.note && <p style={{ margin: '0 0 6px', fontSize: 13.5, color: 'var(--navy-700)' }}>{grp.note}</p>}
+                        <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                          {grp.items.map((it, i) => (
+                            <li key={i} style={{ fontSize: 13.5, color: 'var(--navy-700)', lineHeight: 1.6 }}>{it}</li>
+                          ))}
+                        </ul>
+                        {grp.after && <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{grp.after}</p>}
+                      </div>
+                    ))}
+                    <p style={{ margin: '14px 0 0', fontSize: 14, fontWeight: 800, color: 'var(--gold)' }}>{g.deadline}</p>
+                    <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{g.submit}</p>
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* 종합실습 평가기준(첫날) · 복습 퀴즈(마지막날) */}
             {!isRef && (
