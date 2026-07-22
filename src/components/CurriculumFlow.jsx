@@ -26,6 +26,9 @@ export default function CurriculumFlow() {
     <svg viewBox="0 0 1180 470" width="100%" role="img"
       aria-label="전체 교육과정 흐름도 — 정규교과에서 본 프로젝트까지"
       style={{ display: 'block' }}>
+      {/* 자체 다크 배경 — 이 SVG는 다크 전제(근백색 글자·라임 셀)라, 라이트 모드
+         흰 카드 위에서도 글자가 보이도록 SVG 안에 다크 패널을 깔아 둔다. */}
+      <rect x="0" y="0" width="1180" height="470" rx="12" fill="#0c0e15" />
       <defs>
         <linearGradient id="cf-lime" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#22d3ee" /><stop offset="1" stopColor="#a3e635" />

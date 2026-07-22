@@ -1454,9 +1454,8 @@ kubectl expose deployment web --port=80 --type=NodePort   # 서비스로 노출`
 export const prepById = (id) => prepTopics.find((t) => t.id === id)
 
 // ── 참고자료 (이미지 + 외부 링크) ──
-export const refImages = [
-  { src: '/curriculum_graph.png', caption: 'SKALA 4기 전체 커리큘럼 흐름도' },
-]
+// 전체 커리큘럼 흐름도는 CurriculumFlow(SVG)로 대체됨 — 정적 이미지 제거(2026-07-22).
+export const refImages = []
 
 // 과목별 공식 문서 (강의 보조 자료)
 export const refGroups = [
