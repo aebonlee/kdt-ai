@@ -146,9 +146,10 @@ export const plans = {
         "다음 토큰 확률을 보려고 logits = model(input_ids).logits 의 마지막 위치(logits[0, -1])를 꺼내 probs = torch.softmax(그 값, dim=-1) 로 확률로 바꾼다.",
         "torch.topk(probs, 5) 로 가장 확률 높은 다음 토큰 5개와 확률을 출력한다.",
         "tokenizer.decode 로 그 5개 토큰을 사람이 읽는 단어로 바꿔 무엇을 예측했는지 확인한다.",
-        "프롬프트를 'The future of AI is' 와 'I love' 두 가지로 바꿔, 예측 단어가 어떻게 달라지는지 비교 캡처한다."
+        "프롬프트를 'The future of AI is' 와 'I love' 두 가지로 바꿔, 예측 단어가 어떻게 달라지는지 비교 캡처한다.",
+        "[제출물] 위 실습을 바탕으로 1~2페이지 '개발해석 보고서'를 작성한다 — ① 구현한 미니 언어모델(bigram→GPT-2) 구조, ② 이해한 Transformer 핵심 개념(토큰화·임베딩·Attention·다음 토큰 예측)을 자기 말로, ③ 생성 문장 예시와 모델의 한계를 실습 결과와 연결한 해석, ④ 실제 LLM과 미니모델의 차이·배운 점·개선 방향(성찰). 노트북(.ipynb)은 보조 자료로 함께 내면 좋다(선택)."
       ],
-      "deliverable": "GPT-2 생성 결과와 'top-5 다음 토큰 확률' 표가 담긴 노트북(.ipynb)"
+      "deliverable": "1~2페이지 개발해석 보고서(구현 모델 구조 + Transformer 핵심 개념 이해 + 결과 해석 + 성찰·개선방향)가 주 산출물. GPT-2 생성 결과·top-5 확률 노트북(.ipynb)은 선택(Optional). ※ 평가기준: 이해역량 55(구조이해 30·학습생성 25) + 해석역량 45(결과해석 25·성찰 20)"
     }
   },
   "python-1": {
