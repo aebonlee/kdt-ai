@@ -693,10 +693,26 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 /* Code block */
 .codeblock {
   background: #0d1230; color: #e6e9f5; border-radius: var(--radius);
-  padding: 16px 18px; overflow-x: auto; margin: 0;
+  padding: 16px 14px; overflow-x: auto; margin: 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.65;
 }
-.codeblock .cmt { color: #98c379; font-style: italic; }
+.codeblock code { display: block; }
+/* 줄번호 거터 + 코드 본문(라인 단위 flex) */
+.codeblock .cline { display: flex; }
+.codeblock .ln {
+  flex: 0 0 auto; min-width: 2.2em; text-align: right;
+  padding-right: 12px; margin-right: 12px;
+  color: #5a6597; opacity: 0.85; user-select: none;
+  border-right: 1px solid rgba(255,255,255,0.09);
+}
+.codeblock .lc { flex: 1 1 auto; white-space: pre; }
+/* 구문 강조 토큰 색 (다크 코드 배경 기준 · 라이트/다크 공통 — 코드블록은 항상 다크) */
+.codeblock .cmt    { color: #98c379; font-style: italic; }  /* 주석 = 녹색 */
+.codeblock .tok-kw  { color: #c586c0; }                     /* 키워드 = 보라 */
+.codeblock .tok-fn  { color: #dcdcaa; }                     /* 함수 = 노랑 */
+.codeblock .tok-var { color: #9cdcfe; }                     /* 변수 = 하늘 */
+.codeblock .tok-str { color: #ce9178; }                     /* 문자열 = 살몬 */
+.codeblock .tok-num { color: #d19a66; }                     /* 숫자 = 주황 */
 /* 평가기준 · 퀴즈 섹션 (강의안) */
 .exam-sub { font-weight: 800; color: var(--navy-800); font-size: 15px; margin: 16px 0 7px; }
 .exam-tablewrap { overflow-x: auto; margin: 8px 0; }
