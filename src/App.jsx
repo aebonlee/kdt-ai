@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import Header from './components/Header'
+import SideNav from './components/SideNav'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import RequireAuth from './components/RequireAuth'
@@ -52,6 +53,7 @@ export default function App() {
     <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
       <ScrollToTop />
       <Header />
+      <SideNav />
       <ClassOnboarding />
       <main style={{ flex: 1 }}>
         <Suspense fallback={<PageFallback />}>
