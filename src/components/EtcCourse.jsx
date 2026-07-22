@@ -9,12 +9,20 @@ import { otherSessions, TRACKS } from '../data/othersessions'
 import CodeBlock from './CodeBlock'
 import Rating from './Rating'
 import { ExamBlock } from './ExamQuiz'
+import PracticeSupplement from './PracticeSupplement'
 
 const fmt = (d) => `${d.slice(5, 7)}-${d.slice(8, 10)}`
+// 실습교수 작성분(origin:'practice') 판정 — 본문에서 빼 블록 말미 보충자료로 묶는다.
+const isPractice = (x) => x?.origin === 'practice'
+const notPractice = (x) => !isPractice(x)
 
 export default function EtcCourse({ courseId }) {
   const c = otherCourses[courseId]
   const deep = otherDeep[courseId] || {}
+  const mainConcepts = (deep.concepts || []).filter(notPractice)
+  const mainExamples = (deep.examples || []).filter(notPractice)
+  const suppConcepts = (deep.concepts || []).filter(isPractice)
+  const suppExamples = (deep.examples || []).filter(isPractice)
   if (!c) {
     return (
       <div>
@@ -64,11 +72,11 @@ export default function EtcCourse({ courseId }) {
         </>
       )}
 
-      {deep.concepts?.length > 0 && (
+      {mainConcepts.length > 0 && (
         <>
           <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>📚 핵심 개념</h3>
           <div className="grid grid-2" style={{ marginTop: 12 }}>
-            {deep.concepts.map((k, i) => (
+            {mainConcepts.map((k, i) => (
               <dl key={i} className="concept">
                 <dt>{k.term}</dt>
                 <dd style={{ whiteSpace: 'pre-line' }}><Rich text={k.desc} /></dd>
@@ -78,11 +86,11 @@ export default function EtcCourse({ courseId }) {
         </>
       )}
 
-      {deep.examples?.length > 0 && (
+      {mainExamples.length > 0 && (
         <>
           <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>💻 따라하기 실습</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
-            {deep.examples.map((ex, i) => (
+            {mainExamples.map((ex, i) => (
               <div key={i}>
                 <div className="box-h" style={{ marginBottom: 8 }}>
                   {ex.title} <span style={{ fontWeight: 600, color: 'var(--ink-soft)', fontSize: 12 }}>({ex.lang})</span>
@@ -96,6 +104,9 @@ export default function EtcCourse({ courseId }) {
           </div>
         </>
       )}
+
+      {/* 실습교수 작성분(origin:'practice')을 블록 말미 보충자료로 묶는다 */}
+      <PracticeSupplement concepts={suppConcepts} examples={suppExamples} />
 
       {c.tip && (
         <div className="box box-tips" style={{ marginTop: 20 }}>

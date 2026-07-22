@@ -8,6 +8,7 @@ import Rating from '../components/Rating'
 import ExamQuiz from '../components/ExamQuiz'
 import { practiceGuides } from '../data/practiceGuides'
 import EtcCourse from '../components/EtcCourse'
+import PracticeSupplement from '../components/PracticeSupplement'
 import { otherCourses } from '../data/othercontent'
 
 // 실습교안 — 네이티브 React 렌더(과거 practice-textbook.html iframe 임베드를 대체).
@@ -19,6 +20,9 @@ const modeClass = (tag) =>
 
 const subjectModules = import.meta.glob('../data/lectures/*.js', { import: 'default' })
 const mainSubjects = subjects.filter((s) => !s.reference)
+// 실습교수(반별 투입 강사) 작성분 판정 — origin:'practice' (§Dev_md 53). 본문에서 빼 과목 말미로 묶는다.
+const isPractice = (x) => x?.origin === 'practice'
+const notPractice = (x) => !isPractice(x)
 const etcEntries = Object.entries(otherCourses).map(([id, c]) => ({ id, ...c }))
 const H3 = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 
@@ -29,7 +33,8 @@ function DayBlock({ subj, day, dd }) {
   const mode = modeOf(subj.id, day)
   const periodTags = periodTagsOf(subj.id, day)
   const plan = dd?.plan || null
-  const codeExamples = dd?.examples || []
+  // 실습교수 작성분(origin:'practice')은 본문 실습예제에서 빼고 과목 말미 보충자료로 모은다.
+  const codeExamples = (dd?.examples || []).filter(notPractice)
   const keyConcepts = dd?.concepts || []
   const detail = dd?.detail || null
   const deepTheory = dd?.theory || null
@@ -326,6 +331,10 @@ export default function Textbook() {
                     {subj.days.map((_, i) => (
                       <DayBlock key={i} subj={subj} day={i + 1} dd={mod?.[`${subj.id}-${i + 1}`]} />
                     ))}
+                    {/* 과목 말미 — 전 일차에 흩어진 실습교수 작성분(origin:'practice')을 한곳에 모은다 */}
+                    <PracticeSupplement
+                      examples={subj.days.flatMap((_, i) => (mod?.[`${subj.id}-${i + 1}`]?.examples || []).filter(isPractice))}
+                    />
                   </div>
                 )}
               </>
