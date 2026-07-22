@@ -752,14 +752,18 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   font-size: 11px; font-weight: 800; color: #fff;
   padding: 2px 8px; border-radius: 999px; white-space: nowrap; margin-top: 1px;
 }
-.layout-side { grid-template-columns: minmax(0, 1fr); }
-.layout-side > * { min-width: 0; }
-.side-nav { position: static; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 6px; max-height: none; padding: 0 0 8px; -webkit-overflow-scrolling: touch; }
-.side-nav > div { display: flex; gap: 6px; }
-.side-nav-title { display: none; }
-.side-link { white-space: nowrap; width: auto; flex: 0 0 auto; }
-.side-link .sl-sub { display: none; }
-.plan-row { grid-template-columns: 1fr; gap: 4px; }
+/* 좁은 화면(≤900px)에서만 좌측 메뉴를 상단 가로 스크롤로 접는다.
+   ⚠ 이 블록이 @media 밖으로 새어나가면 데스크톱에서도 좌측 메뉴가 상단으로 강제된다(회귀 주의). */
+@media (max-width: 900px) {
+  .layout-side { grid-template-columns: minmax(0, 1fr); }
+  .layout-side > * { min-width: 0; }
+  .side-nav { position: static; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 6px; max-height: none; padding: 0 0 8px; -webkit-overflow-scrolling: touch; }
+  .side-nav > div { display: flex; gap: 6px; }
+  .side-nav-title { display: none; }
+  .side-link { white-space: nowrap; width: auto; flex: 0 0 auto; }
+  .side-link .sl-sub { display: none; }
+  .plan-row { grid-template-columns: 1fr; gap: 4px; }
+}
 /* ── Footer ── */
 .footer { margin-top: var(--s-9); background: var(--ink-surface); color: rgba(255,255,255,0.78); }
 .footer h4 { color: #fff; font-size: 16px; font-weight: 800; margin-bottom: 8px; }
