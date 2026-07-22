@@ -777,37 +777,6 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 .footer .foot-bottom { display: block; }
 .footer .credit { margin-top: 6px; text-align: left; }
 
-/* ── 왼쪽 세로 2차 메뉴(SideNav) — 데스크톱 전용, 스크롤해도 항상 보임 ──
-   상단 메뉴가 스크롤로 사라져도 좌측에서 항상 이동 가능하게. 모바일은 숨김(햄버거 유지). */
-.sidenav { display: none; }
-@media (min-width: 1200px) {
-  .sidenav {
-    display: flex; flex-direction: column;
-    position: fixed; top: 116px; left: 16px; width: 196px; z-index: 90;
-    max-height: calc(100vh - 140px); overflow-y: auto;
-    padding: 14px 12px; border-radius: 14px;
-    background: var(--bg-white); border: 1px solid var(--line);
-    box-shadow: var(--shadow-md);
-  }
-  .sidenav-title {
-    font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
-    color: var(--ink-soft); text-transform: uppercase; padding: 0 8px 10px;
-  }
-  .sidenav-list { display: flex; flex-direction: column; gap: 2px; }
-  .sidenav-link {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 10px; border-radius: 9px;
-    font-size: 14px; font-weight: 700; color: var(--navy-700);
-    text-decoration: none; transition: var(--transition-base);
-  }
-  .sidenav-link:hover { background: var(--ink-surface-hover); color: var(--navy-900); }
-  .sidenav-link.active { background: var(--gold); color: #fff; }
-  .sidenav-ico { font-size: 15px; width: 18px; text-align: center; }
-  /* 레일이 있을 때만 본문·푸터를 오른쪽으로 밀어 겹침 방지 */
-  body.has-sidenav main,
-  body.has-sidenav .footer { padding-left: 228px; }
-}
-
 /* ═══════════════════════════════════════════════════════════════
    라이트 테마 — :root(다크)의 시맨틱 토큰을 라이트로 재정의(재역전).
    설계: 히어로·토픽바(브랜드칩)·푸터·버튼 등 '다크 크롬'은 라이트에서도
@@ -861,4 +830,11 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 /* 스크롤바·세로 메뉴 hover 라이트 톤 */
 [data-theme="light"] ::-webkit-scrollbar-thumb { background: #c7cfe0; border-color: var(--bg-page); }
 [data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #aeb8cf; }
-[data-theme="light"] .sidenav-link:hover { background: #eef2f9; color: var(--navy-900); }
+
+/* 하드코딩 다크였던 좌측 필터탭·칩을 라이트 톤으로(월탭·카테고리·날짜 칩) */
+[data-theme="light"] .month-tab { background: #fff; border-color: var(--line-strong); color: var(--navy-600); }
+[data-theme="light"] .month-tab:hover { border-color: var(--gold); color: var(--navy-900); }
+[data-theme="light"] .month-tab.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+[data-theme="light"] .chip-cat,
+[data-theme="light"] .chip-day { background: var(--navy-50); border-color: var(--line); color: var(--navy-700); }
+/* 코드 칩(8-2 등)·코드블록은 라이트에서도 다크 유지(가독성·관례) */
