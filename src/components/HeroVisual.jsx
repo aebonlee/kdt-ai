@@ -12,9 +12,9 @@ const TRACKS = [
 
 // 외곽 행성 3개 — 팔레트 액센트(--a1/--a2)를 따라 함께 색이 바뀐다.
 const PLANETS = [
-  { label: 'AI', x: 52, y: 58, r: 17, ring: -16, color: 'var(--a1)', delay: 0 },
-  { label: 'AX', x: 428, y: 246, r: 14, ring: 14, color: 'var(--a2)', delay: 1.4 },
-  { label: 'Dev', x: 64, y: 352, r: 12, ring: -22, color: 'color-mix(in srgb, var(--a1) 50%, var(--a2))', delay: 2.6 },
+  { label: 'AI', x: 26, y: 34, r: 22, ring: -16, color: 'var(--a1)', delay: 0 },
+  { label: 'AX', x: 442, y: 318, r: 18, ring: 14, color: 'var(--a2)', delay: 1.4 },
+  { label: 'Dev', x: 36, y: 378, r: 16, ring: -22, color: 'color-mix(in srgb, var(--a1) 50%, var(--a2))', delay: 2.6 },
 ]
 
 const pos = (angle, r, cx = 230, cy = 210) => ({
