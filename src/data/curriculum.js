@@ -94,6 +94,52 @@ export const subjects = [
     ],
   },
   {
+    // 같은 과목명이지만 담당 전임교수·실습 구성이 완전히 다른 별개 커리큘럼 —
+    // transformer(판교 5층 7반·박병선, 미니모델 체험형)와 분리 운영한다 (2026-07-23 대표 확정).
+    id: 'transformer2',
+    code: '8-2B',
+    level: 3,   // 난이도 1하 2중 3상
+    weight: 3,  // 중요도 1~3
+    name: 'LLM과 Transformer 아키텍처 Ⅱ',
+    category: 'LLM · Agent',
+    summary: 'LSTM 대비 Transformer의 개선을 문장 생성 실습으로 체감하고, CrewAI 에이전트로 LLM을 API 레벨에서 활용한다 (판교 4층 2반 · 임성열 커리큘럼)',
+    days: [
+      {
+        title: 'LSTM vs Transformer — 문장 생성으로 구조 비교',
+        objectives: [
+          'LLM의 입력 처리(토큰화·임베딩)와 다음 토큰 예측 이해',
+          'RNN·LSTM의 장기 의존성 한계를 문장 생성 실습으로 직접 확인',
+          'Self-Attention(Q·K·V)과 softmax 확률화의 원리 이해',
+          '벡터 거리(맨해튼·유클리드)와 임베딩 유사도의 감각 익히기',
+        ],
+        contents: [
+          '언어모델이란: 다음 토큰 예측과 확률 분포',
+          '토큰화와 임베딩, 벡터 공간 — 벡터 거리(맨해튼·유클리드)와 유사도',
+          'RNN·LSTM의 순차 처리와 장기 의존성·병렬화 한계',
+          'Self-Attention 과 Query·Key·Value, softmax 로 확률 만들기',
+          '실습1-1: PyTorch LSTM(CharLSTM)으로 한국어 문장 생성',
+          '실습1-2: 사전학습 GPT-2로 같은 과제 재생성·비교',
+        ],
+      },
+      {
+        title: 'LLM API 활용과 CrewAI 에이전트 개발',
+        objectives: [
+          'LLM 추론(Inference) 파이프라인과 토큰=비용 구조 이해',
+          'CrewAI의 Agent·Task·Crew로 협업 에이전트 파이프라인 구성',
+          '가상데이터 기반 Biz 가치 있는 AI 서비스 시나리오 기획·발표',
+        ],
+        contents: [
+          'LLM 추론 파이프라인: 토큰화→임베딩→Self-Attention→자기회귀 생성',
+          'API 레벨 활용: 스트리밍·컨텍스트 윈도우·usage(토큰=비용)',
+          '프롬프트 기법 복습: CoT · Self-Consistency · ReAct',
+          'CrewAI: Agent(role·goal·backstory)·Task·Crew(sequential)·kickoff',
+          '실습2: 팀 에이전트 구현 + 가상데이터 기반 서비스 시나리오 기획',
+          '팀별 발표·평가 (Biz가치 40 · 기술이해도 30 · 수업충실도 30)',
+        ],
+      },
+    ],
+  },
+  {
     id: 'python',
     code: '7-1',
     level: 1,   // 난이도 1하 2중 3상
@@ -881,11 +927,12 @@ export const sessions = [
   { date: '2026-07-14', weekday: '화', region: '판교', klass: '5층', subjectId: 'git', day: 1 },
   { date: '2026-07-15', weekday: '수', region: '울산', klass: '', subjectId: 'python', day: 1 },
   { date: '2026-07-16', weekday: '목', region: '울산', klass: '', subjectId: 'python', day: 2 },
-  // LLM과 Transformer 아키텍처 — 판교 두 분반(5층 먼저, 4층 다음 — 실시간 배정표 2026-07-12 기준)
+  // LLM과 Transformer 아키텍처 — 판교 두 분반, 담당 전임교수가 달라 별개 과목으로 분리
+  // (5층 7반 = 박병선·transformer / 4층 2반 = 임성열·transformer2, 2026-07-23 대표 확정)
   { date: '2026-07-21', weekday: '화', region: '판교', klass: '5층', subjectId: 'transformer', day: 1 },
   { date: '2026-07-22', weekday: '수', region: '판교', klass: '5층', subjectId: 'transformer', day: 2 },
-  { date: '2026-07-23', weekday: '목', region: '판교', klass: '4층', subjectId: 'transformer', day: 1 },
-  { date: '2026-07-24', weekday: '금', region: '판교', klass: '4층', subjectId: 'transformer', day: 2 },
+  { date: '2026-07-23', weekday: '목', region: '판교', klass: '4층', subjectId: 'transformer2', day: 1 },
+  { date: '2026-07-24', weekday: '금', region: '판교', klass: '4층', subjectId: 'transformer2', day: 2 },
   { date: '2026-07-31', weekday: '금', region: '판교', klass: '5층', subjectId: 'vue', day: 1 },
 
   // ── 8월 (9일) ──

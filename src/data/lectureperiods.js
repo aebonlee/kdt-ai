@@ -25,6 +25,27 @@ export const periods = {
     "원격 사용법: clone·push·pull · Sync Changes",
     "(심화) 브랜치 · 머지 · 충돌 · PR 협업"
   ],
+  // ── 2반(판교 4층·임성열, 07-23~24) — 별개 커리큘럼 (LSTM vs Transformer + CrewAI) ──
+  "transformer2-1": [
+    "[강의] LLM이 뭐길래? '다음 단어 맞히기' 게임으로 시작하기",
+    "[강의] 토큰화와 임베딩 — 벡터 공간과 거리(맨해튼·유클리드)·유사도",
+    "[강의] RNN·LSTM의 한계 — 순차 처리와 장기 의존성",
+    "[강의] Self-Attention과 Query·Key·Value, softmax로 확률 만들기",
+    "[실습] 실습1-1 — PyTorch LSTM(CharLSTM)으로 한국어 문장 생성",
+    "[실습] 실습1-1 — 장기 의존성 한계 관찰·생성 결과 캡처",
+    "[실습] 실습1-2 — 사전학습 GPT-2로 같은 과제 재생성",
+    "[실습] 실습1 마무리 — LSTM vs Transformer 비교 리포트 작성",
+  ],
+  "transformer2-2": [
+    "[강의] 복습: LSTM→Transformer, LLM 추론(Inference) 파이프라인",
+    "[강의] LLM을 API 레벨에서 쓰기 — 토큰=비용(usage)·CoT·SC·ReAct 복습",
+    "[강의+실습] CrewAI 개념(Agent·Task·Crew) + 실습2 착수(팀 편성·.env)",
+    "[실습] 실습2 ① Agent 정의 — Writer·Editor role·goal·backstory",
+    "[실습] 실습2 ② Task·Crew 구성·kickoff 실행, usage로 비용 비교",
+    "[실습] 실습2 ③ 가상데이터로 Biz 가치·서비스 시나리오 기획",
+    "[실습] 실습2 ④ 팀 코드·발표자료(최소 3p) 마무리·리허설",
+    "[발표] 팀별 발표·평가 — Biz가치 40 · 기술이해도 30 · 수업충실도 30",
+  ],
   "transformer-1": [
     "[강의] LLM이 뭐길래? '다음 단어 맞히기' 게임으로 시작하기",
     "[강의] 토큰화(BPE)와 임베딩 — 글자를 숫자 벡터로 바꾸기",

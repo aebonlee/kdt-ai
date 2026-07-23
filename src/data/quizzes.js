@@ -1263,3 +1263,6 @@ export const quizzes = {
     }
   ]
 }
+
+// transformer2(2반·임성열)는 같은 과목 주제라 복습 퀴즈를 transformer(7반)와 공유한다 (2026-07-23 분리 시).
+quizzes['transformer2'] = quizzes['transformer']

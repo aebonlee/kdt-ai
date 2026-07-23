@@ -336,6 +336,28 @@ export default function Lectures() {
               </>
             )}
 
+            {/* 개념 도해 (plan.figures — 수업 중 시각 자료) */}
+            {plan?.figures?.length > 0 && (
+              <>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }}>
+                  📐 개념 도해
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
+                  {plan.figures.map((f) => (
+                    <figure key={f.src} className="card" style={{ margin: 0, padding: 16 }}>
+                      <div className="box-h" style={{ marginBottom: 10 }}>{f.title}</div>
+                      <img src={f.src} alt={f.title} style={{ width: '100%', maxWidth: 760, display: 'block', borderRadius: 10 }} />
+                      {f.caption && (
+                        <figcaption style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                          <Rich text={f.caption} />
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              </>
+            )}
+
             {/* 심화 이론 */}
             {deepTheory?.theory?.length > 0 && (
               <>

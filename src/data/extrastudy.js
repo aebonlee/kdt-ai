@@ -208,3 +208,6 @@ export const extraStudy = {
 }
 
 export const extraStudyFor = (id) => extraStudy[id] || null
+
+// transformer2(2반·임성열) — 도전과제·심화링크는 transformer와 공유 (2026-07-23 분리 시).
+extraStudy['transformer2'] = extraStudy['transformer']

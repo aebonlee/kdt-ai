@@ -79,6 +79,25 @@ function DayBlock({ subj, day, dd }) {
         </>
       )}
 
+      {plan?.figures?.length > 0 && (
+        <>
+          <h3 style={H3}>📐 개념 도해</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
+            {plan.figures.map((f) => (
+              <figure key={f.src} className="card" style={{ margin: 0, padding: 16 }}>
+                <div className="box-h" style={{ marginBottom: 10 }}>{f.title}</div>
+                <img src={f.src} alt={f.title} style={{ width: '100%', maxWidth: 760, display: 'block', borderRadius: 10 }} />
+                {f.caption && (
+                  <figcaption style={{ marginTop: 8, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.7, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                    <Rich text={f.caption} />
+                  </figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        </>
+      )}
+
       {deepTheory?.theory?.length > 0 && (
         <>
           <h3 style={H3}>📘 심화 이론</h3>
@@ -286,7 +305,7 @@ export default function Textbook() {
           <span className="eyebrow">Textbook</span>
           <h1>실습교안</h1>
           <p>
-            <span style={{ display: 'block' }}>담당 18과목의 일차별 강의안·실습·예제·평가기준·복습퀴즈를 한 곳에서 봅니다.</span>
+            <span style={{ display: 'block' }}>담당 {mainSubjects.length}과목의 일차별 강의안·실습·예제·평가기준·복습퀴즈를 한 곳에서 봅니다.</span>
             <span style={{ display: 'block' }}>좌측에서 과목을 선택하면 해당 과목만 불러옵니다. (인쇄 버튼으로 PDF 저장)</span>
           </p>
         </div>

@@ -51,6 +51,47 @@ export const examples = {
       "note": "공개키(.pub)는 자물쇠라 남에게 줘도 되지만, 개인키는 그 자물쇠를 여는 유일한 열쇠라 내 컴퓨터 밖으로 절대 내보내지 않는다.\n한 번 등록해 두면 이후 GitHub 인증이 자동으로 된다."
     }
   ],
+  // ── 2반(판교 4층·임성열) — practice_1-1/1-2/2 노트북 실물 기준 예제 ──
+  "transformer2-1": [
+    {
+      "title": "CharLSTM — 문자 단위 LSTM 언어모델 뼈대 (practice_1-1)",
+      "lang": "python",
+      "code": "import torch\nimport torch.nn as nn\n\n# Embedding -> LSTM -> Linear : '다음 문자 예측' 언어모델\nclass CharLSTM(nn.Module):\n    def __init__(self, input_size, hidden_size=50, num_layers=2):\n        super().__init__()\n        self.embedding = nn.Embedding(input_size, hidden_size)  # 문자 -> 벡터\n        self.lstm = nn.LSTM(hidden_size, hidden_size, num_layers, batch_first=True)  # 순차 처리\n        self.fc = nn.Linear(hidden_size, input_size)            # 다음 문자 점수(logits)\n\n    def forward(self, x, hidden=None):\n        x = self.embedding(x)\n        out, hidden = self.lstm(x, hidden)   # hidden(기억)을 다음 스텝으로 전달\n        return self.fc(out), hidden",
+      "note": "hidden_size=50은 LSTM의 '기억 공간' 크기다. 문장이 길어질수록 이 고정 크기 기억에 앞 문맥이 눌려 담기며 흐려진다 — 오늘 실습에서 직접 관찰할 장기 의존성 한계의 원인이다."
+    },
+    {
+      "title": "사전학습 GPT-2로 같은 과제 다시 풀기 (practice_1-2)",
+      "lang": "python",
+      "code": "from transformers import GPT2LMHeadModel, GPT2Tokenizer\nimport torch\n\ntokenizer = GPT2Tokenizer.from_pretrained('gpt2')   # 토크나이저 로드\nmodel = GPT2LMHeadModel.from_pretrained('gpt2')     # 사전학습 Transformer 로드\n\ninputs = tokenizer('The future of AI is', return_tensors='pt')\nout = model.generate(\n    inputs['input_ids'],\n    attention_mask=inputs['attention_mask'],\n    max_length=40,\n    do_sample=True, temperature=0.8, top_k=50,\n    pad_token_id=tokenizer.eos_token_id,  # GPT-2는 pad 토큰이 없어 eos로 대체\n)\nprint(tokenizer.decode(out[0], skip_special_tokens=True))",
+      "note": "직접 학습한 소형 LSTM과 달리, GPT-2는 대규모 코퍼스로 미리 학습된 Transformer다. Self-Attention이 모든 위치를 한 번에 참조하므로 긴 문장에서도 앞 문맥이 유지된다 — 보고서에서 이 차이를 자신의 말로 비교한다."
+    },
+    {
+      "title": "맨해튼·유클리드 거리 직접 계산 — 임베딩 '가까움'의 척도",
+      "lang": "python",
+      "code": "import numpy as np\n\na = np.array([1, 1])   # 지점 A (임베딩 벡터라고 생각해도 된다)\nb = np.array([5, 4])   # 지점 B\n\nmanhattan = np.abs(a - b).sum()          # |dx| + |dy| = 4 + 3\neuclidean = np.sqrt(((a - b) ** 2).sum())  # sqrt(4^2 + 3^2)\n\nprint('맨해튼 거리(L1):', manhattan)   # 7  — 격자 골목만 따라 이동(택시 거리)\nprint('유클리드 거리(L2):', euclidean) # 5.0 — 자로 잰 직선 거리\n\n# 코사인 유사도 — 거리 대신 '방향(각도)'으로 비슷함을 잰다 (고차원 임베딩 비교의 표준)\ncos = (a @ b) / (np.linalg.norm(a) * np.linalg.norm(b))\nprint('코사인 유사도:', round(float(cos), 4))",
+      "note": "임베딩 공간에서 '비슷한 의미 = 가까운 벡터'다. 무엇으로 가까움을 재느냐(맨해튼 L1 · 유클리드 L2 · 코사인)가 오늘 배우는 벡터 공간 감각의 출발점이다."
+    }
+  ],
+  "transformer2-2": [
+    {
+      "title": "CrewAI — Agent 정의 (Writer·Editor 역할 분담)",
+      "lang": "python",
+      "code": "from crewai import Agent\n\nwriter = Agent(\n    role='Writer',                        # 역할 이름\n    goal='주제에 맞는 초안을 작성한다',   # 이 에이전트의 목표\n    backstory='간결한 글을 잘 쓰는 작가', # 성격·배경(프롬프트에 반영됨)\n    llm='gpt-4o',                         # 사용할 LLM\n)\n\neditor = Agent(\n    role='Editor',\n    goal='초안을 사실 확인하고 다듬는다',\n    backstory='꼼꼼한 편집자. 과장된 표현을 걷어낸다',\n    llm='gpt-4o',\n)",
+      "note": "role·goal·backstory가 곧 시스템 프롬프트가 된다. 팀 과제에서는 데모의 역할 구성을 그대로 내지 말고, 우리 팀 시나리오에 맞는 역할로 바꾸는 것이 평가 포인트(기술이해도)다."
+    },
+    {
+      "title": "Task와 Crew — Plan→Write→Edit 파이프라인 실행",
+      "lang": "python",
+      "code": "from crewai import Task, Crew, Process\n\nwrite_task = Task(\n    description='주제: {topic}. 단계적으로 생각(CoT)한 뒤 500자 초안을 작성해줘.',\n    agent=writer,\n    expected_output='500자 내외의 초안',\n)\nedit_task = Task(\n    description='초안의 사실관계를 확인하고 문장을 다듬어줘.',\n    agent=editor,\n    expected_output='최종 원고',\n)\n\ncrew = Crew(agents=[writer, editor], tasks=[write_task, edit_task],\n            process=Process.sequential)   # 순차 실행: Write -> Edit\nresult = crew.kickoff(inputs={'topic': '우리 팀 서비스 시나리오'})\nprint(result)",
+      "note": "kickoff() 한 번에 Task들이 순서대로 실행된다. 각 Task의 output이 다음 Task의 문맥으로 넘어가는 것이 에이전트 협업의 핵심이다."
+    },
+    {
+      "title": "usage로 토큰=비용 확인 — 호출 최적화의 근거",
+      "lang": "python",
+      "code": "# 다단계 에이전트는 매 호출마다 추론 파이프라인 전체를 반복한다\n# -> 호출 수 x 토큰 수가 곧 비용·지연이 된다\nprint(crew.usage_metrics)\n# 예) prompt_tokens=1830, completion_tokens=642, total_tokens=2472\n\n# 절약 수칙 (반별 공용 크레딧)\n# 1) 프롬프트에 불필요한 긴 원문을 통째로 넣지 않는다(필요 부분만)\n# 2) 같은 요청을 반복 호출하지 않는다(결과 재사용)\n# 3) max_tokens를 과대 설정하지 않는다\n# 4) 같은 의미라도 한국어가 영어보다 토큰을 더 소모한다는 점을 감안한다",
+      "note": "usage(토큰 사용량)를 읽을 줄 알면 '왜 느리고 왜 비싼가'를 수치로 설명할 수 있다 — 발표에서 Biz 가치(비용 구조)를 말할 때 근거로 쓰자."
+    }
+  ],
   "transformer-1": [
     {
       "title": "토크나이저로 문장을 토큰으로 쪼개기",
