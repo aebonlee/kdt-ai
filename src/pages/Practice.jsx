@@ -144,7 +144,7 @@ export default function Practice() {
                         <span style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>📎 제출: {log.submission}</span>
                       )}
                       <Link to={`/lectures/${date}`} className="btn btn-ghost" style={{ padding: '5px 12px', fontSize: 12 }}>
-                        이날 강의안 →
+                        실습강의안 →
                       </Link>
                     </div>
                   </div>
