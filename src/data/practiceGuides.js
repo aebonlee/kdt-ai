@@ -54,6 +54,8 @@ export const practiceGuides = {
       { label: 'requirements-llm.txt — 실습1·2(LSTM·GPT-2·CrewAI) 환경', href: '/materials/requirements-llm.txt' },
       { label: 'requirements-prompt.txt — practice_0(프롬프트·RAG) 환경', href: '/materials/requirements-prompt.txt' },
       { label: 'paper-attention.pdf — 원논문 "Attention Is All You Need"', href: '/materials/paper-attention.pdf' },
+      { label: 'fashion_coordinator.ipynb — 실습2 발표과제 템플릿(임성열 전임교수 추가 공유)', href: '/materials/fashion_coordinator.ipynb' },
+      { label: 'fashion_data.csv — 템플릿용 옷장 데이터(100벌)', href: '/materials/fashion_data.csv' },
     ],
     groups: [
       {
@@ -72,6 +74,7 @@ export const practiceGuides = {
         items: [
           '에이전트 구성 (practice_2) — Agent(role·goal·backstory) 여러 개를 정의하고 Task·Crew로 묶어 순차/협업 파이프라인을 만듭니다.\n예제는 기획자 → 작성자 → 편집자 3인 협업 구조입니다.',
           '시나리오 기획 — 우리 팀이 만들 서비스가 누구에게(이해관계자) 어떤 가치를 주는지, 왜 에이전트를 그렇게 나눴는지를 설계합니다.',
+          '발표과제 템플릿 참고 (fashion_coordinator) — CSV(도메인 데이터) 주입, 검색도구 선택 사용, 데이터에 없는 항목 날조 금지 가드레일이 담긴 실전형 예제입니다.\n옷장 CSV를 우리 팀 도메인(메뉴·여행지·부품 등)으로 갈아끼우고 role·goal을 바꿔 변형하세요.\n학습 목적으로만 활용합니다.',
           '실행·검증 — Crew를 실행해 각 Task의 output과 최종 결과(CrewOutput)를 확인하고, 수업 개념(토큰화·임베딩·Self-Attention·자기회귀 생성 등) 중 최소 1개를 설계와 연결해 설명합니다.',
         ],
         after: '발표자료(최소 3페이지): 1p 시나리오·Biz 가치 / 2p 에이전트·Task 설계 근거 / 3p 실행 결과와 수업개념 반영.\n팀 편성은 좌석표 기준(6인석 → 3+3, 4인석 → 4인).',
