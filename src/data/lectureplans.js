@@ -102,54 +102,45 @@ export const plans = {
       }
     ],
     "practice": {
-      "title": "Self-Attention을 NumPy로 한 줄씩 만들고 가중치를 시각화하기",
+      "title": "실습1. 딥러닝(LSTM) vs Transformer 문장 생성 비교 — 개인 (practice_1-1, practice_1-2)",
       "steps": [
-        "Colab 새 노트북을 열고 첫 셀에 `import numpy as np` 와 `import matplotlib.pyplot as plt` 를 입력해 실행한다.",
-        "예문 '나는 학교에 갔다' 를 3개 토큰으로 보고, 각 토큰의 임베딩을 4차원 난수 행렬 X(3x4)로 만든다(np.random.seed(0)로 고정).",
-        "가중치 행렬 Wq, Wk, Wv 를 각각 4x4 난수로 만들고 Q=X@Wq, K=X@Wk, V=X@Wv 를 계산한다.",
-        "점수 행렬 scores = Q@K.T 를 구하고 sqrt(차원수=4)로 나눠 스케일링한다.",
-        "softmax 함수를 직접 정의해 scores 의 각 행을 확률(합=1)로 바꿔 attention 가중치 A 를 만든다.",
-        "print(A.sum(axis=1)) 로 각 행의 합이 1.0 인지 확인한다(기대 결과: [1. 1. 1.]).",
-        "출력 output = A@V 를 계산하고 shape 이 (3,4)인지 print(output.shape)로 확인한다(기대 결과: (3, 4)).",
-        "plt.imshow(A) 와 plt.colorbar() 로 가중치 히트맵을 그리고, 어떤 토큰이 어떤 토큰을 많이 보는지 눈으로 확인한다.",
-        "토큰 라벨(나는/학교에/갔다)을 x·y축에 붙여 그림을 캡처한다."
+        "제공된 code.zip을 풀고 VS Code에서 실습 폴더를 연 뒤 `python3 -m venv .venv && source .venv/bin/activate` 로 가상환경을 만들고 `python -m pip install -r requirements-llm.txt` 로 torch·numpy 등 실습 패키지를 설치한다.",
+        "[실습1-1 · practice_1-1.ipynb] 한국어 말뭉치를 토큰화(문자/단어 단위)하고 정수 인덱스로 인코딩한 뒤, nn.Embedding → nn.LSTM(input_size, hidden_size, num_layers) → nn.Linear(hidden_size, vocab_size) 구조로 '다음 토큰 예측' 언어모델을 구성한다.",
+        "CrossEntropyLoss + Adam으로 학습 루프를 돌려 loss가 감소하는지 확인하고, 시작 토큰을 넣어 은닉상태(hidden state)를 순차 전달하며 문장을 자기회귀(autoregressive)로 생성한다.",
+        "[한계 관찰] 문장이 길어질수록 앞부분 맥락(주어·인물관계)이 희석되는 장기 의존성(long-term dependency) 한계를, 긴 생성 예시로 직접 캡처한다 — 순차 처리라 병렬화가 어렵고 느리다는 점도 확인 → 'Transformer가 필요한 이유'로 연결한다.",
+        "[실습1-2 · practice_1-2.ipynb] 동일 과제를 Transformer(Self-Attention)로 다시 구현한다. 입력에서 Q·K·V를 만들고 scaled dot-product(QKᵀ/√d_k) → softmax → V 가중합으로 각 위치가 모든 위치를 한 번에 참조하게 하며, causal mask(하삼각)로 미래 토큰을 가려 다음 토큰을 예측한다(디코더형).",
+        "Positional Encoding·Multi-Head·잔차연결(Residual)·LayerNorm이 포함된 블록을 쌓아 학습하고, 같은 시작 토큰·생성 길이로 문장을 생성해 LSTM 결과와 나란히 비교한다(앞부분 맥락이 후반까지 유지되는지 확인).",
+        "temperature·top_k 등 생성 파라미터를 바꿔 생성의 다양성/안정성 변화를 관찰하고, N²(문장 길이 제곱) 연산량·컨텍스트 윈도우 한계도 함께 짚는다.",
+        "[제출물] LSTM·Transformer 생성 코드·결과와, 두 모델의 한계·개선점을 비교한 리포트를 작성한다."
       ],
-      "deliverable": "Self-Attention 계산 노트북(.ipynb)과 attention 가중치 히트맵 이미지 1장"
+      "deliverable": "LSTM 기반 생성 코드·결과 / Transformer 기반 생성 코드·결과 / 두 모델의 한계·개선점 비교 리포트. ※ 평가: 실습1 100점 = 1-1 LSTM(RNN) 문장생성 정상동작 40 + 1-2 Transformer 대체 문장생성 정상동작 60 (정상 동작 여부 중심)"
     }
   },
   "transformer-2": {
     "schedule": [
-      { "time": "09:00–09:50", "topic": "[강의] Multi-Head Attention — 여러 명이 각자 관점으로 읽기" },
-      { "time": "10:00–10:50", "topic": "[강의] Positional Encoding·FFN·잔차연결(Residual)·LayerNorm 조립" },
-      { "time": "11:00–11:50", "topic": "[강의] Encoder vs Decoder, 그리고 BERT·GPT·T5" },
+      { "time": "09:00–09:50", "topic": "[강의] 복습: LSTM→Transformer, 그리고 LLM 추론(Inference) 파이프라인 — 토큰화→임베딩→Self-Attention→다음 토큰 예측(자기회귀)" },
+      { "time": "10:00–10:50", "topic": "[강의] LLM을 API 레벨에서 쓰기 — 스트리밍 응답·컨텍스트 윈도우·토큰=비용(usage), 프롬프트 기법 CoT·SC·ReAct 복습(practice_0)" },
+      { "time": "11:00–11:50", "topic": "[강의+실습 착수] 에이전트 프레임워크 CrewAI 개념(Agent·Task·Crew, 역할 분담·도구 호출) → 실습2 착수: 팀 편성·.env(API키)·requirements-llm 설치" },
       { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
-      { "time": "13:00–13:50", "topic": "[실습] 사전학습 BERT로 문장 임베딩 뽑아 유사도 비교하기" },
-      { "time": "14:00–14:50", "topic": "[강의] Transformer 이후 혁신 ① Scaling Law · In-Context Learning" },
-      { "time": "15:00–15:50", "topic": "[강의] Transformer 이후 혁신 ② RLHF · MoE(Mixture of Experts)" },
-      { "time": "16:00–16:50", "topic": "[강의] LLM 생태계: Open-Weight vs Closed, 벤치마크·Leaderboard" },
-      { "time": "17:00–17:50", "topic": "[실습] GPT-2로 문장 생성하고 다음 토큰 확률 들여다보기" }
+      { "time": "13:00–13:50", "topic": "[실습] 실습2 ① Agent 정의 — Writer·Editor에 role·goal·backstory·LLM(gpt-4o)·temperature 설정" },
+      { "time": "14:00–14:50", "topic": "[실습] 실습2 ② Task(Plan→Write→Edit) 정의·Crew(process=sequential)·kickoff() 실행, 응답 usage로 한국어/영어 토큰·비용 비교" },
+      { "time": "15:00–15:50", "topic": "[실습] 실습2 ③ 가상데이터(상담·계약·거래·FAQ)로 이해관계자·Biz 가치 도출해 AI 서비스 시나리오 기획 + 프롬프트·호출수 최적화(크레딧 절약)" },
+      { "time": "16:00–16:50", "topic": "[실습] 실습2 ④ 팀 에이전트 코드 마무리 + 서비스 시나리오 발표자료(최소 3p) 정리·리허설" },
+      { "time": "17:00–17:50", "topic": "[발표·채점] 팀별 발표 → 평가(Biz가치 40·기술이해도 30·수업충실도 30), 개인별 점수·판단근거·보완사항 기록" }
     ],
     "practice": {
-      "title": "Lab 0. 손으로 만드는 bigram 언어모델 → 사전학습 GPT-2로 텍스트 생성·'다음 토큰 확률' 확인하기",
+      "title": "실습2. CrewAI로 Transformer 기반 LLM을 API 레벨에서 활용하는 에이전트 구현 — 팀 (practice_2.CrewAI_Agent_System)",
       "steps": [
-        "[Lab 0] 짧은 예문(예: i love ai i love code i love you)을 단어 리스트로 만든다.",
-        "[Lab 0] 연속한 (앞단어, 뒷단어) 쌍을 세어 bigram 카운트 표를 만든다.",
-        "[Lab 0] 각 행을 합이 1이 되도록 나눠 다음-단어 확률표를 만든다(이 표 자체가 언어모델).",
-        "[Lab 0] 'i' 다음 단어 확률을 출력해 love가 가장 높게 나오는지 확인한다.",
-        "[Lab 0] 이 확률표로 다음 단어를 샘플링해 문장을 이어 생성해 본다.",
-        "[Lab 0] 한계를 관찰한다: 바로 앞 한 단어만 보므로 긴 문맥을 못 살린다 — '그래서 Transformer가 필요하다'로 오후 GPT-2 실습에 연결한다.",
-        "Colab에서 `pip install transformers torch` 로 라이브러리를 설치한다.",
-        "import torch 와 from transformers import GPT2LMHeadModel, GPT2Tokenizer 로 torch·GPT-2 모델·토크나이저를 불러온다(torch는 뒤 확률 계산에 필요).",
-        "model = GPT2LMHeadModel.from_pretrained('gpt2') 와 tokenizer = GPT2Tokenizer.from_pretrained('gpt2') 를 실행한다.",
-        "프롬프트 'The future of AI is' 를 tokenizer로 인코딩해 input_ids 텐서를 만든다.",
-        "model.generate(input_ids, max_length=20, pad_token_id=tokenizer.eos_token_id) 로 문장을 이어 생성하고 decode 해 출력한다(pad_token_id를 넣으면 pad 경고가 안 뜬다 · 기대 결과: 영어 문장이 자연스럽게 이어짐).",
-        "다음 토큰 확률을 보려고 logits = model(input_ids).logits 의 마지막 위치(logits[0, -1])를 꺼내 probs = torch.softmax(그 값, dim=-1) 로 확률로 바꾼다.",
-        "torch.topk(probs, 5) 로 가장 확률 높은 다음 토큰 5개와 확률을 출력한다.",
-        "tokenizer.decode 로 그 5개 토큰을 사람이 읽는 단어로 바꿔 무엇을 예측했는지 확인한다.",
-        "프롬프트를 'The future of AI is' 와 'I love' 두 가지로 바꿔, 예측 단어가 어떻게 달라지는지 비교 캡처한다.",
-        "[제출물] 위 실습을 바탕으로 1~2페이지 '개발해석 보고서'를 작성한다 — ① 구현한 미니 언어모델(bigram→GPT-2) 구조, ② 이해한 Transformer 핵심 개념(토큰화·임베딩·Attention·다음 토큰 예측)을 자기 말로, ③ 생성 문장 예시와 모델의 한계를 실습 결과와 연결한 해석, ④ 실제 LLM과 미니모델의 차이·배운 점·개선 방향(성찰). 노트북(.ipynb)은 보조 자료로 함께 내면 좋다(선택)."
+        "`python -m pip install -r requirements-llm.txt` 로 crewai·openai 등을 설치하고, code/.env에 반별 OPENAI_API_KEY를 등록한다(키는 GitHub·공개 채널에 절대 공유 금지).",
+        "[practice_2.CrewAI_Agent_System.ipynb] LLM API 호출이 내부적으로 토큰화 → 임베딩 → Self-Attention 연산 → 다음 토큰 예측(자기회귀)으로 이뤄지는 추론(Inference) 파이프라인을 응용 레벨에서 체감한다.",
+        "Agent를 역할별로 정의한다 — 예: Writer(초안 생성)·Editor(교정·검수). 각 Agent에 role·goal·backstory와 사용할 LLM(gpt-4o 등)·temperature를 지정한다.",
+        "Task를 정의해 Agent에 배정한다(예: Plan → Write → Edit). Task 설명에는 CoT(단계별 사고)·ReAct(Thought→Action→Observation) 스타일 지시를 반영해 안정적으로 동작하게 한다.",
+        "Crew(agents, tasks, process=sequential)를 구성하고 crew.kickoff()로 실행한다. 응답의 usage(token 사용량)로 동일 의미라도 한국어가 영어보다 토큰을 더 소모(=비용·지연 증가)함을 확인한다.",
+        "다단계 에이전트는 매 호출마다 추론 파이프라인 전체를 반복하므로 속도·비용이 누적됨을 관찰하고, 프롬프트 길이·호출 횟수·max_tokens를 줄이는 최적화를 적용한다(반별 API 크레딧 절약).",
+        "제공된 가상 데이터(고객상담이력·B2B계약서·거래데이터셋·사내정책FAQ)로 이해관계자를 추정하고 Biz 가치가 있는 AI 서비스 시나리오를 기획한다.",
+        "[제출물] 팀 단위 에이전트 구현 코드와, 서비스 시나리오 기획서를 발표자료(최소 3페이지)로 정리한다."
       ],
-      "deliverable": "1~2페이지 개발해석 보고서(구현 모델 구조 + Transformer 핵심 개념 이해 + 결과 해석 + 성찰·개선방향)가 주 산출물. GPT-2 생성 결과·top-5 확률 노트북(.ipynb)은 선택(Optional). ※ 평가기준: 이해역량 55(구조이해 30·학습생성 25) + 해석역량 45(결과해석 25·성찰 20)"
+      "deliverable": "팀 단위 에이전트 구현 코드(.ipynb) + 서비스 시나리오 기획 발표자료(최소 3페이지, Biz가치·기술이해·수업충실 어필). ※ 평가: 실습2 100점 = Biz가치 40 + 기술이해도 30 + 수업충실도 30 · 평가결과에 개인별 점수·판단근거·보완사항 필수 · 팀 편성=좌석표 기준(6인석 → 3+3, 4인석 → 4인)"
     }
   },
   "python-1": {
