@@ -238,22 +238,22 @@ function DayBlock({ subj, day, dd }) {
           <div style={{ marginTop: 28 }}>
             <h3 style={{ ...H3, margin: '0 0 4px' }}>🧪 {g.title}</h3>
             <div className="box box-practice" style={{ marginTop: 12 }}>
-              <p style={{ margin: '0 0 10px', color: 'var(--ink-soft)', fontSize: 13 }}>{g.intro} <span style={{ opacity: 0.7 }}>({g.source})</span></p>
+              <p style={{ margin: '0 0 10px', color: 'var(--ink-soft)', fontSize: 13 }}><Rich text={g.intro} /> <span style={{ opacity: 0.7 }}>({g.source})</span></p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
                 {g.files.map((f) => <a key={f.href} href={f.href} download className="btn btn-cta" style={{ fontSize: 13, padding: '8px 14px' }}>⬇ {f.label}</a>)}
               </div>
               {g.groups.map((grp) => (
                 <div key={grp.h} style={{ marginTop: 12 }}>
                   <div className="box-h" style={{ marginBottom: 6 }}>{grp.h}</div>
-                  {grp.note && <p style={{ margin: '0 0 6px', fontSize: 13.5, color: 'var(--navy-700)' }}>{grp.note}</p>}
+                  {grp.note && <p style={{ margin: '0 0 6px', fontSize: 13.5, color: 'var(--navy-700)' }}><Rich text={grp.note} /></p>}
                   <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {grp.items.map((it, i) => <li key={i} style={{ fontSize: 13.5, color: 'var(--navy-700)', lineHeight: 1.6 }}>{it}</li>)}
+                    {grp.items.map((it, i) => <li key={i} style={{ fontSize: 13.5, color: 'var(--navy-700)', lineHeight: 1.6 }}><Rich text={it} /></li>)}
                   </ul>
-                  {grp.after && <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{grp.after}</p>}
+                  {grp.after && <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}><Rich text={grp.after} /></p>}
                 </div>
               ))}
               <p style={{ margin: '14px 0 0', fontSize: 14, fontWeight: 800, color: 'var(--gold)' }}>{g.deadline}</p>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{g.submit}</p>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}><Rich text={g.submit} /></p>
             </div>
           </div>
         )
