@@ -13,6 +13,9 @@
         try {
           var t = localStorage.getItem('kdt-theme') || 'dark'
           document.documentElement.setAttribute('data-theme', t)
+          // 액센트 팔레트 복원 — 키는 AccentPalette 저장 키('kdt-accent')와 동일해야 유지된다.
+          var a = localStorage.getItem('kdt-accent') || 'cyan'
+          document.documentElement.setAttribute('data-accent', a)
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark')
         }
@@ -56,10 +59,10 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <script type="module" crossorigin src="/assets/index-CFI_cwdT.js"></script>
+    <script type="module" crossorigin src="/assets/index-Dve5t4Y5.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/react-vendor-DkQmGj46.js">
     <link rel="modulepreload" crossorigin href="/assets/supabase-x7pv8hHy.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-BQcDQob3.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BATYNiIP.css">
   </head>
   <body>
     <div id="root"></div>
