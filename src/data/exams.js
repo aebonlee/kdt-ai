@@ -200,7 +200,7 @@ export const exams = {
     ],
   },
   'transformer2': {
-    variant: '임성열 강사안 · 판교 4층 2반 (2026-07-23~24) · LSTM vs Transformer + CrewAI',
+    variant: '임성열 전임교수 안 · 판교 4층 2반 (2026-07-23~24) · LSTM vs Transformer + CrewAI',
     purpose: 'LLM의 기술 구조를 이해하고, 기존 딥러닝 방식 대비 Transformer 모델이 사용되는 원리를 이해하는지 평가한다. LLM을 활용한 AI 서비스를 기획하고 CrewAI 기반으로 LLM 연동 서비스를 구현한 결과를 평가한다.',
     tasks: [
       { name: '실습 1 · 딥러닝(LSTM) vs Transformer 모델 비교 (개인)', activity: 'LSTM으로 문장을 생성해 장기 의존성 등 한계점을 파악한 뒤, 동일 과제를 Transformer로 재생성해 비교한다. 딥러닝을 정식으로 배우지 않은 상태를 전제로 하므로 독자적 구현·하이퍼파라미터 튜닝은 요구하지 않으며, 제공된 예제 코드를 정상 실행하고 두 모델의 차이를 자신의 말로 설명하는 것이 핵심이다.', time: 'LSTM 생성 20분 + Transformer 개선 20분' },

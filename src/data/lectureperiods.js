@@ -25,7 +25,7 @@ export const periods = {
     "원격 사용법: clone·push·pull · Sync Changes",
     "(심화) 브랜치 · 머지 · 충돌 · PR 협업"
   ],
-  // ── 2반(판교 4층·임성열, 07-23~24) — 별개 커리큘럼 (LSTM vs Transformer + CrewAI) ──
+  // ── 2반(판교 4층·임성열 전임교수, 07-23~24) — 별개 커리큘럼 (LSTM vs Transformer + CrewAI) ──
   "transformer2-1": [
     "[강의] Software 1.0→3.0 — LLM, 언어가 인터페이스가 되다",
     "[강의] 토큰화와 임베딩 — 벡터 공간과 거리(맨해튼·유클리드)·유사도",

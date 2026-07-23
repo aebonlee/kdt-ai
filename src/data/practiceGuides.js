@@ -1,5 +1,5 @@
 // 종합실습 안내 — 분반·담당교수별로 별개 키. 담당 분반 학생에게 그대로 제공.
-// 근거: 임성열 강사 배포 실습소스 llm_code (practice_0 프롬프트 · practice_1-1 LSTM ·
+// 근거: 임성열 전임교수 배포 실습소스 llm_code (practice_0 프롬프트 · practice_1-1 LSTM ·
 //       practice_1-2 Transformer · practice_2 CrewAI 에이전트) — 판교 4층 2반 2026-07-23~24.
 // subjectId(마지막 날) 기준으로 Lectures 페이지 복습퀴즈 위에 노출된다.
 export const practiceGuides = {
@@ -40,10 +40,10 @@ export const practiceGuides = {
     deadline: '개인 제출마감: 7.26(일) 24:00',
     submit: '제출: 슬랙 7반 종합실습 안내글 스레드에 댓글로 보고서(1~2p) + (선택) 본인이 개선/추가 실험한 코드 파일. 파일명 예: Transformer_7반_홍길동',
   },
-  // ── 2반(판교 4층·임성열 강사, 2026-07-23~24) — LSTM vs Transformer + CrewAI ──
+  // ── 2반(판교 4층·임성열 전임교수, 2026-07-23~24) — LSTM vs Transformer + CrewAI ──
   transformer2: {
     title: '종합실습 안내 — LLM과 Transformer 아키텍처',
-    source: '임성열 강사 배포본 · 판교 4층 2반 (2026-07-23~24)',
+    source: '임성열 전임교수 배포본 · 판교 4층 2반 (2026-07-23~24)',
     intro:
       '아래 실습 노트북을 바탕으로 딥러닝(LSTM)에서 Transformer, 그리고 LLM 에이전트까지 직접 실행하며 구조를 이해합니다.\n**개인 과제는 개인코드 3종을 실행해 1페이지 보고서로 제출**하고, **팀 과제는 CrewAI로 에이전트 팀을 구성해 개발**합니다.',
     files: [

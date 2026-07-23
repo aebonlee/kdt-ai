@@ -92,8 +92,9 @@ export default function Appendix() {
         borderRadius: 999,
         fontSize: 11,
         fontWeight: 800,
-        background: 'var(--gold)',
-        color: '#1a1206',
+        background: 'transparent',
+        border: '1px solid var(--gold)',
+        color: 'var(--gold)',
         verticalAlign: 'middle',
         whiteSpace: 'nowrap',
       }}

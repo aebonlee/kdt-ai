@@ -100,9 +100,9 @@ export const subjects = [
     code: '8-2',
     level: 3,   // 난이도 1하 2중 3상
     weight: 3,  // 중요도 1~3
-    name: 'LLM과 Transformer 아키텍처(임성열)',
+    name: 'LLM과 Transformer 아키텍처(임성열 전임교수)',
     category: 'LLM · Agent',
-    summary: 'LSTM 대비 Transformer의 개선을 문장 생성 실습으로 체감하고, CrewAI 에이전트로 LLM을 API 레벨에서 활용한다 (판교 4층 2반 · 임성열 커리큘럼)',
+    summary: 'LSTM 대비 Transformer의 개선을 문장 생성 실습으로 체감하고, CrewAI 에이전트로 LLM을 API 레벨에서 활용한다 (판교 4층 2반 · 임성열 전임교수 커리큘럼)',
     days: [
       {
         title: 'LSTM vs Transformer — 문장 생성으로 구조 비교',
