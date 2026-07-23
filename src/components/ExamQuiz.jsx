@@ -2,6 +2,7 @@
 import { exams, examsAlt } from '../data/exams'
 import { quizzes } from '../data/quizzes'
 import { extraStudy } from '../data/extrastudy'
+import Rich from './Rich'
 
 const H = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 const TYPE = { ox: 'O/X', choice: '4지선다', short: '단답' }
@@ -22,7 +23,7 @@ export function ExamBlock({ e, title = '📋 종합실습 평가기준 · 제출
       {e.purpose && (
         <div className="box box-tips" style={{ marginTop: 12 }}>
           <div className="box-h">🎯 실습 목적</div>
-          <p style={{ margin: 0, whiteSpace: 'pre-line' }}>{e.purpose}</p>
+          <p style={{ margin: 0, whiteSpace: 'pre-line' }}><Rich text={e.purpose} /></p>
         </div>
       )}
       {e.tasks?.length > 0 && (
@@ -33,7 +34,7 @@ export function ExamBlock({ e, title = '📋 종합실습 평가기준 · 제출
               <thead><tr><th>실습명</th><th>주요 활동</th><th>시간</th></tr></thead>
               <tbody>
                 {e.tasks.map((t, i) => (
-                  <tr key={i}><td>{t.name}</td><td style={{ whiteSpace: 'pre-line' }}>{t.activity}</td><td>{t.time}</td></tr>
+                  <tr key={i}><td>{t.name}</td><td style={{ whiteSpace: 'pre-line' }}><Rich text={t.activity} /></td><td>{t.time}</td></tr>
                 ))}
               </tbody>
             </table>
@@ -48,7 +49,7 @@ export function ExamBlock({ e, title = '📋 종합실습 평가기준 · 제출
               <thead><tr><th>평가 항목</th><th>평가 내용</th>{hasPoints && <th>배점</th>}</tr></thead>
               <tbody>
                 {e.criteria.map((c, i) => (
-                  <tr key={i}><td>{c.item}</td><td style={{ whiteSpace: 'pre-line' }}>{c.desc}</td>{hasPoints && <td>{c.points}</td>}</tr>
+                  <tr key={i}><td>{c.item}</td><td style={{ whiteSpace: 'pre-line' }}><Rich text={c.desc} /></td>{hasPoints && <td>{c.points}</td>}</tr>
                 ))}
               </tbody>
             </table>
@@ -58,13 +59,13 @@ export function ExamBlock({ e, title = '📋 종합실습 평가기준 · 제출
       {e.deliverables?.length > 0 && (
         <div className="box box-practice" style={{ marginTop: 12 }}>
           <div className="box-h">📦 제출 · 필수 항목</div>
-          <ul>{e.deliverables.map((d, i) => <li key={i}>{d}</li>)}</ul>
+          <ul>{e.deliverables.map((d, i) => <li key={i}><Rich text={d} /></li>)}</ul>
         </div>
       )}
       {e.notes?.length > 0 && (
         <div className="exam-notes">
           <b>유의사항</b>
-          <ul>{e.notes.map((n, i) => <li key={i}>{n}</li>)}</ul>
+          <ul>{e.notes.map((n, i) => <li key={i}><Rich text={n} /></li>)}</ul>
         </div>
       )}
     </>

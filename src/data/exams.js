@@ -383,29 +383,4 @@ export const examsAlt = {
     ],
   },
 
-  'transformer': {
-    variant: '임성열 강사안 (LSTM vs Transformer + CrewAI API 에이전트) · 판교 4층 2반 2026-07-23~24',
-    purpose:
-      'LLM의 기술 구조를 이해하고, 기존 방식(LSTM) 대비 Transformer 모델이 무엇을 개선하는지 실습으로 체감한다. 나아가 Transformer 기반 LLM을 API 레벨(CrewAI 등 프레임워크)에서 활용해 AI 서비스를 기획·구현하는 역량까지 평가한다.',
-    tasks: [
-      { name: '실습1 — 딥러닝(LSTM) vs Transformer 문장 생성 비교 (개인)', activity: 'LSTM(RNN)으로 문장을 생성해 장기 의존성 한계를 확인하고, 같은 과제를 Transformer로 다시 풀어 개선을 비교한다. (practice_1-1: LSTM / practice_1-2: Transformer 노트북)', time: '' },
-      { name: '실습2 — Transformer 기반 LLM을 API 레벨에서 활용 (팀)', activity: 'CrewAI 등 프레임워크로 LLM 에이전트를 구성·연동해 추론 파이프라인을 응용 레벨에서 체감하고, AI 서비스 시나리오를 기획한다. (practice_2.CrewAI_Agent_System 노트북)', time: '' },
-    ],
-    criteria: [
-      { item: '실습1-1 — LSTM(RNN) 문장 생성', desc: 'RNN 또는 LSTM이 문장 생성에 올바로 적용되어 정상 동작하는가.', points: '40점' },
-      { item: '실습1-2 — Transformer 대체 문장 생성', desc: 'Transformer 모델이 문장 생성에 올바로 적용되어 정상 동작하는가.', points: '60점' },
-      { item: '실습2-1 — Biz 가치', desc: 'Transformer 기반 LLM을 API 레벨로 활용한 시나리오 기획이 AI 서비스로서 Biz 가치가 있는가.', points: '40점' },
-      { item: '실습2-2 — 기술 이해도', desc: 'Transformer 기반 LLM의 API 레벨 활용에 대한 기술을 충분히 이해하고 구현했는가.', points: '30점' },
-      { item: '실습2-3 — 수업 충실도', desc: 'Transformer·아키텍처 수업에서 전달한 내용을 실습에 충실히 반영했는가.', points: '30점' },
-    ],
-    deliverables: [
-      '실습1: LSTM·Transformer 생성 코드·결과 + 두 모델 한계·개선 비교 리포트',
-      '실습2: 팀 단위 에이전트 구현 코드 + 서비스 시나리오 기획서 발표자료(최소 3페이지)',
-    ],
-    notes: [
-      '실습1·실습2 각각 100점 만점 (실습1 = LSTM 40 + Transformer 60 · 정상 동작 여부 중심 / 실습2 = Biz가치 40 + 기술이해도 30 + 수업충실도 30).',
-      '평가 결과에는 개인별 점수·판단 근거·보완사항을 반드시 포함한다(직능원 대응). 실습2 팀은 좌석표 기준(6인석 → 3+3, 4인석 → 4인)으로 편성한다.',
-      '※ 참고: 박병선 미니모델 체험형 안(이해역량 55 + 해석역량 45)은 판교 5층 7반(2026-07-21~22)에서 사용한 별도 버전이다.',
-    ],
-  },
 }

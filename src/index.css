@@ -900,3 +900,16 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   h2, h3, h4 { break-after: avoid; }
   @page { margin: 12mm; }
 }
+
+
+/* ── 부록 용어사전 2단 레이아웃 (좌측 인덱스 sticky) ── */
+.appendix-layout { display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; }
+.appendix-side { position: sticky; top: 76px; align-self: start; max-height: calc(100vh - 96px); overflow-y: auto; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface, #fff); }
+.appendix-side::-webkit-scrollbar { width: 6px; }
+.appendix-side::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+.appendix-side button:hover { filter: brightness(0.97); }
+.appendix-main { min-width: 0; }
+@media (max-width: 860px) {
+  .appendix-layout { grid-template-columns: 1fr; }
+  .appendix-side { position: static; max-height: none; margin-bottom: 20px; }
+}

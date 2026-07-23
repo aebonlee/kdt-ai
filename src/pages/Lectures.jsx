@@ -199,11 +199,12 @@ export default function Lectures() {
                   return (
                     <button
                       key={s.date}
-                      className={`side-link${isActive ? ' active' : ''}`}
+                      className={`side-link${isActive ? ' active' : ''}${s.date === todayStr ? ' is-today' : ''}`}
                       onClick={() => navigate(`/lectures/${s.date}`)}
                       aria-current={isActive ? 'true' : undefined}
+                      style={s.date === todayStr ? { background: 'rgba(212,160,23,0.18)', boxShadow: 'inset 4px 0 0 var(--gold)', fontWeight: 800 } : undefined}
                     >
-                      {s.date.slice(5)} ({s.weekday})
+                      {s.date.slice(5)} ({s.weekday}){s.date === todayStr ? ' · 오늘' : ''}
                       <span className="sl-sub">
                         {sj?.name} · {s.region} {s.klass}
                       </span>
@@ -576,7 +577,7 @@ export default function Lectures() {
                   </h3>
                   <div className="box box-practice" style={{ marginTop: 12 }}>
                     <p style={{ margin: '0 0 10px', color: 'var(--ink-soft)', fontSize: 13 }}>
-                      {g.intro} <span style={{ opacity: 0.7 }}>({g.source})</span>
+                      <Rich text={g.intro} /> <span style={{ opacity: 0.7 }}>({g.source})</span>
                     </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
                       {g.files.map((f) => (
@@ -588,17 +589,17 @@ export default function Lectures() {
                     {g.groups.map((grp) => (
                       <div key={grp.h} style={{ marginTop: 12 }}>
                         <div className="box-h" style={{ marginBottom: 6 }}>{grp.h}</div>
-                        {grp.note && <p style={{ margin: '0 0 6px', fontSize: 13.5, color: 'var(--navy-700)' }}>{grp.note}</p>}
+                        {grp.note && <p style={{ margin: '0 0 6px', fontSize: 13.5, color: 'var(--navy-700)' }}><Rich text={grp.note} /></p>}
                         <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 5 }}>
                           {grp.items.map((it, i) => (
-                            <li key={i} style={{ fontSize: 13.5, color: 'var(--navy-700)', lineHeight: 1.6 }}>{it}</li>
+                            <li key={i} style={{ fontSize: 13.5, color: 'var(--navy-700)', lineHeight: 1.6 }}><Rich text={it} /></li>
                           ))}
                         </ul>
-                        {grp.after && <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{grp.after}</p>}
+                        {grp.after && <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}><Rich text={grp.after} /></p>}
                       </div>
                     ))}
                     <p style={{ margin: '14px 0 0', fontSize: 14, fontWeight: 800, color: 'var(--gold)' }}>{g.deadline}</p>
-                    <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{g.submit}</p>
+                    <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}><Rich text={g.submit} /></p>
                   </div>
                 </div>
               )
