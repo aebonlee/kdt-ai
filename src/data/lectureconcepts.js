@@ -420,6 +420,19 @@ export const concepts = {
       "term": "watch(감시자)",
       "desc": "특정 반응형 값이 바뀌는 순간을 지켜보다가, 바뀔 때마다 실행할 동작(부수효과)을 걸어두는 함수다. computed가 새 값을 계산해 돌려주는 것이라면, watch는 값이 바뀌면 API를 부르거나 로그를 남기는 등 결과값이 아닌 행동이 필요할 때 쓴다."
     }
+  ,
+  {
+    "term": "세임네임 단축(same-name shorthand)",
+    "desc": "Vue 3.4부터 도입된 문법으로, 연결할 변수명과 HTML 속성명이 일치하면 <img :src>처럼 =\"src\" 부분을 생략할 수 있고 Vue가 같은 이름의 변수를 자동 매핑한다.\n변수명을 id·src·href처럼 HTML 표준 속성명과 맞춰 두면 코딩이 빨라진다. (교재 p.61)"
+  },
+  {
+    "term": "이벤트 수식어(event modifier)",
+    "desc": "이벤트 리스너의 기본 동작을 제어하는 특수 접미어다.\n.prevent(폼 새로고침 방지)·.stop(버블링 차단)·.once(1회만)·.self 외에 .enter 같은 키보드 수식어, .ctrl·.exact 시스템 수식어, .right 마우스 수식어까지 있다. (교재 pp.79-82)"
+  },
+  {
+    "term": "스캐폴딩(scaffolding)",
+    "desc": "npm create vue@latest 실행 시 폴더 구조·빌드 설정·필수 라이브러리 연동을 자동 생성해 주는 초기 뼈대 구축이다.\n생성 과정에서 Router·Pinia·ESLint·Prettier 탑재 여부를 질문으로 선택한다. (교재 p.25)"
+  }
   ],
   "vue-2": [
     {
@@ -454,6 +467,19 @@ export const concepts = {
       "term": "Provide / Inject",
       "desc": "부모가 provide('키', 값)로 데이터를 창고에 넣어두면, 아래로 몇 단계 떨어진 자손 컴포넌트든 inject('키')로 곧바로 꺼내 쓸 수 있는 통로다. props를 중간 컴포넌트마다 릴레이로 넘기는 'props 내리막길' 문제를 피할 때 쓰며, 한 컴포넌트 트리 안에서만 통하고 앱 전체 공유는 Pinia가 담당한다."
     }
+  ,
+  {
+    "term": "watchEffect(자동 감시자)",
+    "desc": "감시 대상을 명시하지 않아도 함수 안에서 접근한 반응형 데이터를 자동 추적해 값이 바뀔 때마다 재실행되는 함수다.\n컴포넌트가 처음 태어날 때도 최초 1회 즉시 실행되며, 이전 값(oldValue)은 제공하지 않는다. (교재 pp.115-116)"
+  },
+  {
+    "term": "페이로드(payload)",
+    "desc": "자식이 emit() 두 번째 인자부터 실어 부모의 콜백 함수로 넘기는 데이터다.\nemit('select-city', name)처럼 이벤트 이름 뒤에 붙여 전달한다. (교재 p.139)"
+  },
+  {
+    "term": "프롭스 드릴링(Props Drilling)",
+    "desc": "계층이 깊을 때 중간 컴포넌트들이 자기는 쓰지도 않는 데이터를 오직 아래로 전달하기 위해 Props를 받아 토스하기를 반복하는 현상이다.\nProvide/Inject가 이를 해결하지만, 전역 상태 관리(Pinia)가 있어 사용 빈도는 높지 않다. (교재 p.144)"
+  }
   ],
   "vue-3": [
     {
@@ -484,6 +510,15 @@ export const concepts = {
       "term": "스토어(store)",
       "desc": "Pinia에서 상태(state)·계산값(getters)·변경함수(actions)를 담는 데이터 창고다."
     }
+  ,
+  {
+    "term": "지연 로딩(lazy loading)",
+    "desc": "라우트의 component를 동적 import로 지정해 해당 컴포넌트가 필요한 순간에 로드하는 방식이다.\n정적 import는 앱 시작 시점에 전부 메모리에 올린다 — 교재 라우터 과제의 첫 요구사항이기도 하다. (교재 pp.154·164)"
+  },
+  {
+    "term": "뷰엑스(Vuex)",
+    "desc": "Vue 2 시절의 상태관리 라이브러리로 Pinia의 전신이다.\nPinia는 Vue 3의 상태(state) 관리 라이브러리이며, 상태란 애플리케이션 렌더링에 영향을 줄 수 있는 값을 뜻한다. (교재 p.166)"
+  }
   ],
   "vue-4": [
     {
@@ -514,6 +549,19 @@ export const concepts = {
       "term": "빌드·배포",
       "desc": "개발용 코드를 브라우저용 정적 파일로 압축(빌드)해 서버에 올려 공개(배포)하는 과정이다."
     }
+  ,
+  {
+    "term": "옵셔널 체이닝(optional chaining, ?.)",
+    "desc": "점(.) 왼쪽이 null·undefined면 하위 속성으로 진입하지 않고 에러 없이 undefined를 반환하는 ES11(2020) 문법이다.\n깊은 객체 참조 시 프로그램이 뻗지 않게 보호한다 — 교재가 \"실무 빈도 극상\"으로 표기한 항목. (교재 pp.219·222)"
+  },
+  {
+    "term": "널 병합 연산자(nullish coalescing, ??)",
+    "desc": "좌항이 null 또는 undefined일 때만 우항의 기본값을 반환하는 ES11 연산자다.\n과거의 논리합(||)은 숫자 0이나 빈 문자열 같은 Falsy 값까지 기본값으로 덮어버리는 버그를 유발했다. (교재 p.223)"
+  },
+  {
+    "term": "트리 셰이킹(tree-shaking)",
+    "desc": "npm run build 시 Rollup 엔진이 프로젝트 소스를 전부 뒤진 뒤 쓰이지 않는 코드를 털어내고 압축된 정적 파일(dist)을 만드는 최적화 과정이다. (교재 p.31)"
+  }
   ],
   "webproject-1": [
     {

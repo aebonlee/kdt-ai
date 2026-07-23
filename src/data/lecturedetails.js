@@ -712,7 +712,7 @@ export const details = {
     "homework": [
       "오늘 만든 할 일 목록에 '완료된 항목 모두 삭제' 버튼을 추가하고, 클릭 시 done 이 true 인 항목만 배열에서 제거되도록 구현해 캡처를 제출한다",
       "computed 를 하나 더 만들어 '전체 개수 / 완료 개수' 를 화면에 함께 표시한다"
-    ]
+    ,"교재 2장 과제(p.91) — 날씨 제어판 UI·카드 모형: v-for 카드(:key 필수) + v-if 온도 라벨 + :value/@input 검색 + @click.stop 상세보기"]
   },
   "vue-2": {
     "topics": [
@@ -793,7 +793,7 @@ export const details = {
     "homework": [
       "오늘의 회원 목록에 '회원 추가' 폼을 만들어 새 회원을 users 배열에 추가하고, 추가/삭제가 모두 동작하는 화면을 캡처해 제출한다",
       "useCounter 라는 컴포저블 함수를 만들어 count 와 inc 를 반환하고, 두 개 이상의 컴포넌트에서 재사용해 본다"
-    ]
+    ,"교재 3장 과제(p.119) — 날씨 대시보드 동적 기능: 반응형 상태·computed 검색 필터·watch/watchEffect 로그", "교재 4장 과제(p.151) — 컴포넌트 구조화: WeatherParent/SearchBar/WeatherCard/BaseDashboardCard(slot) 4분리"]
   },
   "vue-3": {
     "topics": [
@@ -867,7 +867,7 @@ export const details = {
     "homework": [
       "상품 목록·상세·장바구니에 '담은 상품 비우기' 액션을 추가하고, 헤더 개수가 0으로 돌아가는 동작을 캡처해 제출한다",
       "네비게이션 가드(beforeEach)를 추가해 '/admin' 으로 갈 때 로그인 안 했으면 '/' 로 돌려보내도록 구현한다"
-    ]
+    ,"교재 5장 과제(p.164) — 라우터 대시보드: 지연 로딩 + 네비게이션 바 + Home/Detail(router.push)/About 뷰", "교재 6장 과제(p.172) — configStore: unit state·unitSymbol getter·toggleUnit action + UnitToggler 배치"]
   },
   "vue-4": {
     "topics": [
@@ -973,7 +973,7 @@ export const details = {
     "homework": [
       "미니 SPA에 '글 상세' 라우트를 추가해 목록의 제목을 클릭하면 해당 글 본문을 API로 불러와 보여주도록 완성하고 배포 주소를 제출한다",
       "로딩 중에는 스피너(회전 아이콘)나 '잠시만 기다려 주세요' 화면을 추가해 사용자 경험을 개선한다"
-    ]
+    ,"교재 7장 과제(p.187) — Axios 설치 + OpenWeatherMap API Key 발급·실데이터 연동", "교재 10장 실습(pp.246-249) — ESLint eqeqeq 검출·Prettier 포맷·.env.staging 분리·dist 해시 분석"]
   },
   "webproject-1": {
     "topics": [

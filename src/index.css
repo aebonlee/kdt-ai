@@ -879,10 +879,10 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   /* 앱 크롬·인쇄버튼·사이드바 숨김, 콘텐츠 전체폭 */
   .topbar, .navbar, .footer, .theme-toggle, .tb-print-btn, .tb-print-box { display: none !important; }
   .page-header-ed { padding: 10px 0 0 !important; background: none !important; }
-  .textbook-page .eyebrow, .textbook-page .page-header-ed p { display: none !important; }
-  .textbook-page .side-nav { display: none !important; }
-  .textbook-page .layout-side { display: block !important; }
-  .textbook-page .section { padding: 0 !important; }
+  .eyebrow, .page-header-ed p { display: none !important; }
+  .side-nav, .month-tabs { display: none !important; }
+  .layout-side { display: block !important; }
+  .section { padding: 0 !important; }
   .container { max-width: none !important; padding: 0 12px !important; }
   .card, .box, .box-practice, .box-tips { background: #fff !important; border-color: var(--line) !important; box-shadow: none !important; }
   /* 코드블록: 인쇄 시 밝은 배경 + 진한 구문색(잉크 절약·가독) */
