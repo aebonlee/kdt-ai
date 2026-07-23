@@ -25,23 +25,30 @@ export default function Appendix() {
   const [initial, setInitial] = useState(null)
   const [onlyImp, setOnlyImp] = useState(false)
 
-  // 전체 용어 평탄화 + 초성 계산
+  // 전체 용어 평탄화 + 이중 인덱스 계산 — "한글(영문)" 용어는 한글 초성과 영문 알파벳 양쪽에서 잡힌다
   const allTerms = useMemo(
     () =>
       glossary.flatMap((g) =>
-        g.terms.map((t) => ({ ...t, group: g.h, ini: getInitial(t.ko) }))
+        g.terms.map((t) => {
+          const inis = new Set([getInitial(t.ko), getInitial(t.en)])
+          // ko 표기 안의 괄호 영문(예: "맨해튼 거리(Manhattan Distance)")도 알파벳 인덱스로 인지
+          const paren = (t.ko || '').match(/\(([A-Za-z])/)
+          if (paren) inis.add(paren[1].toUpperCase())
+          inis.delete('#')
+          return { ...t, group: g.h, ini: getInitial(t.ko), inis: [...inis] }
+        })
       ),
     []
   )
   const total = allTerms.length
   const impCount = allTerms.filter((t) => t.imp).length
-  const presentInitials = useMemo(() => new Set(allTerms.map((t) => t.ini)), [allTerms])
+  const presentInitials = useMemo(() => new Set(allTerms.flatMap((t) => t.inis)), [allTerms])
 
   const q = query.trim().toLowerCase()
   const filtering = q !== '' || initial !== null || onlyImp
   const matched = allTerms.filter((t) => {
     if (onlyImp && !t.imp) return false
-    if (initial && t.ini !== initial) return false
+    if (initial && !t.inis.includes(initial)) return false
     if (q && !(`${t.ko} ${t.en} ${t.def}`.toLowerCase().includes(q))) return false
     return true
   })
