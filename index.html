@@ -13,6 +13,9 @@
         try {
           var t = localStorage.getItem('kdt-theme') || 'dark'
           document.documentElement.setAttribute('data-theme', t)
+          // 액센트 팔레트 복원 — 키는 AccentPalette 저장 키('kdt-accent')와 동일해야 유지된다.
+          var a = localStorage.getItem('kdt-accent') || 'cyan'
+          document.documentElement.setAttribute('data-accent', a)
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark')
         }

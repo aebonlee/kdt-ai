@@ -35,7 +35,7 @@
   --navy-200: #222634;  /* 라인 */
   --navy-100: #12141c;  /* 패널 */
   --navy-50:  #0c0e15;  /* 서피스(가장 어두움) */
-  --gold:     #22d3ee;  /* 프라이머리 액센트 = 시안 */
+  --gold:     var(--a1);  /* 프라이머리 액센트 = 팔레트 연동(기본 시안) */
   --azure:    #61afef;
 
   /* 지역·층 색 구분 — 다크 배경에서 잘 보이는 톤으로 */
@@ -61,7 +61,7 @@
   --container-max: 1450px;
   --radius: 8px;
 
-  --hero-bg: radial-gradient(900px 520px at 82% 12%, rgba(34,211,238,0.12), transparent 60%),
+  --hero-bg: radial-gradient(900px 520px at 82% 12%, color-mix(in srgb, var(--a1) 12%, transparent), transparent 60%),
              radial-gradient(760px 460px at 4% 96%, rgba(163,230,53,0.10), transparent 60%),
              #0a0b10;
   --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -103,9 +103,9 @@ ul { list-style: none; }
 .btn-primary { background: #1c2230; color: var(--navy-900); border-color: #2e3648; }
 .btn-primary:hover { background: #242c3d; border-color: var(--a1); }
 .btn-ghost { border-color: #3a4152; color: var(--navy-800); background: transparent; }
-.btn-ghost:hover { border-color: var(--a1); color: var(--a1); background: rgba(34,211,238,0.08); }
+.btn-ghost:hover { border-color: var(--a1); color: var(--a1); background: color-mix(in srgb, var(--a1) 8%, transparent); }
 .btn-cta { background: var(--a1); color: #06121a; font-weight: 800; border-color: var(--a1); }
-.btn-cta:hover { background: #3ee0f5; box-shadow: 0 6px 20px rgba(34,211,238,0.28); }
+.btn-cta:hover { background: color-mix(in srgb, var(--a1) 85%, #fff); box-shadow: 0 6px 20px color-mix(in srgb, var(--a1) 28%, transparent); }
 .btn-arrow { transition: transform 0.2s; }
 .btn:hover .btn-arrow { transform: translateX(3px); }
 
@@ -877,7 +877,7 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   }
   html, body, .textbook-page, .section, .container { background: #ffffff !important; color: #1b2337 !important; }
   /* 앱 크롬·인쇄버튼·사이드바 숨김, 콘텐츠 전체폭 */
-  .topbar, .navbar, .footer, .theme-toggle, .tb-print-btn, .tb-print-box { display: none !important; }
+  .topbar, .navbar, .footer, .theme-toggle, .accent-palette, .tb-print-btn, .tb-print-box { display: none !important; }
   .page-header-ed { padding: 10px 0 0 !important; background: none !important; }
   .eyebrow, .page-header-ed p { display: none !important; }
   .side-nav, .month-tabs { display: none !important; }
@@ -914,4 +914,51 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 @media (max-width: 860px) {
   .appendix-layout { grid-template-columns: 1fr; }
   .appendix-side { position: static; max-height: none; margin-bottom: 20px; }
+}
+
+/* ═══════════════ 액센트 팔레트 (다크모드 토글 옆 🎨) ═══════════════
+   data-accent가 --a1/--a2만 갈아끼우면 --gold·그라디언트·히어로 비주얼·행성이 전부 연동.
+   라이트 모드는 흰 배경 대비를 위해 --gold만 딥 톤으로 별도 재정의(기본 시안 → #0e7490 패턴과 동일). */
+:root[data-accent="amber"]   { --a1: #fbbf24; --a2: #fb923c; }
+:root[data-accent="violet"]  { --a1: #a78bfa; --a2: #f472b6; }
+:root[data-accent="emerald"] { --a1: #34d399; --a2: #a3e635; }
+:root[data-accent="rose"]    { --a1: #fb7185; --a2: #fbbf24; }
+:root[data-theme="light"][data-accent="amber"]   { --gold: #b45309; }
+:root[data-theme="light"][data-accent="violet"]  { --gold: #7c3aed; }
+:root[data-theme="light"][data-accent="emerald"] { --gold: #047857; }
+:root[data-theme="light"][data-accent="rose"]    { --gold: #be123c; }
+
+/* 팔레트 팝오버 UI */
+.accent-palette { position: relative; display: inline-flex; }
+.ap-pop {
+  position: absolute; top: calc(100% + 10px); right: 0; z-index: 300;
+  display: flex; gap: 10px; padding: 12px 14px;
+  background: var(--bg-white); border: 1px solid var(--line-strong); border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+}
+.ap-dot {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;
+}
+.ap-dot::before {
+  content: ''; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ap-c); border: 2px solid rgba(255,255,255,0.25);
+  transition: var(--transition-base);
+}
+.ap-dot:hover::before { transform: scale(1.15); }
+.ap-dot.active::before { border-color: #fff; box-shadow: 0 0 0 2px var(--ap-c); }
+[data-theme="light"] .ap-dot::before { border-color: rgba(0,0,0,0.15); }
+[data-theme="light"] .ap-dot.active::before { border-color: #fff; }
+.ap-name { font-size: 10px; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
+.ap-dot.active .ap-name { color: var(--gold); }
+
+/* ═══════════════ 히어로 타이핑 로테이터 (디자인 원본 rest06 이식) ═══════════════
+   부모(.ht-line:last-child)의 a1→a2 그라디언트 background-clip:text가 글자에 적용되고,
+   커서 바(.tw-caret)는 자식 배경이라 클리핑 없이 --a2 색으로 깜빡인다. */
+.tw-wrap { display: inline-flex; align-items: center; min-height: 1.04em; }
+.tw-text { white-space: pre; }
+.tw-caret {
+  display: inline-block; width: 4px; height: 0.78em; margin-left: 7px;
+  background: var(--a2); border-radius: 1px;
+  animation: dib-blink 1s steps(1) infinite;
 }

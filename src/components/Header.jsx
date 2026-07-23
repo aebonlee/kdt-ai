@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
 import { course } from '../data/course'
 import ThemeToggle from './ThemeToggle'
+import AccentPalette from './AccentPalette'
 import AuthButtons from './AuthButtons'
 import { useAuth } from '../contexts/AuthContext'
 import { canAccessAdmin } from '../config/admin'
@@ -48,6 +49,7 @@ export default function Header() {
             {admin && <AdminMenu />}
             <AuthButtons />
             <ThemeToggle />
+            <AccentPalette />
           </span>
         </div>
       </div>

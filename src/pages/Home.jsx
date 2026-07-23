@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { course } from '../data/course'
 import Sentences from '../components/Sentences'
 import HeroVisual from '../components/HeroVisual'
+import TypeWriter from '../components/TypeWriter'
 import CurriculumFlow from '../components/CurriculumFlow'
 
 export default function Home() {
@@ -15,7 +16,10 @@ export default function Home() {
             <p className="hero-mono">$ dreamitbiz --learn ai</p>
             <h1 className="hero-title">
               <span className="ht-line">AI 실무를</span>
-              <span className="ht-line">코드로 배우다</span>
+              {/* 핵심 키워드 타이핑 로테이터 — 디자인 원본(rest06) 이식 */}
+              <span className="ht-line">
+                <TypeWriter words={['코드로 배우다', '실습으로 익히다', '프로젝트로 완성하다', '피드백으로 성장하다']} />
+              </span>
             </h1>
             <p className="hero-lead">
               DreamIT Biz 학습지원 — 강의안·실습교안부터 팀 프로젝트까지,
