@@ -685,6 +685,8 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   background: none; font-family: inherit; transition: var(--transition-base); display: block; width: 100%;
 }
 .side-link:hover { background: var(--navy-50); color: var(--navy-800); }
+/* 활성(클릭한) 항목 — 배경·볼드가 클릭을 따라 이동한다. 오늘 표시는 '· 오늘' 텍스트로만. */
+.side-link.active { background: var(--navy-50); color: var(--navy-800); font-weight: 800; box-shadow: inset 3px 0 0 var(--gold); }
 .side-link .sl-sub { display: block; font-size: 11px; font-weight: 500; color: var(--ink-soft); margin-top: 2px; }
 /* 핵심 개념 */
 .concept { padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-white); }

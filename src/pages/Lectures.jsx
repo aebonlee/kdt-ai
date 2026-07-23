@@ -202,7 +202,6 @@ export default function Lectures() {
                       className={`side-link${isActive ? ' active' : ''}${s.date === todayStr ? ' is-today' : ''}`}
                       onClick={() => navigate(`/lectures/${s.date}`)}
                       aria-current={isActive ? 'true' : undefined}
-                      style={s.date === todayStr ? { background: 'rgba(212,160,23,0.18)', boxShadow: 'inset 4px 0 0 var(--gold)', fontWeight: 800 } : undefined}
                     >
                       {s.date.slice(5)} ({s.weekday}){s.date === todayStr ? ' · 오늘' : ''}
                       <span className="sl-sub">
