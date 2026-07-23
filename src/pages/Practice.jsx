@@ -1,9 +1,9 @@
-// 담당일자별 실습교안 — 개강일(7/14)부터 일자별 타임라인.
+// 담당일자별 실습교안 — 개강일(7/14)부터 일자별 타임라인 + 좌측 담당 세션 메뉴.
 // 이애본 실습교수 세션은 강조 카드(실전 기록: 반 맞춤 변경·평가·제출처),
 // 그 외 날짜·트랙은 참고 행으로 전체 과정 흐름을 함께 보여준다 (2026-07-24 대표 확정 기획).
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { subjects, subjectById, sessions } from '../data/curriculum'
+import { subjectById, sessions } from '../data/curriculum'
 import { otherSessions, TRACKS, EVENT_LABELS } from '../data/othersessions'
 import { otherCourses } from '../data/othercontent'
 import { practiceLog } from '../data/practicelog'
@@ -13,15 +13,12 @@ import Rich from '../components/Rich'
 const fmt = (d) => `${Number(d.slice(5, 7))}/${Number(d.slice(8, 10))}`
 const WEEKDAY = ['일', '월', '화', '수', '목', '금', '토']
 const weekdayOf = (d) => WEEKDAY[new Date(d + 'T00:00:00+09:00').getDay()]
-const MONTHS = ['2026-07', '2026-08', '2026-09', '2026-10', '2026-11', '2026-12']
-const MONTH_LABEL = { '2026-07': '7월', '2026-08': '8월', '2026-09': '9월', '2026-10': '10월', '2026-11': '11월', '2026-12': '12월' }
+const MONTH_LABEL = (m) => `${Number(m.slice(5, 7))}월`
 
 const nameOfCell = (c) => otherCourses[c]?.name || subjectById(c)?.name || EVENT_LABELS[c] || c
 
 export default function Practice() {
   const todayStr = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10)
-  const defaultMonth = MONTHS.includes(todayStr.slice(0, 7)) ? todayStr.slice(0, 7) : MONTHS[0]
-  const [month, setMonth] = useState(defaultMonth)
 
   // 날짜 축: 담당 세션 + 배정표(othersessions) 합집합
   const rows = useMemo(() => {
@@ -33,9 +30,29 @@ export default function Practice() {
     return dates.map((date) => ({ date, mine: mine.get(date) || null, other: others.get(date) || null }))
   }, [])
 
-  const monthRows = rows.filter((r) => r.date.startsWith(month))
-  const myCount = rows.filter((r) => r.mine).length
-  const doneCount = rows.filter((r) => r.mine && r.date <= todayStr).length
+  const mySessions = rows.filter((r) => r.mine)
+  const doneCount = mySessions.filter((r) => r.date <= todayStr).length
+
+  // 좌측 메뉴 선택 → 해당 카드로 스크롤
+  const defaultActive =
+    mySessions.find((r) => r.date >= todayStr)?.date || mySessions[mySessions.length - 1]?.date
+  const [active, setActive] = useState(defaultActive)
+  useEffect(() => {
+    if (!active) return
+    const el = document.getElementById(`ps-${active}`)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [active])
+
+  // 좌측 메뉴 월 그룹
+  const navGroups = useMemo(() => {
+    const g = new Map()
+    for (const r of mySessions) {
+      const m = r.date.slice(0, 7)
+      if (!g.has(m)) g.set(m, [])
+      g.get(m).push(r)
+    }
+    return [...g.entries()]
+  }, [mySessions])
 
   return (
     <div>
@@ -45,27 +62,40 @@ export default function Practice() {
           <h1>담당일자별 실습교안</h1>
           <p>
             <span style={{ display: 'block' }}>개강일(7/14)부터 일자별로 진행합니다. 이애본 실습교수 담당 세션은 카드로 강조되고, 그날 실제 수업에서 진행·변경·평가한 내용이 기록됩니다.</span>
-            <span style={{ display: 'block' }}>담당 세션 {myCount}일 중 {doneCount}일 진행 · 교과목 이론은 상단 「교과목별 강의안」에서 학습하세요.</span>
+            <span style={{ display: 'block' }}>담당 세션 {mySessions.length}일 중 {doneCount}일 진행 · 교과목 이론은 상단 「교과목별 강의안」에서 학습하세요.</span>
           </p>
         </div>
       </div>
 
       <section className="section">
-        <div className="container">
-          {/* 월 탭 */}
-          <div className="month-tabs" style={{ marginBottom: 20 }}>
-            {MONTHS.map((m) => (
-              <button key={m} className={`month-tab${month === m ? ' active' : ''}`} onClick={() => setMonth(m)}>
-                {MONTH_LABEL[m]}
-              </button>
+        <div className="container layout-side">
+          {/* 좌측 메뉴 — 담당 세션(월 그룹) */}
+          <nav className="side-nav" aria-label="담당 세션">
+            {navGroups.map(([m, list]) => (
+              <div key={m}>
+                <div style={{ fontSize: 11.5, fontWeight: 800, color: 'var(--ink-soft)', letterSpacing: '0.08em', margin: '14px 4px 6px' }}>
+                  {MONTH_LABEL(m)}
+                </div>
+                {list.map((r) => {
+                  const sj = subjectById(r.mine.subjectId)
+                  return (
+                    <button
+                      key={r.date}
+                      className={`side-link${active === r.date ? ' active' : ''}`}
+                      onClick={() => setActive(r.date)}
+                    >
+                      {fmt(r.date)} ({weekdayOf(r.date)}){r.date === todayStr ? ' · 오늘' : ''}
+                      <span className="sl-sub">{sj?.name} · {r.mine.region} {r.mine.klass}</span>
+                    </button>
+                  )
+                })}
+              </div>
             ))}
-          </div>
+          </nav>
 
+          {/* 본문 타임라인 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {monthRows.length === 0 && (
-              <p style={{ color: 'var(--ink-soft)' }}>이 달에는 표시할 일정이 없습니다.</p>
-            )}
-            {monthRows.map(({ date, mine, other }) => {
+            {rows.map(({ date, mine, other }) => {
               const isToday = date === todayStr
               const isPast = date < todayStr
               const log = practiceLog[date]
@@ -73,12 +103,12 @@ export default function Practice() {
               const ev = log?.evaluation ? exams[log.evaluation] : null
 
               if (mine) {
-                // ── 담당 세션: 강조 카드 ──
                 return (
-                  <div key={date} className="card" style={{
+                  <div key={date} id={`ps-${date}`} className="card" style={{
                     padding: '18px 22px',
                     borderLeft: '4px solid var(--gold)',
                     background: isToday ? 'var(--navy-50)' : undefined,
+                    scrollMarginTop: 84,
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                       <strong style={{ fontSize: 15, color: 'var(--navy-800)' }}>{fmt(date)} ({weekdayOf(date)})</strong>
@@ -121,7 +151,6 @@ export default function Practice() {
                 )
               }
 
-              // ── 담당 아님: 참고 행 (그날 각 트랙 과목) ──
               if (!other) return null
               const cells = TRACKS.map((t) => {
                 const cell = other[t.key]

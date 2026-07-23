@@ -10,6 +10,7 @@ import { practiceGuides } from '../data/practiceGuides'
 import EtcCourse from '../components/EtcCourse'
 import PracticeSupplement from '../components/PracticeSupplement'
 import { otherCourses } from '../data/othercontent'
+import { subjectCatalog } from '../data/subjectcatalog'
 
 // 실습교안 — 네이티브 React 렌더(과거 practice-textbook.html iframe 임베드를 대체).
 // 과목별 데이터를 선택 시에만 동적 로드해 가볍고, 앱 테마(라이트/다크)·좌측 메뉴를 공유한다.
@@ -265,24 +266,27 @@ function DayBlock({ subj, day, dd }) {
 }
 
 export default function Textbook() {
-  const [tab, setTab] = useState('mine')
-  const [activeId, setActiveId] = useState(mainSubjects[0].id)
+  const [catIdx, setCatIdx] = useState(0)
+  const [verIdx, setVerIdx] = useState(0)
   const [mod, setMod] = useState(null)
   const [loading, setLoading] = useState(true)
-  const isEtc = tab === 'etc'
+
+  const cat = subjectCatalog[catIdx]
+  const ver = cat.versions[Math.min(verIdx, cat.versions.length - 1)]
+  const isEtc = ver.type === 'etc'
+  const subj = !isEtc ? subjectById(ver.id) : null
 
   useEffect(() => {
     if (isEtc) { setMod(null); setLoading(false); return }
     let cancelled = false
     setLoading(true); setMod(null)
-    const loader = subjectModules[`../data/lectures/${activeId}.js`]
+    const loader = subjectModules[`../data/lectures/${ver.id}.js`]
     if (!loader) { setLoading(false); return }
     loader().then((m) => { if (!cancelled) { setMod(m); setLoading(false) } }).catch(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
-  }, [activeId, isEtc])
+  }, [ver.id, isEtc])
 
-  const subj = !isEtc ? subjectById(activeId) : null
-  const pickTab = (t) => { setTab(t); setActiveId(t === 'etc' ? etcEntries[0].id : mainSubjects[0].id) }
+  const pickSubject = (i) => { setCatIdx(i); setVerIdx(0) }
 
   return (
     <div className="textbook-page">
@@ -305,42 +309,56 @@ export default function Textbook() {
           <span className="eyebrow">Subjects</span>
           <h1>교과목별 강의안</h1>
           <p>
-            <span style={{ display: 'block' }}>교과목별로 정리된 강의안입니다 — 일차별 학습목표·핵심개념·교재 기반 심화 이론·예제·평가기준·복습퀴즈를 담습니다.</span>
-            <span style={{ display: 'block' }}>좌측에서 과목을 선택하세요. 수업일별 실전 기록은 「담당일자별 실습교안」에서 확인합니다. (인쇄 버튼으로 PDF 저장)</span>
+            <span style={{ display: 'block' }}>전 {subjectCatalog.length}개 교과목을 과정 진행 순서대로 나열했습니다 — 담당·타 강사 구분 없이 과목별로 학습합니다.</span>
+            <span style={{ display: 'block' }}>전임교수별로 내용이 갈리는 과목은 A안·B안으로 병기됩니다. 수업일별 실전 기록은 「담당일자별 실습교안」에서 확인하세요.</span>
           </p>
         </div>
       </div>
 
       <section className="section">
         <div className="container layout-side">
-          <nav className="side-nav" aria-label="과목">
-            <div className="month-tabs">
-              <button className={`month-tab${tab === 'mine' ? ' active' : ''}`} onClick={() => pickTab('mine')}>담당 강의</button>
-              <button className={`month-tab${tab === 'etc' ? ' active' : ''}`} onClick={() => pickTab('etc')}>담당일정 외</button>
-            </div>
-            {(isEtc ? etcEntries : mainSubjects).map((s) => (
+          <nav className="side-nav" aria-label="교과목">
+            {subjectCatalog.map((c, i) => (
               <button
-                key={s.id}
-                className={`side-link${activeId === s.id ? ' active' : ''}`}
-                onClick={() => setActiveId(s.id)}
+                key={c.title}
+                className={`side-link${catIdx === i ? ' active' : ''}`}
+                onClick={() => pickSubject(i)}
               >
-                {s.name}
-                <span className="sl-sub">{isEtc ? `${s.category} · ${s.hours}시간 · 타 강사` : `${s.code} · ${s.days.length}일차`}</span>
+                {i + 1}. {c.title}
+                <span className="sl-sub">
+                  {c.versions.map((v) => v.plan + (v.professor ? `(${v.professor.replace(' 전임교수', '')})` : '')).join(' · ')}
+                </span>
               </button>
             ))}
           </nav>
 
           <div>
+            {/* A안/B안 선택 — 버전이 2개 이상일 때만 */}
+            {cat.versions.length > 1 && (
+              <div className="month-tabs" style={{ marginBottom: 16 }}>
+                {cat.versions.map((v, i) => (
+                  <button
+                    key={v.id}
+                    className={`month-tab${verIdx === i ? ' active' : ''}`}
+                    onClick={() => setVerIdx(i)}
+                  >
+                    {v.plan}{v.professor ? ` · ${v.professor}` : ''}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {isEtc ? (
-              <EtcCourse courseId={activeId} />
+              <EtcCourse courseId={ver.id} />
             ) : subj ? (
               <>
                 <div className="detail-meta">
                   <span className="chip chip-code">{subj.code}</span>
                   <span className="chip chip-cat">{subj.category}</span>
+                  {ver.professor && <span className="chip chip-day">{ver.plan} · {ver.professor}</span>}
                   <Rating level={subj.level} weight={subj.weight} />
                 </div>
-                <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginTop: 8 }}>{subj.name}</h2>
+                <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginTop: 8 }}>{cat.title}</h2>
                 <p style={{ color: 'var(--ink-soft)', marginTop: 4 }}>{subj.category} · {subj.days.length}일차 강의안</p>
 
                 {loading ? (
