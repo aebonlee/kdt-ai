@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <!-- 맨해튼 거리 도해 — kdt-ai 다크 IDE 톤 자체 패널 (라이트/다크 공용) -->
+  <rect width="760" height="420" rx="14" fill="#0d1020"/>
+  <text x="30" y="42" fill="#e6e9f5" font-size="20" font-weight="800">맨해튼 거리(Manhattan Distance) — '택시 거리'</text>
+  <text x="30" y="66" fill="#8a93b8" font-size="13">대각선 없이 가로·세로 골목만 따라 이동하는 격자 도시에서의 거리</text>
+
+  <!-- 격자 (6×5 블록) -->
+  <g stroke="#2a3050" stroke-width="1.2">
+    <line x1="80" y1="96" x2="416" y2="96"/><line x1="80" y1="152" x2="416" y2="152"/>
+    <line x1="80" y1="208" x2="416" y2="208"/><line x1="80" y1="264" x2="416" y2="264"/>
+    <line x1="80" y1="320" x2="416" y2="320"/><line x1="80" y1="376" x2="416" y2="376"/>
+    <line x1="80" y1="96" x2="80" y2="376"/><line x1="136" y1="96" x2="136" y2="376"/>
+    <line x1="192" y1="96" x2="192" y2="376"/><line x1="248" y1="96" x2="248" y2="376"/>
+    <line x1="304" y1="96" x2="304" y2="376"/><line x1="360" y1="96" x2="360" y2="376"/>
+    <line x1="416" y1="96" x2="416" y2="376"/>
+  </g>
+
+  <!-- 유클리드(직선) — 점선 -->
+  <line x1="136" y1="320" x2="360" y2="152" stroke="#59c2ff" stroke-width="2.5" stroke-dasharray="7 6"/>
+  <!-- 맨해튼 경로 — 가로 후 세로 -->
+  <path d="M 136 320 L 360 320 L 360 152" fill="none" stroke="#e8b64c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 이동 방향 화살표 -->
+  <path d="M 250 312 l 12 8 l -12 8 z" fill="#e8b64c"/>
+  <path d="M 352 240 l 8 -12 l 8 12 z" fill="#e8b64c"/>
+
+  <!-- 지점 A·B -->
+  <circle cx="136" cy="320" r="9" fill="#e8b64c" stroke="#0d1020" stroke-width="2.5"/>
+  <circle cx="360" cy="152" r="9" fill="#59c2ff" stroke="#0d1020" stroke-width="2.5"/>
+  <text x="112" y="348" fill="#e8b64c" font-size="15" font-weight="800">A(1, 1)</text>
+  <text x="374" y="148" fill="#59c2ff" font-size="15" font-weight="800">B(5, 4)</text>
+
+  <!-- Δx·Δy 표기 -->
+  <text x="228" y="368" fill="#e8b64c" font-size="13" font-weight="700">Δx = 4블록</text>
+  <text x="378" y="242" fill="#e8b64c" font-size="13" font-weight="700" transform="rotate(-90 378 242)"> </text>
+  <text x="424" y="242" fill="#e8b64c" font-size="13" font-weight="700">Δy = 3블록</text>
+
+  <!-- 우측 수식 패널 -->
+  <g>
+    <rect x="472" y="100" width="258" height="128" rx="10" fill="#161b33" stroke="#e8b64c" stroke-width="1.4"/>
+    <text x="490" y="128" fill="#e8b64c" font-size="15" font-weight="800">■ 맨해튼 거리 (L1)</text>
+    <text x="490" y="156" fill="#e6e9f5" font-size="14">d = |x₁−x₂| + |y₁−y₂|</text>
+    <text x="490" y="182" fill="#e6e9f5" font-size="14">= |5−1| + |4−1|</text>
+    <text x="490" y="208" fill="#e8b64c" font-size="16" font-weight="800">= 4 + 3 = 7 블록</text>
+
+    <rect x="472" y="244" width="258" height="100" rx="10" fill="#161b33" stroke="#59c2ff" stroke-width="1.4"/>
+    <text x="490" y="272" fill="#59c2ff" font-size="15" font-weight="800">□ 유클리드 거리 (L2·직선)</text>
+    <text x="490" y="300" fill="#e6e9f5" font-size="14">d = √(4² + 3²)</text>
+    <text x="490" y="326" fill="#59c2ff" font-size="16" font-weight="800">= 5  (항상 L1보다 ≤)</text>
+  </g>
+
+  <text x="472" y="376" fill="#8a93b8" font-size="12.5">임베딩 벡터의 '가까움(=의미 유사)'을 재는 거리 척도 중 하나</text>
+</svg>
