@@ -72,6 +72,7 @@ export default function App() {
             <Route path="/progress" element={<RequireAdmin><AdminShell><Progress /></AdminShell></RequireAdmin>} />
             <Route path="/day/:date" element={<RequireAuth><DayDetail /></RequireAuth>} />
             <Route path="/textbook" element={<RequireAuth><Textbook /></RequireAuth>} />
+            <Route path="/practice" element={<RequireAuth><Practice /></RequireAuth>} />
 
             {/* 로그인 / 게시판 / 대시보드 */}
             <Route path="/login" element={<Login />} />

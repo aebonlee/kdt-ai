@@ -11,8 +11,8 @@ import AdminMenu from './AdminMenu'
 const nav = [
   { to: '/about', label: 'About' },
   { to: '/prep', label: '선수학습자료' },
-  { to: '/lectures', label: '학습강의안' },
-  { to: '/textbook', label: '실습교안' },
+  { to: '/textbook', label: '교과목별 강의안' },
+  { to: '/practice', label: '담당일자별 실습교안' },
   { to: '/team', label: '팀 프로젝트' },
   { to: '/appendix', label: '부록' },
   { to: '/reference', label: '참고자료' },

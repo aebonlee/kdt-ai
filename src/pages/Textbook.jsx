@@ -302,11 +302,11 @@ export default function Textbook() {
               💡 인쇄 미리보기에서 &ldquo;배경 그래픽&rdquo; 옵션을 켜면<br />코드·배지 색이 함께 나옵니다
             </p>
           </div>
-          <span className="eyebrow">Textbook</span>
-          <h1>실습교안</h1>
+          <span className="eyebrow">Subjects</span>
+          <h1>교과목별 강의안</h1>
           <p>
-            <span style={{ display: 'block' }}>담당 {mainSubjects.length}과목의 일차별 강의안·실습·예제·평가기준·복습퀴즈를 한 곳에서 봅니다.</span>
-            <span style={{ display: 'block' }}>좌측에서 과목을 선택하면 해당 과목만 불러옵니다. (인쇄 버튼으로 PDF 저장)</span>
+            <span style={{ display: 'block' }}>교과목별로 정리된 강의안입니다 — 일차별 학습목표·핵심개념·교재 기반 심화 이론·예제·평가기준·복습퀴즈를 담습니다.</span>
+            <span style={{ display: 'block' }}>좌측에서 과목을 선택하세요. 수업일별 실전 기록은 「담당일자별 실습교안」에서 확인합니다. (인쇄 버튼으로 PDF 저장)</span>
           </p>
         </div>
       </div>
@@ -341,7 +341,7 @@ export default function Textbook() {
                   <Rating level={subj.level} weight={subj.weight} />
                 </div>
                 <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginTop: 8 }}>{subj.name}</h2>
-                <p style={{ color: 'var(--ink-soft)', marginTop: 4 }}>{subj.category} · {subj.days.length}일차 실습교안</p>
+                <p style={{ color: 'var(--ink-soft)', marginTop: 4 }}>{subj.category} · {subj.days.length}일차 강의안</p>
 
                 {loading ? (
                   <div style={{ marginTop: 20, padding: '48px 20px', textAlign: 'center', color: 'var(--ink-soft)' }}>강의안을 불러오는 중…</div>
