@@ -209,5 +209,29 @@ export const extraStudy = {
 
 export const extraStudyFor = (id) => extraStudy[id] || null
 
-// transformer2(2반·임성열) — 도전과제·심화링크는 transformer와 공유 (2026-07-23 분리 시).
-extraStudy['transformer2'] = extraStudy['transformer']
+// transformer2(2반·임성열) — 자체 도전과제·링크 (7반과 공유하지 않음)
+extraStudy['transformer2'] = {
+  "challenges": [
+    "practice_1-1의 hidden_size(50)를 20/100으로 바꿔 장기 의존성 한계가 언제부터 심해지는지 비교해 본다.",
+    "원논문 \"Attention Is All You Need\"의 Figure 1(아키텍처 도식)을 보고 오늘 배운 블록 이름을 전부 짚어 본다.",
+    "CrewAI 에이전트를 2개→3개로 늘려(예: 검수자 추가) 결과 품질과 usage 토큰이 어떻게 변하는지 기록한다."
+  ],
+  "links": [
+    {
+      "t": "Attention Is All You Need (원논문 PDF — 강의안 첨부)",
+      "u": "/materials/paper-attention.pdf"
+    },
+    {
+      "t": "CrewAI 공식 문서",
+      "u": "https://docs.crewai.com/"
+    },
+    {
+      "t": "Hugging Face Transformers 문서 (GPT-2)",
+      "u": "https://huggingface.co/docs/transformers/model_doc/gpt2"
+    },
+    {
+      "t": "Vellum LLM Leaderboard (교재 소개 리더보드)",
+      "u": "https://www.vellum.ai/llm-leaderboard"
+    }
+  ]
+}

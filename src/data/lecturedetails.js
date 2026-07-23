@@ -110,18 +110,40 @@ export const details = {
   // ── 2반(판교 4층·임성열) — 별개 커리큘럼 ──
   "transformer2-1": {
     "topics": [
-      { "h": "언어모델과 벡터 공간", "items": [
-        "다음 토큰 예측 — 언어모델은 '다음에 올 말'의 확률 분포를 만든다",
-        "토큰화·임베딩 — 글자를 숫자 벡터로, 의미가 비슷하면 벡터도 가깝게",
-        "벡터 거리 — 맨해튼(L1)·유클리드(L2)·코사인 유사도로 '가까움'을 잰다",
-        "softmax — 제각각인 점수를 합=1인 확률로 정규화"
-      ] },
-      { "h": "LSTM에서 Transformer로", "items": [
-        "LSTM — 한 줄로 서서 차례차례 읽기, 고정 크기 기억(hidden)에 문맥 압축",
-        "장기 의존성 한계 — 문장이 길어지면 앞 문맥이 흐려진다",
-        "Self-Attention — 모든 위치를 한 번에 참조, Q·K·V와 scaled dot-product",
-        "병렬화 — 순차 처리(LSTM)와 달리 한꺼번에 계산해 학습이 빠르다"
-      ] }
+      {
+        "h": "Intro — Software 3.0과 AI 시대",
+        "items": [
+          "전통적 개발은 함수를, AI 소프트웨어는 모델을 만든다",
+          "Software 1.0(규칙 코딩) → 2.0(데이터로 학습) → 3.0(목표 정의로 사고·행동)",
+          "\"소프트웨어의 인터페이스는 API가 아니라 언어다\" — 개발자는 문제정의자·사고 설계자로",
+          "LLM = 추론엔진·지식 인터페이스·자연어 컴파일러·에이전트의 두뇌",
+          "AI 2~3년 주기 퀀텀 점프: 2012 AlexNet → 2017 Attention Is All You Need → 2022 ChatGPT",
+          "증강 지능 — 대체가 아니라 인간 의사결정의 향상"
+        ]
+      },
+      {
+        "h": "NLP에서 LLM까지 — 언어의 수치화 여정",
+        "items": [
+          "Corpus·Vocabulary, One-hot vector, BoW(빈도 표현)",
+          "N-Gram(순서 일부 보존)·TF-IDF(중요 단어 선별)와 차원의 저주",
+          "분포가설 → Word2Vec 임베딩 (King−Man+Woman=Queen)",
+          "언어모델 = 단어 시퀀스에 확률 할당, 다음 단어 예측",
+          "RNN(hidden state) → vanishing gradient → LSTM/GRU(게이트) → Seq2Seq(압축 소실)",
+          "Attention의 등장과 Contextual Embedding('배'의 세 가지 의미 구분)"
+        ]
+      },
+      {
+        "h": "Self-Attention 수학 — 유사도에서 어텐션까지",
+        "items": [
+          "코사인 유사도 — 내적을 벡터 크기로 정규화(L2), 각도 기반 유사도",
+          "내적의 기하학적 의미 — 정사영 길이 × 벡터 길이",
+          "벡터 거리 비교 사례 — 유클리드 거리 vs 코사인 유사도 (맨해튼 거리 포함)",
+          "입력 × W^Q·W^K·W^V → Q(질문)·K(색인)·V(내용)",
+          "QKᵀ Score Matrix — (i,j) = i토큰이 j토큰을 주목하는 정도",
+          "√d_k 스케일링 + Softmax 확률화 → V 가중합 = 문맥 벡터",
+          "Attention(Q,K,V) = Softmax(QKᵀ/√d_k)V"
+        ]
+      }
     ],
     "labs": [
       { "title": "Lab. 거리 척도 3종 비교 — 어떤 '가까움'이 맞을까", "steps": [
@@ -142,18 +164,39 @@ export const details = {
   },
   "transformer2-2": {
     "topics": [
-      { "h": "LLM을 API 레벨에서 쓰기", "items": [
-        "추론(Inference) 파이프라인 — 토큰화→임베딩→Self-Attention→자기회귀 생성",
-        "토큰 = 비용 — usage로 사용량을 읽고, 한국어가 영어보다 토큰을 더 쓴다",
-        "컨텍스트 윈도우 — 한 번에 넣을 수 있는 문맥의 한계",
-        "프롬프트 기법 — CoT·Self-Consistency·ReAct를 Task 설명에 반영"
-      ] },
-      { "h": "CrewAI 에이전트 협업", "items": [
-        "Agent — role·goal·backstory가 곧 시스템 프롬프트",
-        "Task — 할 일 정의와 expected_output, Agent에 배정",
-        "Crew — process=sequential로 Task를 순차 실행(kickoff)",
-        "다단계 호출 — 매 호출마다 파이프라인 전체가 반복돼 비용이 누적된다"
-      ] }
+      {
+        "h": "Transformer 아키텍처 완성",
+        "items": [
+          "\"Attention Is All You Need\"(2017) — RNN·CNN 없이 Self-Attention만으로",
+          "인코더-디코더 구조, BLEU 성과(영-독 28.4·영-불 41.8, 더 적은 비용으로 SOTA)",
+          "Multi-Head Attention — 병렬 어텐션 h개 + Concat + Linear 재조합",
+          "LayerNorm(차원별 정규화)·Residual(원 입력 보존, 포스트잇 비유)",
+          "FFN(ReLU 비선형성)·Positional Encoding(번호표 비유)",
+          "Masked Self-Attention — 미래를 가리고 다음 토큰 예측(GPT의 원리)"
+        ]
+      },
+      {
+        "h": "LLM 생태계와 선택 기준",
+        "items": [
+          "현대 LLM 4대 특징 — 규모·사전학습(+Fine-tuning)·NLP 작업·Transformer",
+          "GPT-3 = 5,000억 토큰·175B 파라미터(GPT-2의 100배 이상)",
+          "리더보드 3종 — Stanford HELM(학계)·Vellum(산업계)·HF Open LLM(오픈소스)",
+          "평가 축 — 추론(GPQA)·수학(AIME)·코딩(SWE Bench)·속도·토큰당 비용",
+          "Market leaders — GPT-5·Gemini 3·Claude 4.5·Grok 4·LLaMA 4의 강점 비교",
+          "AI 진화 방향 — 인지 AI → 생성형 AI → AI 에이전트 → 피지컬 AI"
+        ]
+      },
+      {
+        "h": "LLM 활용 — API에서 Multi-Agent까지",
+        "items": [
+          "추론 파이프라인 — 토큰화→임베딩→Self-Attention→다음 토큰 예측(자기회귀)",
+          "토큰 = 비용·속도 — usage 확인, 한국어가 영어보다 토큰을 더 소모",
+          "다단계 에이전트 — 매 호출마다 파이프라인 전체 반복(느리고 비싼 이유)",
+          "CoT·SC·ReAct — 구조를 바꾸지 않고 프롬프트 설계로 추론 품질 향상",
+          "CrewAI — Agent(role·goal·backstory, 롤플레잉 성능 향상)·Task·Crew",
+          "기획자→작성자→편집자 협업 템플릿 → 팀 시나리오로 변형(실습2)"
+        ]
+      }
     ],
     "labs": [
       { "title": "Lab. 역할을 바꾸면 결과가 바뀔까", "steps": [

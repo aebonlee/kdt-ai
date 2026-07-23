@@ -156,15 +156,15 @@ export const plans = {
     "schedule": [
       {
         "time": "09:00–09:50",
-        "topic": "[강의] LLM이 뭐길래? '다음 단어 맞히기' 게임으로 시작하기"
+        "topic": "[강의] Software 1.0→3.0 — LLM, 언어가 인터페이스가 되다"
       },
       {
         "time": "10:00–10:50",
-        "topic": "[강의] 토큰화(BPE)와 임베딩 — 글자를 숫자 벡터로 바꾸기"
+        "topic": "[강의] 토큰화와 임베딩 — 벡터 공간과 거리(맨해튼·유클리드)·유사도"
       },
       {
         "time": "11:00–11:50",
-        "topic": "[실습] 토크나이저로 문장 쪼개고 임베딩 벡터 직접 꺼내보기"
+        "topic": "[강의] RNN·LSTM의 한계 — 순차 처리와 장기 의존성"
       },
       {
         "time": "12:00–13:00",
@@ -173,23 +173,23 @@ export const plans = {
       },
       {
         "time": "13:00–13:50",
-        "topic": "[강의] RNN·LSTM의 한계 — 한 줄로 서서 차례차례 읽기의 답답함"
+        "topic": "[강의] Self-Attention과 Query·Key·Value, softmax로 확률 만들기"
       },
       {
         "time": "14:00–14:50",
-        "topic": "[강의] Attention의 직관 — 중요한 문장에 형광펜 치기"
+        "topic": "[실습] 실습1-1 — PyTorch LSTM(CharLSTM)으로 한국어 문장 생성"
       },
       {
         "time": "15:00–15:50",
-        "topic": "[강의] Self-Attention과 Query·Key·Value 삼총사"
+        "topic": "[실습] 실습1-1 — 장기 의존성 한계 관찰·생성 결과 캡처"
       },
       {
         "time": "16:00–16:50",
-        "topic": "[실습] Scaled Dot-Product Attention 손으로·NumPy로 계산하기"
+        "topic": "[실습] 실습1-2 — 사전학습 GPT-2로 같은 과제 재생성"
       },
       {
         "time": "17:00–17:50",
-        "topic": "[실습] Attention 가중치 히트맵으로 시각화하기"
+        "topic": "[실습] 실습1 마무리 — LSTM vs Transformer 비교 리포트 작성"
       }
     ],
     "practice": {
@@ -221,15 +221,43 @@ export const plans = {
   },
   "transformer2-2": {
     "schedule": [
-      { "time": "09:00–09:50", "topic": "[강의] 복습: LSTM→Transformer, 그리고 LLM 추론(Inference) 파이프라인 — 토큰화→임베딩→Self-Attention→다음 토큰 예측(자기회귀)" },
-      { "time": "10:00–10:50", "topic": "[강의] LLM을 API 레벨에서 쓰기 — 스트리밍 응답·컨텍스트 윈도우·토큰=비용(usage), 프롬프트 기법 CoT·SC·ReAct 복습(practice_0)" },
-      { "time": "11:00–11:50", "topic": "[강의+실습 착수] 에이전트 프레임워크 CrewAI 개념(Agent·Task·Crew, 역할 분담·도구 호출) → 실습2 착수: 팀 편성·.env(API키)·requirements-llm 설치" },
-      { "time": "12:00–13:00", "topic": "점심 휴식", "lunch": true },
-      { "time": "13:00–13:50", "topic": "[실습] 실습2 ① Agent 정의 — Writer·Editor에 role·goal·backstory·LLM(gpt-4o)·temperature 설정" },
-      { "time": "14:00–14:50", "topic": "[실습] 실습2 ② Task(Plan→Write→Edit) 정의·Crew(process=sequential)·kickoff() 실행, 응답 usage로 한국어/영어 토큰·비용 비교" },
-      { "time": "15:00–15:50", "topic": "[실습] 실습2 ③ 가상데이터(상담·계약·거래·FAQ)로 이해관계자·Biz 가치 도출해 AI 서비스 시나리오 기획 + 프롬프트·호출수 최적화(크레딧 절약)" },
-      { "time": "16:00–16:50", "topic": "[실습] 실습2 ④ 팀 에이전트 코드 마무리 + 서비스 시나리오 발표자료(최소 3p) 정리·리허설" },
-      { "time": "17:00–17:50", "topic": "[발표·채점] 팀별 발표 → 평가(Biz가치 40·기술이해도 30·수업충실도 30), 개인별 점수·판단근거·보완사항 기록" }
+      {
+        "time": "09:00–09:50",
+        "topic": "[강의] 복습: LSTM→Transformer, LLM 추론(Inference) 파이프라인"
+      },
+      {
+        "time": "10:00–10:50",
+        "topic": "[강의] LLM을 API 레벨에서 쓰기 — 토큰=비용(usage)·CoT·SC·ReAct 복습"
+      },
+      {
+        "time": "11:00–11:50",
+        "topic": "[강의+실습] CrewAI 개념(Agent·Task·Crew) + 실습2 착수(팀 편성·.env)"
+      },
+      {
+        "time": "12:00–13:00",
+        "topic": "점심 휴식",
+        "lunch": true
+      },
+      {
+        "time": "13:00–13:50",
+        "topic": "[실습] 실습2 ① Agent 정의 — Writer·Editor role·goal·backstory"
+      },
+      {
+        "time": "14:00–14:50",
+        "topic": "[실습] 실습2 ② Task·Crew 구성·kickoff 실행, usage로 비용 비교"
+      },
+      {
+        "time": "15:00–15:50",
+        "topic": "[실습] 실습2 ③ 가상데이터로 Biz 가치·서비스 시나리오 기획"
+      },
+      {
+        "time": "16:00–16:50",
+        "topic": "[실습] 실습2 ④ 팀 코드·발표자료(최소 3p) 마무리·리허설"
+      },
+      {
+        "time": "17:00–17:50",
+        "topic": "[발표] 팀별 발표·평가 — Biz가치 40 · 기술이해도 30 · 수업충실도 30"
+      }
     ],
     "practice": {
       "title": "실습2. CrewAI로 Transformer 기반 LLM을 API 레벨에서 활용하는 에이전트 구현 — 팀 (practice_2.CrewAI_Agent_System)",

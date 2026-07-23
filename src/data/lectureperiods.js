@@ -27,7 +27,7 @@ export const periods = {
   ],
   // ── 2반(판교 4층·임성열, 07-23~24) — 별개 커리큘럼 (LSTM vs Transformer + CrewAI) ──
   "transformer2-1": [
-    "[강의] LLM이 뭐길래? '다음 단어 맞히기' 게임으로 시작하기",
+    "[강의] Software 1.0→3.0 — LLM, 언어가 인터페이스가 되다",
     "[강의] 토큰화와 임베딩 — 벡터 공간과 거리(맨해튼·유클리드)·유사도",
     "[강의] RNN·LSTM의 한계 — 순차 처리와 장기 의존성",
     "[강의] Self-Attention과 Query·Key·Value, softmax로 확률 만들기",

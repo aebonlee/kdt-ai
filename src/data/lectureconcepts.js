@@ -15,6 +15,26 @@ export const concepts = {
     {
       "term": "소프트맥스(Softmax) 함수",
       "desc": "딥러닝의 다중 클래스 분류(Multi-class Classification)에서 쓰는 활성화 함수다. 여러 클래스(예: 강아지·고양이·호랑이) 중 하나를 예측할 때, 출력층의 점수를 0~1 사이 확률로 정규화해 총합이 항상 1이 되게 만든다. 언어모델에서는 '다음 토큰'의 확률 분포를 만들 때, Self-Attention에서는 QKᵀ/√d_k 점수를 attention 가중치(합=1)로 바꿀 때 — 오늘 수업 두 곳 모두에 등장한다."
+    },
+      {
+      "term": "Corpus와 Vocabulary",
+      "desc": "기계가 언어를 이해하려면 언어를 수치로 변환해야 하는데, 그 재료가 되는 '수집하여 가지고 있는 모든 단어들'이 Corpus다.\nNLP 작업을 위해 Corpus에서 뽑은 단어들이 Vocabulary이며, One-hot vector의 크기(N=단어 개수)도 여기서 정해진다. (교재 p.34)"
+    },
+    {
+      "term": "TF-IDF",
+      "desc": "'어떤 단어가 중요한가'를 가리는 빈도 기반 지표다.\nTF(많이 나오면 중요)에 IDF(다른 문서에도 흔하면 중요도 하락)를 곱해, 이 문서에서 정말 특징적인 단어를 찾아낸다. (p.36)"
+    },
+    {
+      "term": "분포가설(Distributional Hypothesis)",
+      "desc": "단어의 의미는 그 단어가 나타나는 문맥이 정의하며, 비슷한 문맥에서 쓰이는 단어는 의미도 비슷하다는 가설이다(\"You shall know a word by the company it keeps\").\nWord2Vec 등 워드 임베딩이 이 가설의 딥러닝 구현이다. (p.39)"
+    },
+    {
+      "term": "Contextual Embedding(문맥적 임베딩)",
+      "desc": "Word2Vec류는 '한 단어=고정 벡터 하나'라 동음이의어('배'=과일/선박/신체)를 구분하지 못한다.\nTransformer 기반 임베딩은 같은 단어라도 문맥에 따라 다른 벡터를 생성한다 — \"money in the bank\"와 \"river bank\"의 bank가 서로 다른 좌표에 놓인다. (p.48)"
+    },
+    {
+      "term": "전이학습(Transfer Learning)과 Pretrained Model",
+      "desc": "유사한 데이터로 미리 학습해 둔 모델이 Pretrained Model이고, 이를 바탕으로 내 문제를 푸는 접근이 전이학습이다.\n실습1-2에서 사전학습 GPT-2를 그대로 불러와 문장을 생성하는 것이 바로 이 개념의 체감이다. (p.49)"
     }
   ],
   "transformer2-2": [
@@ -29,6 +49,26 @@ export const concepts = {
     {
       "term": "토큰 = 비용 (usage)",
       "desc": "API 응답의 usage(prompt_tokens·completion_tokens)가 곧 요금과 지연의 단위다. 같은 의미라도 한국어가 영어보다 토큰을 더 소모하며, 프롬프트 길이·호출 횟수·max_tokens를 줄이는 것이 실전 최적화의 기본이다."
+    },
+      {
+      "term": "Foundation 모델",
+      "desc": "프롬프트 기반의 대규모 사전 학습 언어 모델이다(\"Language Models are Few-Shot Learners\", 2020).\n대규모 데이터·사전 학습으로 다양한 작업을 높은 성능으로 수행하며, 멀티모달 학습으로 확장되고 있다. (p.28)"
+    },
+    {
+      "term": "BLEU와 WMT",
+      "desc": "BLEU는 기계번역 품질 지표로, Transformer 논문은 WMT 2014 영-독 28.4·영-불 41.8로 당시 SOTA를 달성했다.\nWMT는 기계번역 분야의 가장 권위 있는 학회로 매년 번역 경진대회를 연다. (p.60)"
+    },
+    {
+      "term": "컨텍스트 윈도우(Context Window)",
+      "desc": "모델이 한 번에 참조할 수 있는 입력 길이의 한계다.\nSelf-Attention 연산량이 문장 길이의 제곱(N²)에 비례하기 때문에 생기며, 프롬프트를 아무리 잘 설계해도 이 모델 자체의 한계는 넘을 수 없다. (실습 가이드 p.18)"
+    },
+    {
+      "term": "증강 지능(Augmented Intelligence)",
+      "desc": "AI가 인간의 지능과 의사결정을 '대체'가 아니라 '향상'시키는 데 초점을 둔 활용 방식이다.\n인간의 경쟁자가 아닌 도구로서의 AI — 사람이 생산적 역할을 계속 수행하는 미래를 원할수록 중요해진다. (p.25)"
+    },
+    {
+      "term": "LLM 평가 벤치마크",
+      "desc": "MMLU(57개 분야 지식·추론)·HellaSwag(상식적 문장 완성)·GSM8K(수학적 추론)·HumanEval(파이썬 코딩)·TruthfulQA(환각 방지) 등 리더보드가 쓰는 표준 문제 세트다.\n어제오늘 쓴 모델이 '어떤 시험을 잘 보는 학생'인지 읽는 눈을 준다. (p.80)"
     }
   ],
   "git-1": [
