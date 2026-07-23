@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { subjectById, sessions } from '../data/curriculum'
 import { otherSessions, TRACKS, EVENT_LABELS } from '../data/othersessions'
 import { otherCourses } from '../data/othercontent'
-import { practiceLog } from '../data/practicelog'
+import { practiceLog, sessionRooms } from '../data/practicelog'
 import { exams } from '../data/exams'
 import Rich from '../components/Rich'
 
@@ -85,7 +85,7 @@ export default function Practice() {
                       onClick={() => setActive(r.date)}
                     >
                       {fmt(r.date)} ({weekdayOf(r.date)}){r.date === todayStr ? ' · 오늘' : ''}
-                      <span className="sl-sub">{sj?.name} · {r.mine.region} {r.mine.klass}</span>
+                      <span className="sl-sub">{sj?.name} · {sessionRooms[r.date] || `${r.mine.region} ${r.mine.klass}`}</span>
                     </button>
                   )
                 })}
@@ -112,7 +112,7 @@ export default function Practice() {
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                       <strong style={{ fontSize: 15, color: 'var(--navy-800)' }}>{fmt(date)} ({weekdayOf(date)})</strong>
-                      <span className="chip chip-region gwangju">{mine.region} {mine.klass}</span>
+                      <span className="chip chip-region gwangju">{sessionRooms[date] || `${mine.region} ${mine.klass}`}</span>
                       <span className="chip chip-code">이애본 실습교수</span>
                       {isToday && <span className="chip chip-day">오늘</span>}
                       {isPast && !isToday && <span className="chip" style={{ opacity: 0.7 }}>진행 완료</span>}
