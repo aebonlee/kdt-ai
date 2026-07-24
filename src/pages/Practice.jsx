@@ -152,9 +152,10 @@ export default function Practice() {
               }
 
               if (!other) return null
+              const TRACK_COLORS = { gj: 'var(--gwangju)', us: 'var(--ulsan)', p4: 'var(--pangyo3)', p5: 'var(--pangyo)' }
               const cells = TRACKS.map((t) => {
                 const cell = other[t.key]
-                return cell ? `${t.label} ${nameOfCell(cell.c)}` : null
+                return cell ? { key: t.key, label: t.label, name: nameOfCell(cell.c), color: TRACK_COLORS[t.key] } : null
               }).filter(Boolean)
               if (cells.length === 0) return null
               return (
@@ -164,7 +165,14 @@ export default function Practice() {
                   background: isToday ? 'var(--navy-50)' : undefined,
                 }}>
                   <strong style={{ color: 'var(--navy-600)', flex: '0 0 64px' }}>{fmt(date)} ({weekdayOf(date)})</strong>
-                  <span style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{cells.join(' · ')}</span>
+                  <span style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                    {cells.map((c, i) => (
+                      <span key={c.key}>
+                        {i > 0 && <span style={{ opacity: 0.45, margin: '0 8px' }}>·</span>}
+                        <strong style={{ color: c.color, fontWeight: 800 }}>{c.label}</strong> {c.name}
+                      </span>
+                    ))}
+                  </span>
                 </div>
               )
             })}

@@ -294,8 +294,7 @@ export default function Textbook() {
           <span className="eyebrow">Subjects</span>
           <h1>교과목별 강의안</h1>
           <p>
-            <span style={{ display: 'block' }}>전 {subjectCatalog.length}개 교과목을 과정 진행 순서대로 나열했습니다 — 담당·타 강사 구분 없이 과목별로 학습합니다.</span>
-            <span style={{ display: 'block' }}>전임교수별로 내용이 갈리는 과목은 A안·B안으로 병기됩니다. 교안·교재 기반 학습 내용만 담으며, 실습 안내·평가·당일 기록은 「담당일자별 실습교안」에 있습니다.</span>
+            전 {subjectCatalog.length}개 교과목을 과정 진행 순서대로 나열했습니다 — 담당·타 강사 구분 없이 과목별로 학습하며, 전임교수별로 내용이 갈리는 과목은 A안·B안으로 병기됩니다. 교안·교재 기반 학습 내용만 담으며, 실습 안내·평가·당일 기록은 「담당일자별 실습교안」에 있습니다.
           </p>
         </div>
       </div>
