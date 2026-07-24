@@ -9,6 +9,7 @@ import Rating from '../components/Rating'
 import ExamQuiz from '../components/ExamQuiz'
 import { practiceGuides } from '../data/practiceGuides'
 import { practiceLog } from '../data/practicelog'
+import { practiceMaterials } from '../data/practicematerials'
 import PracticeSupplement from '../components/PracticeSupplement'
 import EtcCourse from '../components/EtcCourse'
 import { otherCourses } from '../data/othercontent'
@@ -327,6 +328,33 @@ export default function Lectures() {
                 </ul>
                 {practiceLog[current.date].submission && practiceLog[current.date].submission !== '—' && (
                   <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)' }}>📎 제출: {practiceLog[current.date].submission}</p>
+                )}
+              </div>
+            )}
+
+            {/* 수업 공유 자료 — 그날 실제 배포한 파일을 해설과 함께 다운로드 */}
+            {!isRef && current.date && practiceMaterials[current.date] && (
+              <div className="card" style={{ marginTop: 14, padding: '16px 20px' }}>
+                <div className="box-h" style={{ marginBottom: 10 }}>📥 수업 공유 자료 · 다운로드</div>
+                <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
+                  {practiceMaterials[current.date].items.map((f) => (
+                    <li key={f.label} style={{ fontSize: 13.5, lineHeight: 1.6, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                      {f.external ? (
+                        <a href={f.href} target="_blank" rel="noreferrer" style={{ color: 'var(--gold)', fontWeight: 700 }}>⬇ {f.label}</a>
+                      ) : (
+                        <a href={f.href} download style={{ color: 'var(--gold)', fontWeight: 700 }}>⬇ {f.label}</a>
+                      )}
+                      <span style={{ color: 'var(--navy-700)' }}> — {f.desc}</span>
+                      {f.external && <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}> (슬랙 로그인 필요)</span>}
+                    </li>
+                  ))}
+                </ul>
+                {practiceMaterials[current.date].notes?.length > 0 && (
+                  <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--line)' }}>
+                    {practiceMaterials[current.date].notes.map((n, i) => (
+                      <p key={i} style={{ margin: '4px 0 0', fontSize: 13.5, fontWeight: 700, color: 'var(--navy-800)', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>{n}</p>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
