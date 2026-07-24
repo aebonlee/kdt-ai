@@ -22,14 +22,14 @@ export default function Home() {
               </span>
             </h1>
             <p className="hero-lead">
-              DreamIT Biz 학습지원 — 강의안·실습교안부터 팀 프로젝트까지,
-              현장에서 바로 쓰는 AI 실무 커리큘럼을 한곳에서.
+              <span style={{ display: 'block' }}>DreamIT Biz 학습지원 — 강의안·실습교안부터 팀 프로젝트까지,</span>
+              <span style={{ display: 'block' }}>현장에서 바로 쓰는 AI 실무 커리큘럼을 한곳에서.</span>
             </p>
             {/* 학습 트랙 요약 — 라인형 */}
             <div className="hero-values">
               {[
-                { k: '강의안', d: '날짜별 8시간 자립 강의 블록', c: 'var(--a1)' },
-                { k: '실습교안', d: '복사–붙여넣기로 바로 도는 실습', c: 'var(--a2)' },
+                { k: '교과목별 강의안', d: '전 과목 진행순 · 교안·교재 그라운딩 학습', c: 'var(--a1)' },
+                { k: '담당일자별 실습교안', d: '일자별 실전 기록 · 당일 맞춤 수정과 평가', c: 'var(--a2)' },
                 { k: '팀 프로젝트', d: '수행 전 과정 가이드', c: '#c678dd' },
                 { k: '평가·피드백', d: '과목별 기준으로 성장 점검', c: '#61afef' },
               ].map((v, i) => (
@@ -60,7 +60,8 @@ export default function Home() {
             {[
               { to: '/about', t: 'About', d: '개발 취지 · 강사 소개' },
               { to: '/prep', t: '선수학습자료', d: '파이썬·Streamlit·Django·Supabase 등 기초' },
-              { to: '/lectures', t: '강의안', d: '날짜별 8시간 강의안 · 시간표·실습' },
+              { to: '/textbook', t: '교과목별 강의안', d: '전 과목 진행순 · A안·B안 · 실라버스 학습 흐름' },
+              { to: '/practice', t: '담당일자별 실습교안', d: '개강일부터 일자별 실전 기록 · 실습강의안·평가' },
               { to: '/team', t: '팀 프로젝트', d: '팀 프로젝트 수행 전 과정 가이드' },
               { to: '/reference', t: '참고자료', d: '과목별 공식 문서·자료 모음' },
             ].map((c) => (
