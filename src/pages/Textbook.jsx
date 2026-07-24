@@ -32,7 +32,7 @@ function DayBlock({ subj, day, dd }) {
   const plan = dd?.plan || null
   // 실습교수 작성분(origin:'practice')은 본문 실습예제에서 빼고 과목 말미 보충자료로 모은다.
   const codeExamples = (dd?.examples || []).filter(notPractice)
-  const keyConcepts = dd?.concepts || []
+  const keyConcepts = (dd?.concepts || []).filter(notPractice)
   const detail = dd?.detail || null
   const deepTheory = dd?.theory || null
   const realCodes = dd?.realCodes || []
@@ -76,11 +76,11 @@ function DayBlock({ subj, day, dd }) {
         </>
       )}
 
-      {plan?.figures?.length > 0 && (
+      {(plan?.figures || []).filter(notPractice).length > 0 && (
         <>
           <h3 style={H3}>📐 개념 도해</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 12 }}>
-            {plan.figures.map((f) => (
+            {plan.figures.filter(notPractice).map((f) => (
               <figure key={f.src} className="card" style={{ margin: 0, padding: 16 }}>
                 <div className="box-h" style={{ marginBottom: 10 }}>{f.title}</div>
                 <img src={f.src} alt={f.title} style={{ width: '100%', maxWidth: 760, display: 'block', borderRadius: 10 }} />

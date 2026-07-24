@@ -208,11 +208,13 @@ export const plans = {
     },
     "figures": [
       {
+        "origin": "practice",
         "src": "/images/manhattan-distance.svg",
         "title": "맨해튼 거리 vs 유클리드 거리",
         "caption": "격자 도시에서 가로·세로로만 이동한 거리의 합(L1, 노랑 실선)과 직선 거리(L2, 파랑 점선). 임베딩 벡터의 '가까움'을 재는 거리 척도의 출발점이다."
       },
       {
+        "origin": "practice",
         "src": "/images/softmax.svg",
         "title": "소프트맥스 — 점수를 확률로",
         "caption": "출력층의 제각각인 점수(logits)를 0~1 확률로 정규화해 총합을 1로 만든다. 다음 토큰 확률 분포와 Self-Attention 가중치, 오늘 수업 두 곳 모두에 등장한다."
