@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { subjects, subjectById } from '../data/curriculum'
-import { PERIOD_TIMES } from '../data/lectureperiods'
 import { modeOf, periodTagsOf } from '../data/lecturemodes'
 import Rich from '../components/Rich'
 import CodeBlock from '../components/CodeBlock'
@@ -137,20 +136,18 @@ function DayBlock({ subj, day, dd }) {
         </>
       )}
 
-      <h3 style={H3}>⏱ 진행 시간표 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>(09:00~17:50 · 교시당 50분)</span></h3>
+      {/* 교과목별 강의안은 시각·교시 없이 실라버스 학습 흐름만 싣는다 —
+          교시별 진행 시간표(당일 운영)는 담당일자별 실습교안(실습강의안) 소관. */}
+      <h3 style={H3}>📋 실라버스 학습 흐름 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>(진행 순서 · 이론/실습 방식)</span></h3>
       {dayPeriods ? (
         <div className="card" style={{ marginTop: 12 }}>
-          {PERIOD_TIMES.map((slot, j) => {
-            if (slot.lunch) return (
-              <div key="lunch" className="plan-row"><div className="plan-time">{slot.time}</div><div className="plan-lunch">점심 휴식</div></div>
-            )
-            const ci = j < 3 ? j : j - 1
+          {dayPeriods.map((topic, ci) => {
             const ptag = periodTags?.[ci]
             return (
-              <div key={slot.label} className="plan-row">
-                <div className="plan-time">{slot.label}<span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>{slot.time}</span></div>
+              <div key={ci} className="plan-row">
+                <div className="plan-time">{ci + 1}</div>
                 <div className="plan-topic plan-topic-row">
-                  <span>{dayPeriods[ci]}</span>
+                  <span>{topic}</span>
                   {ptag && <span className={`period-tag ${modeClass(ptag)}`}>{ptag}</span>}
                 </div>
               </div>
@@ -159,10 +156,10 @@ function DayBlock({ subj, day, dd }) {
         </div>
       ) : plan ? (
         <div className="card" style={{ marginTop: 12 }}>
-          {plan.schedule.map((row, i) => (
+          {plan.schedule.filter((row) => !row.lunch).map((row, i) => (
             <div key={i} className="plan-row">
-              <div className="plan-time">{row.time}</div>
-              <div>{row.lunch ? <div className="plan-lunch">{row.topic}</div> : <><div className="plan-topic">{row.topic}</div>{row.detail && <div className="plan-detail">{row.detail}</div>}</>}</div>
+              <div className="plan-time">{i + 1}</div>
+              <div><div className="plan-topic">{row.topic}</div>{row.detail && <div className="plan-detail">{row.detail}</div>}</div>
             </div>
           ))}
         </div>
