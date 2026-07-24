@@ -964,3 +964,20 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
   background: var(--a2); border-radius: 1px;
   animation: dib-blink 1s steps(1) infinite;
 }
+
+/* ═══════════════ 푸터 3단 배치 (2026-07-24 개편) ═══════════════ */
+.foot-grid {
+  display: grid; grid-template-columns: 1.5fr 1.2fr 0.8fr; gap: var(--s-6);
+  padding-bottom: var(--s-6); margin-bottom: var(--s-5);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.foot-h {
+  font-size: 12.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--a1); margin-bottom: 10px;
+}
+.foot-links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.foot-links a { font-size: 14px; color: rgba(255,255,255,0.78); transition: var(--transition-base); }
+.foot-links a:hover { color: var(--a1); }
+@media (max-width: 760px) {
+  .foot-grid { grid-template-columns: 1fr; gap: var(--s-5); }
+}
