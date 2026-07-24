@@ -6,9 +6,7 @@ import Rich from '../components/Rich'
 import CodeBlock from '../components/CodeBlock'
 import Rating from '../components/Rating'
 import ExamQuiz from '../components/ExamQuiz'
-import { practiceGuides } from '../data/practiceGuides'
 import EtcCourse from '../components/EtcCourse'
-import PracticeSupplement from '../components/PracticeSupplement'
 import { otherCourses } from '../data/othercontent'
 import { subjectCatalog } from '../data/subjectcatalog'
 
@@ -22,8 +20,7 @@ const modeClass = (tag) =>
 const subjectModules = import.meta.glob('../data/lectures/*.js', { import: 'default' })
 const mainSubjects = subjects.filter((s) => !s.reference)
 // 실습교수(반별 투입 강사) 작성분 판정 — origin:'practice' (§Dev_md 53). 본문에서 빼 과목 말미로 묶는다.
-const isPractice = (x) => x?.origin === 'practice'
-const notPractice = (x) => !isPractice(x)
+const notPractice = (x) => x?.origin !== 'practice'
 const etcEntries = Object.entries(otherCourses).map(([id, c]) => ({ id, ...c }))
 const H3 = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 
@@ -233,34 +230,8 @@ function DayBlock({ subj, day, dd }) {
         </>
       )}
 
-      {practiceGuides[subj.id] && day === totalDays && (() => {
-        const g = practiceGuides[subj.id]
-        return (
-          <div style={{ marginTop: 28 }}>
-            <h3 style={{ ...H3, margin: '0 0 4px' }}>🧪 {g.title}</h3>
-            <div className="box box-practice" style={{ marginTop: 12 }}>
-              <p style={{ margin: '0 0 10px', color: 'var(--ink-soft)', fontSize: 13 }}><Rich text={g.intro} /> <span style={{ opacity: 0.7 }}>({g.source})</span></p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
-                {g.files.map((f) => <a key={f.href} href={f.href} download className="btn btn-cta" style={{ fontSize: 13, padding: '8px 14px' }}>⬇ {f.label}</a>)}
-              </div>
-              {g.groups.map((grp) => (
-                <div key={grp.h} style={{ marginTop: 12 }}>
-                  <div className="box-h" style={{ marginBottom: 6 }}>{grp.h}</div>
-                  {grp.note && <p style={{ margin: '0 0 6px', fontSize: 13.5, color: 'var(--navy-700)' }}><Rich text={grp.note} /></p>}
-                  <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {grp.items.map((it, i) => <li key={i} style={{ fontSize: 13.5, color: 'var(--navy-700)', lineHeight: 1.6 }}><Rich text={it} /></li>)}
-                  </ul>
-                  {grp.after && <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}><Rich text={grp.after} /></p>}
-                </div>
-              ))}
-              <p style={{ margin: '14px 0 0', fontSize: 14, fontWeight: 800, color: 'var(--gold)' }}>{g.deadline}</p>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}><Rich text={g.submit} /></p>
-            </div>
-          </div>
-        )
-      })()}
 
-      <ExamQuiz subjectId={subj.id} day={day} totalDays={totalDays} />
+      <ExamQuiz subjectId={subj.id} day={day} totalDays={totalDays} showExam={false} />
     </div>
   )
 }
@@ -310,7 +281,7 @@ export default function Textbook() {
           <h1>교과목별 강의안</h1>
           <p>
             <span style={{ display: 'block' }}>전 {subjectCatalog.length}개 교과목을 과정 진행 순서대로 나열했습니다 — 담당·타 강사 구분 없이 과목별로 학습합니다.</span>
-            <span style={{ display: 'block' }}>전임교수별로 내용이 갈리는 과목은 A안·B안으로 병기됩니다. 수업일별 실전 기록은 「담당일자별 실습교안」에서 확인하세요.</span>
+            <span style={{ display: 'block' }}>전임교수별로 내용이 갈리는 과목은 A안·B안으로 병기됩니다. 교안·교재 기반 학습 내용만 담으며, 실습 안내·평가·당일 기록은 「담당일자별 실습교안」에 있습니다.</span>
           </p>
         </div>
       </div>
@@ -368,10 +339,6 @@ export default function Textbook() {
                     {subj.days.map((_, i) => (
                       <DayBlock key={i} subj={subj} day={i + 1} dd={mod?.[`${subj.id}-${i + 1}`]} />
                     ))}
-                    {/* 과목 말미 — 전 일차에 흩어진 실습교수 작성분(origin:'practice')을 한곳에 모은다 */}
-                    <PracticeSupplement
-                      examples={subj.days.flatMap((_, i) => (mod?.[`${subj.id}-${i + 1}`]?.examples || []).filter(isPractice))}
-                    />
                   </div>
                 )}
               </>

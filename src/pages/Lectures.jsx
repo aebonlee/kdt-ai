@@ -8,6 +8,8 @@ import CodeBlock from '../components/CodeBlock'
 import Rating from '../components/Rating'
 import ExamQuiz from '../components/ExamQuiz'
 import { practiceGuides } from '../data/practiceGuides'
+import { practiceLog } from '../data/practicelog'
+import PracticeSupplement from '../components/PracticeSupplement'
 import EtcCourse from '../components/EtcCourse'
 import { otherCourses } from '../data/othercontent'
 import { etcMonthlyDigest, otherPeriods, EVENT_LABELS } from '../data/othersessions'
@@ -105,7 +107,8 @@ export default function Lectures() {
 
   const dd = subjData ? subjData[`${current.subjectId}-${current.day}`] : null
   const plan = dd?.plan || null
-  const codeExamples = dd?.examples || []
+  const codeExamples = (dd?.examples || []).filter((x) => x?.origin !== 'practice')
+  const practiceExtras = (dd?.examples || []).filter((x) => x?.origin === 'practice')
   const keyConcepts = dd?.concepts || []
   const detail = dd?.detail || null
   const deepTheory = dd?.theory || null
@@ -310,6 +313,21 @@ export default function Lectures() {
                 <strong className={`mode-badge ${modeClass(mode.tag)}`}>{mode.tag}</strong>
                 <span className="mode-ratio">{mode.ratio}</span>
                 <span className="mode-desc">{mode.note}</span>
+              </div>
+            )}
+
+            {/* 당일 수업 기록 — 그날 그 반에서 실제 진행·변경한 내용 (practicelog) */}
+            {!isRef && current.date && practiceLog[current.date] && (
+              <div className="box box-practice" style={{ marginTop: 20, borderLeft: '4px solid var(--gold)' }}>
+                <div className="box-h">📌 당일 수업 기록 · {practiceLog[current.date].professor}</div>
+                <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  {practiceLog[current.date].custom.map((c, i) => (
+                    <li key={i} style={{ fontSize: 13.5, lineHeight: 1.6 }}><Rich text={c} /></li>
+                  ))}
+                </ul>
+                {practiceLog[current.date].submission && practiceLog[current.date].submission !== '—' && (
+                  <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--ink-soft)' }}>📎 제출: {practiceLog[current.date].submission}</p>
+                )}
               </div>
             )}
 
@@ -639,6 +657,9 @@ export default function Lectures() {
                 </div>
               )
             })()}
+
+            {/* 실습교수 보충자료 — 이애본 실습교수 배포분(origin:'practice') 별도 조판 */}
+            {!isRef && <PracticeSupplement examples={practiceExtras} />}
 
             {/* 종합실습 평가기준(첫날) · 복습 퀴즈(마지막날) */}
             {!isRef && (

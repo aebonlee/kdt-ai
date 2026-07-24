@@ -132,7 +132,7 @@ function ExtraStudyBlock({ x }) {
   )
 }
 
-export default function ExamQuiz({ subjectId, day, totalDays }) {
+export default function ExamQuiz({ subjectId, day, totalDays, showExam = true }) {
   // 평가기준은 과목 첫날 + 마지막날(종합실습 평가 당일)에 노출
   const e = day === 1 || day === totalDays ? exams[subjectId] : null
   const alt = day === 1 || day === totalDays ? examsAlt[subjectId] : null
@@ -141,8 +141,8 @@ export default function ExamQuiz({ subjectId, day, totalDays }) {
   if (!e && !alt && !qs && !extra) return null
   return (
     <>
-      <ExamBlock e={e} />
-      {alt && (
+      {showExam && <ExamBlock e={e} />}
+      {showExam && alt && (
         <>
           <ExamBlock e={alt} title="📑 전임교수 평가안 (참고)" />
           <p style={{ marginTop: 8, fontSize: 12.5, color: 'var(--ink-soft)' }}>
