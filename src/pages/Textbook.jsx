@@ -23,6 +23,15 @@ const notPractice = (x) => x?.origin !== 'practice'
 const etcEntries = Object.entries(otherCourses).map(([id, c]) => ({ id, ...c }))
 const H3 = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 
+// 실라버스 학습 흐름의 할당 시간 — "09:00–09:50" 형태 시간 범위를 분 단위로 환산(시각 자체는 싣지 않음)
+const durationOf = (time) => {
+  const m = /(\d{1,2}):(\d{2})\s*[–~-]\s*(\d{1,2}):(\d{2})/.exec(time || '')
+  if (!m) return '50분'
+  const mins = (+m[3] * 60 + +m[4]) - (+m[1] * 60 + +m[2])
+  if (mins <= 0) return '50분'
+  return mins % 60 === 0 ? `${mins / 60}시간` : mins > 60 ? `${Math.floor(mins / 60)}시간 ${mins % 60}분` : `${mins}분`
+}
+
 // 한 일차의 강의안 본문 — 학습강의안(/lectures)과 동일 구성(날짜/지역 헤더만 제외).
 function DayBlock({ subj, day, dd }) {
   const totalDays = subj.days.length
@@ -138,14 +147,14 @@ function DayBlock({ subj, day, dd }) {
 
       {/* 교과목별 강의안은 시각·교시 없이 실라버스 학습 흐름만 싣는다 —
           교시별 진행 시간표(당일 운영)는 담당일자별 실습교안(실습강의안) 소관. */}
-      <h3 style={H3}>📋 실라버스 학습 흐름 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>(진행 순서 · 이론/실습 방식)</span></h3>
+      <h3 style={H3}>📋 실라버스 학습 흐름 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>(진행 순서 · 할당 시간 · 이론/실습 방식)</span></h3>
       {dayPeriods ? (
         <div className="card" style={{ marginTop: 12 }}>
           {dayPeriods.map((topic, ci) => {
             const ptag = periodTags?.[ci]
             return (
               <div key={ci} className="plan-row">
-                <div className="plan-time">{ci + 1}</div>
+                <div className="plan-time">{ci + 1}<span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>50분</span></div>
                 <div className="plan-topic plan-topic-row">
                   <span>{topic}</span>
                   {ptag && <span className={`period-tag ${modeClass(ptag)}`}>{ptag}</span>}
@@ -158,7 +167,7 @@ function DayBlock({ subj, day, dd }) {
         <div className="card" style={{ marginTop: 12 }}>
           {plan.schedule.filter((row) => !row.lunch).map((row, i) => (
             <div key={i} className="plan-row">
-              <div className="plan-time">{i + 1}</div>
+              <div className="plan-time">{i + 1}<span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>{durationOf(row.time)}</span></div>
               <div><div className="plan-topic">{row.topic}</div>{row.detail && <div className="plan-detail">{row.detail}</div>}</div>
             </div>
           ))}
