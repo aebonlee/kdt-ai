@@ -591,8 +591,11 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 .foot-brand b { font-weight: 900; }
 
 /* 로그인 카드 텍스트 로고 (kdt-ai) */
-.login-logo-text { font-size: 26px; font-weight: 700; color: var(--navy-900); letter-spacing: -0.01em; }
+.login-logo-text { font-size: 26px; font-weight: 700; color: var(--navy-800); letter-spacing: -0.01em; }
 .login-logo-text b { font-weight: 900; background: linear-gradient(100deg, var(--a1), var(--a2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* 'Biz'는 그라디언트가 아니라 본문색 — 카드 배경과 확실히 대비되게 명시 */
+.login-logo-biz { color: var(--navy-800); font-weight: 700; }
+[data-theme="light"] .login-logo-text, [data-theme="light"] .login-logo-biz { color: var(--navy-900); }
 
 /* ── 카테고리 필터 탭(.month-tabs) — kdt-ai 다크. 정의 누락으로 간격 없던 것 복구 ── */
 .month-tabs { display: flex; flex-wrap: wrap; gap: 8px; }

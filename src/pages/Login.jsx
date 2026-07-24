@@ -14,7 +14,7 @@ export default function Login() {
     <section className="section login-section">
       <div className="container login-wrap">
         <div className="login-card">
-          <span className="login-logo login-logo-text"><b>DreamIT</b> Biz</span>
+          <span className="login-logo login-logo-text"><b>DreamIT</b> <span className="login-logo-biz">Biz</span></span>
           <h1 className="login-title">로그인</h1>
           <p className="login-sub">게시판·대시보드 이용을 위해 로그인하세요.</p>
 
@@ -24,10 +24,10 @@ export default function Login() {
 
           <div className="login-btns">
             <button type="button" onClick={signInWithGoogle} className="login-btn login-google">
-              <span className="g-mark" aria-hidden="true">G</span> Google 계정으로 로그인
+              Google 계정으로 로그인
             </button>
             <button type="button" onClick={signInWithKakao} className="login-btn login-kakao">
-              <span aria-hidden="true">💬</span> 카카오로 로그인
+              카카오로 로그인
             </button>
           </div>
 
