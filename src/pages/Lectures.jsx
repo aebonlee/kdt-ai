@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { sortedSessions, subjectById, dayOf, sessionByDate, referenceSubjects } from '../data/curriculum'
 import { PERIOD_TIMES } from '../data/lectureperiods'
 import { modeOf, periodTagsOf } from '../data/lecturemodes'
@@ -711,6 +711,7 @@ export default function Lectures() {
               return (
                 <div id="lecture-appendix" style={{ marginTop: 36, paddingTop: 20, borderTop: '2px solid var(--line)', scrollMarginTop: 84 }}>
                   <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '0 0 8px' }}>📎 {ax.title}</h3>
+                  <p style={{ margin: '0 0 12px', fontSize: 13 }}><Link to="/appendix/diagrams" style={{ color: 'var(--gold)', fontWeight: 700 }}>→ 상단 「부록 · 기획안 도해 가이드」에서 더 자세히 보기</Link></p>
                   {ax.intro && (
                     <p style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.8, whiteSpace: 'pre-line', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
                       <Rich text={ax.intro} />

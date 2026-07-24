@@ -8,6 +8,7 @@ import RequireAdmin from './components/RequireAdmin'
 import AdminShell from './components/AdminShell'
 import Home from './pages/Home' // 랜딩은 정적 import — entry→Home→curriculum 워터폴 제거(-1 RTT)
 import Appendix from './pages/Appendix'
+import AppendixDiagrams from './pages/AppendixDiagrams'
 import ClassOnboarding from './components/ClassOnboarding'
 
 // 라우트 단위 코드 스플리팅 — 각 페이지를 필요할 때만 내려받는다.
@@ -70,6 +71,7 @@ export default function App() {
             <Route path="/team" element={<RequireAuth><TeamProject /></RequireAuth>} />
             <Route path="/reference" element={<RequireAuth><References /></RequireAuth>} />
             <Route path="/appendix" element={<RequireAuth><Appendix /></RequireAuth>} />
+            <Route path="/appendix/diagrams" element={<RequireAuth><AppendixDiagrams /></RequireAuth>} />
             <Route path="/progress" element={<RequireAdmin><AdminShell><Progress /></AdminShell></RequireAdmin>} />
             <Route path="/day/:date" element={<RequireAuth><DayDetail /></RequireAuth>} />
             <Route path="/textbook" element={<RequireAuth><Textbook /></RequireAuth>} />

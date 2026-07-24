@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { glossary, glossaryIntro } from '../data/glossary'
+import AppendixTabs from '../components/AppendixTabs'
 
 // 한글 초성 추출 (ㄲ→ㄱ 등 된소리는 기본 자음으로 묶음)
 const CHO = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
@@ -133,6 +134,7 @@ export default function Appendix() {
 
       <section className="section">
         <div className="container">
+          <AppendixTabs />
           <div className="appendix-layout">
             {/* 좌측 인덱스 */}
             <aside className="appendix-side">
