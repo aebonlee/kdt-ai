@@ -981,3 +981,10 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 @media (max-width: 760px) {
   .foot-grid { grid-template-columns: 1fr; gap: var(--s-5); }
 }
+
+/* 좌측 메뉴 하위 링크 (부록 등 본문 섹션 바로가기) */
+.side-link.side-link-sub {
+  margin-left: 12px; border-left: 2px solid var(--gold);
+  background: color-mix(in srgb, var(--a1) 6%, transparent);
+}
+.side-link.side-link-sub:hover { background: color-mix(in srgb, var(--a1) 12%, transparent); }

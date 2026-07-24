@@ -229,6 +229,17 @@ export default function Lectures() {
                   )
                 })}
 
+            {/* 열려 있는 날짜에 부록이 있으면 본문 부록으로 바로 가는 하위 링크 */}
+            {!isRef && practiceLog[current.date]?.appendix && (
+              <button
+                className="side-link side-link-sub"
+                onClick={() => document.getElementById('lecture-appendix')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              >
+                📎 부록 — 기획안 도해 4종
+                <span className="sl-sub">파이프라인 · 아키텍처 · 순서도 · 와이어프레임</span>
+              </button>
+            )}
+
             {/* 담당일정 외 강의내용 학습 자료 — 월별·과목별 */}
             <details className="etc-nav" open={!!etc}>
               <summary>📚 담당일정 외 강의내용 학습 자료</summary>
@@ -698,7 +709,7 @@ export default function Lectures() {
             {!isRef && current.date && practiceLog[current.date]?.appendix && (() => {
               const ax = practiceLog[current.date].appendix
               return (
-                <div style={{ marginTop: 36, paddingTop: 20, borderTop: '2px solid var(--line)' }}>
+                <div id="lecture-appendix" style={{ marginTop: 36, paddingTop: 20, borderTop: '2px solid var(--line)', scrollMarginTop: 84 }}>
                   <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '0 0 8px' }}>📎 {ax.title}</h3>
                   {ax.intro && (
                     <p style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.8, whiteSpace: 'pre-line', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
@@ -716,6 +727,14 @@ export default function Lectures() {
                             </li>
                           ))}
                         </ul>
+                        {sec.figure && (
+                          <figure style={{ margin: '14px 0 0' }}>
+                            <img src={sec.figure.src} alt={sec.figure.caption} style={{ width: '100%', maxWidth: 900, display: 'block', borderRadius: 10 }} />
+                            <figcaption style={{ marginTop: 7, fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.6, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                              {sec.figure.caption}
+                            </figcaption>
+                          </figure>
+                        )}
                       </div>
                     ))}
                   </div>

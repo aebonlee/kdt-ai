@@ -81,6 +81,7 @@ export const practiceLog = {
       sections: [
         {
           h: '① 파이프라인(Pipeline) — "무엇이 어떤 순서로 흘러가나"',
+          figure: { src: '/images/diagram-pipeline.svg', caption: '파이프라인 예시 — 오늘 팀 과제(CrewAI 3-Agent) 흐름' },
           items: [
             '데이터나 작업이 **흐르는 순서**를 왼쪽→오른쪽 한 줄로 그립니다. 공장의 컨베이어 벨트를 떠올려 주세요.',
             '규칙: **상자 = 단계**, **화살표 = 이동**, 화살표 위에는 반드시 ==무엇이 이동하는지== 적기 (예: "고객 요청 텍스트", "요약 JSON").',
@@ -89,6 +90,7 @@ export const practiceLog = {
         },
         {
           h: '② 아키텍처(Architecture) — "시스템이 무엇으로 구성되나"',
+          figure: { src: '/images/diagram-architecture.svg', caption: '아키텍처 예시 — 3계층 + 외부 서비스 점선 구분' },
           items: [
             '시스템의 **구성요소와 관계**를 층(layer)으로 그립니다. 건물 단면도처럼 위→아래로.',
             '규칙: 맨 위 = 사용자·입력, 중간 = 우리 시스템(에이전트·로직), 맨 아래 = 데이터·외부 서비스. **같은 역할은 같은 색**으로 묶기.',
@@ -97,6 +99,7 @@ export const practiceLog = {
         },
         {
           h: '③ 순서도(Flowchart) — "판단과 분기가 있는 로직"',
+          figure: { src: '/images/diagram-flowchart.svg', caption: '순서도 예시 — 품질 미달 시 재생성으로 되돌아가는 검증 루프' },
           items: [
             '중간에 **예/아니오 갈림길**이 있으면 파이프라인이 아니라 순서도로 그립니다.',
             '규칙: **타원 = 시작/끝**, **사각형 = 처리**, **마름모 = 판단**. 마름모에서 나가는 화살표에는 ==예/아니오 라벨 필수==. 흐름은 위→아래 한 방향.',
@@ -105,6 +108,7 @@ export const practiceLog = {
         },
         {
           h: '④ 와이어프레임(Wireframe) — "화면이 어떻게 생겼나"',
+          figure: { src: '/images/diagram-wireframe.svg', caption: '와이어프레임 예시 — 뼈대만, 버튼 문구는 실제 텍스트로' },
           items: [
             '서비스 화면의 **뼈대**만 회색 상자와 선으로 그립니다. 인테리어 전 설계도면과 같습니다.',
             '규칙: 색·아이콘·디자인 넣지 않기(뼈대에 집중), 대신 ==버튼·문구는 실제 텍스트==로 적기 (예: "코디 추천받기" 버튼).',
