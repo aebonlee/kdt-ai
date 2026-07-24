@@ -849,6 +849,8 @@ u.rich-u { text-decoration-color: var(--gold); text-decoration-thickness: 2px; t
 /* 다크 배경 버튼 글자 보정 */
 [data-theme="light"] .btn-primary { color: #f2f4f8; }
 [data-theme="light"] .btn-ghost { color: var(--navy-700); border-color: var(--line-strong); }
+[data-theme="light"] .hero .btn-ghost { color: var(--a1); border-color: var(--a1); }
+[data-theme="light"] .hero .btn-ghost:hover { background: var(--a1); color: #0a0b10; }
 
 /* 스크롤바·세로 메뉴 hover 라이트 톤 */
 [data-theme="light"] ::-webkit-scrollbar-thumb { background: #c7cfe0; border-color: var(--bg-page); }

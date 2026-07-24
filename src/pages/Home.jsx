@@ -40,10 +40,10 @@ export default function Home() {
               ))}
             </div>
             <div className="hero-actions">
-              <Link to="/lectures" className="btn btn-cta">
-                학습강의안 보기 <span className="btn-arrow">→</span>
+              <Link to="/textbook" className="btn btn-cta">
+                교과목별 강의안 <span className="btn-arrow">→</span>
               </Link>
-              <Link to="/textbook" className="btn btn-ghost">실습교안 보기</Link>
+              <Link to="/practice" className="btn btn-ghost">담당일자별 실습교안</Link>
             </div>
           </div>
 
