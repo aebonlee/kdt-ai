@@ -14,8 +14,8 @@ export const prepTopics = [
     id: 'python',
     name: '파이썬 A to Z',
     tag: '필수',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 1,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 5,  // 중요도 1~5
     desc: '모든 AI 과목의 기반이 되는 Python을 처음부터 끝까지. 본 과정 수강 전 익혀두면 좋습니다.',
     sections: [
       { h: '기초 문법', items: ['변수·자료형·연산자', '조건문·반복문', '문자열·포맷팅(f-string)'] },
@@ -56,8 +56,8 @@ print(counts.most_common(2))   # [('ai', 3), ('ml', 2)]`,
     id: 'streamlit',
     name: '스트림릿 Tip',
     tag: 'AI 데모',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 2,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 3,  // 중요도 1~5
     desc: '파이썬만으로 데이터·AI 웹앱을 빠르게 만드는 Streamlit. 미니 프로젝트 데모에 유용합니다.',
     sections: [
       { h: '핵심', items: ['st.write / st.title / st.markdown', 'st.dataframe / st.line_chart', '위젯: st.button·st.text_input·st.selectbox'] },
@@ -95,8 +95,8 @@ if st.button("인사하기"):
     id: 'gradio',
     name: '그라디오 Tip',
     tag: 'AI 데모',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 1,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 2,  // 중요도 1~5
     desc: 'ML 모델 데모 UI를 빠르게 만드는 Gradio. LLM·이미지 모델 데모에 적합합니다.',
     sections: [
       { h: '기본', items: ['gr.Interface(fn, inputs, outputs)', '컴포넌트: Textbox·Image·Audio·Chatbot'] },
@@ -133,8 +133,8 @@ gr.Interface(fn=greet, inputs="text", outputs="text").launch()`,
     id: 'django',
     name: '장고 Tip',
     tag: '백엔드',
-    level: 3,   // 난이도 1하 2중 3상
-    weight: 1,  // 중요도 1~3
+    level: 4,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 2,  // 중요도 1~5
     desc: '풀스택 웹 프레임워크 Django. 관리자·ORM·인증이 내장된 큰 규모 백엔드에 적합합니다.',
     sections: [
       { h: '구조', items: ['project vs app', 'settings.py / urls.py', 'MTV 패턴'] },
@@ -175,8 +175,8 @@ class Post(models.Model):
     id: 'flask',
     name: '플라스크 Tip',
     tag: '백엔드',
-    level: 2,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 3,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 3,  // 중요도 1~5
     desc: '가볍고 단순한 마이크로 웹 프레임워크 Flask. AI 모델 추론 API를 빠르게 만들 때 좋습니다.',
     sections: [
       { h: '기본', items: ['@app.route 라우팅', 'request로 요청 처리', 'jsonify로 JSON 응답'] },
@@ -219,8 +219,8 @@ def predict():
     id: 'render',
     name: 'Render',
     tag: '배포',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 1,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 2,  // 중요도 1~5
     desc: '간단하게 웹 서비스·API를 배포하는 클라우드 플랫폼. 백엔드/데모 배포 실습에 활용합니다.',
     sections: [
       { h: '서비스 유형', items: ['Web Service (상시 실행)', 'Static Site', 'Cron Job'] },
@@ -253,8 +253,8 @@ gunicorn app:app --bind 0.0.0.0:$PORT`,
     id: 'supabase',
     name: 'Supabase',
     tag: 'BaaS',
-    level: 2,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 3,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 3,  // 중요도 1~5
     desc: 'PostgreSQL 기반 오픈소스 백엔드(BaaS). DB·인증·스토리지·벡터(pgvector)를 한 번에 제공합니다.',
     sections: [
       { h: '핵심', items: ['Postgres DB + 자동 REST/GraphQL', 'Auth (이메일·소셜 로그인)', 'Storage (파일)', 'Realtime 구독'] },
@@ -296,8 +296,8 @@ const { data, error } = await supabase
     id: 'git',
     name: 'Git · GitHub',
     tag: '필수',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 1,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 5,  // 중요도 1~5
     desc: '코드 버전관리와 협업의 기본. 모든 실습·프로젝트의 토대입니다.',
     sections: [
       { h: '기본 흐름', items: ['clone / add / commit / push', '작업 단위로 커밋', 'git status / log'] },
@@ -334,8 +334,8 @@ git push -u origin feature/login   # 원격에 올리고 PR 생성`,
     id: 'cli',
     name: '터미널 · CLI',
     tag: '필수',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 1,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 4,  // 중요도 1~5
     desc: '명령줄 기본기. 개발·배포·서버 작업의 공통 언어입니다.',
     sections: [
       { h: '파일·디렉터리', items: ['ls / cd / pwd', 'mkdir / cp / mv / rm', '경로(절대/상대)·와일드카드'] },
@@ -371,8 +371,8 @@ ls -la | grep "^d"`,
     id: 'javascript',
     name: 'JavaScript ES6+',
     tag: '프론트',
-    level: 2,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 3,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 3,  // 중요도 1~5
     desc: 'Vue 학습의 선수 지식. 모던 JS 핵심 문법을 익힙니다.',
     sections: [
       { h: '기본', items: ['let / const, 템플릿 리터럴', '화살표 함수', '구조 분해 / 스프레드'] },
@@ -412,8 +412,8 @@ const data = await res.json()          // JSON 파싱`,
     id: 'html-css',
     name: 'HTML · CSS',
     tag: '프론트',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 2,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 3,  // 중요도 1~5
     desc: '웹 화면의 구조와 스타일. Vue 컴포넌트 작성의 바탕입니다.',
     sections: [
       { h: 'HTML', items: ['시맨틱 태그(header/main/section)', '폼·입력 요소', '접근성 기초(alt/label)'] },
@@ -452,8 +452,8 @@ const data = await res.json()          // JSON 파싱`,
     id: 'sql',
     name: 'SQL 기초',
     tag: '데이터',
-    level: 2,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 3,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 4,  // 중요도 1~5
     desc: '데이터베이스 조회·집계의 기본. Vector DB·pgvector 이해에도 도움됩니다.',
     sections: [
       { h: '조회', items: ['SELECT / WHERE', 'ORDER BY / LIMIT', '연산자·LIKE'] },
@@ -491,8 +491,8 @@ LIMIT 5;`,
     id: 'pandas',
     name: 'Pandas · NumPy',
     tag: '데이터',
-    level: 2,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 3,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 5,  // 중요도 1~5
     desc: '데이터 분석·전처리의 핵심 라이브러리. ML 실습의 선수 지식입니다.',
     sections: [
       { h: 'NumPy', items: ['ndarray, 벡터 연산', '브로드캐스팅', '난수·통계 함수'] },
@@ -530,8 +530,8 @@ print(summary.sort_values(ascending=False).head())`,
     id: 'docker',
     name: 'Docker 기초',
     tag: '배포',
-    level: 2,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 3,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 4,  // 중요도 1~5
     desc: '애플리케이션 컨테이너화. 모델 서빙·배포 실습의 기반입니다.',
     sections: [
       { h: '개념', items: ['이미지 vs 컨테이너', '레이어·캐시', '레지스트리'] },
@@ -567,8 +567,8 @@ docker logs -f <id>               # 로그 실시간 추적`,
     id: 'http-api',
     name: 'REST API · HTTP',
     tag: '백엔드',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 2,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 4,  // 중요도 1~5
     desc: '프론트-백엔드 통신의 기본. AI 서비스 API 설계·호출의 토대입니다.',
     sections: [
       { h: 'HTTP', items: ['메서드 GET/POST/PUT/DELETE', '상태코드 2xx/4xx/5xx', '헤더·바디·JSON'] },
@@ -604,8 +604,8 @@ curl -X POST https://api.example.com/items \\
     id: 'colab',
     name: 'Colab · Jupyter',
     tag: '실습환경',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 1,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 4,  // 중요도 1~5
     desc: '설치 없이 GPU로 ML/LLM을 실습하는 노트북 환경입니다.',
     sections: [
       { h: '노트북 기초', items: ['셀(코드/마크다운) 실행', '실행 순서·상태', '단축키(Shift+Enter)'] },
@@ -643,8 +643,8 @@ drive.mount('/content/drive')       # 구글 드라이브 마운트
     id: 'llm-basics',
     name: 'LLM · 프롬프트 리터러시',
     tag: 'AI 기초',
-    level: 1,   // 난이도 1하 2중 3상
-    weight: 3,  // 중요도 1~3
+    level: 2,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 5,  // 중요도 1~5
     desc: '생성형 AI를 다루는 기본 소양. 모든 LLM 과목의 출발점입니다.',
     sections: [
       { h: '개념', items: ['토큰과 확률적 생성', '컨텍스트 윈도우', '지식 컷오프·환각'] },
@@ -685,8 +685,8 @@ print(resp.choices[0].message.content)`,
     id: 'java-spring',
     name: 'Java · SpringBoot',
     tag: '과정 연계',
-    level: 3,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 4,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 3,  // 중요도 1~5
     desc: 'SKALA 4기의 Java·SpringBoot·REST API 과목은 별도 강사가 진행합니다. 담당 과목인 Spring AI·모델 서빙의 선수 기반이 되므로, 여기서는 핵심 흐름만 미리 익혀둡니다.',
     sections: [
       { h: 'Java 기본', items: ['클래스·객체·인터페이스', 'record 로 데이터 담기', '컬렉션(List/Map)·스트림', '예외 처리(try/catch)'] },
@@ -729,8 +729,8 @@ public class TodoController {
     id: 'kubernetes',
     name: '쿠버네티스 · DevOps',
     tag: '과정 연계',
-    level: 3,   // 난이도 1하 2중 3상
-    weight: 2,  // 중요도 1~3
+    level: 5,   // 난이도 1입문 2기초 3보통 4심화 5고난도
+    weight: 3,  // 중요도 1~5
     desc: 'SKALA 4기의 Cloud 과목(컨테이너·쿠버네티스·DevOps·Agile/MSA)은 별도 강사가 진행합니다. 담당 과목인 모델 서빙·AIOps 를 실제 운영으로 확장하는 후속 단계로, 큰 그림만 잡아둡니다.',
     sections: [
       { h: '왜 필요한가', items: ['컨테이너 여러 개를 사람이 직접 관리하기 어려움', '쿠버네티스 = 컨테이너 오케스트레이터(배치·복구·확장 자동화)', 'Docker 기초(선수) → 쿠버네티스(확장)'] },
