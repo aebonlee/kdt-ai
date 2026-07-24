@@ -61,7 +61,7 @@ function DayBlock({ subj, day, dd }) {
   return (
     <div style={{ paddingTop: 8, marginTop: day > 1 ? 40 : 0, borderTop: day > 1 ? '2px solid var(--line)' : 'none' }}>
       <div className="detail-meta">
-        <span className="chip chip-day">Day {day} / {totalDays}</span>
+        {totalDays > 1 && <span className="chip chip-day">실라버스 {(day - 1) * 8 + 1}~{day * 8}시간</span>}
         {mode && <span className={`chip chip-mode ${modeClass(mode.tag)}`}>{mode.tag}</span>}
       </div>
 
@@ -245,7 +245,7 @@ function DayBlock({ subj, day, dd }) {
       )}
 
 
-      <ExamQuiz subjectId={subj.id} day={day} totalDays={totalDays} showExam={false} />
+      <ExamQuiz subjectId={subj.id} day={day} totalDays={totalDays} />
     </div>
   )
 }
@@ -344,7 +344,7 @@ export default function Textbook() {
                   <Rating level={subj.level} weight={subj.weight} />
                 </div>
                 <h2 style={{ fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginTop: 8 }}>{cat.title}</h2>
-                <p style={{ color: 'var(--ink-soft)', marginTop: 4 }}>{subj.category} · {subj.days.length}일차 강의안</p>
+                <p style={{ color: 'var(--ink-soft)', marginTop: 4 }}>{subj.category} · 실라버스 {subj.days.length * 8}시간 할당</p>
 
                 {loading ? (
                   <div style={{ marginTop: 20, padding: '48px 20px', textAlign: 'center', color: 'var(--ink-soft)' }}>강의안을 불러오는 중…</div>
