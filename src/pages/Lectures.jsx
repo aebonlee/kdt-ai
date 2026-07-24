@@ -693,6 +693,35 @@ export default function Lectures() {
             {!isRef && (
               <ExamQuiz subjectId={current.subjectId} day={current.day} totalDays={subj?.days?.length || 1} />
             )}
+
+            {/* 부록 — 당일 실습 보강 가이드 (practicelog[date].appendix, 실습강의안 맨 아래) */}
+            {!isRef && current.date && practiceLog[current.date]?.appendix && (() => {
+              const ax = practiceLog[current.date].appendix
+              return (
+                <div style={{ marginTop: 36, paddingTop: 20, borderTop: '2px solid var(--line)' }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '0 0 8px' }}>📎 {ax.title}</h3>
+                  {ax.intro && (
+                    <p style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--navy-700)', lineHeight: 1.8, whiteSpace: 'pre-line', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                      <Rich text={ax.intro} />
+                    </p>
+                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {ax.sections.map((sec) => (
+                      <div key={sec.h} className="card">
+                        <h4 style={{ fontSize: 15, fontWeight: 800, color: 'var(--gold)', marginBottom: 8 }}>{sec.h}</h4>
+                        <ul className="dot-list" style={{ margin: 0 }}>
+                          {sec.items.map((it, i) => (
+                            <li key={i} style={{ fontSize: 13.5, color: 'var(--navy-700)', lineHeight: 1.75, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                              <Rich text={it} />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
           </div>
           )}
         </div>
