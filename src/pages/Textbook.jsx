@@ -297,7 +297,7 @@ export default function Textbook() {
               >
                 {i + 1}. {c.title}
                 <span className="sl-sub">
-                  {c.versions.map((v) => v.plan + (v.professor ? `(${v.professor})` : '')).join(' · ')}
+                  {c.versions.map((v) => v.plan.replace('안', '') + (v.professor ? `(${v.professor})` : '')).join('·')}
                 </span>
               </button>
             ))}
