@@ -90,7 +90,7 @@ export default function AppendixDiagrams() {
                   <p style={{ margin: '0 0 14px', fontSize: 14, color: 'var(--gold)', fontWeight: 700 }}>{d.oneLine}</p>
 
                   <figure style={{ margin: '0 0 16px' }}>
-                    <img src={d.figure} alt={d.title} style={{ width: '100%', maxWidth: 900, display: 'block', borderRadius: 10 }} />
+                    <img src={d.figure} alt={d.title} style={{ width: '100%', display: 'block', borderRadius: 10 }} />
                   </figure>
 
                   <div className="grid grid-2">
