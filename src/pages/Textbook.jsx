@@ -23,13 +23,24 @@ const notPractice = (x) => x?.origin !== 'practice'
 const etcEntries = Object.entries(otherCourses).map(([id, c]) => ({ id, ...c }))
 const H3 = { fontSize: 18, fontWeight: 800, color: 'var(--navy-800)', margin: '28px 0 4px' }
 
-// 실라버스 학습 흐름의 할당 시간 — "09:00–09:50" 형태 시간 범위를 분 단위로 환산(시각 자체는 싣지 않음)
+// 실라버스 학습 흐름의 할당 시간 — 시간(H) 단위 표기. 교시 1개 = 1시간, 시간 범위는 교시 수로 환산.
 const durationOf = (time) => {
   const m = /(\d{1,2}):(\d{2})\s*[–~-]\s*(\d{1,2}):(\d{2})/.exec(time || '')
-  if (!m) return '50분'
+  if (!m) return '1시간'
   const mins = (+m[3] * 60 + +m[4]) - (+m[1] * 60 + +m[2])
-  if (mins <= 0) return '50분'
-  return mins % 60 === 0 ? `${mins / 60}시간` : mins > 60 ? `${Math.floor(mins / 60)}시간 ${mins % 60}분` : `${mins}분`
+  return `${Math.max(1, Math.round(mins / 60))}시간`
+}
+
+// 연속으로 같은 주제가 이어지는 교시는 하나로 묶어 할당 시간을 합산한다 (실라버스 단위 표기)
+const groupPeriods = (dayPeriods, periodTags) => {
+  const rows = []
+  dayPeriods.forEach((topic, ci) => {
+    const ptag = periodTags?.[ci] || null
+    const last = rows[rows.length - 1]
+    if (last && last.topic === topic && last.ptag === ptag) last.hours += 1
+    else rows.push({ topic, ptag, hours: 1 })
+  })
+  return rows
 }
 
 // 한 일차의 강의안 본문 — 학습강의안(/lectures)과 동일 구성(날짜/지역 헤더만 제외).
@@ -150,18 +161,15 @@ function DayBlock({ subj, day, dd }) {
       <h3 style={H3}>📋 실라버스 학습 흐름 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)' }}>(진행 순서 · 할당 시간 · 이론/실습 방식)</span></h3>
       {dayPeriods ? (
         <div className="card" style={{ marginTop: 12 }}>
-          {dayPeriods.map((topic, ci) => {
-            const ptag = periodTags?.[ci]
-            return (
-              <div key={ci} className="plan-row">
-                <div className="plan-time">{ci + 1}<span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>50분</span></div>
-                <div className="plan-topic plan-topic-row">
-                  <span>{topic}</span>
-                  {ptag && <span className={`period-tag ${modeClass(ptag)}`}>{ptag}</span>}
-                </div>
+          {groupPeriods(dayPeriods, periodTags).map((row, i) => (
+            <div key={i} className="plan-row">
+              <div className="plan-time">{i + 1}<span style={{ display: 'block', fontWeight: 500, color: 'var(--ink-soft)', fontSize: 12 }}>{row.hours}시간</span></div>
+              <div className="plan-topic plan-topic-row">
+                <span>{row.topic}</span>
+                {row.ptag && <span className={`period-tag ${modeClass(row.ptag)}`}>{row.ptag}</span>}
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       ) : plan ? (
         <div className="card" style={{ marginTop: 12 }}>
